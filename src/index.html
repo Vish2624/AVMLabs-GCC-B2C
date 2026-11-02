@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<script src="./image-slot.js"></script>
+<script src="./icon.js"></script>
+<style>
+@include styles/global.css
+</style>
+</helmet>
+<div style="min-height:100dvh;background:#F6F6FA;color:#16133A;overflow-x:clip">
+<sc-if value="{{ showGate }}" hint-placeholder-val="{{ false }}">
+@include components/location-gate.html
+</sc-if>
+
+@include components/header.html
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+@include pages/home/hero.html
+
+@include pages/home/health-profiles.html
+
+@include pages/home/most-booked.html
+
+
+@include pages/home/centres.html
+
+</sc-if>
+
+<sc-if value="{{ isTests }}" hint-placeholder-val="{{ false }}">
+@include pages/tests.html
+</sc-if>
+
+<sc-if value="{{ isProfiles }}" hint-placeholder-val="{{ false }}">
+@include pages/profiles.html
+</sc-if>
+
+<sc-if value="{{ isCart }}" hint-placeholder-val="{{ false }}">
+@include pages/cart.html
+</sc-if>
+
+<sc-if value="{{ isTest }}" hint-placeholder-val="{{ false }}">
+@include pages/test-detail.html
+</sc-if>
+
+<sc-if value="{{ isAbout }}" hint-placeholder-val="{{ false }}">
+@include pages/about.html
+</sc-if>
+
+@include components/footer.html
+
+<sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
+@include components/mobile-tabs.html
+</sc-if>
+
+<sc-if value="{{ showTestsBar }}" hint-placeholder-val="{{ false }}">
+@include components/tests-bar.html
+</sc-if>
+
+<sc-if value="{{ showCartBar }}" hint-placeholder-val="{{ false }}">
+@include components/cart-bar.html
+</sc-if>
+
+<sc-if value="{{ showFab }}" hint-placeholder-val="{{ false }}">
+@include components/whatsapp-fab.html
+</sc-if>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+@include components/toast.html
+</sc-if>
+
+<sc-if value="{{ isBooked }}" hint-placeholder-val="{{ false }}">
+@include components/booking-confirmed.html
+</sc-if>
+
+<sc-if value="{{ desktopReels }}" hint-placeholder-val="{{ false }}">
+@include reels/reels-desktop.html
+</sc-if>
+
+<sc-if value="{{ mobileReels }}" hint-placeholder-val="{{ false }}">
+@include reels/reels-mobile.html
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="@settings config/settings.json">
+class Component extends DCLogic {
+@include logic/01-data.js
+
+@include logic/02-state.js
+@include logic/03-region-pricing.js
+@include logic/04-navigation-cart.js
+@include logic/05-booking.js
+@include logic/06-reels.js
+@include logic/07-lifecycle.js
+@include logic/08-render-values.js
+}
+</script>
+</body>
+</html>

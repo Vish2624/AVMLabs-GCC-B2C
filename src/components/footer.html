@@ -1,0 +1,44 @@
+<footer style="background:#100D2C;color:#C9C6E0;margin-top:clamp(40px,6vw,72px)">
+  <div style="max-width:1280px;margin:0 auto;padding:clamp(28px,4vw,44px) clamp(14px,3vw,28px) 0">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;padding:clamp(20px,3vw,28px);border-radius:24px;background:linear-gradient(140deg,#1C1650,#2C2180 60%,#3B2C9E);border:1px solid rgba(255,255,255,0.08)">
+      <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1 1 280px">
+        <span style="font-size:clamp(20px,2.4vw,26px);font-weight:800;letter-spacing:-0.02em;color:#fff;text-wrap:balance">Book a test in under a minute</span>
+        <span style="font-size:14px;color:#C9C4EE">Home sample collection available.</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button onClick="{{ waGeneral }}" style="white-space:nowrap;height:48px;padding:0 20px;border-radius:999px;border:none;background:linear-gradient(180deg,#22B463,#138A47);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;gap:9px;cursor:pointer;box-shadow:0 12px 26px -12px rgba(19,138,71,0.8)"><avm-i n="whatsapp" s="18"></avm-i>Book on WhatsApp</button>
+        <button onClick="{{ goTests }}" style="white-space:nowrap;height:48px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;cursor:pointer" style-hover="background:rgba(255,255,255,0.14)">Browse tests<avm-i n="arrow-right" s="16"></avm-i></button>
+      </div>
+    </div>
+  </div>
+  <div style="max-width:1280px;margin:0 auto;padding:clamp(28px,4vw,44px) clamp(14px,3vw,28px) 28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:32px 28px">
+    <div style="display:flex;flex-direction:column;gap:16px;grid-column:span 1;min-width:0">
+      <span style="align-self:flex-start;background:#fff;border-radius:14px;padding:8px 10px;display:flex"><img src="./assets/avm-logo.png" alt="AVM Labs" style="height:56px;display:block"></span>
+      <span style="font-size:14px;line-height:1.65;color:#B9B5D6;max-width:300px">Hormones · Vitamins · Wellness. Lab tests and health profiles with free home collection.</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:12px;font-weight:800;color:#fff;letter-spacing:.1em;text-transform:uppercase">Explore</span>
+      <div style="display:flex;flex-direction:column;gap:6px"><sc-for list="{{ footLinks }}" as="f" hint-placeholder-count="4"><button onClick="{{ f.go }}" style="align-self:flex-start;white-space:nowrap;border:none;background:none;padding:3px 0;text-align:left;color:#C9C6E0;font-size:14.5px;cursor:pointer;transition:color .2s" style-hover="color:#fff">{{ f.label }}</button></sc-for></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:12px;font-weight:800;color:#fff;letter-spacing:.1em;text-transform:uppercase">Popular tests</span>
+      <div style="display:flex;flex-direction:column;gap:6px"><sc-for list="{{ footTests }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.go }}" style="align-self:flex-start;white-space:nowrap;border:none;background:none;padding:3px 0;text-align:left;color:#C9C6E0;font-size:14.5px;cursor:pointer;transition:color .2s" style-hover="color:#fff">{{ f.label }}</button></sc-for></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:12px;font-weight:800;color:#fff;letter-spacing:.1em;text-transform:uppercase">Visit or contact</span>
+      <span style="font-size:14.5px;display:flex;align-items:flex-start;gap:10px;line-height:1.5"><span style="padding-top:2px;color:#9C95E8"><avm-i n="map-pin" s="16"></avm-i></span>{{ regionAddr }}</span>
+      <span style="font-size:14.5px;display:flex;align-items:center;gap:10px"><span style="color:#9C95E8;display:flex"><avm-i n="clock" s="16"></avm-i></span>7 AM – 8 PM, all days</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <button onClick="{{ waGeneral }}" style="white-space:nowrap;height:38px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer" style-hover="border-color:#9C95E8"><avm-i n="whatsapp" s="15"></avm-i>WhatsApp</button>
+        <button onClick="{{ directions }}" style="white-space:nowrap;height:38px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer" style-hover="border-color:#9C95E8"><avm-i n="navigation" s="15"></avm-i>Directions</button>
+      </div>
+    </div>
+  </div>
+  <div style="border-top:1px solid rgba(255,255,255,0.08)">
+    <div style="max-width:1280px;margin:0 auto;padding:16px clamp(14px,3vw,28px) 22px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;font-size:12.5px;line-height:1.6;color:#A9A5C9">
+      <span>© 2026 AVM Labs · Wellness Laboratory</span>
+      <span>Lab results support, but do not replace, medical advice.</span>
+    </div>
+  </div>
+<div style="height:{{ spacerH }}"></div>
+</footer>

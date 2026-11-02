@@ -1,0 +1,83 @@
+<main style="max-width:1200px;margin:0 auto;padding:clamp(18px,3vw,36px) clamp(14px,3vw,28px) 24px">
+  <h1 style="margin:0 0 18px;font-size:clamp(28px,3.6vw,44px);font-weight:800;letter-spacing:-0.035em">Your cart</h1>
+  <sc-if value="{{ cartEmpty }}">
+    <div style="background:#fff;border:1px solid #ECEBF3;border-radius:28px;padding:clamp(28px,5vw,56px);display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px">
+      <span style="width:64px;height:64px;border-radius:20px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center"><avm-i n="shopping-bag" s="28"></avm-i></span>
+      <span style="font-size:20px;font-weight:800">Your cart is empty</span>
+      <span style="font-size:14.5px;color:#5D5A7A;max-width:380px;line-height:1.55">Add individual tests, or pick a health profile for better value.</span>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px"><button onClick="{{ goTests }}" style="white-space:nowrap;height:48px;padding:0 22px;border-radius:999px;border:none;background:#3B2C9E;color:#fff;font-size:14px;font-weight:800;cursor:pointer">Browse tests</button><button onClick="{{ openReels0 }}" style="white-space:nowrap;height:48px;padding:0 22px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:14px;font-weight:800;cursor:pointer">Explore profiles</button></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hasCart }}">
+  <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+    <div style="flex:2 1 540px;min-width:0;display:flex;flex-direction:column;gap:16px">
+      <div style="background:#fff;border:1px solid #ECEBF3;border-radius:24px;padding:clamp(16px,2.5vw,24px);display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span style="width:26px;height:26px;border-radius:8px;background:#16133A;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800">1</span><span style="font-size:17px;font-weight:800">Tests & profiles</span><span style="flex:1"></span><button onClick="{{ goTests }}" style="border:none;background:none;color:#3B2C9E;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px"><avm-i n="plus" s="14"></avm-i>Add more</button></div>
+        <sc-for list="{{ cartLines }}" as="l" hint-placeholder-count="2">
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-top:1px solid #F0EFF5">
+            <span style="width:40px;height:40px;border-radius:12px;background:{{ l.iconBg }};color:{{ l.iconFg }};display:grid;place-items:center;flex:none"><avm-i n="{{ l.icon }}" s="18"></avm-i></span>
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:15px;font-weight:700;line-height:1.3">{{ l.name }}</span><span style="font-size:12.5px;color:#5D5A7A">{{ l.sub }}</span><sc-if value="{{ l.hasDup }}"><span style="font-size:12.5px;font-weight:600;color:#7A4A00;background:#FFF4E0;padding:5px 9px;border-radius:10px;align-self:flex-start;margin-top:4px">{{ l.dup }} — you can remove this.</span></sc-if></div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span style="font-size:16px;font-weight:800">{{ l.priceF }}</span><span style="font-size:12px;color:#5D5A7A;text-decoration:line-through">{{ l.mrpF }}</span></div>
+            <button onClick="{{ l.remove }}" aria-label="Remove" style="width:36px;height:36px;border-radius:999px;border:1px solid #ECEBF3;background:#fff;color:#5D5A7A;display:grid;place-items:center;cursor:pointer;flex:none" style-hover="color:#C81E25;border-color:#F3C9CB"><avm-i n="trash-2" s="15"></avm-i></button>
+          </div>
+        </sc-for>
+      </div>
+      <sc-for list="{{ cartMatches }}" as="m" hint-placeholder-count="0">
+        <div style="border-radius:24px;padding:18px 20px;background:linear-gradient(160deg,#ECE9FD,#FFFFFF 75%);border:1px solid #DAD5F7;display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+          <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="width:28px;height:28px;border-radius:999px;background:#3B2C9E;color:#fff;display:grid;place-items:center"><avm-i n="sparkles" s="14"></avm-i></span><span style="font-size:11.5px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#3B2C9E">Profile match</span><span style="font-size:12px;font-weight:800;color:#0E7350;background:#E3F4EB;padding:3px 9px;border-radius:999px">{{ m.pill }}</span></div>
+            <div style="font-size:16px;font-weight:800;line-height:1.3">{{ m.headline }}</div>
+            <div style="font-size:13.5px;color:#5D5A7A;line-height:1.5">{{ m.detail }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ m.extras }}" as="x" hint-placeholder-count="0"><span style="font-size:12px;font-weight:600;padding:4px 9px;border-radius:999px;background:#fff;border:1px solid #E2DEF7">+ {{ x }}</span></sc-for></div>
+          </div>
+          <div style="display:flex;gap:8px;flex:0 0 auto"><button onClick="{{ m.switchIt }}" style="white-space:nowrap;height:44px;padding:0 18px;border-radius:999px;border:none;background:#3B2C9E;color:#fff;font-size:14px;font-weight:800;cursor:pointer">Switch to profile</button><button onClick="{{ m.view }}" style="white-space:nowrap;height:44px;padding:0 16px;border-radius:999px;border:1px solid #DAD5F7;background:#fff;color:#3B2C9E;font-size:14px;font-weight:700;cursor:pointer">View</button></div>
+        </div>
+      </sc-for>
+      <div style="background:#fff;border:1px solid #ECEBF3;border-radius:24px;padding:clamp(16px,2.5vw,24px);display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;background:#16133A;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800">2</span><span style="font-size:17px;font-weight:800">Sample collection</span></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px">
+          <button onClick="{{ pickHome }}" style="text-align:left;cursor:pointer;border-radius:20px;padding:16px;border:2px solid {{ modeHome.bd }};background:{{ modeHome.bg }};display:flex;flex-direction:column;gap:8px;color:#16133A;transition:all .2s">
+            <span style="display:flex;align-items:center;gap:10px;width:100%"><span style="width:38px;height:38px;border-radius:12px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center"><avm-i n="house" s="19"></avm-i></span><span style="flex:1;font-size:15px;font-weight:800">Home collection</span><span style="color:#0E7350;display:flex"><avm-i n="circle-check" s="20"></avm-i></span></span>
+            <span style="font-size:24px;font-weight:800;letter-spacing:-0.02em;color:#0E7350">{{ hcBig }}</span>
+            <span style="font-size:13px;color:#5D5A7A;line-height:1.45">{{ hcSub }}</span>
+          </button>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid #ECEBF3;border-radius:24px;padding:clamp(16px,2.5vw,24px);display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;background:#16133A;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800">3</span><span style="font-size:17px;font-weight:800">Patient details</span></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Full name</span><input value="{{ form.name }}" onChange="{{ on.name }}" placeholder="As on ID" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.name }};background:#FBFBFD;padding:0 14px;font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"><sc-if value="{{ err.name }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.name }}</span></sc-if></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">WhatsApp number</span><span style="position:relative;display:block"><span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:600;color:#5D5A7A">{{ dial }}</span><input value="{{ form.phone }}" onChange="{{ on.phone }}" type="tel" placeholder="{{ phPh }}" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.phone }};background:#FBFBFD;padding:0 14px 0 {{ phPad }};font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"></span><sc-if value="{{ err.phone }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.phone }}</span></sc-if></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">{{ idLabel }}</span><span style="position:relative;display:block"><span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#6E6A8A;display:flex"><avm-i n="id-card" s="18"></avm-i></span><input value="{{ form.nid }}" onChange="{{ on.nid }}" type="tel" inputmode="numeric" placeholder="{{ idPh }}" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.nid }};background:#FBFBFD;padding:0 14px 0 44px;font-size:15px;color:#16133A;outline:none;width:100%;letter-spacing:.02em" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"></span><sc-if value="{{ err.nid }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.nid }}</span></sc-if></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Age</span><input value="{{ form.age }}" onChange="{{ on.age }}" type="tel" placeholder="Years" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.age }};background:#FBFBFD;padding:0 14px;font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"><sc-if value="{{ err.age }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.age }}</span></sc-if></label>
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Gender</span><div style="display:flex;gap:6px;height:50px;padding:4px;border-radius:14px;background:#F2F1F7;border:1.5px solid {{ bc.gender }}"><sc-for list="{{ genders }}" as="g" hint-placeholder-count="3"><button onClick="{{ g.pick }}" style="flex:1;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;background:{{ g.bg }};color:{{ g.fg }};box-shadow:{{ g.sh }}">{{ g.label }}</button></sc-for></div><sc-if value="{{ err.gender }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.gender }}</span></sc-if></div>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid #ECEBF3;border-radius:24px;padding:clamp(16px,2.5vw,24px);display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;background:#16133A;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800">4</span><span style="font-size:17px;font-weight:800">{{ slotTitle }}</span></div>
+        <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px"><sc-for list="{{ days }}" as="d" hint-placeholder-count="6"><button onClick="{{ d.pick }}" style="flex:none;width:76px;height:66px;border-radius:16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1.5px solid {{ d.bd }};background:{{ d.bg }};color:{{ d.fg }}"><span style="font-size:12px;font-weight:600;opacity:0.85">{{ d.top }}</span><span style="font-size:15px;font-weight:800">{{ d.bottom }}</span></button></sc-for></div>
+        <sc-if value="{{ err.date }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.date }}</span></sc-if>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px"><sc-for list="{{ slots }}" as="s" hint-placeholder-count="6"><button onClick="{{ s.pick }}" disabled="{{ s.disabled }}" style="white-space:nowrap;height:46px;border-radius:14px;font-size:14px;font-weight:700;cursor:{{ s.cursor }};border:1.5px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};text-decoration:{{ s.td }}">{{ s.label }}</button></sc-for></div>
+        <sc-if value="{{ err.slot }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.slot }}</span></sc-if>
+      </div>
+      <div style="background:#fff;border:1px solid #ECEBF3;border-radius:24px;padding:clamp(16px,2.5vw,24px);display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;background:#16133A;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800">5</span><span style="font-size:17px;font-weight:800">{{ placeTitle }}</span></div>
+        <sc-if value="{{ isHomeMode }}"><label style="display:flex;flex-direction:column;gap:6px"><textarea value="{{ form.address }}" onChange="{{ on.address }}" rows="3" placeholder="{{ addrPh }}" style="border-radius:14px;border:1.5px solid {{ bc.address }};background:#FBFBFD;padding:12px 14px;font-size:15px;line-height:1.5;color:#16133A;outline:none;width:100%;resize:vertical" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"></textarea><sc-if value="{{ err.address }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.address }}</span></sc-if></label></sc-if>
+      </div>
+    </div>
+    <aside style="flex:1 1 320px;min-width:0;position:{{ asidePos }};top:92px;display:flex;flex-direction:column;gap:14px">
+      <div style="background:rgba(255,255,255,0.9);backdrop-filter:blur(18px);border:1px solid #ECEBF3;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 60px -36px rgba(22,19,58,0.5)">
+        <span style="font-size:17px;font-weight:800">Bill summary</span>
+        <div style="display:flex;justify-content:space-between;font-size:14px;color:#4A4766"><span>Item total (MRP)</span><span>{{ bill.mrpF }}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:14px;color:#0E7350;font-weight:600"><span>Discount</span><span>− {{ bill.savingF }}</span></div>
+        <sc-if value="{{ isHomeMode }}"><div style="display:flex;justify-content:space-between;font-size:14px;color:#4A4766"><span>Home collection</span><span style="font-weight:700;color:{{ bill.hcColor }}">{{ bill.hcF }}</span></div></sc-if>
+        <div style="height:1px;background:#ECEBF3;margin:2px 0"></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:15px;font-weight:800">To pay</span><span style="font-size:26px;font-weight:800;letter-spacing:-0.02em">{{ bill.payF }}</span></div>
+        <div style="font-size:13px;font-weight:700;color:#0E7350;background:#E3F4EB;padding:8px 12px;border-radius:12px;text-align:center">You save {{ bill.totalSaveF }} on this booking</div>
+        <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}"><button onClick="{{ confirm }}" style="white-space:nowrap;height:54px;border-radius:999px;border:none;background:linear-gradient(180deg,#1FAD5E,#138A47);color:#fff;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 14px 30px -14px rgba(19,138,71,0.9),inset 0 1px 0 rgba(255,255,255,0.25)"><avm-i n="whatsapp" s="20"></avm-i>Confirm booking on WhatsApp</button></sc-if>
+        <span style="font-size:12.5px;color:#5D5A7A;line-height:1.5;text-align:center">You'll be redirected to WhatsApp with your booking details. Pay at the time of collection.</span>
+      </div>
+    </aside>
+  </div>
+  </sc-if>
+</main>

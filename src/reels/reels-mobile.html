@@ -1,0 +1,75 @@
+<div style="position:fixed;inset:0;z-index:100;background:#F6F6FA;display:flex;align-items:center;justify-content:center;gap:28px;color:#16133A">
+  <div style="position:absolute;inset:0;background:{{ reelAmbient }};pointer-events:none"></div>
+  <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative;width:260px;max-height:{{ stageH }};overflow:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:24px;background:#fff;border:1px solid #E7E6F0;backdrop-filter:blur(20px)">
+      <span style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5D5A7A;padding:4px 8px 8px">All profiles</span>
+      <sc-for list="{{ reelList }}" as="l" hint-placeholder-count="6"><button onClick="{{ l.go }}" style="display:flex;flex-direction:column;gap:2px;align-items:flex-start;text-align:left;padding:10px 12px;border-radius:14px;border:1px solid {{ l.bd }};background:{{ l.bg }};color:#16133A;cursor:pointer"><span style="font-size:14px;font-weight:700">{{ l.name }}</span><span style="font-size:12px;color:#5D5A7A">{{ l.meta }}</span></button></sc-for>
+    </div>
+  </sc-if>
+  <div style="position:relative;width:{{ stageW }};height:{{ stageH }};border-radius:{{ stageR }};overflow:hidden;background:#fff;box-shadow:0 30px 80px -40px rgba(22,19,58,0.28);flex:none">
+    <div ref="{{ reelsRef }}" data-reels-scroller="1" style="height:100%;overflow:hidden;position:relative;overscroll-behavior:contain;touch-action:pan-x"><div data-reel-track="1" style="height:100%;will-change:transform;transform:translate3d(0,0,0)">
+      <sc-for list="{{ reels }}" as="r" hint-placeholder-count="1">
+        <div data-reel="1" style="height:100%;scroll-snap-align:start;scroll-snap-stop:always;position:relative;overflow:hidden;contain:paint;background:{{ r.bg }}">
+          <span style="position:absolute;right:-30px;top:18%;font-size:300px;font-weight:800;letter-spacing:-0.06em;color:rgba(59,44,158,0.06);line-height:1;pointer-events:none">{{ r.sym }}</span>
+          <div data-rimg="1" style="position:absolute;left:0;right:0;top:0;height:62%;pointer-events:none;opacity:1;will-change:opacity;-webkit-mask-image:linear-gradient(180deg,#000 45%,transparent 100%);mask-image:linear-gradient(180deg,#000 45%,transparent 100%)"><image-slot id="{{ r.slotId }}" shape="rect" placeholder="" style="display:block;width:100%;height:100%"></image-slot></div>
+          <div data-rveil="1" style="position:absolute;inset:0;pointer-events:none;background:rgba(255,255,255,0.82);opacity:0;will-change:opacity"></div>
+          <div style="position:absolute;top:0;left:0;right:0;z-index:4;padding:calc(12px + env(safe-area-inset-top)) 14px 0;display:flex;flex-direction:column;gap:10px;pointer-events:none">
+            <div style="display:flex;justify-content:center;gap:6px;pointer-events:auto"><sc-for list="{{ r.segs }}" as="g" hint-placeholder-count="3"><button onClick="{{ g.go }}" aria-label="Go to slide" style="border:none;padding:6px 2px;background:none;cursor:pointer;display:grid;place-items:center"><span style="display:block;height:7px;width:{{ g.w }};border-radius:999px;background:{{ g.bg }};transition:width .3s,background .3s"></span></button></sc-for></div>
+            <div style="display:flex;align-items:center;gap:8px;height:36px;padding-right:52px"></div>
+          </div>
+          <div data-h="1" onScroll="{{ r.onH }}" style="position:absolute;inset:0;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x">
+            <div style="flex:0 0 100%;height:100%;scroll-snap-align:start;padding:calc(84px + env(safe-area-inset-top)) 76px {{ slidePadB }} 20px;display:flex;flex-direction:column;justify-content:flex-end;gap:12px;position:relative">
+              <div style="display:flex;gap:8px;flex-wrap:wrap"><span style="white-space:nowrap;height:28px;padding:0 12px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:inline-flex;align-items:center;font-size:12px;font-weight:700">{{ r.tag }}</span><span style="white-space:nowrap;height:28px;padding:0 12px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700"><avm-i n="clock" s="12"></avm-i>{{ r.fastLabel }}</span></div>
+              <div style="display:flex;align-items:flex-end;gap:10px"><span style="font-size:clamp(72px,11vh,104px);font-weight:800;line-height:.85;letter-spacing:-0.05em">{{ r.params }}</span><span style="font-size:14px;font-weight:600;color:#5D5A7A;padding-bottom:8px;line-height:1.25">parameters<br>{{ r.testsN }} tests</span></div>
+              <h2 style="margin:0;font-size:clamp(28px,4vh,36px);font-weight:800;letter-spacing:-0.03em;line-height:1.05">{{ r.name }}</h2>
+              <p style="margin:0;font-size:15px;line-height:1.5;color:#5D5A7A">{{ r.tagline }}</p>
+              <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ r.ideal }}" as="x" hint-placeholder-count="3"><span style="white-space:nowrap;font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:999px;background:#fff;border:1px solid #E7E6F0">{{ x }}</span></sc-for></div>
+              
+            </div>
+            <div style="flex:0 0 100%;height:100%;scroll-snap-align:start;padding:calc(84px + env(safe-area-inset-top)) 72px {{ slidePadB }} 20px;display:flex;flex-direction:column;gap:12px">
+              <span style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5D5A7A">What's included</span>
+              <span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">{{ r.testsN }} tests · {{ r.params }} parameters</span>
+              <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;scrollbar-width:none">
+                <sc-for list="{{ r.tests }}" as="t" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:#fff;border:1px solid #E7E6F0"><span style="width:28px;height:28px;border-radius:9px;background:#EEECF8;color:#3B2C9E;display:grid;place-items:center;font-size:12px;font-weight:800;flex:none">{{ t.n }}</span><span style="flex:1;font-size:14px;font-weight:600;line-height:1.3">{{ t.name }}</span><span style="font-size:12px;color:#5D5A7A;white-space:nowrap">{{ t.p }}</span></div></sc-for>
+              </div>
+              <span style="font-size:13px;color:#5D5A7A">Worth {{ r.mrpF }} if booked separately</span>
+            </div>
+            <div style="flex:0 0 100%;height:100%;scroll-snap-align:start;padding:calc(84px + env(safe-area-inset-top)) 72px {{ slidePadB }} 20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;scrollbar-width:none">
+              <span style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5D5A7A">Good to know</span>
+              <span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">Why take this profile</span>
+              <sc-for list="{{ r.benefits }}" as="b" hint-placeholder-count="3"><div style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px;line-height:1.5"><span style="color:#1FAD5E;padding-top:2px"><avm-i n="circle-check" s="17"></avm-i></span><span>{{ b }}</span></div></sc-for>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+                <div style="padding:12px;border-radius:14px;background:#fff;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:3px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Preparation</span><span style="font-size:13.5px;font-weight:700">{{ r.fastLabel }}</span></div>
+                <div style="padding:12px;border-radius:14px;background:#fff;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:3px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Reports</span><span style="font-size:13.5px;font-weight:700">Within {{ r.tat }}</span></div>
+                <div style="padding:12px;border-radius:14px;background:#fff;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:3px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Home collection</span><span style="font-size:13.5px;font-weight:700">Free</span></div>
+              </div>
+            </div>
+          </div>
+          <div style="position:absolute;right:10px;bottom:{{ railBottom }};z-index:4;display:flex;flex-direction:column;gap:16px;align-items:center">
+            <button onClick="{{ r.toggle }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span style="width:48px;height:48px;border-radius:999px;background:{{ r.addBg }};color:{{ r.addInk }};border:1px solid #E7E6F0;display:grid;place-items:center"><avm-i n="{{ r.addIcon }}" s="22"></avm-i></span>{{ r.addLabel }}</button>
+            <button onClick="{{ r.share }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span style="width:48px;height:48px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:grid;place-items:center"><avm-i n="share-2" s="20"></avm-i></span>Share</button>
+            <button onClick="{{ r.toTests }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span style="width:48px;height:48px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:grid;place-items:center"><avm-i n="list" s="20"></avm-i></span>Tests</button>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:0;z-index:4;padding:40px 16px {{ reelPadB }};background:linear-gradient(180deg,rgba(246,246,250,0) 0%,rgba(246,246,250,0.97) 45%);display:flex;align-items:center;gap:14px">
+            <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;color:#5D5A7A;text-decoration:line-through">{{ r.mrpF }}</span><span style="white-space:nowrap;font-size:11.5px;font-weight:800;color:#0B3B26;background:#7BE3B4;padding:2px 8px;border-radius:999px">{{ r.off }}</span></div><span style="font-size:26px;font-weight:800;letter-spacing:-0.02em">{{ r.priceF }}</span></div>
+            <button onClick="{{ r.book }}" style="flex:1;height:54px;border-radius:999px;border:none;cursor:pointer;background:linear-gradient(180deg,#22B463,#138A47);color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 12px 30px -10px rgba(19,138,71,0.8),inset 0 1px 0 rgba(255,255,255,0.25)"><avm-i n="whatsapp" s="20"></avm-i>Book now</button>
+          </div>
+        </div>
+      </sc-for></div>
+    </div>
+    <button onClick="{{ closeReels }}" aria-label="Close" style="position:absolute;top:calc(24px + env(safe-area-inset-top));right:12px;z-index:6;width:40px;height:40px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="x" s="20"></avm-i></button>
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ prevSlide }}" aria-label="Previous" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);z-index:6;width:38px;height:38px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="chevron-left" s="18"></avm-i></button>
+      <button onClick="{{ nextSlide }}" aria-label="Next" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);z-index:6;width:38px;height:38px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="chevron-right" s="18"></avm-i></button>
+    </sc-if>
+    
+  </div>
+  <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:12px;width:130px">
+      <button onClick="{{ reelUp }}" aria-label="Previous profile" style="width:52px;height:52px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="chevron-up" s="22"></avm-i></button>
+      <span style="font-size:13px;font-weight:700">{{ reelPos }}</span>
+      <button onClick="{{ reelDown }}" aria-label="Next profile" style="width:52px;height:52px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="chevron-down" s="22"></avm-i></button>
+      <span style="font-size:12px;line-height:1.7;color:#5D5A7A;text-align:center;margin-top:10px">↑ ↓ next profile<br>← → details<br>Esc to close</span>
+    </div>
+  </sc-if>
+</div>

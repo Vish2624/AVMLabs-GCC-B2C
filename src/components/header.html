@@ -1,0 +1,43 @@
+<header style="position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.76);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid rgba(22,19,58,0.07)">
+  <div style="max-width:1280px;margin:0 auto;padding:8px clamp(12px,3vw,28px);display:flex;align-items:center;gap:clamp(8px,1.6vw,20px)">
+    <button onClick="{{ goHome }}" aria-label="AVM Labs home" style="border:none;background:none;padding:0;cursor:pointer;display:flex;align-items:center;flex:none"><img src="./assets/avm-logo.png" alt="AVM Labs — Wellness Laboratory" style="height:{{ logoH }};width:auto;display:block"></button>
+    <div style="position:relative;flex:none;z-index:61">
+      <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ toggleLoc }}" style="display:flex;align-items:center;gap:8px;height:44px;padding:0 12px 0 8px;border-radius:999px;border:1px solid #E7E6F0;background:rgba(255,255,255,0.8);cursor:pointer;color:#16133A">
+          <span style="width:28px;height:28px;border-radius:999px;background:#FDECEC;color:#E0222A;display:grid;place-items:center"><avm-i n="map-pin" s="15"></avm-i></span>
+          <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.15"><span style="font-size:11px;color:#5D5A7A;font-weight:500">Location</span><span style="font-size:13px;font-weight:700">{{ locLabel }}</span></span>
+          <avm-i n="chevron-down" s="14"></avm-i>
+        </button>
+      </sc-if>
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ toggleLoc }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:2px 0;border:none;background:none;cursor:pointer;color:#16133A;text-align:left;min-width:0">
+          <span style="font-size:14px;font-weight:800;letter-spacing:-0.01em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:30vw">{{ locCity }}</span>
+          <span style="display:flex;align-items:center;gap:2px;font-size:10.5px;font-weight:500;color:#6F6C8A;white-space:nowrap">Select location<avm-i n="chevron-down" s="11"></avm-i></span>
+        </button>
+      </sc-if>
+      <sc-if value="{{ locOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;top:calc(100% + 10px);left:0;width:min(320px,calc(100vw - 90px));background:rgba(255,255,255,0.98);border:1px solid #E7E6F0;border-radius:20px;box-shadow:0 24px 60px -20px rgba(22,19,58,0.35);padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:#F6F6FA;border:1px solid #ECEBF3"><span style="color:#E0222A;display:flex"><avm-i n="locate-fixed" s="17"></avm-i></span><span style="flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3"><span style="font-size:11.5px;color:#5D5A7A;font-weight:600">Detected location</span><span style="font-size:14px;font-weight:700">{{ regionPlace }}</span></span><button onClick="{{ relocate }}" style="white-space:nowrap;border:none;background:none;color:#3B2C9E;font-size:13px;font-weight:700;cursor:pointer;padding:4px 0">Update</button></div>
+        </div>
+      </sc-if>
+    </div>
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <nav style="display:flex;align-items:center;gap:2px">
+        <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4"><button onClick="{{ n.go }}" style="white-space:nowrap;height:40px;padding:0 16px;border-radius:999px;border:none;cursor:pointer;font-size:14px;font-weight:600;background:{{ n.bg }};color:{{ n.fg }}">{{ n.label }}</button></sc-for>
+      </nav>
+    </sc-if>
+    <div style="flex:{{ spacerFlex }}"></div>
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{ openReels0 }}" style="white-space:nowrap;height:44px;padding:0 18px 0 8px;border-radius:999px;border:none;cursor:pointer;display:flex;align-items:center;gap:10px;background:linear-gradient(120deg,#1C1650,#3B2C9E 70%,#5B46D6);color:#fff;font-size:14px;font-weight:700;box-shadow:0 10px 24px -12px rgba(59,44,158,0.8),inset 0 1px 0 rgba(255,255,255,0.2)"><span style="width:30px;height:30px;border-radius:999px;background:rgba(255,255,255,0.18);display:grid;place-items:center"><avm-i n="play" s="14"></avm-i></span>Explore profiles</button>
+    </sc-if>
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{ goCart }}" aria-label="Cart" style="position:relative;width:44px;height:44px;border-radius:999px;border:1px solid #E7E6F0;background:rgba(255,255,255,0.8);display:grid;place-items:center;cursor:pointer;color:#16133A;flex:none">
+        <avm-i n="shopping-bag" s="20"></avm-i>
+        <sc-if value="{{ hasCart }}"><span style="position:absolute;top:-4px;right:-4px;min-width:21px;height:21px;padding:0 5px;border-radius:999px;background:#E0222A;color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;border:2px solid #fff">{{ cartCount }}</span></sc-if>
+      </button>
+    </sc-if>
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ toggleMSearch }}" aria-label="Search" style="flex:1 1 auto;min-width:0;height:42px;padding:0 6px 0 14px;border-radius:999px;border:1px solid #E7E6F0;background:{{ mSearchBg }};display:flex;align-items:center;gap:8px;cursor:pointer;color:#8F8CA8;font-size:13.5px;font-weight:500;text-align:left"><span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ mSearchText }}</span><span style="width:32px;height:32px;border-radius:999px;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;display:grid;place-items:center;flex:none"><avm-i n="{{ mSearchIcon }}" s="16"></avm-i></span></button>
+    </sc-if>
+  </div>
+</header>

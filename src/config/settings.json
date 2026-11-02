@@ -1,0 +1,89 @@
+{
+  "requireLocation": {
+    "editor": "boolean",
+    "default": true,
+    "tsType": "boolean",
+    "section": "Location"
+  },
+  "previewRegion": {
+    "editor": "enum",
+    "options": [
+      "auto",
+      "IN",
+      "BH",
+      "SA",
+      "AE"
+    ],
+    "default": "auto",
+    "tsType": "string",
+    "section": "Location"
+  },
+  "whatsappNumber": {
+    "editor": "text",
+    "default": "919999999999",
+    "tsType": "string",
+    "section": "India"
+  },
+  "addressIndia": {
+    "editor": "text",
+    "default": "[India centre address]",
+    "tsType": "string",
+    "section": "India"
+  },
+  "whatsappNumberBahrain": {
+    "editor": "text",
+    "default": "97300000000",
+    "tsType": "string",
+    "section": "Bahrain"
+  },
+  "addressBahrain": {
+    "editor": "text",
+    "default": "[Bahrain centre address]",
+    "tsType": "string",
+    "section": "Bahrain"
+  },
+  "whatsappNumberKSA": {
+    "editor": "text",
+    "default": "966500000000",
+    "tsType": "string",
+    "section": "Saudi Arabia"
+  },
+  "addressKSA": {
+    "editor": "text",
+    "default": "[KSA centre address]",
+    "tsType": "string",
+    "section": "Saudi Arabia"
+  },
+  "whatsappNumberUAE": {
+    "editor": "text",
+    "default": "971500000000",
+    "tsType": "string",
+    "section": "UAE"
+  },
+  "addressUAE": {
+    "editor": "text",
+    "default": "[UAE centre address]",
+    "tsType": "string",
+    "section": "UAE"
+  },
+  "homeCollectionFee": {
+    "editor": "int",
+    "default": 250,
+    "min": 0,
+    "max": 1000,
+    "step": 50,
+    "unit": "₹",
+    "tsType": "number",
+    "section": "Booking"
+  },
+  "freeHomeCollectionAbove": {
+    "editor": "int",
+    "default": 0,
+    "min": 0,
+    "max": 5000,
+    "step": 100,
+    "unit": "₹",
+    "tsType": "number",
+    "section": "Booking"
+  }
+}

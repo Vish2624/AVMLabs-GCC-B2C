@@ -1,0 +1,9 @@
+  <div style="position:fixed;inset:0;z-index:130;background:rgba(14,11,43,0.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px">
+    <div style="width:min(420px,100%);background:#fff;border-radius:28px;padding:28px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;box-shadow:0 40px 100px -30px rgba(0,0,0,0.5)">
+      <span style="width:64px;height:64px;border-radius:999px;background:#E3F4EB;color:#0E7350;display:grid;place-items:center"><avm-i n="whatsapp" s="30"></avm-i></span>
+      <span style="font-size:22px;font-weight:800;letter-spacing:-0.02em">Almost done!</span>
+      <span style="font-size:14.5px;line-height:1.55;color:#5D5A7A">We've opened WhatsApp with your booking details. Hit send to confirm — our team will reply with your slot.</span>
+      <a href="{{ bookedUrl }}" target="_blank" rel="noopener" style="width:100%;height:50px;border-radius:999px;background:linear-gradient(180deg,#1FAD5E,#138A47);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px"><avm-i n="whatsapp" s="18"></avm-i>Open WhatsApp again</a>
+      <button onClick="{{ finishBooked }}" style="width:100%;height:48px;border-radius:999px;border:1.5px solid #E7E6F0;background:#fff;color:#16133A;font-size:14px;font-weight:700;cursor:pointer">Done</button>
+    </div>
+  </div>

@@ -1,0 +1,60 @@
+<main style="max-width:1280px;margin:0 auto;padding:clamp(18px,3vw,36px) clamp(14px,3vw,28px) 24px">
+  <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-end;margin-bottom:18px">
+    <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#5D5A7A;font-weight:600">Home / Tests</span><h1 style="margin:0;font-size:clamp(28px,3.6vw,44px);font-weight:800;letter-spacing:-0.035em">{{ catTitle }}</h1><span style="font-size:14px;color:#5D5A7A">{{ testsCountLabel }}</span></div>
+    <div style="flex:0 1 420px;min-width:min(100%,260px);display:flex;align-items:center;gap:10px;height:50px;padding:0 8px 0 16px;border-radius:999px;background:rgba(255,255,255,0.85);border:1px solid #E7E6F0;box-shadow:0 10px 30px -20px rgba(42,31,122,0.4);color:#5D5A7A">
+      <avm-i n="search" s="18"></avm-i>
+      <input value="{{ tq }}" onChange="{{ onTq }}" placeholder="Search tests — e.g. Vitamin D, TSH" style="flex:1;min-width:0;border:none;outline:none;background:transparent;font-size:15px;color:#16133A;height:44px">
+      <sc-if value="{{ hasTq }}"><button onClick="{{ clearTq }}" aria-label="Clear" style="width:34px;height:34px;border-radius:999px;border:none;background:#F0EFF7;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="x" s="14"></avm-i></button></sc-if>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 14px;margin-bottom:8px">
+    <sc-for list="{{ testCats }}" as="c" hint-placeholder-count="8"><button onClick="{{ c.go }}" style="flex:none;display:flex;align-items:center;gap:8px;height:44px;padding:0 14px 0 6px;border-radius:999px;cursor:pointer;font-size:13.5px;font-weight:700;white-space:nowrap;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }}"><span style="width:32px;height:32px;border-radius:999px;display:grid;place-items:center;background:{{ c.symBg }};color:{{ c.symFg }}"><avm-i n="{{ c.icon }}" s="16"></avm-i></span>{{ c.label }}<span style="font-size:12px;font-weight:600;opacity:0.75">{{ c.count }}</span></button></sc-for>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">
+    <div style="flex:1 1 520px;min-width:0">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,max(300px,calc((100% - 32px) / 3))),1fr));gap:16px">
+        <sc-for list="{{ testsView }}" as="t" hint-placeholder-count="6">
+      <div onClick="{{ t.open }}" style="cursor:pointer;background:{{ t.cardBg }};border:1px solid #ECEBF3;border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:18px;box-shadow:none;transition:box-shadow .25s,transform .25s,border-color .25s" style-hover="box-shadow:0 18px 40px -22px rgba(42,31,122,0.35);transform:translateY(-2px);border-color:#DAD5F7">
+        <h3 style="margin:0;font-size:18px;font-weight:700;line-height:1.3;letter-spacing:-0.015em;color:#16133A;text-wrap:pretty;min-height:2.6em;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ t.name }}</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:auto">
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="test-tubes" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Includes</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.paramsCap }}</span></span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="clock-3" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Reports in</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.tatH }}</span></span></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 18px;border-radius:20px;background:#F6F5FB">
+          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+            <span style="display:flex;align-items:center;gap:8px;white-space:nowrap"><span style="font-size:13px;color:#6E6A8A;text-decoration:line-through">{{ t.mrpF }}</span><span style="font-size:12px;font-weight:800;color:#0E7350;background:#D8F1E4;padding:3px 9px;border-radius:999px">{{ t.offCap }}</span></span>
+            <span style="white-space:nowrap;font-size:21px;font-weight:800;letter-spacing:-0.02em;color:#16133A;line-height:1">{{ t.priceF }}</span>
+          </div>
+          <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
+          <sc-if value="{{ t.inCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 22px;border-radius:999px;border:1.5px solid #3B2C9E;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer"><avm-i n="check" s="17"></avm-i>Added</button></sc-if>
+        </div>
+      </div>
+    </sc-for>
+      </div>
+      <sc-if value="{{ testsEmpty }}"><div style="padding:48px 20px;text-align:center;color:#5D5A7A;font-size:15px;background:#fff;border:1px dashed #DCDAE8;border-radius:22px">No tests match that search. Try a different name or category.</div></sc-if>
+    </div>
+    <sc-if value="{{ isWide }}" hint-placeholder-val="{{ true }}">
+      <aside style="flex:0 0 340px;position:sticky;top:92px;display:flex;flex-direction:column;gap:14px">
+        <div style="background:rgba(255,255,255,0.88);backdrop-filter:blur(18px);border:1px solid #ECEBF3;border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 50px -34px rgba(22,19,58,0.45)">
+          <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:16px;font-weight:800">Your cart</span><span style="font-size:13px;color:#5D5A7A;font-weight:600">{{ barCountLabel }}</span></div>
+          <sc-if value="{{ cartEmpty }}"><div style="font-size:13.5px;line-height:1.55;color:#5D5A7A">Add tests and we'll check if a health profile covers them for less.</div></sc-if>
+          <sc-for list="{{ cartPreview }}" as="l" hint-placeholder-count="0"><div style="display:flex;justify-content:space-between;gap:10px;font-size:13.5px"><span style="font-weight:600;line-height:1.35">{{ l.name }}</span><span style="font-weight:700;white-space:nowrap">{{ l.priceF }}</span></div></sc-for>
+          <sc-if value="{{ hasCart }}">
+            <div style="height:1px;background:#ECEBF3"></div>
+            <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800"><span>Subtotal</span><span>{{ bill.priceF }}</span></div>
+            <button onClick="{{ goCart }}" style="white-space:nowrap;height:48px;border-radius:999px;border:none;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 10px 24px -12px rgba(59,44,158,0.7),inset 0 1px 0 rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center;gap:8px">Go to cart<avm-i n="arrow-right" s="16"></avm-i></button>
+          </sc-if>
+        </div>
+        <sc-for list="{{ topMatch }}" as="m" hint-placeholder-count="0">
+          <div style="border-radius:24px;padding:18px;background:linear-gradient(160deg,#ECE9FD,#FFFFFF 75%);border:1px solid #DAD5F7;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="width:28px;height:28px;border-radius:999px;background:#3B2C9E;color:#fff;display:grid;place-items:center"><avm-i n="sparkles" s="14"></avm-i></span><span style="font-size:11.5px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#3B2C9E">Profile match</span><span style="flex:1"></span><span style="font-size:12px;font-weight:800;color:#0E7350;background:#E3F4EB;padding:3px 9px;border-radius:999px">{{ m.pill }}</span></div>
+            <div style="font-size:16px;font-weight:800;line-height:1.3">{{ m.headline }}</div>
+            <div style="font-size:13.5px;color:#5D5A7A;line-height:1.5">{{ m.detail }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ m.extras }}" as="x" hint-placeholder-count="0"><span style="font-size:12px;font-weight:600;padding:4px 9px;border-radius:999px;background:#fff;border:1px solid #E2DEF7;color:#16133A">+ {{ x }}</span></sc-for></div>
+            <div style="display:flex;gap:8px;margin-top:4px"><button onClick="{{ m.switchIt }}" style="flex:1;height:44px;border-radius:999px;border:none;background:#3B2C9E;color:#fff;font-size:14px;font-weight:800;cursor:pointer">Switch to profile</button><button onClick="{{ m.view }}" style="white-space:nowrap;height:44px;padding:0 16px;border-radius:999px;border:1px solid #DAD5F7;background:#fff;color:#3B2C9E;font-size:14px;font-weight:700;cursor:pointer">View</button></div>
+          </div>
+        </sc-for>
+      </aside>
+    </sc-if>
+  </div>
+</main>
