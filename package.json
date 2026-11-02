@@ -1,0 +1,18 @@
+{
+  "name": "avmlabs-gcc-b2c",
+  "private": true,
+  "type": "module",
+  "description": "AVM Labs B2C website, admin panel and API",
+  "engines": {
+    "node": ">=20.12"
+  },
+  "scripts": {
+    "build": "node build.js && node scripts/copy-static.js",
+    "check": "node build.js --check",
+    "dev": "node scripts/dev.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "zod": "^4.6.7"
+  }
+}

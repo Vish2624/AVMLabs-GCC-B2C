@@ -1,6 +1,10 @@
-.thumbnail
-node_modules/
 .DS_Store
+.env
+.env.local
+.thumbnail
+.vercel/
+node_modules/
+public/
+screenshots/
 Thumbs.db
 uploads/
-screenshots/

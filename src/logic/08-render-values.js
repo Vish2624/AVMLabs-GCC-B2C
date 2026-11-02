@@ -143,7 +143,7 @@
       directions: () => window.open('https://www.google.com/maps/search/?api=1&query=AVM+Labs', '_blank', 'noopener'),
       waGeneral: () => this.openWA("Hi AVM Labs! I'd like to know more about your tests and profiles."),
       // Mobile header + home: location block, search toggle, and the Tests/Profiles icon row.
-      locCity: (s.region && s.region.city) || RG.name, logoH: isDesktop ? 'clamp(52px,6vw,68px)' : '44px', spacerFlex: isDesktop ? '1' : '0',
+      locCity: (s.region && s.region.city) || RG.name, logoH: isDesktop ? 'clamp(60px,6.8vw,80px)' : '44px', spacerFlex: isDesktop ? '1' : '0',
       mSearchOpen: isMobile && !!s.mSearch, mSearchBg: s.mSearch ? '#EFEDFB' : '#fff', mSearchIcon: s.mSearch ? 'x' : 'search', mSearchText: s.mSearch ? 'Close' : 'Search tests',
       toggleMSearch: () => {
         const open = !s.mSearch;
@@ -169,7 +169,7 @@
       profilesView: D.P.filter(p => s.pf === 'all' || p.tags.includes(s.pf)).map(p => {
         const inC = has('profile', p.id);
         return { name: p.name, tag: p.tag, sym: p.sym, tagline: p.tagline, testsN: p.tests.length, params: p.params, fastLabel: p.fasting ? 'Fasting needed' : 'No fasting',
-          soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, symColor: `oklch(0.45 0.16 ${p.hue} / 0.14)`, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.96) 0%, oklch(0.95 0.035 ${p.hue} / 0.75) 40%, oklch(0.95 0.035 ${p.hue} / 0) 75%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
+          soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, symColor: `oklch(0.45 0.16 ${p.hue} / 0.14)`, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.97) 0%, oklch(0.95 0.035 ${p.hue} / 0.94) 58%, oklch(0.95 0.035 ${p.hue} / 0.6) 78%, oklch(0.95 0.035 ${p.hue} / 0) 96%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
           preview: p.ts.slice(0, 4).map(t => t.short), hasMore: p.ts.length > 4, moreLabel: '+' + (p.ts.length - 4) + ' more',
           mrpF: inr(p.mrp), off: off(p.mrp, p.price), priceF: inr(p.price), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i), book: book(p) };
       }),

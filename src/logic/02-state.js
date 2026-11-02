@@ -25,6 +25,23 @@
     return (Component._db = { T, P, PM, inProf });
   }
 
+  // Swaps the built-in profiles for the ones managed in the admin (/api/profiles).
+  // Keeps the built-in list when the API can't be reached.
+  loadProfiles() {
+    const sym = name => { const w = name.replace(/[^A-Za-z ]/g, '').split(/s+/).filter(Boolean); return w.length > 1 ? w[0][0].toUpperCase() + w[1][0].toLowerCase() : (w[0] || '··').slice(0, 2); };
+    fetch('/api/profiles').then(r => (r.ok ? r.json() : null)).then(list => {
+      if (!Array.isArray(list) || !list.length) return;
+      const known = new Set(Component.TESTS.map(t => t.id));
+      const profiles = list.map(p => ({ id: p.id, name: p.name, tag: p.tag, sym: sym(p.name), hue: p.hue, tags: [p.category], tagline: p.tagline,
+        tests: [...new Set(p.subs.flatMap(s => s.tests))].filter(id => known.has(id)), price: p.price, subs: p.subs })).filter(p => p.tests.length);
+      if (!profiles.length) return;
+      Component.PROFILES = profiles;
+      Component.PICON = { ...Component.PICON, ...Object.fromEntries(list.map(p => [p.id, p.icon])) };
+      Component._db = null;
+      this.setState(s => ({ profilesVer: (s.profilesVer || 0) + 1, cart: s.cart.filter(c => c.type !== 'profile' || profiles.some(p => p.id === c.id)) }));
+    }).catch(() => {});
+  }
+
   opts() {
     const p = this.props || {};
     const n = (v, d) => (v === undefined || v === null || v === '' || isNaN(+v)) ? d : +v;

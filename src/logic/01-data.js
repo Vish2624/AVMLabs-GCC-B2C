@@ -5,35 +5,7 @@
     { id: 'heart', label: 'Heart', sym: 'Ht', icon: 'heart-pulse', hue: 25 }, { id: 'liver', label: 'Liver', sym: 'Lv', icon: 'shield-plus', hue: 45 },
     { id: 'kidney', label: 'Kidney', sym: 'Kd', icon: 'bean', hue: 160 }, { id: 'blood', label: 'Blood', sym: 'Bl', icon: 'droplet', hue: 10 }, { id: 'bone', label: 'Bone', sym: 'Ca', icon: 'bone', hue: 60 }
   ];
-  static TESTS = [
-    ['vitd', 'Vitamin D (25-OH)', 'Vitamin D', ['vitamins', 'bone'], 1, '24 hrs', 0, 1500, 699],
-    ['b12', 'Vitamin B12', 'Vitamin B12', ['vitamins'], 1, '24 hrs', 0, 1100, 549],
-    ['folate', 'Folic Acid (Vitamin B9)', 'Folate', ['vitamins'], 1, '24 hrs', 0, 1000, 549],
-    ['calcium', 'Calcium, Serum', 'Calcium', ['vitamins', 'bone'], 1, '12 hrs', 0, 350, 199],
-    ['iron', 'Iron Studies', 'Iron Studies', ['vitamins', 'blood'], 4, '24 hrs', 1, 1200, 699],
-    ['ferritin', 'Ferritin', 'Ferritin', ['vitamins', 'blood'], 1, '24 hrs', 0, 900, 499],
-    ['cbc', 'Complete Blood Count (CBC)', 'CBC', ['blood'], 24, '8 hrs', 0, 500, 299],
-    ['thyroid', 'Thyroid Profile (T3, T4, TSH)', 'Thyroid Profile', ['thyroid', 'hormones'], 3, '12 hrs', 0, 800, 449],
-    ['tsh', 'TSH (Ultrasensitive)', 'TSH', ['thyroid', 'hormones'], 1, '12 hrs', 0, 400, 249],
-    ['antitpo', 'Anti-TPO Antibodies', 'Anti-TPO', ['thyroid'], 1, '48 hrs', 0, 1600, 899],
-    ['hba1c', 'HbA1c (Glycosylated Haemoglobin)', 'HbA1c', ['diabetes'], 2, '8 hrs', 0, 650, 399],
-    ['fbs', 'Glucose, Fasting', 'Fasting Glucose', ['diabetes'], 1, '6 hrs', 1, 150, 99],
-    ['insulin', 'Insulin, Fasting', 'Fasting Insulin', ['diabetes', 'hormones'], 1, '24 hrs', 1, 1000, 649],
-    ['lipid', 'Lipid Profile', 'Lipid Profile', ['heart'], 9, '12 hrs', 1, 900, 499],
-    ['crp', 'hs-CRP (Inflammation)', 'hs-CRP', ['heart'], 1, '12 hrs', 0, 800, 449],
-    ['lft', 'Liver Function Test (LFT)', 'LFT', ['liver'], 12, '12 hrs', 0, 1000, 599],
-    ['kft', 'Kidney Function Test (KFT)', 'KFT', ['kidney'], 10, '12 hrs', 0, 1000, 599],
-    ['urine', 'Urine Routine & Microscopy', 'Urine Routine', ['kidney'], 20, '8 hrs', 0, 300, 149],
-    ['testo', 'Testosterone, Total', 'Testosterone', ['hormones', 'men'], 1, '24 hrs', 0, 1200, 699],
-    ['cortisol', 'Cortisol, Morning', 'Cortisol', ['hormones'], 1, '24 hrs', 0, 900, 549],
-    ['psa', 'PSA, Total', 'PSA', ['men'], 1, '24 hrs', 0, 1000, 599],
-    ['fsh', 'FSH (Follicle Stimulating Hormone)', 'FSH', ['hormones', 'women'], 1, '24 hrs', 0, 700, 449],
-    ['lh', 'LH (Luteinizing Hormone)', 'LH', ['hormones', 'women'], 1, '24 hrs', 0, 700, 449],
-    ['prolactin', 'Prolactin', 'Prolactin', ['hormones', 'women'], 1, '24 hrs', 0, 800, 499],
-    ['estradiol', 'Estradiol (E2)', 'Estradiol', ['hormones', 'women'], 1, '24 hrs', 0, 1000, 649],
-    ['amh', 'AMH (Anti-Müllerian Hormone)', 'AMH', ['hormones', 'women'], 1, '48 hrs', 0, 2800, 1799],
-    ['dheas', 'DHEA-S', 'DHEA-S', ['hormones', 'women'], 1, '24 hrs', 0, 1400, 849]
-  ].map(a => ({ id: a[0], name: a[1], short: a[2], cat: a[3], params: a[4], tat: a[5], fasting: !!a[6], mrp: a[7], price: a[8] }));
+  static TESTS = @json data/tests.json;
   static DETAILS = {
     vitd: ['25-Hydroxy Vitamin D, Vitamin D Total, Calcidiol', 'Measures the main form of vitamin D circulating in your blood. Low levels are common and linked to fatigue, bone pain, hair fall and low immunity.', ['25-OH Vitamin D (D2 + D3)'], 'Blood'],
     b12: ['Cobalamin, Cyanocobalamin', 'Checks your vitamin B12 level, needed for healthy nerves and red blood cells. Low B12 can cause tiredness, tingling, poor memory and anaemia.', ['Vitamin B12 (Cobalamin)'], 'Blood'],

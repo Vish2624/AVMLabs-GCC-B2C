@@ -905,35 +905,7 @@ class Component extends DCLogic {
     { id: 'heart', label: 'Heart', sym: 'Ht', icon: 'heart-pulse', hue: 25 }, { id: 'liver', label: 'Liver', sym: 'Lv', icon: 'shield-plus', hue: 45 },
     { id: 'kidney', label: 'Kidney', sym: 'Kd', icon: 'bean', hue: 160 }, { id: 'blood', label: 'Blood', sym: 'Bl', icon: 'droplet', hue: 10 }, { id: 'bone', label: 'Bone', sym: 'Ca', icon: 'bone', hue: 60 }
   ];
-  static TESTS = [
-    ['vitd', 'Vitamin D (25-OH)', 'Vitamin D', ['vitamins', 'bone'], 1, '24 hrs', 0, 1500, 699],
-    ['b12', 'Vitamin B12', 'Vitamin B12', ['vitamins'], 1, '24 hrs', 0, 1100, 549],
-    ['folate', 'Folic Acid (Vitamin B9)', 'Folate', ['vitamins'], 1, '24 hrs', 0, 1000, 549],
-    ['calcium', 'Calcium, Serum', 'Calcium', ['vitamins', 'bone'], 1, '12 hrs', 0, 350, 199],
-    ['iron', 'Iron Studies', 'Iron Studies', ['vitamins', 'blood'], 4, '24 hrs', 1, 1200, 699],
-    ['ferritin', 'Ferritin', 'Ferritin', ['vitamins', 'blood'], 1, '24 hrs', 0, 900, 499],
-    ['cbc', 'Complete Blood Count (CBC)', 'CBC', ['blood'], 24, '8 hrs', 0, 500, 299],
-    ['thyroid', 'Thyroid Profile (T3, T4, TSH)', 'Thyroid Profile', ['thyroid', 'hormones'], 3, '12 hrs', 0, 800, 449],
-    ['tsh', 'TSH (Ultrasensitive)', 'TSH', ['thyroid', 'hormones'], 1, '12 hrs', 0, 400, 249],
-    ['antitpo', 'Anti-TPO Antibodies', 'Anti-TPO', ['thyroid'], 1, '48 hrs', 0, 1600, 899],
-    ['hba1c', 'HbA1c (Glycosylated Haemoglobin)', 'HbA1c', ['diabetes'], 2, '8 hrs', 0, 650, 399],
-    ['fbs', 'Glucose, Fasting', 'Fasting Glucose', ['diabetes'], 1, '6 hrs', 1, 150, 99],
-    ['insulin', 'Insulin, Fasting', 'Fasting Insulin', ['diabetes', 'hormones'], 1, '24 hrs', 1, 1000, 649],
-    ['lipid', 'Lipid Profile', 'Lipid Profile', ['heart'], 9, '12 hrs', 1, 900, 499],
-    ['crp', 'hs-CRP (Inflammation)', 'hs-CRP', ['heart'], 1, '12 hrs', 0, 800, 449],
-    ['lft', 'Liver Function Test (LFT)', 'LFT', ['liver'], 12, '12 hrs', 0, 1000, 599],
-    ['kft', 'Kidney Function Test (KFT)', 'KFT', ['kidney'], 10, '12 hrs', 0, 1000, 599],
-    ['urine', 'Urine Routine & Microscopy', 'Urine Routine', ['kidney'], 20, '8 hrs', 0, 300, 149],
-    ['testo', 'Testosterone, Total', 'Testosterone', ['hormones', 'men'], 1, '24 hrs', 0, 1200, 699],
-    ['cortisol', 'Cortisol, Morning', 'Cortisol', ['hormones'], 1, '24 hrs', 0, 900, 549],
-    ['psa', 'PSA, Total', 'PSA', ['men'], 1, '24 hrs', 0, 1000, 599],
-    ['fsh', 'FSH (Follicle Stimulating Hormone)', 'FSH', ['hormones', 'women'], 1, '24 hrs', 0, 700, 449],
-    ['lh', 'LH (Luteinizing Hormone)', 'LH', ['hormones', 'women'], 1, '24 hrs', 0, 700, 449],
-    ['prolactin', 'Prolactin', 'Prolactin', ['hormones', 'women'], 1, '24 hrs', 0, 800, 499],
-    ['estradiol', 'Estradiol (E2)', 'Estradiol', ['hormones', 'women'], 1, '24 hrs', 0, 1000, 649],
-    ['amh', 'AMH (Anti-Müllerian Hormone)', 'AMH', ['hormones', 'women'], 1, '48 hrs', 0, 2800, 1799],
-    ['dheas', 'DHEA-S', 'DHEA-S', ['hormones', 'women'], 1, '24 hrs', 0, 1400, 849]
-  ].map(a => ({ id: a[0], name: a[1], short: a[2], cat: a[3], params: a[4], tat: a[5], fasting: !!a[6], mrp: a[7], price: a[8] }));
+  static TESTS = [{"id":"vitd","name":"Vitamin D (25-OH)","short":"Vitamin D","cat":["vitamins","bone"],"params":1,"tat":"24 hrs","fasting":false,"mrp":1500,"price":699},{"id":"b12","name":"Vitamin B12","short":"Vitamin B12","cat":["vitamins"],"params":1,"tat":"24 hrs","fasting":false,"mrp":1100,"price":549},{"id":"folate","name":"Folic Acid (Vitamin B9)","short":"Folate","cat":["vitamins"],"params":1,"tat":"24 hrs","fasting":false,"mrp":1000,"price":549},{"id":"calcium","name":"Calcium, Serum","short":"Calcium","cat":["vitamins","bone"],"params":1,"tat":"12 hrs","fasting":false,"mrp":350,"price":199},{"id":"iron","name":"Iron Studies","short":"Iron Studies","cat":["vitamins","blood"],"params":4,"tat":"24 hrs","fasting":true,"mrp":1200,"price":699},{"id":"ferritin","name":"Ferritin","short":"Ferritin","cat":["vitamins","blood"],"params":1,"tat":"24 hrs","fasting":false,"mrp":900,"price":499},{"id":"cbc","name":"Complete Blood Count (CBC)","short":"CBC","cat":["blood"],"params":24,"tat":"8 hrs","fasting":false,"mrp":500,"price":299},{"id":"thyroid","name":"Thyroid Profile (T3, T4, TSH)","short":"Thyroid Profile","cat":["thyroid","hormones"],"params":3,"tat":"12 hrs","fasting":false,"mrp":800,"price":449},{"id":"tsh","name":"TSH (Ultrasensitive)","short":"TSH","cat":["thyroid","hormones"],"params":1,"tat":"12 hrs","fasting":false,"mrp":400,"price":249},{"id":"antitpo","name":"Anti-TPO Antibodies","short":"Anti-TPO","cat":["thyroid"],"params":1,"tat":"48 hrs","fasting":false,"mrp":1600,"price":899},{"id":"hba1c","name":"HbA1c (Glycosylated Haemoglobin)","short":"HbA1c","cat":["diabetes"],"params":2,"tat":"8 hrs","fasting":false,"mrp":650,"price":399},{"id":"fbs","name":"Glucose, Fasting","short":"Fasting Glucose","cat":["diabetes"],"params":1,"tat":"6 hrs","fasting":true,"mrp":150,"price":99},{"id":"insulin","name":"Insulin, Fasting","short":"Fasting Insulin","cat":["diabetes","hormones"],"params":1,"tat":"24 hrs","fasting":true,"mrp":1000,"price":649},{"id":"lipid","name":"Lipid Profile","short":"Lipid Profile","cat":["heart"],"params":9,"tat":"12 hrs","fasting":true,"mrp":900,"price":499},{"id":"crp","name":"hs-CRP (Inflammation)","short":"hs-CRP","cat":["heart"],"params":1,"tat":"12 hrs","fasting":false,"mrp":800,"price":449},{"id":"lft","name":"Liver Function Test (LFT)","short":"LFT","cat":["liver"],"params":12,"tat":"12 hrs","fasting":false,"mrp":1000,"price":599},{"id":"kft","name":"Kidney Function Test (KFT)","short":"KFT","cat":["kidney"],"params":10,"tat":"12 hrs","fasting":false,"mrp":1000,"price":599},{"id":"urine","name":"Urine Routine & Microscopy","short":"Urine Routine","cat":["kidney"],"params":20,"tat":"8 hrs","fasting":false,"mrp":300,"price":149},{"id":"testo","name":"Testosterone, Total","short":"Testosterone","cat":["hormones","men"],"params":1,"tat":"24 hrs","fasting":false,"mrp":1200,"price":699},{"id":"cortisol","name":"Cortisol, Morning","short":"Cortisol","cat":["hormones"],"params":1,"tat":"24 hrs","fasting":false,"mrp":900,"price":549},{"id":"psa","name":"PSA, Total","short":"PSA","cat":["men"],"params":1,"tat":"24 hrs","fasting":false,"mrp":1000,"price":599},{"id":"fsh","name":"FSH (Follicle Stimulating Hormone)","short":"FSH","cat":["hormones","women"],"params":1,"tat":"24 hrs","fasting":false,"mrp":700,"price":449},{"id":"lh","name":"LH (Luteinizing Hormone)","short":"LH","cat":["hormones","women"],"params":1,"tat":"24 hrs","fasting":false,"mrp":700,"price":449},{"id":"prolactin","name":"Prolactin","short":"Prolactin","cat":["hormones","women"],"params":1,"tat":"24 hrs","fasting":false,"mrp":800,"price":499},{"id":"estradiol","name":"Estradiol (E2)","short":"Estradiol","cat":["hormones","women"],"params":1,"tat":"24 hrs","fasting":false,"mrp":1000,"price":649},{"id":"amh","name":"AMH (Anti-Müllerian Hormone)","short":"AMH","cat":["hormones","women"],"params":1,"tat":"48 hrs","fasting":false,"mrp":2800,"price":1799},{"id":"dheas","name":"DHEA-S","short":"DHEA-S","cat":["hormones","women"],"params":1,"tat":"24 hrs","fasting":false,"mrp":1400,"price":849}];
   static DETAILS = {
     vitd: ['25-Hydroxy Vitamin D, Vitamin D Total, Calcidiol', 'Measures the main form of vitamin D circulating in your blood. Low levels are common and linked to fatigue, bone pain, hair fall and low immunity.', ['25-OH Vitamin D (D2 + D3)'], 'Blood'],
     b12: ['Cobalamin, Cyanocobalamin', 'Checks your vitamin B12 level, needed for healthy nerves and red blood cells. Low B12 can cause tiredness, tingling, poor memory and anaemia.', ['Vitamin B12 (Cobalamin)'], 'Blood'],
@@ -1023,6 +995,23 @@ class Component extends DCLogic {
     const PM = {}; P.forEach(p => { PM[p.id] = p; });
     const inProf = {}; P.forEach(p => p.tests.forEach(id => { (inProf[id] = inProf[id] || []).push(p); }));
     return (Component._db = { T, P, PM, inProf });
+  }
+
+  // Swaps the built-in profiles for the ones managed in the admin (/api/profiles).
+  // Keeps the built-in list when the API can't be reached.
+  loadProfiles() {
+    const sym = name => { const w = name.replace(/[^A-Za-z ]/g, '').split(/s+/).filter(Boolean); return w.length > 1 ? w[0][0].toUpperCase() + w[1][0].toLowerCase() : (w[0] || '··').slice(0, 2); };
+    fetch('/api/profiles').then(r => (r.ok ? r.json() : null)).then(list => {
+      if (!Array.isArray(list) || !list.length) return;
+      const known = new Set(Component.TESTS.map(t => t.id));
+      const profiles = list.map(p => ({ id: p.id, name: p.name, tag: p.tag, sym: sym(p.name), hue: p.hue, tags: [p.category], tagline: p.tagline,
+        tests: [...new Set(p.subs.flatMap(s => s.tests))].filter(id => known.has(id)), price: p.price, subs: p.subs })).filter(p => p.tests.length);
+      if (!profiles.length) return;
+      Component.PROFILES = profiles;
+      Component.PICON = { ...Component.PICON, ...Object.fromEntries(list.map(p => [p.id, p.icon])) };
+      Component._db = null;
+      this.setState(s => ({ profilesVer: (s.profilesVer || 0) + 1, cart: s.cart.filter(c => c.type !== 'profile' || profiles.some(p => p.id === c.id)) }));
+    }).catch(() => {});
   }
 
   opts() {
@@ -1273,6 +1262,7 @@ class Component extends DCLogic {
     if (window.visualViewport) window.visualViewport.addEventListener('resize', this._onResize);
     this._onResize();
     let saved = null; try { saved = JSON.parse(localStorage.getItem('avmlabs_region_v1') || 'null'); } catch (e) {}
+    this.loadProfiles();
     if (saved && Component.REGIONS[saved.code]) this.setState({ region: saved, geo: 'ok' });
     else if (this.gateOn()) this.locate();
     this._onKey = e => {
@@ -1522,7 +1512,7 @@ class Component extends DCLogic {
       directions: () => window.open('https://www.google.com/maps/search/?api=1&query=AVM+Labs', '_blank', 'noopener'),
       waGeneral: () => this.openWA("Hi AVM Labs! I'd like to know more about your tests and profiles."),
       // Mobile header + home: location block, search toggle, and the Tests/Profiles icon row.
-      locCity: (s.region && s.region.city) || RG.name, logoH: isDesktop ? 'clamp(52px,6vw,68px)' : '44px', spacerFlex: isDesktop ? '1' : '0',
+      locCity: (s.region && s.region.city) || RG.name, logoH: isDesktop ? 'clamp(60px,6.8vw,80px)' : '44px', spacerFlex: isDesktop ? '1' : '0',
       mSearchOpen: isMobile && !!s.mSearch, mSearchBg: s.mSearch ? '#EFEDFB' : '#fff', mSearchIcon: s.mSearch ? 'x' : 'search', mSearchText: s.mSearch ? 'Close' : 'Search tests',
       toggleMSearch: () => {
         const open = !s.mSearch;
@@ -1548,7 +1538,7 @@ class Component extends DCLogic {
       profilesView: D.P.filter(p => s.pf === 'all' || p.tags.includes(s.pf)).map(p => {
         const inC = has('profile', p.id);
         return { name: p.name, tag: p.tag, sym: p.sym, tagline: p.tagline, testsN: p.tests.length, params: p.params, fastLabel: p.fasting ? 'Fasting needed' : 'No fasting',
-          soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, symColor: `oklch(0.45 0.16 ${p.hue} / 0.14)`, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.96) 0%, oklch(0.95 0.035 ${p.hue} / 0.75) 40%, oklch(0.95 0.035 ${p.hue} / 0) 75%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
+          soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, symColor: `oklch(0.45 0.16 ${p.hue} / 0.14)`, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.97) 0%, oklch(0.95 0.035 ${p.hue} / 0.94) 58%, oklch(0.95 0.035 ${p.hue} / 0.6) 78%, oklch(0.95 0.035 ${p.hue} / 0) 96%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
           preview: p.ts.slice(0, 4).map(t => t.short), hasMore: p.ts.length > 4, moreLabel: '+' + (p.ts.length - 4) + ' more',
           mrpF: inr(p.mrp), off: off(p.mrp, p.price), priceF: inr(p.price), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i), book: book(p) };
       }),

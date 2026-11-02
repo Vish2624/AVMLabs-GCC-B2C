@@ -1,0 +1,68 @@
+// Local development server: serves the site and admin as static files and
+// runs api/ handlers the way Vercel routes them.
+//
+//   npm run dev   ->  http://localhost:3000  (admin at /admin/)
+import fs from 'node:fs';
+import http from 'node:http';
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const PORT = Number(process.env.PORT) || 3000;
+
+if (fs.existsSync(path.join(ROOT, '.env'))) process.loadEnvFile(path.join(ROOT, '.env'));
+
+const TYPES = {
+  '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
+  '.json': 'application/json; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml',
+  '.webp': 'image/webp', '.ico': 'image/x-icon',
+};
+const PRIVATE = /^\/(\.env[^/]*|\.git|node_modules|server|scripts|supabase)(\/|$)/;
+
+// /api/admin/profiles/abc -> api/admin/profiles/[id].js, like Vercel's file routing.
+function findHandler(urlPath) {
+  const rel = urlPath.replace(/^\/+|\/+$/g, '');
+  const candidates = [`${rel}.js`, `${rel}/index.js`, `${path.posix.dirname(rel)}/[id].js`];
+  return candidates.map((c) => path.join(ROOT, c)).find((f) => f.startsWith(path.join(ROOT, 'api')) && fs.existsSync(f));
+}
+
+async function serveApi(req, res, urlPath) {
+  const file = findHandler(urlPath);
+  if (!file) {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'Not found' }));
+  }
+  const { default: handler } = await import(pathToFileURL(file).href + '?t=' + fs.statSync(file).mtimeMs);
+  await handler(req, res);
+}
+
+function serveStatic(res, urlPath) {
+  if (urlPath === '/') urlPath = '/AVM Labs Website.dc.html';
+  if (urlPath.endsWith('/')) urlPath += 'index.html';
+  const file = path.join(ROOT, urlPath);
+  if (!file.startsWith(ROOT) || PRIVATE.test(urlPath)) {
+    res.writeHead(403);
+    return res.end('Forbidden');
+  }
+  fs.readFile(file, (err, data) => {
+    if (err) {
+      res.writeHead(404);
+      return res.end('Not found');
+    }
+    res.writeHead(200, { 'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-store' });
+    res.end(data);
+  });
+}
+
+http.createServer(async (req, res) => {
+  const urlPath = decodeURIComponent(new URL(req.url, 'http://local').pathname);
+  try {
+    if (urlPath.startsWith('/api/')) await serveApi(req, res, urlPath);
+    else if (urlPath === '/admin') res.writeHead(301, { Location: '/admin/' }).end();
+    else serveStatic(res, urlPath);
+  } catch (err) {
+    console.error(err);
+    if (!res.headersSent) res.writeHead(500);
+    res.end();
+  }
+}).listen(PORT, () => console.log(`Dev server on http://localhost:${PORT}  (admin: http://localhost:${PORT}/admin/)`));

@@ -4,6 +4,7 @@
     if (window.visualViewport) window.visualViewport.addEventListener('resize', this._onResize);
     this._onResize();
     let saved = null; try { saved = JSON.parse(localStorage.getItem('avmlabs_region_v1') || 'null'); } catch (e) {}
+    this.loadProfiles();
     if (saved && Component.REGIONS[saved.code]) this.setState({ region: saved, geo: 'ok' });
     else if (this.gateOn()) this.locate();
     this._onKey = e => {
