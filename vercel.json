@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/AVM%20Labs%20Website.dc.html" }
+  ]
+}
