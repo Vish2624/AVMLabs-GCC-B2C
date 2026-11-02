@@ -101,11 +101,12 @@
         share: () => this.share(p), book: book(p) };
     }) : [];
     const cur = D.P[ri] || D.P[0];
+    const heroW = D.PM.women, heroV = D.PM.vitamin;
 
     const showTabs = isMobile && !s.reelsOpen && !(pg === 'cart' && hasCart);
     const showTestsBar = isMobile && !isWide && pg === 'tests' && hasCart && !s.reelsOpen;
     const showCartBar = isMobile && pg === 'cart' && hasCart && !s.reelsOpen;
-    const showFab = !s.reelsOpen && pg !== 'cart' && !showTestsBar;
+    const showFab = !s.reelsOpen && pg !== 'cart' && !showTestsBar && !(isMobile && pg === 'home' && !s.scrolled);
     // On mobile the WhatsApp button sits above the tab bar, so clear both.
     const spacerH = 'calc(' + (showCartBar ? '92px' : showTestsBar ? (ms.length ? '200px' : '150px') : showTabs ? (showFab ? '156px' : '92px') : '0px') + ' + ' + barPad + ')';
     const tabC = p => pgN === p ? '#3B2C9E' : '#5D5A7A';
@@ -124,7 +125,8 @@
         const all = Array.from({ length: 10 }, (_, i) => ({ id: 'centre-photo-' + (i + 1), ...this.photo('centre-photo-' + (i + 1)), ph: 'Centre photo ' + (i + 1) }));
         return { centreRows: rows, centreY: 'translateY(' + (-k * 46) + 'px)', centreCount: regs.length, centreShots: all.concat(all) };
       })(),
-      hero1Mrp: inr(D.P[3].mrp), hero1Price: inr(D.P[3].price), hero2Mrp: inr(D.P[1].mrp), hero2Price: inr(D.P[1].price),
+      // Hero slides feature these profiles by id; they may be unpublished or reordered in the admin.
+      hero1Mrp: heroW ? inr(heroW.mrp) : '', hero1Price: heroW ? inr(heroW.price) : '', hero2Mrp: heroV ? inr(heroV.mrp) : '', hero2Price: heroV ? inr(heroV.price) : '',
       ...gateVM,
       checkPin: () => { const v = s.pinInput; if (RG.postRe.test(v)) this.setState({ pin: v, pinMsg: 'Great — free home collection is available at ' + (RG.code === 'BH' ? 'Block ' : '') + v + '.', pinOk: true }); else this.setState({ pinMsg: 'Enter a valid ' + RG.postLabel.toLowerCase() + '.', pinOk: false }); },
       hasPinMsg: !!s.pinMsg, pinMsg: s.pinMsg, pinMsgColor: s.pinOk ? '#0E7350' : '#C81E25',
@@ -139,7 +141,7 @@
       heroX: 'translateX(-' + (s.hero * 100) + '%)', heroPrev: () => this.setState(st => ({ hero: (st.hero + 2) % 3 })), heroNext: () => this.setState(st => ({ hero: (st.hero + 1) % 3 })),
       heroDots: [0, 1, 2].map(i => ({ w: s.hero === i ? '26px' : '8px', bg: s.hero === i ? '#3B2C9E' : '#D4D1E6', go: () => this.setState({ hero: i }) })),
       heroTS: e => { this._hx = e.touches[0].clientX; }, heroTE: e => { const dx = e.changedTouches[0].clientX - (this._hx || 0); if (Math.abs(dx) > 40) this.setState(st => ({ hero: (st.hero + (dx < 0 ? 1 : 2)) % 3 })); },
-      heroGo1: () => this.openReels(3), heroGo2: () => this.openReels(1),
+      heroGo1: () => (heroW ? this.openReels(heroW.i) : this.go('profiles')), heroGo2: () => (heroV ? this.openReels(heroV.i) : this.go('profiles')),
       directions: () => window.open('https://www.google.com/maps/search/?api=1&query=AVM+Labs', '_blank', 'noopener'),
       waGeneral: () => this.openWA("Hi AVM Labs! I'd like to know more about your tests and profiles."),
       // Mobile header + home: location block, search toggle, and the Tests/Profiles icon row.

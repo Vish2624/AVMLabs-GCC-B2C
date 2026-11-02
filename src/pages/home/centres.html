@@ -12,7 +12,7 @@
             <sc-for list="{{ centreRows }}" as="c" hint-placeholder-count="4"><div style="height:46px;flex:none;display:flex;align-items:center;gap:10px;padding:0 6px 0 7px"><span style="width:38px;height:30px;border-radius:999px;background:linear-gradient(135deg,#4B3CC4,#2A1F7A);box-shadow:0 4px 10px -4px rgba(59,44,158,0.6);color:#fff;display:grid;place-items:center;font-size:10.5px;font-weight:800;flex:none">{{ c.code }}</span><span style="flex:1;min-width:0;font-size:14.5px;font-weight:800;letter-spacing:-0.01em;color:#16133A;white-space:nowrap">{{ c.name }}</span><span style="width:32px;height:32px;border-radius:999px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="map-pin" s="15"></avm-i></span></div></sc-for>
           </div>
         </div>
-        <div style="display:flex;justify-content:center;gap:6px"><sc-for list="{{ centreRows }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.go }}" aria-label="{{ c.name }}" style="border:none;padding:4px 2px;background:none;cursor:pointer;display:grid;place-items:center"><span style="display:block;height:6px;width:{{ c.dotW }};border-radius:999px;background:{{ c.dotBg }};transition:width .3s,background .3s"></span></button></sc-for></div>
+        <div style="display:flex;justify-content:center;gap:0"><sc-for list="{{ centreRows }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.go }}" aria-label="{{ c.name }}" style="border:none;padding:9px 6px;min-width:24px;background:none;cursor:pointer;display:grid;place-items:center"><span style="display:block;height:6px;width:{{ c.dotW }};border-radius:999px;background:{{ c.dotBg }};transition:width .3s,background .3s"></span></button></sc-for></div>
       </div>
     </div>
     

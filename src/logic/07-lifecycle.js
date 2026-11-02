@@ -17,6 +17,8 @@
       else if (e.key === 'Escape') this.closeReels();
     };
     window.addEventListener('keydown', this._onKey);
+    this._onScroll = () => { const scrolled = window.scrollY > 240; if (scrolled !== !!this.state.scrolled) this.setState({ scrolled }); };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
     this._tickT = setInterval(() => { if (!this.state.reelsOpen && this.state.page === 'home') this.setState(s => ({ tick: (s.tick || 0) + 1 })); }, 2200);
     this._heroT = setInterval(() => { if (this.state.page === 'home' && !this.state.reelsOpen) this.setState(s => ({ hero: (s.hero + 1) % 3 })); }, 6000);
     if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) this.typeLoop();
@@ -102,7 +104,7 @@
     }
   }
   componentWillUnmount() {
-    window.removeEventListener('resize', this._onResize); window.removeEventListener('keydown', this._onKey);
+    window.removeEventListener('resize', this._onResize); window.removeEventListener('keydown', this._onKey); window.removeEventListener('scroll', this._onScroll);
     if (window.visualViewport) window.visualViewport.removeEventListener('resize', this._onResize);
     clearInterval(this._heroT); clearInterval(this._tickT);
     [this._tt, this._ht, this._ht2, this._gT, this._vT, this._hT, this._tyT].forEach(clearTimeout);
