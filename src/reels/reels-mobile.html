@@ -46,6 +46,7 @@
             </div>
           </div>
           <div style="position:absolute;right:10px;bottom:{{ railBottom }};z-index:4;display:flex;flex-direction:column;gap:16px;align-items:center">
+            <sc-if value="{{ reelHint }}" hint-placeholder-val="{{ false }}"><div data-swipe="{{ hintDir }}" aria-hidden="true"><span data-swipe-arrows="1"><avm-i n="{{ hintIcon }}" s="18"></avm-i><avm-i n="{{ hintIcon }}" s="18"></avm-i></span><b>Swipe</b><small>{{ hintLabel }}</small></div></sc-if>
             <button onClick="{{ r.toggle }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span style="width:48px;height:48px;border-radius:999px;background:{{ r.addBg }};color:{{ r.addInk }};border:1px solid #E7E6F0;display:grid;place-items:center"><avm-i n="{{ r.addIcon }}" s="22"></avm-i></span>{{ r.addLabel }}</button>
             <button onClick="{{ r.share }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span style="width:48px;height:48px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:grid;place-items:center"><avm-i n="share-2" s="20"></avm-i></span>Share</button>
             <button onClick="{{ r.toTests }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span style="width:48px;height:48px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:grid;place-items:center"><avm-i n="list" s="20"></avm-i></span>Tests</button>
@@ -62,7 +63,6 @@
       <button onClick="{{ prevSlide }}" aria-label="Previous" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);z-index:6;width:38px;height:38px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="chevron-left" s="18"></avm-i></button>
       <button onClick="{{ nextSlide }}" aria-label="Next" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);z-index:6;width:38px;height:38px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="chevron-right" s="18"></avm-i></button>
     </sc-if>
-    
   </div>
   <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ false }}">
     <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:12px;width:130px">

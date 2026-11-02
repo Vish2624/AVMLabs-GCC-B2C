@@ -9,6 +9,7 @@
     else if (this.gateOn()) this.locate();
     this._onKey = e => {
       if (!this.state.reelsOpen) return;
+      this.armHint();
       const i = this.cur(), k = this.state.slides[i] || 0;
       if (e.key === 'ArrowDown') { e.preventDefault(); this.goReel(i + 1); }
       else if (e.key === 'ArrowUp') { e.preventDefault(); this.goReel(i - 1); }
@@ -23,6 +24,27 @@
     this._heroT = setInterval(() => { if (this.state.page === 'home' && !this.state.reelsOpen) this.setState(s => ({ hero: (s.hero + 1) % 3 })); }, 6000);
     if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) this.typeLoop();
     requestAnimationFrame(() => this.fillSlots());
+    this.centreLoop();
+  }
+  // Centres gallery: the tile passing the middle of the strip grows, then eases back to normal size as it moves on.
+  centreLoop() {
+    const step = () => {
+      this._cRaf = requestAnimationFrame(step);
+      const strip = document.querySelector('[data-centre-strip]'); if (!strip) return;
+      const r = strip.getBoundingClientRect(); if (r.bottom < 0 || r.top > window.innerHeight) return;
+      const mid = r.left + r.width / 2;
+      strip.querySelectorAll('[data-centre-tile]').forEach(el => {
+        const b = el.getBoundingClientRect(), w = b.width / (parseFloat(el.dataset.s) || 1);
+        const d = Math.min(1, Math.abs(b.left + b.width / 2 - mid) / (w + 44)), t = (1 + Math.cos(d * Math.PI)) / 2;
+        const s = 1 + 0.24 * t;
+        if (Math.abs(s - (parseFloat(el.dataset.s) || 1)) < 0.001) return;
+        el.dataset.s = s;
+        el.style.transform = 'translateZ(0) scale(' + s.toFixed(4) + ')';
+        el.style.zIndex = t > 0.5 ? '2' : '';
+        el.style.boxShadow = t > 0.01 ? '0 ' + (24 * t).toFixed(1) + 'px ' + (44 * t).toFixed(1) + 'px -' + (18 * t).toFixed(1) + 'px rgba(42,31,122,' + (0.45 * t).toFixed(3) + ')' : '';
+      });
+    };
+    if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) this._cRaf = requestAnimationFrame(step);
   }
   // Templated image-slots get their attributes after they're created and can miss their first fill;
   // re-setting an observed attribute makes them render their photo.
@@ -71,7 +93,7 @@
               };
               el.addEventListener('wheel', this._onWheel, { passive: false });
               const canScrollY = (t) => { while (t && t !== el) { if (t.scrollHeight > t.clientHeight + 2 && /(auto|scroll)/.test(getComputedStyle(t).overflowY)) return true; t = t.parentElement; } return false; };
-              this._ts = ev => { if (ev.touches.length !== 1) { this._drag = null; return; } const p = ev.touches[0]; this._drag = { x: p.clientX, y: p.clientY, t: Date.now(), axis: null, skip: canScrollY(ev.target), dy: 0 }; };
+              this._ts = ev => { this.armHint(); if (ev.touches.length !== 1) { this._drag = null; return; } const p = ev.touches[0]; this._drag = { x: p.clientX, y: p.clientY, t: Date.now(), axis: null, skip: canScrollY(ev.target), dy: 0 }; };
               this._tm = ev => {
                 const d = this._drag; if (!d || d.skip) return;
                 const p = ev.touches[0], dx = p.clientX - d.x, dy = p.clientY - d.y;
@@ -106,7 +128,7 @@
   componentWillUnmount() {
     window.removeEventListener('resize', this._onResize); window.removeEventListener('keydown', this._onKey); window.removeEventListener('scroll', this._onScroll);
     if (window.visualViewport) window.visualViewport.removeEventListener('resize', this._onResize);
-    clearInterval(this._heroT); clearInterval(this._tickT);
+    clearInterval(this._heroT); clearInterval(this._tickT); cancelAnimationFrame(this._cRaf);
     [this._tt, this._ht, this._ht2, this._gT, this._vT, this._hT, this._tyT].forEach(clearTimeout);
     document.body.style.overflow = ''; document.documentElement.style.overflow = '';
   }

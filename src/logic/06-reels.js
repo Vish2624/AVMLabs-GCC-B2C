@@ -2,10 +2,25 @@
     this._openAt = Date.now();
     this._ri = i || 0;
     this.setState({ reelsOpen: true, reelIdx: i || 0, slides: {}, hint: false, locOpen: false });
-    clearTimeout(this._ht); clearTimeout(this._ht2);
-    
+    this._hc = 0;
+    this.armHint();
   }
   closeReels() { clearTimeout(this._ht); clearTimeout(this._ht2); this.setState({ reelsOpen: false, hint: false }); }
+  // Mobile reels: after 4s without any touch, show a swipe hint above the side buttons for 5s, then start counting again.
+  // Alternates between "swipe left" (test details) and "swipe up/down" (other profiles).
+  armHint() {
+    clearTimeout(this._ht); clearTimeout(this._ht2);
+    if (this.state.hint) this.setState({ hint: false });
+    this._ht = setTimeout(() => {
+      if (!this.state.reelsOpen || this.state.w >= 1024) return;
+      const i = this.cur(), k = this.state.slides[i] || 0, n = Component.PROFILES.length, opts = [];
+      if (k < 2) opts.push('left');
+      if (n > 1) opts.push(i < n - 1 ? 'up' : 'down');
+      if (!opts.length) return;
+      this.setState({ hint: opts[(this._hc = (this._hc || 0) + 1) % opts.length] });
+      this._ht2 = setTimeout(() => { this.setState({ hint: false }); this.armHint(); }, 5000);
+    }, 4000);
+  }
   scroller() { return (this.reelsRef && this.reelsRef.current) || document.querySelector('[data-reels-scroller]'); }
   cur() { return this._ri != null ? this._ri : this.state.reelIdx; }
   track() { const el = this.scroller(); return el && el.querySelector('[data-reel-track]'); }
@@ -18,6 +33,7 @@
     const n = Component.PROFILES.length; i = Math.max(0, Math.min(n - 1, i));
     this._ri = i;
     this.applyTrack(i, true);
+    this.armHint();
     // commit to state only after the slide finishes — re-rendering mid-animation causes stutter
     clearTimeout(this._gT);
     this._gT = setTimeout(() => { if (this.state.reelIdx !== this._ri) this.setState({ reelIdx: this._ri }); }, 480);
@@ -40,6 +56,7 @@
   }
   onH(i, e) {
     const el = e.currentTarget;
+    this.armHint();
     // fade the photo in step with the finger — no state, no re-render
     const p = Math.max(0, Math.min(1, el.scrollLeft / Math.max(1, el.clientWidth)));
     const reel = el.closest('[data-reel]');

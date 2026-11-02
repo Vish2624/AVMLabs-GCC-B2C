@@ -201,10 +201,8 @@
       reelList: D.P.map(p => ({ sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, name: p.name, meta: p.tests.length + ' tests · ' + inr(p.price), go: () => this.goReel(p.i), bg: p.i === ri ? '#EEECF8' : 'transparent', bd: p.i === ri ? '#D9D5F0' : 'transparent' })),
       mobileReels: s.reelsOpen && isMobile, desktopReels: s.reelsOpen && isDesktop, reelDots: D.P.map(p => ({ h: p.i === ri ? '26px' : '8px', bg: p.i === ri ? '#3B2C9E' : '#D4D1E6', go: () => this.goReel(p.i) })), reelUp: () => this.goReel(this.cur() - 1), reelDown: () => this.goReel(this.cur() + 1), reelPos: (ri + 1) + ' / ' + n,
       prevSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) - 1); }, nextSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) + 1); },
-      reelHint: s.hint && isMobile, reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')',
-      hintPop: (() => { const ce = React.createElement;
-        const chip = (n, anim) => ce('span', { key: n, style: { width: 38, height: 38, borderRadius: 999, background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.22)', display: 'grid', placeItems: 'center' } }, ce('span', { style: { display: 'grid', animation: anim + ' 1.1s ease-in-out infinite' } }, ce('avm-i', { n, s: '20' })));
-        return ce('div', { 'aria-label': 'Swipe up for next profile, swipe left for tests', style: { position: 'absolute', left: '50%', bottom: 'calc(102px + ' + reelPadB + ')', zIndex: 6, display: 'flex', gap: 8, padding: 6, borderRadius: 999, background: 'rgba(14,11,43,0.62)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.16)', boxShadow: '0 14px 30px -12px rgba(0,0,0,0.6)', color: '#fff', pointerEvents: 'none', animation: 'avmHintIn .35s cubic-bezier(.2,.9,.3,1.2) both' } }, chip('chevron-up', 'avmNudgeUp'), chip('chevron-left', 'avmNudgeLeft'));
-      })()
+      reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')',
+      reelHint: !!s.hint && isMobile, hintDir: s.hint || 'up', hintIcon: 'chevron-' + (s.hint || 'up'),
+      hintLabel: s.hint === 'left' ? 'details' : s.hint === 'down' ? 'back' : 'next'
     };
   }
