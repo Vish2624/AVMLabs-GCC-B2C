@@ -13,9 +13,15 @@ const PORT = Number(process.env.PORT) || 3000;
 if (fs.existsSync(path.join(ROOT, '.env'))) process.loadEnvFile(path.join(ROOT, '.env'));
 
 const TYPES = {
-  '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
-  '.json': 'application/json; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml',
-  '.webp': 'image/webp', '.ico': 'image/x-icon',
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.svg': 'image/svg+xml',
+  '.webp': 'image/webp',
+  '.ico': 'image/x-icon',
 };
 const PRIVATE = /^\/(\.env[^/]*|\.git|node_modules|server|scripts|supabase)(\/|$)/;
 
@@ -23,7 +29,9 @@ const PRIVATE = /^\/(\.env[^/]*|\.git|node_modules|server|scripts|supabase)(\/|$
 function findHandler(urlPath) {
   const rel = urlPath.replace(/^\/+|\/+$/g, '');
   const candidates = [`${rel}.js`, `${rel}/index.js`, `${path.posix.dirname(rel)}/[id].js`];
-  return candidates.map((c) => path.join(ROOT, c)).find((f) => f.startsWith(path.join(ROOT, 'api')) && fs.existsSync(f));
+  return candidates
+    .map((c) => path.join(ROOT, c))
+    .find((f) => f.startsWith(path.join(ROOT, 'api')) && fs.existsSync(f));
 }
 
 async function serveApi(req, res, urlPath) {
@@ -49,20 +57,25 @@ function serveStatic(res, urlPath) {
       res.writeHead(404);
       return res.end('Not found');
     }
-    res.writeHead(200, { 'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-store' });
+    res.writeHead(200, {
+      'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream',
+      'Cache-Control': 'no-store',
+    });
     res.end(data);
   });
 }
 
-http.createServer(async (req, res) => {
-  const urlPath = decodeURIComponent(new URL(req.url, 'http://local').pathname);
-  try {
-    if (urlPath.startsWith('/api/')) await serveApi(req, res, urlPath);
-    else if (urlPath === '/admin') res.writeHead(301, { Location: '/admin/' }).end();
-    else serveStatic(res, urlPath);
-  } catch (err) {
-    console.error(err);
-    if (!res.headersSent) res.writeHead(500);
-    res.end();
-  }
-}).listen(PORT, () => console.log(`Dev server on http://localhost:${PORT}  (admin: http://localhost:${PORT}/admin/)`));
+http
+  .createServer(async (req, res) => {
+    const urlPath = decodeURIComponent(new URL(req.url, 'http://local').pathname);
+    try {
+      if (urlPath.startsWith('/api/')) await serveApi(req, res, urlPath);
+      else if (urlPath === '/admin') res.writeHead(301, { Location: '/admin/' }).end();
+      else serveStatic(res, urlPath);
+    } catch (err) {
+      console.error(err);
+      if (!res.headersSent) res.writeHead(500);
+      res.end();
+    }
+  })
+  .listen(PORT, () => console.log(`Dev server on http://localhost:${PORT}  (admin: http://localhost:${PORT}/admin/)`));

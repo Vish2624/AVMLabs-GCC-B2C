@@ -1,0 +1,18 @@
+# Website source is assembled byte-for-byte by build.js; formatting would change the site.
+src/
+AVM Labs Website.dc.html
+support.js
+image-slot.js
+icon.js
+.image-slots.state.json
+
+# Generated or third-party
+public/
+node_modules/
+package-lock.json
+supabase/seed.sql
+
+# Not code
+uploads/
+screenshots/
+*.md

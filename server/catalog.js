@@ -19,11 +19,30 @@ export const CATEGORIES = [
 ];
 
 // Lucide icon names (https://lucide.dev).
-export const ICONS = ['layers', 'shield-plus', 'pill', 'zap', 'flower-2', 'flower', 'biceps-flexed',
-  'syringe', 'activity', 'heart-pulse', 'droplet', 'bone', 'atom', 'sparkles'];
+export const ICONS = [
+  'layers',
+  'shield-plus',
+  'pill',
+  'zap',
+  'flower-2',
+  'flower',
+  'biceps-flexed',
+  'syringe',
+  'activity',
+  'heart-pulse',
+  'droplet',
+  'bone',
+  'atom',
+  'sparkles',
+];
 
 export const COLOURS = [
-  { hue: 275, label: 'Violet' }, { hue: 245, label: 'Indigo' }, { hue: 195, label: 'Teal' },
-  { hue: 150, label: 'Green' }, { hue: 75, label: 'Amber' }, { hue: 25, label: 'Orange' },
-  { hue: 345, label: 'Rose' }, { hue: 320, label: 'Pink' },
+  { hue: 275, label: 'Violet' },
+  { hue: 245, label: 'Indigo' },
+  { hue: 195, label: 'Teal' },
+  { hue: 150, label: 'Green' },
+  { hue: 75, label: 'Amber' },
+  { hue: 25, label: 'Orange' },
+  { hue: 345, label: 'Rose' },
+  { hue: 320, label: 'Pink' },
 ];

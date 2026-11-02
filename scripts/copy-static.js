@@ -10,8 +10,12 @@ const OUT = path.join(ROOT, 'public');
 
 const FILES = [
   ['AVM Labs Website.dc.html', 'index.html'],
-  ['support.js'], ['icon.js'], ['image-slot.js'], ['.image-slots.state.json'],
-  ['assets'], ['admin'],
+  ['support.js'],
+  ['icon.js'],
+  ['image-slot.js'],
+  ['.image-slots.state.json'],
+  ['assets'],
+  ['admin'],
 ];
 
 fs.rmSync(OUT, { recursive: true, force: true });

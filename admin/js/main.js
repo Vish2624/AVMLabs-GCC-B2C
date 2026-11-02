@@ -28,13 +28,15 @@ async function guard(fn) {
 }
 
 function showLogin(message) {
-  show(LoginView({
-    message,
-    onLogin: async (password) => {
-      await api.login(password);
-      await showList();
-    },
-  }));
+  show(
+    LoginView({
+      message,
+      onLogin: async (password) => {
+        await api.login(password);
+        await showList();
+      },
+    }),
+  );
 }
 
 function showError(err) {
@@ -56,42 +58,46 @@ async function showList() {
   }
   if (!loaded) return;
 
-  show(ProfileListView({
-    profiles,
-    catalog,
-    onNew: () => showEditor(null),
-    onEdit: (profile) => showEditor(profile),
-    onDelete: async (id) => {
-      try {
-        await guard(() => api.deleteProfile(id));
-        profiles = profiles.filter((p) => p.id !== id);
-        toast('Profile deleted');
-        return true;
-      } catch (err) {
-        toast(err.message);
-        return false;
-      }
-    },
-    onLogout: async () => {
-      await api.logout().catch(() => {});
-      showLogin();
-    },
-  }));
+  show(
+    ProfileListView({
+      profiles,
+      catalog,
+      onNew: () => showEditor(null),
+      onEdit: (profile) => showEditor(profile),
+      onDelete: async (id) => {
+        try {
+          await guard(() => api.deleteProfile(id));
+          profiles = profiles.filter((p) => p.id !== id);
+          toast('Profile deleted');
+          return true;
+        } catch (err) {
+          toast(err.message);
+          return false;
+        }
+      },
+      onLogout: async () => {
+        await api.logout().catch(() => {});
+        showLogin();
+      },
+    }),
+  );
 }
 
 function showEditor(profile) {
-  show(ProfileEditorView({
-    profile,
-    catalog,
-    nextSortOrder: profiles.reduce((max, p) => Math.max(max, p.sortOrder + 1), 0),
-    onClose: showList,
-    onSave: async (payload, isNew) => {
-      const saved = await guard(() => (isNew ? api.createProfile(payload) : api.updateProfile(payload)));
-      if (!saved) return;
-      toast(isNew ? 'Profile created' : 'Profile saved');
-      await showList();
-    },
-  }));
+  show(
+    ProfileEditorView({
+      profile,
+      catalog,
+      nextSortOrder: profiles.reduce((max, p) => Math.max(max, p.sortOrder + 1), 0),
+      onClose: showList,
+      onSave: async (payload, isNew) => {
+        const saved = await guard(() => (isNew ? api.createProfile(payload) : api.updateProfile(payload)));
+        if (!saved) return;
+        toast(isNew ? 'Profile created' : 'Profile saved');
+        await showList();
+      },
+    }),
+  );
 }
 
 async function start() {

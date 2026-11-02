@@ -6,7 +6,8 @@ export function LoginView({ onLogin, message = '' }) {
   let error = message;
   let busy = false;
 
-  const { el, update } = view(() => html`
+  const { el, update } = view(
+    () => html`
     <div class="login">
       <form class="login-card" novalidate>
         <div class="logo"><img src="/assets/avm-logo.png" alt="AVM Labs — Wellness Laboratory"></div>
@@ -18,7 +19,8 @@ export function LoginView({ onLogin, message = '' }) {
         </div>
         <button class="btn primary" type="submit" ${busy ? 'disabled' : ''}>${icon('lock')}${busy ? 'Signing in…' : 'Sign in'}</button>
       </form>
-    </div>`);
+    </div>`,
+  );
 
   el.addEventListener('submit', async (e) => {
     e.preventDefault();

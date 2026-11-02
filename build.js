@@ -21,18 +21,20 @@ const read = (rel) => fs.readFileSync(path.join(SRC, rel), 'utf8');
 const json = (rel) => JSON.stringify(JSON.parse(read(rel)));
 
 function build() {
-  return read('index.html')
-    .split('\n')
-    .map((line) => {
-      const inc = /^@include (.+)$/.exec(line);
-      if (inc) return read(inc[1]).replace(/\n$/, '');
-      return line
-        .replace(/@settings ([^"]+)/, (_, rel) => json(rel).replace(/&/g, '&amp;').replace(/"/g, '&quot;'))
-        .replace(/@json ([^\s;]+)/, (_, rel) => json(rel));
-    })
-    .join('\n')
-    // Included files can contain directives too (e.g. @json in logic/01-data.js).
-    .replace(/@json ([^\s;]+)/g, (_, rel) => json(rel));
+  return (
+    read('index.html')
+      .split('\n')
+      .map((line) => {
+        const inc = /^@include (.+)$/.exec(line);
+        if (inc) return read(inc[1]).replace(/\n$/, '');
+        return line
+          .replace(/@settings ([^"]+)/, (_, rel) => json(rel).replace(/&/g, '&amp;').replace(/"/g, '&quot;'))
+          .replace(/@json ([^\s;]+)/, (_, rel) => json(rel));
+      })
+      .join('\n')
+      // Included files can contain directives too (e.g. @json in logic/01-data.js).
+      .replace(/@json ([^\s;]+)/g, (_, rel) => json(rel))
+  );
 }
 
 const html = build();

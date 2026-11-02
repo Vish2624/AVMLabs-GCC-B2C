@@ -41,23 +41,27 @@ export function ProfileListView({ profiles, catalog, onNew, onEdit, onDelete, on
               <div class="now">${formatPrice(p.price)}</div>
             </div>
             <div class="card-actions">
-              ${confirming
-                ? html`<button class="btn small danger solid" data-act="delete" data-id="${p.id}" ${deletingId ? 'disabled' : ''}>${deletingId ? 'Deleting…' : 'Delete'}</button>
+              ${
+                confirming
+                  ? html`<button class="btn small danger solid" data-act="delete" data-id="${p.id}" ${deletingId ? 'disabled' : ''}>${deletingId ? 'Deleting…' : 'Delete'}</button>
                        <button class="btn small" data-act="cancel-delete">Keep</button>`
-                : html`<button class="btn small icon-only danger" data-act="ask-delete" data-id="${p.id}" aria-label="Delete ${p.name}">${icon('trash-2')}</button>
-                       <button class="btn small outline" data-act="edit" data-id="${p.id}">${icon('pencil')}Edit</button>`}
+                  : html`<button class="btn small icon-only danger" data-act="ask-delete" data-id="${p.id}" aria-label="Delete ${p.name}">${icon('trash-2')}</button>
+                       <button class="btn small outline" data-act="edit" data-id="${p.id}">${icon('pencil')}Edit</button>`
+              }
             </div>
           </div>
         </div>
         <details>
           <summary>View structure</summary>
           <div class="structure">
-            ${p.subs.map((s) => html`
+            ${p.subs.map(
+              (s) => html`
               <div>
                 <h3>${s.name}</h3>
                 ${s.description && html`<p>${s.description}</p>`}
                 <ul>${s.tests.map((id) => html`<li>${tests.get(id)?.name || id}</li>`)}</ul>
-              </div>`)}
+              </div>`,
+            )}
           </div>
         </details>
       </section>`;
@@ -96,9 +100,13 @@ export function ProfileListView({ profiles, catalog, onNew, onEdit, onDelete, on
     if (act === 'new') onNew();
     else if (act === 'logout') onLogout();
     else if (act === 'edit') onEdit(profiles.find((p) => p.id === id));
-    else if (act === 'ask-delete') { confirmId = id; update(); }
-    else if (act === 'cancel-delete') { confirmId = null; update(); }
-    else if (act === 'delete') {
+    else if (act === 'ask-delete') {
+      confirmId = id;
+      update();
+    } else if (act === 'cancel-delete') {
+      confirmId = null;
+      update();
+    } else if (act === 'delete') {
       deletingId = id;
       update();
       const ok = await onDelete(id);

@@ -12,9 +12,15 @@ function required(name) {
 export class ConfigError extends Error {}
 
 export const config = {
-  get supabaseUrl() { return required('SUPABASE_URL'); },
-  get supabaseServiceKey() { return required('SUPABASE_SERVICE_ROLE_KEY'); },
-  get adminPassword() { return required('ADMIN_PASSWORD'); },
+  get supabaseUrl() {
+    return required('SUPABASE_URL');
+  },
+  get supabaseServiceKey() {
+    return required('SUPABASE_SERVICE_ROLE_KEY');
+  },
+  get adminPassword() {
+    return required('ADMIN_PASSWORD');
+  },
   // Signs the login cookie. Optional: without it, a key is derived from the
   // Supabase service key, which is already a server-only secret.
   get sessionSecret() {

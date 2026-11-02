@@ -16,8 +16,16 @@ export function passwordMatches(input) {
 
 function cookieHeader(req, value, maxAge) {
   const local = /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(req.headers.host || '');
-  return [`${COOKIE}=${value}`, 'Path=/api/admin', 'HttpOnly', 'SameSite=Strict', `Max-Age=${maxAge}`, local ? '' : 'Secure']
-    .filter(Boolean).join('; ');
+  return [
+    `${COOKIE}=${value}`,
+    'Path=/api/admin',
+    'HttpOnly',
+    'SameSite=Strict',
+    `Max-Age=${maxAge}`,
+    local ? '' : 'Secure',
+  ]
+    .filter(Boolean)
+    .join('; ');
 }
 
 export function sessionCookie(req) {

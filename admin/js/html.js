@@ -4,8 +4,12 @@
 const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 
 class Safe {
-  constructor(value) { this.value = value; }
-  toString() { return this.value; }
+  constructor(value) {
+    this.value = value;
+  }
+  toString() {
+    return this.value;
+  }
 }
 
 export const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ESCAPES[c]);

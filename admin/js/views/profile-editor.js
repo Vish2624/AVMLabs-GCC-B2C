@@ -4,12 +4,23 @@ import { appBar, cardBg, formatPrice, icon, ink, plural, toast, view } from '../
 
 const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
-const slugify = (s) => s.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-  .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40).replace(/-+$/, '');
+const slugify = (s) =>
+  s
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40)
+    .replace(/-+$/, '');
 
 let keySeq = 0;
 const newSub = (sub = {}, open = true) => ({
-  key: ++keySeq, name: sub.name || '', description: sub.description || '', tests: [...(sub.tests || [])], open,
+  key: ++keySeq,
+  name: sub.name || '',
+  description: sub.description || '',
+  tests: [...(sub.tests || [])],
+  open,
 });
 
 export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onClose }) {
@@ -18,8 +29,19 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
   const byName = new Map(catalog.tests.map((t) => [t.name.toLowerCase(), t]));
 
   const draft = isNew
-    ? { id: '', name: '', tag: '', category: catalog.categories[0].id, tagline: '', price: '', icon: 'layers',
-        hue: catalog.colours[0].hue, sortOrder: nextSortOrder, published: true, subs: [newSub()] }
+    ? {
+        id: '',
+        name: '',
+        tag: '',
+        category: catalog.categories[0].id,
+        tagline: '',
+        price: '',
+        icon: 'layers',
+        hue: catalog.colours[0].hue,
+        sortOrder: nextSortOrder,
+        published: true,
+        subs: [newSub()],
+      }
     : { ...profile, price: String(profile.price), subs: profile.subs.map((s, i) => newSub(s, i === 0)) };
   let idTouched = !isNew;
   let dirty = false;
@@ -53,7 +75,9 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
         </button>
         <button class="btn small icon-only danger" type="button" data-act="remove-sub" data-sub="${i}" aria-label="Remove ${s.name || 'sub-profile'}">${icon('trash-2')}</button>
       </div>
-      ${s.open && html`
+      ${
+        s.open &&
+        html`
         <div class="sub-body">
           <div class="grid">
             <div class="field">
@@ -67,18 +91,24 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
           </div>
           <div class="field">
             <span class="label">Tests</span>
-            ${s.tests.length
-              ? html`<div class="chips">${s.tests.map((id, j) => html`
+            ${
+              s.tests.length
+                ? html`<div class="chips">${s.tests.map(
+                    (id, j) => html`
                   <span class="chip">${tests.get(id)?.name || id}<small>${formatPrice(tests.get(id)?.mrp)}</small>
                     <button type="button" data-act="remove-test" data-sub="${i}" data-test="${j}" aria-label="Remove ${tests.get(id)?.name || id}">×</button>
-                  </span>`)}</div>`
-              : html`<p class="empty-note">No tests yet.</p>`}
+                  </span>`,
+                  )}</div>`
+                : html`<p class="empty-note">No tests yet.</p>`
+            }
             <label class="add-test">${icon('plus')}<input id="test-add-${i}" data-field="test-add" data-sub="${i}" list="test-options" placeholder="Type to add a test, e.g. Vitamin D" autocomplete="off" aria-label="Add a test"></label>
           </div>
-        </div>`}
+        </div>`
+      }
     </div>`;
 
-  const { el, update } = view(() => html`
+  const { el, update } = view(
+    () => html`
     ${appBar(html`<button class="btn small" type="button" data-act="close">${icon('arrow-left')}All profiles</button>`)}
     <main class="page narrow">
     <div class="pagehead">
@@ -139,13 +169,17 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
       <div class="grid">
         <div class="field">
           <span class="label">Icon</span>
-          <div class="icons">${catalog.icons.map((name) => html`
-            <button class="icon-pick" type="button" data-act="icon" data-value="${name}" aria-pressed="${draft.icon === name}" aria-label="${name}">${icon(name)}</button>`)}</div>
+          <div class="icons">${catalog.icons.map(
+            (name) => html`
+            <button class="icon-pick" type="button" data-act="icon" data-value="${name}" aria-pressed="${draft.icon === name}" aria-label="${name}">${icon(name)}</button>`,
+          )}</div>
         </div>
         <div class="field">
           <span class="label">Colour</span>
-          <div class="swatches">${catalog.colours.map((c) => html`
-            <button class="swatch" type="button" data-act="hue" data-value="${c.hue}" aria-pressed="${draft.hue === c.hue}" aria-label="${c.label}" style="background:oklch(0.7 0.15 ${c.hue})"></button>`)}</div>
+          <div class="swatches">${catalog.colours.map(
+            (c) => html`
+            <button class="swatch" type="button" data-act="hue" data-value="${c.hue}" aria-pressed="${draft.hue === c.hue}" aria-label="${c.label}" style="background:oklch(0.7 0.15 ${c.hue})"></button>`,
+          )}</div>
         </div>
       </div>
       <div class="preview" style="${cardBg(draft.hue)}">
@@ -171,17 +205,24 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
     <div class="savebar"><div class="savebar-in">
       <p class="summary" data-summary>${summary()}</p>
       <div class="row">
-        ${confirmDiscard
-          ? html`<span class="warn">Discard changes?</span>
+        ${
+          confirmDiscard
+            ? html`<span class="warn">Discard changes?</span>
                  <button class="btn" type="button" data-act="keep-editing">Keep editing</button>
                  <button class="btn danger solid" type="button" data-act="discard">Discard</button>`
-          : html`<button class="btn" type="button" data-act="close">Cancel</button>
-                 <button class="btn primary" type="button" data-act="save" ${saving ? 'disabled' : ''}>${icon('check')}${saving ? 'Saving…' : isNew ? 'Create profile' : 'Save changes'}</button>`}
+            : html`<button class="btn" type="button" data-act="close">Cancel</button>
+                 <button class="btn primary" type="button" data-act="save" ${saving ? 'disabled' : ''}>${icon('check')}${saving ? 'Saving…' : isNew ? 'Create profile' : 'Save changes'}</button>`
+        }
       </div>
-    </div></div>`);
+    </div></div>`,
+  );
 
-  const refreshSummary = () => { el.querySelector('[data-summary]').innerHTML = summary().toString(); };
-  const markDirty = () => { dirty = true; };
+  const refreshSummary = () => {
+    el.querySelector('[data-summary]').innerHTML = summary().toString();
+  };
+  const markDirty = () => {
+    dirty = true;
+  };
 
   function addTest(i, input) {
     const value = input.value.trim();
@@ -213,12 +254,23 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
       return el.querySelector('.alert')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
     const payload = {
-      id: draft.id, name: draft.name.trim(), tag: draft.tag.trim(), category: draft.category,
-      tagline: draft.tagline.trim(), price: Math.round(Number(draft.price)), icon: draft.icon, hue: draft.hue,
-      sortOrder: Math.max(0, Math.round(Number(draft.sortOrder) || 0)), published: draft.published,
+      id: draft.id,
+      name: draft.name.trim(),
+      tag: draft.tag.trim(),
+      category: draft.category,
+      tagline: draft.tagline.trim(),
+      price: Math.round(Number(draft.price)),
+      icon: draft.icon,
+      hue: draft.hue,
+      sortOrder: Math.max(0, Math.round(Number(draft.sortOrder) || 0)),
+      published: draft.published,
       subs: draft.subs
         .filter((s) => s.name.trim() || s.description.trim() || s.tests.length)
-        .map((s) => ({ name: s.name.trim() || 'Untitled sub-profile', description: s.description.trim(), tests: s.tests })),
+        .map((s) => ({
+          name: s.name.trim() || 'Untitled sub-profile',
+          description: s.description.trim(),
+          tests: s.tests,
+        })),
     };
     saving = true;
     update();
@@ -239,16 +291,48 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
     const i = Number(btn.dataset.sub);
     switch (btn.dataset.act) {
       case 'close':
-        if (dirty) { confirmDiscard = true; update(); } else onClose();
+        if (dirty) {
+          confirmDiscard = true;
+          update();
+        } else onClose();
         break;
-      case 'keep-editing': confirmDiscard = false; update(); break;
-      case 'discard': dirty = false; onClose(); break;
-      case 'save': save(); break;
-      case 'icon': draft.icon = btn.dataset.value; markDirty(); update(); break;
-      case 'hue': draft.hue = Number(btn.dataset.value); markDirty(); update(); break;
-      case 'toggle': draft.subs[i].open = !draft.subs[i].open; update(); break;
-      case 'expand-all': draft.subs.forEach((s) => { s.open = true; }); update(); break;
-      case 'collapse-all': draft.subs.forEach((s) => { s.open = false; }); update(); break;
+      case 'keep-editing':
+        confirmDiscard = false;
+        update();
+        break;
+      case 'discard':
+        dirty = false;
+        onClose();
+        break;
+      case 'save':
+        save();
+        break;
+      case 'icon':
+        draft.icon = btn.dataset.value;
+        markDirty();
+        update();
+        break;
+      case 'hue':
+        draft.hue = Number(btn.dataset.value);
+        markDirty();
+        update();
+        break;
+      case 'toggle':
+        draft.subs[i].open = !draft.subs[i].open;
+        update();
+        break;
+      case 'expand-all':
+        draft.subs.forEach((s) => {
+          s.open = true;
+        });
+        update();
+        break;
+      case 'collapse-all':
+        draft.subs.forEach((s) => {
+          s.open = false;
+        });
+        update();
+        break;
       case 'add-sub':
         draft.subs.push(newSub());
         markDirty();
@@ -284,8 +368,10 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
       draft.subs[i].name = t.value;
       el.querySelector(`[data-sub-title="${i}"]`).textContent = t.value || 'Untitled sub-profile';
     } else if (field === 'sub-desc') draft.subs[i].description = t.value;
-    else if (field === 'id') { draft.id = t.value; idTouched = true; }
-    else draft[field] = t.value;
+    else if (field === 'id') {
+      draft.id = t.value;
+      idTouched = true;
+    } else draft[field] = t.value;
 
     if (field === 'name') {
       el.querySelector('[data-preview="name"]').textContent = t.value || 'Profile name';

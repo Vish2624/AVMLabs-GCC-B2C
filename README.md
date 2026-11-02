@@ -10,18 +10,29 @@ api/              Vercel serverless functions
 server/           code shared by the API: auth, database, validation
 supabase/         database schema (migrations/) and starting data (seed.sql)
 scripts/          dev server and build helpers
+tests/            API tests (node:test)
+.github/          CI workflow
 assets/           logo and category icons
 support.js icon.js image-slot.js .image-slots.state.json   website runtime (keep beside the .dc.html)
 ```
 
-## Commands
+## Development
+
+Requires Node 22 (see `.nvmrc`). VS Code will suggest the ESLint, Prettier and EditorConfig extensions.
 
 ```
-npm install        install dependencies
-npm run dev        local server: http://localhost:3000, admin at /admin/
-npm run build      rebuild the site file and copy static files to public/
-npm run check      confirm the site file matches src/
+npm install            install dependencies
+npm run dev            local server: http://localhost:3000, admin at /admin/
+npm run build          rebuild the site file and copy static files to public/
+npm run check          confirm the site file matches src/
+npm test               run the API tests (tests/)
+npm run lint           ESLint        (npm run lint:fix to auto-fix)
+npm run format         Prettier      (npm run format:check to only check)
+npm run verify         lint + format check + tests + build check, as CI runs on every push
 ```
+
+`src/` and the runtime scripts are excluded from linting and formatting: build.js assembles them
+byte-for-byte into the site file, so reformatting them would change the site.
 
 Edit the website in `src/`, then `npm run build`. The Claude Design runtime only reads
 markup and logic from inside the single `.dc.html` file, so the build combines every part.
