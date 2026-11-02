@@ -1,10 +1,10 @@
 // Create or edit a profile: details, look, and sub-profiles with tests.
 import { html } from '../html.js';
-import { formatPrice, icon, plural, tint, toast, view } from '../ui.js';
+import { appBar, cardBg, formatPrice, icon, ink, plural, toast, view } from '../ui.js';
 
 const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
-const slugify = (s) => s.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase()
+const slugify = (s) => s.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
   .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40).replace(/-+$/, '');
 
 let keySeq = 0;
@@ -37,9 +37,10 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
     const price = Number(draft.price);
     const off = mrp > 0 && price >= 0 && price < mrp ? Math.round((1 - price / mrp) * 100) : 0;
     return html`
-      <strong>${plural(ids.length, 'test')}</strong> · ${plural(params, 'parameter')} · MRP <strong>${formatPrice(mrp)}</strong>
-      ${draft.price !== '' && html` · Price <strong>${formatPrice(price)}</strong>${off > 0 && html` (${off}% off)`}`}
-      ${price > mrp && mrp > 0 && html` · <span class="warn">Price is above MRP</span>`}`;
+      ${draft.price !== '' && html`<span class="now">${formatPrice(price)}</span>`}
+      ${mrp > 0 && html`<s>${formatPrice(mrp)}</s>`}${off > 0 && html`<span class="pill off">${off}% off</span>`}
+      <span><b>${plural(ids.length, 'test')}</b> · ${plural(params, 'parameter')}</span>
+      ${price > mrp && mrp > 0 && html`<span class="warn">Price is above MRP</span>`}`;
   };
 
   const sub = (s, i) => html`
@@ -50,7 +51,7 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
           <span class="name" data-sub-title="${i}">${s.name || 'Untitled sub-profile'}</span>
           <span class="count">${plural(s.tests.length, 'test')} · ${formatPrice(subMrp(s))}</span>
         </button>
-        <button class="btn small ghost danger" type="button" data-act="remove-sub" data-sub="${i}" aria-label="Remove ${s.name || 'sub-profile'}">Remove</button>
+        <button class="btn small icon-only danger" type="button" data-act="remove-sub" data-sub="${i}" aria-label="Remove ${s.name || 'sub-profile'}">${icon('trash-2')}</button>
       </div>
       ${s.open && html`
         <div class="sub-body">
@@ -72,20 +73,25 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
                     <button type="button" data-act="remove-test" data-sub="${i}" data-test="${j}" aria-label="Remove ${tests.get(id)?.name || id}">×</button>
                   </span>`)}</div>`
               : html`<p class="empty-note">No tests yet.</p>`}
-            <input id="test-add-${i}" data-field="test-add" data-sub="${i}" list="test-options" placeholder="Type to add a test, e.g. Vitamin D" autocomplete="off" aria-label="Add a test">
+            <label class="add-test">${icon('plus')}<input id="test-add-${i}" data-field="test-add" data-sub="${i}" list="test-options" placeholder="Type to add a test, e.g. Vitamin D" autocomplete="off" aria-label="Add a test"></label>
           </div>
         </div>`}
     </div>`;
 
   const { el, update } = view(() => html`
-    <header class="topbar">
-      <div><h1>${isNew ? 'New profile' : 'Edit profile'}</h1><p class="subtitle">${isNew ? 'Build a profile from sub-profiles and tests.' : draft.name}</p></div>
-      <button class="btn" type="button" data-act="close">← Back to list</button>
-    </header>
-    ${error && html`<div class="alert" role="alert">${error}</div>`}
+    ${appBar(html`<button class="btn small" type="button" data-act="close">${icon('arrow-left')}All profiles</button>`)}
+    <main class="page narrow">
+    <div class="pagehead">
+      <div>
+        <div class="eyebrow">${isNew ? 'New profile' : 'Edit profile'}</div>
+        <h1>${isNew ? 'Create a health profile' : draft.name}</h1>
+        <p class="subtitle">Group tests into sub-profiles. Price and MRP update as you go.</p>
+      </div>
+    </div>
+    ${error && html`<div class="alert" role="alert">${icon('circle-alert')}${error}</div>`}
 
     <section class="panel">
-      <h2>Details</h2>
+      <div class="panel-head"><span class="num">1</span><div><h2>Details</h2><p>What customers see on the profile card.</p></div></div>
       <div class="grid">
         <div class="field">
           <label for="name">Profile name</label>
@@ -123,13 +129,13 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
         </div>
         <div class="field">
           <span class="label">Visibility</span>
-          <label class="check"><input type="checkbox" data-field="published" ${draft.published ? 'checked' : ''}> Show on website</label>
+          <label class="switch"><input type="checkbox" data-field="published" ${draft.published ? 'checked' : ''}><span class="track"></span>Show on website</label>
         </div>
       </div>
     </section>
 
     <section class="panel">
-      <h2>Look</h2>
+      <div class="panel-head"><span class="num">2</span><div><h2>Look</h2><p>Icon and colour of the profile tile.</p></div></div>
       <div class="grid">
         <div class="field">
           <span class="label">Icon</span>
@@ -142,35 +148,37 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
             <button class="swatch" type="button" data-act="hue" data-value="${c.hue}" aria-pressed="${draft.hue === c.hue}" aria-label="${c.label}" style="background:oklch(0.7 0.15 ${c.hue})"></button>`)}</div>
         </div>
       </div>
-      <div class="preview" style="${tint(draft.hue)}">
-        ${icon(draft.icon)}
+      <div class="preview" style="${cardBg(draft.hue)}">
+        <span class="preview-icon" style="${ink(draft.hue)}">${icon(draft.icon)}</span>
         <div><strong data-preview="name">${draft.name || 'Profile name'}</strong><span data-preview="tagline">${draft.tagline || 'Tagline'}</span></div>
+        <span class="pill">Preview</span>
       </div>
     </section>
 
     <div class="section-head">
-      <h2>Sub-profiles (${draft.subs.length})</h2>
+      <div><div class="eyebrow">Step 3</div><h2>Sub-profiles (${draft.subs.length})</h2></div>
       <div class="row">
-        <button class="btn small ghost" type="button" data-act="expand-all">Expand all</button>
-        <button class="btn small ghost" type="button" data-act="collapse-all">Collapse all</button>
+        <button class="btn link" type="button" data-act="expand-all">Expand all</button>
+        <button class="btn link" type="button" data-act="collapse-all">Collapse all</button>
       </div>
     </div>
     <div class="subs">${draft.subs.map(sub)}</div>
-    <button class="btn" type="button" data-act="add-sub">+ Add sub-profile</button>
+    <button class="add-sub" type="button" data-act="add-sub">+ Add sub-profile</button>
+    </main>
 
     <datalist id="test-options">${catalog.tests.map((t) => html`<option value="${t.name}"></option>`)}</datalist>
 
-    <div class="savebar">
+    <div class="savebar"><div class="savebar-in">
       <p class="summary" data-summary>${summary()}</p>
       <div class="row">
         ${confirmDiscard
-          ? html`<span class="summary">Discard changes?</span>
+          ? html`<span class="warn">Discard changes?</span>
                  <button class="btn" type="button" data-act="keep-editing">Keep editing</button>
                  <button class="btn danger solid" type="button" data-act="discard">Discard</button>`
           : html`<button class="btn" type="button" data-act="close">Cancel</button>
-                 <button class="btn primary" type="button" data-act="save" ${saving ? 'disabled' : ''}>${saving ? 'Saving…' : isNew ? 'Create profile' : 'Save changes'}</button>`}
+                 <button class="btn primary" type="button" data-act="save" ${saving ? 'disabled' : ''}>${icon('check')}${saving ? 'Saving…' : isNew ? 'Create profile' : 'Save changes'}</button>`}
       </div>
-    </div>`);
+    </div></div>`);
 
   const refreshSummary = () => { el.querySelector('[data-summary]').innerHTML = summary().toString(); };
   const markDirty = () => { dirty = true; };

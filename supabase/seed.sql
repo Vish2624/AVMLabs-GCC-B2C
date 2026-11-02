@@ -33,7 +33,7 @@ insert into public.sub_profiles (profile_id, name, description, test_ids, sort_o
   ('women', 'Thyroid', '', array['tsh']::text[], 1);
 
 insert into public.profiles (id, name, tag, category, tagline, price, icon, hue, sort_order, published)
-values ('pcos', 'PCOS Profile', 'Women', 'women', 'Acne, irregular periods or weight gain? Get clarity.', 2799, 'venus-and-mars', 320, 4, true);
+values ('pcos', 'PCOS Profile', 'Women', 'women', 'Acne, irregular periods or weight gain? Get clarity.', 2799, 'flower', 320, 4, true);
 insert into public.sub_profiles (profile_id, name, description, test_ids, sort_order) values
   ('pcos', 'Hormones', '', array['fsh', 'lh', 'prolactin', 'testo', 'dheas']::text[], 0),
   ('pcos', 'Diabetes', '', array['insulin', 'fbs']::text[], 1),

@@ -1,6 +1,6 @@
 // Password login screen.
 import { html } from '../html.js';
-import { view } from '../ui.js';
+import { icon, view } from '../ui.js';
 
 export function LoginView({ onLogin, message = '' }) {
   let error = message;
@@ -8,17 +8,15 @@ export function LoginView({ onLogin, message = '' }) {
 
   const { el, update } = view(() => html`
     <div class="login">
-      <form class="panel" novalidate>
-        <div class="brand">
-          <span class="brand-mark">AVM</span>
-          <div><h1>Admin</h1><p class="subtitle">AVM Labs health profiles</p></div>
-        </div>
+      <form class="login-card" novalidate>
+        <div class="logo"><img src="/assets/avm-logo.png" alt="AVM Labs — Wellness Laboratory"></div>
+        <div><h1>Admin sign in</h1><p class="subtitle">Manage the health profiles on the website.</p></div>
         ${error && html`<div class="alert" role="alert">${error}</div>`}
         <div class="field">
           <label for="password">Password</label>
-          <input id="password" type="password" autocomplete="current-password" required>
+          <input id="password" type="password" autocomplete="current-password" placeholder="Enter admin password" required>
         </div>
-        <button class="btn primary" type="submit" ${busy ? 'disabled' : ''}>${busy ? 'Signing in…' : 'Sign in'}</button>
+        <button class="btn primary" type="submit" ${busy ? 'disabled' : ''}>${icon('lock')}${busy ? 'Signing in…' : 'Sign in'}</button>
       </form>
     </div>`);
 

@@ -19,7 +19,7 @@ export const CATEGORIES = [
 ];
 
 // Lucide icon names (https://lucide.dev).
-export const ICONS = ['layers', 'shield-plus', 'pill', 'zap', 'flower-2', 'venus-and-mars', 'biceps-flexed',
+export const ICONS = ['layers', 'shield-plus', 'pill', 'zap', 'flower-2', 'flower', 'biceps-flexed',
   'syringe', 'activity', 'heart-pulse', 'droplet', 'bone', 'atom', 'sparkles'];
 
 export const COLOURS = [

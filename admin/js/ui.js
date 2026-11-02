@@ -21,6 +21,19 @@ export const icon = (name) =>
 
 // Soft tint and ink colours for a profile hue, matching the website.
 export const tint = (hue) => `background:oklch(0.94 0.045 ${hue});color:oklch(0.42 0.16 ${hue})`;
+export const ink = (hue) => `color:oklch(0.45 0.16 ${hue})`;
+export const cardBg = (hue) => `background:linear-gradient(160deg, oklch(0.94 0.04 ${hue}), oklch(0.985 0.012 ${hue}))`;
+
+// Frosted header with the website logo, shared by every signed-in screen.
+export const appBar = (actions) => html`
+  <header class="appbar">
+    <div class="appbar-in">
+      <a class="logo" href="/" target="_blank" rel="noopener" aria-label="Open website"><img src="/assets/avm-logo.png" alt="AVM Labs"></a>
+      <span class="appbar-tag">Admin</span>
+      <span class="grow"></span>
+      ${actions}
+    </div>
+  </header>`;
 
 // Element with the given HTML that re-renders itself; event handlers are
 // attached once to the element and survive re-renders.

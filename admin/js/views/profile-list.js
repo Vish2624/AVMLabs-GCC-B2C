@@ -1,6 +1,6 @@
 // List of all profiles with search, edit and delete.
 import { html } from '../html.js';
-import { formatPrice, icon, plural, tint, view } from '../ui.js';
+import { appBar, cardBg, formatPrice, icon, ink, plural, view } from '../ui.js';
 
 export function ProfileListView({ profiles, catalog, onNew, onEdit, onDelete, onLogout }) {
   const tests = new Map(catalog.tests.map((t) => [t.id, t]));
@@ -14,27 +14,39 @@ export function ProfileListView({ profiles, catalog, onNew, onEdit, onDelete, on
 
   const card = (p) => {
     const count = uniqueTests(p).length;
+    const full = mrp(p);
+    const off = full > p.price ? Math.round((1 - p.price / full) * 100) : 0;
     const confirming = confirmId === p.id;
     return html`
       <section class="card">
-        <div class="card-head">
-          <span class="card-icon" style="${tint(p.hue)}">${icon(p.icon)}</span>
-          <div class="card-main">
+        <div class="card-top" style="${cardBg(p.hue)}">
+          <div class="row">
+            <span class="card-icon" style="${ink(p.hue)}">${icon(p.icon)}</span>
             <div class="row">
-              <h2>${p.name}</h2>
-              <span class="badge">${categoryLabel.get(p.category) || p.category}</span>
-              <span class="badge ${p.published ? 'live' : 'draft'}">${p.published ? 'Live' : 'Draft'}</span>
+              <span class="pill">${categoryLabel.get(p.category) || p.category}</span>
+              <span class="pill ${p.published ? 'live' : 'draft'}">${p.published ? 'Live' : 'Draft'}</span>
             </div>
-            ${p.tagline && html`<p class="tagline">${p.tagline}</p>`}
-            <p class="meta">${plural(p.subs.length, 'sub-profile')} · ${plural(count, 'test')} ·
-              <span class="price">${formatPrice(p.price)}</span>${mrp(p) > p.price && html`<s>${formatPrice(mrp(p))}</s>`}</p>
           </div>
-          <div class="card-actions">
-            <button class="btn small" data-act="edit" data-id="${p.id}">Edit</button>
-            ${confirming
-              ? html`<button class="btn small danger solid" data-act="delete" data-id="${p.id}" ${deletingId ? 'disabled' : ''}>${deletingId ? 'Deleting…' : 'Confirm delete'}</button>
-                     <button class="btn small" data-act="cancel-delete">Cancel</button>`
-              : html`<button class="btn small danger" data-act="ask-delete" data-id="${p.id}">Delete</button>`}
+          <h2>${p.name}</h2>
+          ${p.tagline && html`<p class="tagline">${p.tagline}</p>`}
+        </div>
+        <div class="card-body">
+          <div class="facts">
+            <div class="fact"><span class="fact-icon">${icon('test-tubes')}</span><span><small>Includes</small><b>${plural(count, 'test')}</b></span></div>
+            <div class="fact"><span class="fact-icon">${icon('layers')}</span><span><small>Sub-profiles</small><b>${p.subs.length}</b></span></div>
+          </div>
+          <div class="pricebox">
+            <div>
+              ${off > 0 && html`<div class="was"><s>${formatPrice(full)}</s><span class="pill off">${off}% off</span></div>`}
+              <div class="now">${formatPrice(p.price)}</div>
+            </div>
+            <div class="card-actions">
+              ${confirming
+                ? html`<button class="btn small danger solid" data-act="delete" data-id="${p.id}" ${deletingId ? 'disabled' : ''}>${deletingId ? 'Deleting…' : 'Delete'}</button>
+                       <button class="btn small" data-act="cancel-delete">Keep</button>`
+                : html`<button class="btn small icon-only danger" data-act="ask-delete" data-id="${p.id}" aria-label="Delete ${p.name}">${icon('trash-2')}</button>
+                       <button class="btn small outline" data-act="edit" data-id="${p.id}">${icon('pencil')}Edit</button>`}
+            </div>
           </div>
         </div>
         <details>
@@ -54,22 +66,27 @@ export function ProfileListView({ profiles, catalog, onNew, onEdit, onDelete, on
   const { el, update } = view(() => {
     const q = query.trim().toLowerCase();
     const shown = profiles.filter((p) => !q || `${p.name} ${p.tag} ${p.category}`.toLowerCase().includes(q));
+    const live = profiles.filter((p) => p.published).length;
     return html`
-      <header class="topbar">
-        <div class="brand">
-          <span class="brand-mark">AVM</span>
-          <div><h1>Health profiles</h1><p class="subtitle">${plural(profiles.length, 'profile')} · changes show on the website within a minute</p></div>
+      ${appBar(html`
+        <button class="btn small" data-act="logout">${icon('log-out')}Log out</button>
+        <button class="btn primary" data-act="new">${icon('plus')}New profile</button>`)}
+      <main class="page">
+        <div class="pagehead">
+          <div>
+            <div class="eyebrow">Admin</div>
+            <h1>Health profiles</h1>
+            <p class="subtitle">Changes show on the website within a minute.</p>
+          </div>
         </div>
-        <div class="row">
-          <button class="btn ghost" data-act="logout">Log out</button>
-          <button class="btn primary" data-act="new">+ New profile</button>
+        <div class="toolbar">
+          <label class="search">${icon('search')}<input type="search" data-input="search" placeholder="Search profiles" aria-label="Search profiles" value="${query}"></label>
+          <span class="stats">${plural(profiles.length, 'profile')} · ${live} live</span>
         </div>
-      </header>
-      ${profiles.length > 3 && html`
-        <div class="toolbar"><input type="search" data-input="search" placeholder="Search profiles" aria-label="Search profiles" value="${query}"></div>`}
-      ${!profiles.length && html`<div class="empty">No profiles yet. Select “New profile” to create the first one.</div>`}
-      ${profiles.length > 0 && !shown.length && html`<div class="empty">No profiles match “${query}”.</div>`}
-      ${shown.map(card)}`;
+        ${!profiles.length && html`<div class="empty">No profiles yet. Select “New profile” to create the first one.</div>`}
+        ${profiles.length > 0 && !shown.length && html`<div class="empty">No profiles match “${query}”.</div>`}
+        <div class="cards">${shown.map(card)}</div>
+      </main>`;
   });
 
   el.addEventListener('click', async (e) => {
