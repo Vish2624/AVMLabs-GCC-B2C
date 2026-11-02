@@ -72,9 +72,8 @@
       const lp = this.loc(x.price); mrp += this.loc(x.mrp); price += lp; raw += x.price;
       items.push({ name: x.name + (c.type === 'profile' ? ' (Profile)' : ''), price: lp });
     });
-    const walk = false, potential = 0, walkAmt = 0;
-    const hc = !walk && raw < o.freeAbove ? this.loc(o.fee) : 0;
-    const pay = price - walkAmt + hc;
-    return { items, mrp, price, raw, saving: mrp - price, walk, walkAmt, hc, pay, potential };
+    const hc = raw < o.freeAbove ? this.loc(o.fee) : 0;
+    const pay = price + hc;
+    return { items, mrp, price, raw, saving: mrp - price, hc, pay };
   }
 

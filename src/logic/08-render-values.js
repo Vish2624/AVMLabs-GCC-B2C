@@ -12,7 +12,7 @@
       unsupported: ['map-pin-off', 'Location not supported', 'Open the site in Chrome or Safari.', '', 'Try again'],
       outside: ['globe', 'Not available in ' + (s.geoCountry || 'your country'), 'We serve ' + served + '.', '', 'Check again']
     }[gs] || [];
-    const gateVM = { showGate: this.gateOn() && !(s.region && C.REGIONS[s.region.code]), gateIcon: GT[0], gateTitle: GT[1], gateText: GT[2], gateNote: GT[3], gateHasNote: !!GT[3], gateNoteBg: '#FDECEC', gateNoteInk: '#9B1C22', gateBtn: GT[4], gateBusy: gs === 'locating', gateCanRetry: gs !== 'locating',
+    const gateVM = { showGate: this.gateOn() && !(s.region && C.REGIONS[s.region.code]), gateIcon: GT[0], gateTitle: GT[1], gateText: GT[2], gateBtn: GT[4], gateBusy: gs === 'locating', gateCanRetry: gs !== 'locating',
       gateMain: !s.pickCountry, gatePick: !!s.pickCountry, openPick: () => this.setState({ pickCountry: true }), closePick: () => this.setState({ pickCountry: false }),
       countryOpts: ['BH', 'SA', 'AE'].map(c => ({ name: C.REGIONS[c].name, code: c === 'SA' ? 'KSA' : c, go: () => this.pickRegion(c) })) };
     const inr = x => this.inr(x);
@@ -25,10 +25,10 @@
     const reelBg = h => `radial-gradient(70% 55% at 100% 0%, oklch(0.62 0.16 ${h} / 0.42), transparent 70%), radial-gradient(80% 60% at 0% 100%, oklch(0.42 0.17 275 / 0.55), transparent 70%), linear-gradient(160deg, #1D1852 0%, #141039 55%, #0E0B2B 100%)`;
 
     const testVM = t => {
-      const ps = D.inProf[t.id] || [], inC = has('test', t.id);
+      const inC = has('test', t.id);
       const pc = C.CATS.find(c => c.id === t.cat[0]) || C.CATS[0];
-      return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, tatF: t.tat + ' report', tatH: t.tat.replace('hrs', 'hours').replace('hr', 'hour'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), offCap: off(t.mrp, t.price).replace('off', 'Off'), cardBg: 'radial-gradient(75% 70% at 100% 0%, #F0EDFE 0%, rgba(240,237,254,0) 65%), radial-gradient(55% 50% at 0% 100%, rgba(255,236,240,0.55) 0%, rgba(255,236,240,0) 70%), #FFFFFF', paramsF: t.params + (t.params > 1 ? ' parameters' : ' parameter'), tat: t.tat, fasting: t.fasting,
-        hasProf: ps.length > 0, profLabel: 'In ' + ps.length + (ps.length > 1 ? ' profiles' : ' profile'), openProf: e => { e.stopPropagation(); ps.length && this.openReels(ps[0].i); }, open: () => this.openTest(t.id),
+      return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, tatH: t.tat.replace('hrs', 'hours').replace('hr', 'hour'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), offCap: off(t.mrp, t.price).replace('off', 'Off'), cardBg: 'radial-gradient(75% 70% at 100% 0%, #F0EDFE 0%, rgba(240,237,254,0) 65%), radial-gradient(55% 50% at 0% 100%, rgba(255,236,240,0.55) 0%, rgba(255,236,240,0) 70%), #FFFFFF', tat: t.tat, fasting: t.fasting,
+        open: () => this.openTest(t.id),
         mrpF: inr(t.mrp), off: off(t.mrp, t.price), priceF: inr(t.price), inCart: inC, notInCart: !inC, toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); } };
     };
     let td = null;
@@ -38,8 +38,7 @@
       td = { ...vm, aka: dt[0], hasAka: !!dt[0], about: dt[1], params: dt[2].map((n, k) => ({ n: k + 1, name: n })), paramsTitle: t.params + (t.params > 1 ? ' parameters' : ' parameter'),
         sample: dt[3], sampleIcon: dt[3] === 'Urine' ? 'flask-conical' : 'droplet', fastTitle: t.fasting ? 'Fasting required' : 'No fasting required', fastSub: t.fasting ? '10–12 hrs overnight, water is fine' : 'Eat and drink as usual',
         reportT: 'Report in ' + t.tat, book: () => this.openWA("Hi AVM Labs! I'd like to book the " + t.name + ' test.'),
-        profs: ps.map(p => ({ name: p.name, meta: p.tests.length + ' tests · ' + inr(p.price), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.i) })), hasProfs: ps.length > 0,
-        related: C.TESTS.filter(x => x.id !== t.id && x.cat.some(c => t.cat.includes(c))).slice(0, 4).map(testVM) };
+        profs: ps.map(p => ({ name: p.name, meta: p.tests.length + ' tests · ' + inr(p.price), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.i) })), hasProfs: ps.length > 0 };
     }
     const book = p => () => this.openWA("Hi AVM Labs! I'd like to book the " + p.name + ' profile.');
 
@@ -95,7 +94,7 @@
       const sl = s.slides[p.i] || 0, inC = has('profile', p.id);
       return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, testsN: p.tests.length, ideal: p.ideal, benefits: p.benefits, tat: p.tat,
         fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })),
-        mrpF: inr(p.mrp), priceF: inr(p.price), off: off(p.mrp, p.price), pos: (p.i + 1) + ' / ' + n, slideLabel: ['Overview', 'Tests included', 'Good to know'][sl],
+        mrpF: inr(p.mrp), priceF: inr(p.price), off: off(p.mrp, p.price),
         segs: [0, 1, 2].map(k => ({ w: k === sl ? '22px' : '7px', bg: k === sl ? '#3B2C9E' : '#D4D1E6', go: () => this.goSlide(p.i, k) })), onH: e => this.onH(p.i, e), toTests: () => this.goSlide(p.i, 1),
         toggle: () => this.toggle('profile', p.id, p.name), addIcon: inC ? 'check' : 'plus', addLabel: inC ? 'Added' : 'Add', addText: inC ? 'In cart' : 'Add to cart', addBg: inC ? '#3B2C9E' : '#fff', addInk: inC ? '#fff' : '#16133A',
         share: () => this.share(p), book: book(p) };
@@ -114,10 +113,10 @@
     return {
       isDesktop, isMobile, isWide, isHome: pg === 'home', isTests: pg === 'tests', isProfiles: pg === 'profiles', isCart: pg === 'cart', isAbout: pg === 'about', isTest: !!td, td: td || {}, backTests: go('tests'),
       goHome: go('home'), goTests: go('tests'), goProfiles: go('profiles'), goCart: go('cart'), nav,
-      openReels0: () => this.openReels(0), hasCart, cartEmpty: !hasCart, cartCount, walkPct: o.pct, profileCount: n,
-      locOpen: s.locOpen, toggleLoc: () => this.setState(st => ({ locOpen: !st.locOpen })), closeLoc: () => this.setState({ locOpen: false }),
-      locLabel: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name, pinInput: s.pinInput, onPin: e => this.setState({ pinInput: (RG.text ? e.target.value : e.target.value.replace(/\D/g, '')).slice(0, RG.postMax) }),
-      postPh: RG.postPh, addrPh: 'House / flat no., street, landmark, ' + RG.postLabel.toLowerCase(), postLabelLc: RG.postLabel.toLowerCase(), regionPlace: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name, regionAddr: (this.props || {})[RG.addrProp] || RG.addrDef, relocate: () => this.locate(),
+      openReels0: () => this.openReels(0), hasCart, cartEmpty: !hasCart, cartCount, profileCount: n,
+      locOpen: s.locOpen, toggleLoc: () => this.setState(st => ({ locOpen: !st.locOpen })),
+      locLabel: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name,
+      postPh: RG.postPh, addrPh: 'House / flat no., street, landmark, ' + RG.postLabel.toLowerCase(), regionPlace: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name, regionAddr: (this.props || {})[RG.addrProp] || RG.addrDef, relocate: () => this.locate(),
       ...(() => {
         const regs = Object.values(C.REGIONS), k = (s.tick || 0) % regs.length;
         const rows = regs.map((r, i) => { const on = i === k; return { dotW: on ? '20px' : '6px', dotBg: on ? '#3B2C9E' : '#D4D1E6', name: r.name, code: r.code === 'SA' ? 'KSA' : r.code, go: () => this.setState({ tick: i }) }; });
@@ -128,8 +127,6 @@
       // Hero slides feature these profiles by id; they may be unpublished or reordered in the admin.
       hero1Mrp: heroW ? inr(heroW.mrp) : '', hero1Price: heroW ? inr(heroW.price) : '', hero2Mrp: heroV ? inr(heroV.mrp) : '', hero2Price: heroV ? inr(heroV.price) : '',
       ...gateVM,
-      checkPin: () => { const v = s.pinInput; if (RG.postRe.test(v)) this.setState({ pin: v, pinMsg: 'Great — free home collection is available at ' + (RG.code === 'BH' ? 'Block ' : '') + v + '.', pinOk: true }); else this.setState({ pinMsg: 'Enter a valid ' + RG.postLabel.toLowerCase() + '.', pinOk: false }); },
-      hasPinMsg: !!s.pinMsg, pinMsg: s.pinMsg, pinMsgColor: s.pinOk ? '#0E7350' : '#C81E25',
       smTests: s.sMode === 'tests' ? segOn : segOff, smProfiles: s.sMode === 'profiles' ? segOn : segOff,
       setModeTests: () => this.setState({ sMode: 'tests' }), setModeProfiles: () => this.setState({ sMode: 'profiles' }),
       q: s.q, onQ: e => this.setState({ q: e.target.value, qFocus: true }), onQFocus: () => this.setState({ qFocus: true }), onQBlur: () => setTimeout(() => this.setState({ qFocus: false }), 150),
@@ -176,9 +173,8 @@
           mrpF: inr(p.mrp), off: off(p.mrp, p.price), priceF: inr(p.price), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i), book: book(p) };
       }),
       cartLines, pickHome: () => this.setState({ mode: 'home' }), 
-      modeHome: modeStyle(isHomeMode), modeWalk: modeStyle(!isHomeMode), isHomeMode, isWalkMode: !isHomeMode,
+      modeHome: modeStyle(isHomeMode), isHomeMode,
       hcBig: b.raw < o.freeAbove ? inr(o.fee) : 'FREE', hcSub: b.raw < o.freeAbove ? 'Free on orders above ' + inr(o.freeAbove) : inr(o.fee) + ' collection fee waived',
-      walkSub: 'Save ' + this.money(b.potential) + ' on this cart',
       form: s.form, err: s.errors, dial: RG.dial, phPh: RG.phPh, phPad: (RG.dial.length * 10 + 24) + 'px', idLabel: RG.idLabel + (RG.idOpt ? ' (optional)' : ''), idPh: RG.idPh,
       on: { name: setF('name'), phone: setF('phone', digits(RG.phLen)), nid: setF('nid', digits(RG.idLen)), age: setF('age', digits(3)), address: setF('address') },
       bc: { name: bcOf('name'), phone: bcOf('phone'), nid: bcOf('nid'), age: bcOf('age'), gender: bcOf('gender'), address: bcOf('address') },
@@ -186,7 +182,7 @@
       slotTitle: isHomeMode ? 'Collection date & time' : 'Visit date & time', placeTitle: isHomeMode ? 'Collection address' : 'Visit our centre',
       days: days.map(d => { const a = s.form.date === d.key; return { top: d.top, bottom: d.bottom, pick: () => this.setState(st => ({ form: { ...st.form, date: d.key, slot: d.i === 0 ? '' : st.form.slot }, errors: { ...st.errors, date: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : '#fff', fg: a ? '#fff' : '#16133A' }; }),
       slots, asidePos: isWide ? 'sticky' : 'static',
-      bill: { mrpF: this.money(b.mrp), priceF: this.money(b.price), savingF: this.money(b.saving), walkF: this.money(b.walkAmt), hcF: b.hc ? this.money(b.hc) : 'FREE', hcColor: b.hc ? '#16133A' : '#0E7350', payF: this.money(b.pay), totalSaveF: this.money(Math.max(0, b.mrp - b.pay)) },
+      bill: { mrpF: this.money(b.mrp), priceF: this.money(b.price), savingF: this.money(b.saving), hcF: b.hc ? this.money(b.hc) : 'FREE', hcColor: b.hc ? '#16133A' : '#0E7350', payF: this.money(b.pay), totalSaveF: this.money(Math.max(0, b.mrp - b.pay)) },
       confirm: () => this.confirm(),
       isBooked: !!s.booked, bookedUrl: s.booked ? s.booked.url : '#',
       finishBooked: () => { this.setCart(() => []); this.setState({ booked: null }); this.go('home'); },

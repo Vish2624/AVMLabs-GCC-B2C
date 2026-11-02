@@ -1,5 +1,4 @@
   openReels(i) {
-    this._openAt = Date.now();
     this._ri = i || 0;
     this.setState({ reelsOpen: true, reelIdx: i || 0, slides: {}, hint: false, locOpen: false });
     this._hc = 0;

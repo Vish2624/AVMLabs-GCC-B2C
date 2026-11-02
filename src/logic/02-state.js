@@ -10,7 +10,7 @@
     return { page: 'home', w: window.innerWidth, h: window.innerHeight, cart, sMode: 'tests', q: '', qFocus: false, cat: 'all', tq: '', pf: 'all', hero: 0,
       reelsOpen: false, reelIdx: 0, slides: {}, hint: false, mode: 'home',
       form: { name: '', phone: '', nid: '', age: '', gender: '', date: '', slot: '', address: '' }, errors: {}, booked: null,
-      locOpen: false, pin: '', pinInput: '', pinMsg: '', pinOk: true, toast: '' };
+      locOpen: false, toast: '' };
   }
 
   db() {
@@ -46,6 +46,6 @@
     const p = this.props || {};
     const n = (v, d) => (v === undefined || v === null || v === '' || isNaN(+v)) ? d : +v;
     const rg = this.region();
-    return { wa: String(p[rg.waProp] || rg.waDef).replace(/\D/g, ''), pct: 0, fee: n(p.homeCollectionFee, 250), freeAbove: n(p.freeHomeCollectionAbove, 0) };
+    return { wa: String(p[rg.waProp] || rg.waDef).replace(/\D/g, ''), fee: n(p.homeCollectionFee, 250), freeAbove: n(p.freeHomeCollectionAbove, 0) };
   }
 

@@ -3,12 +3,7 @@ html,body{margin:0;padding:0;background:#F6F6FA;color:#16133A;font-family:'Plus 
 a{color:#3B2C9E;text-decoration:none}a:hover{color:#2A1F7A}
 button,input,textarea,select{font-family:inherit}
 input::placeholder,textarea::placeholder{color:#8F8CA8}
-@keyframes avmHintIn{0%{opacity:0;transform:translate(-50%,12px) scale(.9)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
-@keyframes avmNudgeUp{0%,100%{transform:translateY(3px);opacity:.55}50%{transform:translateY(-4px);opacity:1}}
-@keyframes avmUp{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,-50%,0)}}
-@keyframes avmDown{from{transform:translate3d(0,-50%,0)}to{transform:translate3d(0,0,0)}}
 @keyframes avmMarquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
-@keyframes avmNudgeLeft{0%,100%{transform:translateX(3px);opacity:.55}50%{transform:translateX(-4px);opacity:1}}
 @keyframes avmGradShift{0%{background-position:0% 50%}100%{background-position:100% 50%}}
 @keyframes avmSheen{0%,55%{transform:translateX(-120%) skewX(-20deg)}85%,100%{transform:translateX(320%) skewX(-20deg)}}
 [data-grad-anim]{animation:avmGradShift 7s ease-in-out infinite alternate;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease}

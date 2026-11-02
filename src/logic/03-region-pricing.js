@@ -18,7 +18,7 @@
   pickRegion(code) {
     const region = { code, city: '', post: '', manual: true, ts: Date.now() };
     try { localStorage.setItem('avmlabs_region_v1', JSON.stringify(region)); } catch (e) {}
-    this.setState({ region, geo: 'ok', pickCountry: false, pin: '', pinInput: '', pinMsg: '' });
+    this.setState({ region, geo: 'ok', pickCountry: false });
   }
   locate() {
     if (!navigator.geolocation) { this.setState({ geo: 'unsupported' }); return; }
@@ -38,7 +38,7 @@
       if (Component.REGIONS[code]) {
         const region = { code, city, post, ts: Date.now() };
         try { localStorage.setItem('avmlabs_region_v1', JSON.stringify(region)); } catch (e) {}
-        this.setState({ region, geo: 'ok', pin: '', pinInput: code === 'IN' && /^\d{6}$/.test(post) ? post : '', pinMsg: '' });
+        this.setState({ region, geo: 'ok' });
       } else this.setState({ geo: 'outside', geoCountry: country || 'your country' });
     }, err => this.setState({ geo: err && err.code === 1 ? 'denied' : 'error' }), { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
   }
