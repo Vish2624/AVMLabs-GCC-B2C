@@ -76,5 +76,24 @@
   static PICON = { essential: 'shield-plus', vitamin: 'pill', thyroid: 'zap', women: 'flower-2', pcos: 'venus-and-mars', men: 'biceps-flexed', diabetes: 'syringe', fullbody: 'activity' };
   static POPULAR = ['vitd', 'thyroid', 'hba1c', 'cbc', 'b12', 'lipid', 'testo', 'amh'];
   static TYPE_TERMS = { tests: ['Vitamin D', 'thyroid', 'HbA1c', 'iron studies', 'lipid profile'], profiles: ["women's health", 'PCOS', "men's health", 'vitamin check'] };
+  // Unsplash photos for image slots: [photo id, photographer, Unsplash username]. Unsplash requires the credit.
+  static PHOTOS = {
+    'profile-bg-thyroid': ['1544005313-94ddf0286df2', 'Štefan Štefančík', 'cikstefan'],
+    'profile-bg-women': ['1562337404-3044c84ac061', 'Kate Kozyrka', 'kozyrka_kate'],
+    'profile-bg-pcos': ['1506126613408-eca07ce68773', 'Jared Rice', 'jareddrice'],
+    'profile-bg-men': ['1568602471122-7832951cc4c5', 'Christian Buehner', 'christianbuehner'],
+    'profile-bg-diabetes': ['1683727186226-910f31a9da45', 'Sweet Life', 'sweetlifediabetes'],
+    'profile-bg-fullbody': ['1512621776951-a57141f2eefd', 'Anna Pelzer', 'annapelzer'],
+    'centre-photo-1': ['1519494026892-80bbd2d6fd0d', 'Martha Dominguez de Gouveia', 'm_dominguez_marketing'],
+    'centre-photo-2': ['1762625570087-6d98fca29531', 'Amy Vosters', 'amyvosters'],
+    'centre-photo-3': ['1614935151651-0bea6508db6b', 'Julia Koblitz', 'jkoblitz'],
+    'centre-photo-4': ['1704455306925-1401c3012117', 'Kari Bjorn Photography', 'karibjorn'],
+    'centre-photo-5': ['1758685848543-5c8ba81bc822', 'Vitaly Gariev', 'silverkblack'],
+    'centre-photo-6': ['1639772823849-6efbd173043c', 'Akram Huseyn', 'akramhuseyn'],
+    'centre-photo-7': ['1758691462863-9e1b8a863140', 'Vitaly Gariev', 'silverkblack'],
+    'centre-photo-8': ['1602052577122-f73b9710adba', 'Trnava University', 'trnavskauni'],
+    'centre-photo-9': ['1777269749032-d8d458ae594d', 'Tasha Kostyuk', 'tashakostyuk'],
+    'centre-photo-10': ['1576091160550-2173dba999ef', 'National Cancer Institute', 'nci'],
+  };
   static SLOTS = [['6–8 AM', 6], ['8–10 AM', 8], ['10–12 PM', 10], ['12–2 PM', 12], ['4–6 PM', 16], ['6–8 PM', 18]];
   static PF = [['all', 'All'], ['wellness', 'Wellness'], ['vitamins', 'Vitamins'], ['thyroid', 'Thyroid'], ['women', 'Women'], ['men', 'Men'], ['diabetes', 'Diabetes']];

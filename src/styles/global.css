@@ -43,3 +43,6 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
 [data-hero-text]>div:last-child{gap:8px!important}
 [data-hero-text]>span[style*="font-size:220px"]{font-size:150px!important;bottom:-40px!important}
 }
+image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
+[data-hero-img]:has(> image-slot:not([data-filled]):not([data-editable])){display:none!important}
+[data-hero-card]:has(image-slot:not([data-filled]):not([data-editable])) [data-hero-text]{flex:1 1 auto!important}

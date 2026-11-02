@@ -59,6 +59,9 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
 [data-hero-text]>div:last-child{gap:8px!important}
 [data-hero-text]>span[style*="font-size:220px"]{font-size:150px!important;bottom:-40px!important}
 }
+image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
+[data-hero-img]:has(> image-slot:not([data-filled]):not([data-editable])){display:none!important}
+[data-hero-card]:has(image-slot:not([data-filled]):not([data-editable])) [data-hero-text]{flex:1 1 auto!important}
 </style>
 </helmet>
 <div style="min-height:100dvh;background:#F6F6FA;color:#16133A;overflow-x:clip">
@@ -232,7 +235,7 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
       </sc-if>
     </div>
 
-    <div style="flex:1.35 1 520px;min-width:0;display:flex;flex-direction:column;gap:16px">
+    <div style="flex:1.35 1 520px;min-width:0;display:flex;flex-direction:column;gap:clamp(16px,2.6vw,36px)">
       <div onTouchStart="{{ heroTS }}" onTouchEnd="{{ heroTE }}" style="flex:1 1 auto;display:flex;flex-direction:column;position:relative;border-radius:30px;overflow:hidden;background:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.95);box-shadow:0 30px 60px -36px rgba(22,19,58,0.45)">
         <div style="flex:1 1 auto;display:flex;transition:transform .6s cubic-bezier(.2,.8,.2,1);transform:{{ heroX }}">
           <div style="flex:0 0 100%;min-width:0;display:flex;padding:10px"><div data-hero-card="1" style="flex:1;min-width:0;display:flex;flex-wrap:wrap;border-radius:22px;overflow:hidden;box-shadow:0 18px 40px -24px rgba(22,19,58,0.5)">
@@ -248,7 +251,7 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
                 <button onClick="{{ heroGo1 }}" style="white-space:nowrap;height:46px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.95);color:#2A1F7A;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px">View profile<avm-i n="arrow-right" s="16"></avm-i></button>
               </div>
             </div>
-            <div data-hero-img="1" style="flex:1 1 220px;min-height:220px;position:relative;overflow:hidden;background:#ECEAF6"><image-slot id="hero-women" shape="rect" placeholder="Profile creative — women's health"></image-slot></div></div>
+            <div data-hero-img="1" style="flex:1 1 220px;min-height:220px;position:relative;overflow:hidden;background:#ECEAF6"><image-slot id="hero-women" src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" credit="Photo by National Cancer Institute on Unsplash" credit-href="https://unsplash.com/@nci" shape="rect" placeholder="Profile creative — women's health"></image-slot></div></div>
           </div>
           <div style="flex:0 0 100%;min-width:0;display:flex;padding:10px"><div data-hero-card="1" style="flex:1;min-width:0;display:flex;flex-wrap:wrap;border-radius:22px;overflow:hidden;box-shadow:0 18px 40px -24px rgba(22,19,58,0.5)">
             <div data-hero-text="1" style="flex:1 1 250px;min-width:0;min-height:300px;padding:clamp(20px,3vw,30px);background:linear-gradient(150deg,#16133A,#3B2C9E);color:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:20px;position:relative;overflow:hidden">
@@ -263,7 +266,7 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
                 <button onClick="{{ heroGo2 }}" style="white-space:nowrap;height:46px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.95);color:#2A1F7A;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px">View profile<avm-i n="arrow-right" s="16"></avm-i></button>
               </div>
             </div>
-            <div data-hero-img="1" style="flex:1 1 220px;min-height:220px;position:relative;overflow:hidden;background:#ECEAF6"><image-slot id="hero-vitamins" shape="rect" placeholder="Profile creative — vitamins"></image-slot></div></div>
+            <div data-hero-img="1" style="flex:1 1 220px;min-height:220px;position:relative;overflow:hidden;background:#ECEAF6"><image-slot id="hero-vitamins" src="https://images.unsplash.com/photo-1707129785947-ddc627a8bab9?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" credit="Photo by Madara on Unsplash" credit-href="https://unsplash.com/@madara_p" shape="rect" placeholder="Profile creative — vitamins"></image-slot></div></div>
           </div>
           <div style="flex:0 0 100%;min-width:0;display:flex;padding:10px"><div data-hero-card="1" style="flex:1;min-width:0;display:flex;flex-wrap:wrap;border-radius:22px;overflow:hidden;box-shadow:0 18px 40px -24px rgba(22,19,58,0.5)">
             <div data-hero-text="1" style="flex:1 1 250px;min-width:0;min-height:300px;padding:clamp(20px,3vw,30px);background:linear-gradient(150deg,#B3161D,#E0222A);color:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:20px;position:relative;overflow:hidden">
@@ -278,7 +281,7 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
                 
               </div>
             </div>
-            <div data-hero-img="1" style="flex:1 1 220px;min-height:220px;position:relative;overflow:hidden;background:#ECEAF6"><image-slot id="hero-centre" shape="rect" placeholder="Home collection photo"></image-slot></div></div>
+            <div data-hero-img="1" style="flex:1 1 220px;min-height:220px;position:relative;overflow:hidden;background:#ECEAF6"><image-slot id="hero-centre" src="https://images.unsplash.com/photo-1615461066159-fea0960485d5?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" credit="Photo by Nguyễn Hiệp on Unsplash" credit-href="https://unsplash.com/@hieptltb97" shape="rect" placeholder="Home collection photo"></image-slot></div></div>
           </div>
         </div>
         <div data-hero-nav="1" style="display:flex;justify-content:center;align-items:center;gap:12px;padding:4px 0 12px">
@@ -307,7 +310,7 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
   <div style="position:relative"><div data-tile-row="1" style="display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 2px 12px">
     <sc-for list="{{ reelTiles }}" as="p" hint-placeholder-count="6">
       <button onClick="{{ p.open }}" style="flex:0 0 clamp(150px,17vw,196px);aspect-ratio:9/16;border-radius:22px;border:none;cursor:pointer;position:relative;overflow:hidden;background:{{ p.bg }};color:#fff;text-align:left;padding:14px;display:flex;flex-direction:column;justify-content:space-between;scroll-snap-align:start;box-shadow:0 20px 40px -26px rgba(22,19,58,0.7);transition:transform .25s" style-hover="transform:translateY(-3px)">
-        <span style="position:absolute;inset:0;pointer-events:none"><image-slot id="{{ p.slotId }}" shape="rect" placeholder="" style="display:block;width:100%;height:100%"></image-slot></span>
+        <span style="position:absolute;inset:0;pointer-events:none"><image-slot id="{{ p.slotId }}" src="{{ p.photoSrc }}" credit="{{ p.photoCredit }}" credit-href="{{ p.photoHref }}" shape="rect" placeholder="" style="display:block;width:100%;height:100%"></image-slot></span>
         <span style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(14,11,43,0.35) 0%,rgba(14,11,43,0.05) 30%,rgba(14,11,43,0.55) 60%,rgba(14,11,43,0.92) 100%)"></span>
         <span style="position:absolute;right:-14px;top:30%;font-size:130px;font-weight:800;letter-spacing:-0.06em;color:rgba(255,255,255,0.08);line-height:1;pointer-events:none">{{ p.sym }}</span>
         <span style="display:flex;justify-content:space-between;align-items:center;position:relative"><span style="white-space:nowrap;height:24px;padding:0 10px;border-radius:999px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.22);display:inline-flex;align-items:center;font-size:11px;font-weight:700">{{ p.tag }}</span><span style="width:28px;height:28px;border-radius:999px;background:rgba(255,255,255,0.18);display:grid;place-items:center"><avm-i n="play" s="12"></avm-i></span></span>
@@ -329,19 +332,19 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
   </div>
   <div style="display:{{ rowDisplay }};grid-template-columns:repeat(auto-fill,minmax(min(100%,max(300px,calc((100% - 32px) / 3))),1fr));gap:16px;overflow-x:{{ rowOverflow }};scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 2px 10px">
     <sc-for list="{{ popular }}" as="t" hint-placeholder-count="4">
-      <div onClick="{{ t.open }}" style="cursor:pointer;flex:0 0 min(82%,320px);scroll-snap-align:start;background:{{ t.cardBg }};border:1px solid #ECEBF3;border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:18px;box-shadow:none;transition:box-shadow .25s,transform .25s,border-color .25s" style-hover="box-shadow:0 18px 40px -22px rgba(42,31,122,0.35);transform:translateY(-2px);border-color:#DAD5F7">
+      <div onClick="{{ t.open }}" style="cursor:pointer;flex:0 0 min(82%,320px);scroll-snap-align:start;background:{{ t.cardBg }};border:1px solid rgba(59,44,158,0.16);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 3px rgba(22,19,58,0.07),0 12px 28px -16px rgba(42,31,122,0.32);transition:box-shadow .25s,transform .25s,border-color .25s" style-hover="box-shadow:0 2px 4px rgba(22,19,58,0.04),0 24px 46px -24px rgba(59,44,158,0.5);transform:translateY(-3px);border-color:rgba(59,44,158,0.22)">
         <h3 style="margin:0;font-size:18px;font-weight:700;line-height:1.3;letter-spacing:-0.015em;color:#16133A;text-wrap:pretty;min-height:2.6em;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ t.name }}</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:auto">
-          <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="test-tubes" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Includes</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.paramsCap }}</span></span></div>
-          <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="clock-3" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Reports in</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.tatH }}</span></span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#F3F1FE 0%,#E5E0FA 100%);box-shadow:inset 0 1px 0 #fff,0 4px 10px -6px rgba(59,44,158,0.35);color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="test-tubes" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Includes</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.paramsCap }}</span></span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#F3F1FE 0%,#E5E0FA 100%);box-shadow:inset 0 1px 0 #fff,0 4px 10px -6px rgba(59,44,158,0.35);color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="clock-3" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Reports in</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.tatH }}</span></span></div>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 18px;border-radius:20px;background:#F6F5FB">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 18px;border-radius:20px;background:linear-gradient(135deg,#F7F5FF 0%,#EEEBFC 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9)">
           <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
             <span style="display:flex;align-items:center;gap:8px;white-space:nowrap"><span style="font-size:13px;color:#6E6A8A;text-decoration:line-through">{{ t.mrpF }}</span><span style="font-size:12px;font-weight:800;color:#0E7350;background:#D8F1E4;padding:3px 9px;border-radius:999px">{{ t.offCap }}</span></span>
             <span style="white-space:nowrap;font-size:21px;font-weight:800;letter-spacing:-0.02em;color:#16133A;line-height:1">{{ t.priceF }}</span>
           </div>
-          <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
-          <sc-if value="{{ t.inCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 22px;border-radius:999px;border:1.5px solid #3B2C9E;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer"><avm-i n="check" s="17"></avm-i>Added</button></sc-if>
+          <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 14px -10px rgba(59,44,158,0.7);transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
+          <sc-if value="{{ t.inCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 22px;border-radius:999px;border:1.5px solid #3B2C9E;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 18px -10px rgba(59,44,158,0.85)"><avm-i n="check" s="17"></avm-i>Added</button></sc-if>
         </div>
       </div>
     </sc-for>
@@ -357,10 +360,10 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
         <h2 style="margin:0;font-size:clamp(22px,2.6vw,30px);font-weight:800;letter-spacing:-0.03em;line-height:1.12;text-wrap:balance">Step into an AVM Labs centre</h2>
         <p style="margin:0;font-size:14.5px;line-height:1.55;color:#5D5A7A;max-width:400px;text-wrap:pretty">Clean, calm collection rooms and trained staff — wherever you are.</p>
       </div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="position:relative;height:60px;border-radius:18px;border:1px solid #D9D5F0;background:#EFEDFB;overflow:hidden">
+      <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px;justify-self:end;margin-left:auto">
+        <div style="position:relative;height:48px;border-radius:999px;border:1px solid rgba(59,44,158,0.14);background:linear-gradient(180deg,#FFFFFF 0%,#F6F4FE 100%);box-shadow:0 10px 24px -16px rgba(42,31,122,0.45),inset 0 1px 0 #fff;overflow:hidden">
           <div style="display:flex;flex-direction:column;transform:{{ centreY }};transition:transform .6s cubic-bezier(.65,0,.25,1)">
-            <sc-for list="{{ centreRows }}" as="c" hint-placeholder-count="4"><div style="height:60px;flex:none;display:flex;align-items:center;gap:12px;padding:0 14px"><span style="width:44px;height:32px;border-radius:10px;background:#3B2C9E;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800;flex:none">{{ c.code }}</span><span style="flex:1;min-width:0;font-size:17px;font-weight:800;letter-spacing:-0.01em;color:#16133A;white-space:nowrap">{{ c.name }}</span><span style="display:flex;color:#3B2C9E"><avm-i n="map-pin" s="18"></avm-i></span></div></sc-for>
+            <sc-for list="{{ centreRows }}" as="c" hint-placeholder-count="4"><div style="height:46px;flex:none;display:flex;align-items:center;gap:10px;padding:0 6px 0 7px"><span style="width:38px;height:30px;border-radius:999px;background:linear-gradient(135deg,#4B3CC4,#2A1F7A);box-shadow:0 4px 10px -4px rgba(59,44,158,0.6);color:#fff;display:grid;place-items:center;font-size:10.5px;font-weight:800;flex:none">{{ c.code }}</span><span style="flex:1;min-width:0;font-size:14.5px;font-weight:800;letter-spacing:-0.01em;color:#16133A;white-space:nowrap">{{ c.name }}</span><span style="width:32px;height:32px;border-radius:999px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="map-pin" s="15"></avm-i></span></div></sc-for>
           </div>
         </div>
         <div style="display:flex;justify-content:center;gap:6px"><sc-for list="{{ centreRows }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.go }}" aria-label="{{ c.name }}" style="border:none;padding:4px 2px;background:none;cursor:pointer;display:grid;place-items:center"><span style="display:block;height:6px;width:{{ c.dotW }};border-radius:999px;background:{{ c.dotBg }};transition:width .3s,background .3s"></span></button></sc-for></div>
@@ -369,7 +372,7 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
     
   <div style="grid-column:1/-1;padding:0 0 clamp(18px,2.5vw,24px);overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)">
       <div style="display:flex;gap:14px;width:max-content;animation:avmMarquee 80s linear infinite;will-change:transform" style-hover="animation-play-state:paused">
-        <sc-for list="{{ centreShots }}" as="c" hint-placeholder-count="12"><div style="flex:none;width:clamp(140px,14vw,170px);aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:#F1F0F8"><image-slot id="{{ c.id }}" shape="rect" placeholder="{{ c.ph }}" style="display:block;width:100%;height:100%"></image-slot></div></sc-for>
+        <sc-for list="{{ centreShots }}" as="c" hint-placeholder-count="10"><div data-centre-tile="1" style="flex:none;width:clamp(180px,19vw,230px);aspect-ratio:3/4;border-radius:20px;overflow:hidden;background:linear-gradient(160deg,#F4F2FC 0%,#E9E6F7 100%);border:1px solid rgba(59,44,158,0.08)"><image-slot id="{{ c.id }}" src="{{ c.photoSrc }}" credit="{{ c.photoCredit }}" credit-href="{{ c.photoHref }}" shape="rect" placeholder="{{ c.ph }}" style="display:block;width:100%;height:100%"></image-slot></div></sc-for>
       </div>
     </div>
   </div>
@@ -394,19 +397,19 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
     <div style="flex:1 1 520px;min-width:0">
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,max(300px,calc((100% - 32px) / 3))),1fr));gap:16px">
         <sc-for list="{{ testsView }}" as="t" hint-placeholder-count="6">
-      <div onClick="{{ t.open }}" style="cursor:pointer;background:{{ t.cardBg }};border:1px solid #ECEBF3;border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:18px;box-shadow:none;transition:box-shadow .25s,transform .25s,border-color .25s" style-hover="box-shadow:0 18px 40px -22px rgba(42,31,122,0.35);transform:translateY(-2px);border-color:#DAD5F7">
+      <div onClick="{{ t.open }}" style="cursor:pointer;background:{{ t.cardBg }};border:1px solid rgba(59,44,158,0.16);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 3px rgba(22,19,58,0.07),0 12px 28px -16px rgba(42,31,122,0.32);transition:box-shadow .25s,transform .25s,border-color .25s" style-hover="box-shadow:0 2px 4px rgba(22,19,58,0.04),0 24px 46px -24px rgba(59,44,158,0.5);transform:translateY(-3px);border-color:rgba(59,44,158,0.22)">
         <h3 style="margin:0;font-size:18px;font-weight:700;line-height:1.3;letter-spacing:-0.015em;color:#16133A;text-wrap:pretty;min-height:2.6em;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ t.name }}</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:auto">
-          <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="test-tubes" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Includes</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.paramsCap }}</span></span></div>
-          <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="clock-3" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Reports in</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.tatH }}</span></span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#F3F1FE 0%,#E5E0FA 100%);box-shadow:inset 0 1px 0 #fff,0 4px 10px -6px rgba(59,44,158,0.35);color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="test-tubes" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Includes</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.paramsCap }}</span></span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#F3F1FE 0%,#E5E0FA 100%);box-shadow:inset 0 1px 0 #fff,0 4px 10px -6px rgba(59,44,158,0.35);color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="clock-3" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Reports in</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.tatH }}</span></span></div>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 18px;border-radius:20px;background:#F6F5FB">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 18px;border-radius:20px;background:linear-gradient(135deg,#F7F5FF 0%,#EEEBFC 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9)">
           <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
             <span style="display:flex;align-items:center;gap:8px;white-space:nowrap"><span style="font-size:13px;color:#6E6A8A;text-decoration:line-through">{{ t.mrpF }}</span><span style="font-size:12px;font-weight:800;color:#0E7350;background:#D8F1E4;padding:3px 9px;border-radius:999px">{{ t.offCap }}</span></span>
             <span style="white-space:nowrap;font-size:21px;font-weight:800;letter-spacing:-0.02em;color:#16133A;line-height:1">{{ t.priceF }}</span>
           </div>
-          <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
-          <sc-if value="{{ t.inCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 22px;border-radius:999px;border:1.5px solid #3B2C9E;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer"><avm-i n="check" s="17"></avm-i>Added</button></sc-if>
+          <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 14px -10px rgba(59,44,158,0.7);transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
+          <sc-if value="{{ t.inCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 22px;border-radius:999px;border:1.5px solid #3B2C9E;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 18px -10px rgba(59,44,158,0.85)"><avm-i n="check" s="17"></avm-i>Added</button></sc-if>
         </div>
       </div>
     </sc-for>
@@ -453,7 +456,7 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
     <sc-for list="{{ profilesView }}" as="p" hint-placeholder-count="6">
       <div style="background:#fff;border:1px solid #ECEBF3;border-radius:26px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .25s,transform .25s" style-hover="box-shadow:0 24px 50px -28px rgba(42,31,122,0.4);transform:translateY(-2px)">
         <div style="position:relative;padding:20px 20px 18px;background:{{ p.soft }};overflow:hidden;display:flex;flex-direction:column;gap:10px">
-          <div style="position:absolute;top:0;right:0;bottom:0;width:62%;z-index:0;-webkit-mask-image:linear-gradient(to left,#000 35%,transparent 100%);mask-image:linear-gradient(to left,#000 35%,transparent 100%)"><image-slot id="{{ p.slotId }}" shape="rect" placeholder="Drop profile image" style="display:block;width:100%;height:100%"></image-slot></div>
+          <div style="position:absolute;top:0;right:0;bottom:0;width:62%;z-index:0;-webkit-mask-image:linear-gradient(to left,#000 35%,transparent 100%);mask-image:linear-gradient(to left,#000 35%,transparent 100%)"><image-slot id="{{ p.slotId }}" src="{{ p.photoSrc }}" credit="{{ p.photoCredit }}" credit-href="{{ p.photoHref }}" shape="rect" placeholder="Drop profile image" style="display:block;width:100%;height:100%"></image-slot></div>
           <div style="position:absolute;inset:0;z-index:1;pointer-events:none;background:{{ p.veil }}"></div>
           <span style="position:absolute;right:-12px;top:-28px;z-index:1;font-size:150px;font-weight:800;letter-spacing:-0.06em;color:{{ p.symColor }};line-height:1;pointer-events:none;mix-blend-mode:multiply">{{ p.sym }}</span>
           <span style="white-space:nowrap;align-self:flex-start;height:26px;padding:0 11px;border-radius:999px;background:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.95);display:inline-flex;align-items:center;font-size:12px;font-weight:700;color:{{ p.ink }};position:relative;z-index:2">{{ p.tag }}</span>
@@ -633,7 +636,7 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
     <div style="background:#fff;border:1px solid #ECEBF3;border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:10px"><span style="width:52px;height:52px;border-radius:16px;background:#FDECEC;color:#C81E25;display:grid;place-items:center;font-size:18px;font-weight:800">Wl</span><span style="font-size:18px;font-weight:800">Wellness</span><span style="font-size:14px;line-height:1.55;color:#5D5A7A">Preventive profiles that give you a yearly baseline of your health.</span></div>
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:16px">
-    <div style="flex:1 1 360px;min-height:300px;position:relative;border-radius:26px;overflow:hidden"><image-slot id="about-lab" shape="rect" placeholder="Lab / team photo"></image-slot></div>
+    <div style="flex:1 1 360px;min-height:300px;position:relative;border-radius:26px;overflow:hidden"><image-slot id="about-lab" src="https://images.unsplash.com/photo-1581093577421-f561a654a353?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" credit="Photo by ThisisEngineering on Unsplash" credit-href="https://unsplash.com/@thisisengineering" shape="rect" placeholder="Lab / team photo"></image-slot></div>
     <div style="flex:1 1 300px;background:#16133A;color:#fff;border-radius:26px;padding:24px;display:flex;flex-direction:column;gap:14px">
       <span style="font-size:20px;font-weight:800">Visit or reach us</span>
       <span style="display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.5;color:#D6D3EE"><avm-i n="map-pin" s="18"></avm-i>[Centre address, area, city]</span>
@@ -757,7 +760,7 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
         <sc-for list="{{ reels }}" as="r" hint-placeholder-count="1">
           <div data-reel="1" style="height:100%;scroll-snap-align:start;scroll-snap-stop:always;display:flex;position:relative;overflow:hidden;background:{{ r.bg }}">
             <span style="position:absolute;left:30%;bottom:-80px;font-size:420px;font-weight:800;letter-spacing:-0.06em;color:rgba(59,44,158,0.06);line-height:1;pointer-events:none">{{ r.sym }}</span>
-            <div style="position:absolute;left:0;bottom:0;width:46%;height:52%;pointer-events:none;-webkit-mask-image:linear-gradient(0deg,#000 50%,transparent 100%),linear-gradient(90deg,#000 80%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(0deg,#000 50%,transparent 100%),linear-gradient(90deg,#000 80%,transparent 100%);mask-composite:intersect"><image-slot id="{{ r.slotId }}" shape="rect" placeholder="" style="display:block;width:100%;height:100%"></image-slot></div>
+            <div style="position:absolute;left:0;bottom:0;width:46%;height:52%;pointer-events:none;-webkit-mask-image:linear-gradient(0deg,#000 50%,transparent 100%),linear-gradient(90deg,#000 80%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(0deg,#000 50%,transparent 100%),linear-gradient(90deg,#000 80%,transparent 100%);mask-composite:intersect"><image-slot id="{{ r.slotId }}" src="{{ r.photoSrc }}" credit="{{ r.photoCredit }}" credit-href="{{ r.photoHref }}" shape="rect" placeholder="" style="display:block;width:100%;height:100%"></image-slot></div>
             <div style="flex:1 1 46%;min-width:0;min-height:0;padding:clamp(22px,3.4vh,44px) clamp(26px,3vw,44px);display:flex;flex-direction:column;gap:clamp(10px,1.8vh,18px);position:relative;overflow:hidden">
               <div style="flex:1 1 auto;min-height:0;overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:clamp(10px,1.8vh,18px)">
               <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -828,7 +831,7 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
       <sc-for list="{{ reels }}" as="r" hint-placeholder-count="1">
         <div data-reel="1" style="height:100%;scroll-snap-align:start;scroll-snap-stop:always;position:relative;overflow:hidden;contain:paint;background:{{ r.bg }}">
           <span style="position:absolute;right:-30px;top:18%;font-size:300px;font-weight:800;letter-spacing:-0.06em;color:rgba(59,44,158,0.06);line-height:1;pointer-events:none">{{ r.sym }}</span>
-          <div data-rimg="1" style="position:absolute;left:0;right:0;top:0;height:62%;pointer-events:none;opacity:1;will-change:opacity;-webkit-mask-image:linear-gradient(180deg,#000 45%,transparent 100%);mask-image:linear-gradient(180deg,#000 45%,transparent 100%)"><image-slot id="{{ r.slotId }}" shape="rect" placeholder="" style="display:block;width:100%;height:100%"></image-slot></div>
+          <div data-rimg="1" style="position:absolute;left:0;right:0;top:0;height:62%;pointer-events:none;opacity:1;will-change:opacity;-webkit-mask-image:linear-gradient(180deg,#000 45%,transparent 100%);mask-image:linear-gradient(180deg,#000 45%,transparent 100%)"><image-slot id="{{ r.slotId }}" src="{{ r.photoSrc }}" credit="{{ r.photoCredit }}" credit-href="{{ r.photoHref }}" shape="rect" placeholder="" style="display:block;width:100%;height:100%"></image-slot></div>
           <div data-rveil="1" style="position:absolute;inset:0;pointer-events:none;background:rgba(255,255,255,0.82);opacity:0;will-change:opacity"></div>
           <div style="position:absolute;top:0;left:0;right:0;z-index:4;padding:calc(12px + env(safe-area-inset-top)) 14px 0;display:flex;flex-direction:column;gap:10px;pointer-events:none">
             <div style="display:flex;justify-content:center;gap:6px;pointer-events:auto"><sc-for list="{{ r.segs }}" as="g" hint-placeholder-count="3"><button onClick="{{ g.go }}" aria-label="Go to slide" style="border:none;padding:6px 2px;background:none;cursor:pointer;display:grid;place-items:center"><span style="display:block;height:7px;width:{{ g.w }};border-radius:999px;background:{{ g.bg }};transition:width .3s,background .3s"></span></button></sc-for></div>
@@ -973,6 +976,25 @@ class Component extends DCLogic {
   static PICON = { essential: 'shield-plus', vitamin: 'pill', thyroid: 'zap', women: 'flower-2', pcos: 'venus-and-mars', men: 'biceps-flexed', diabetes: 'syringe', fullbody: 'activity' };
   static POPULAR = ['vitd', 'thyroid', 'hba1c', 'cbc', 'b12', 'lipid', 'testo', 'amh'];
   static TYPE_TERMS = { tests: ['Vitamin D', 'thyroid', 'HbA1c', 'iron studies', 'lipid profile'], profiles: ["women's health", 'PCOS', "men's health", 'vitamin check'] };
+  // Unsplash photos for image slots: [photo id, photographer, Unsplash username]. Unsplash requires the credit.
+  static PHOTOS = {
+    'profile-bg-thyroid': ['1544005313-94ddf0286df2', 'Štefan Štefančík', 'cikstefan'],
+    'profile-bg-women': ['1562337404-3044c84ac061', 'Kate Kozyrka', 'kozyrka_kate'],
+    'profile-bg-pcos': ['1506126613408-eca07ce68773', 'Jared Rice', 'jareddrice'],
+    'profile-bg-men': ['1568602471122-7832951cc4c5', 'Christian Buehner', 'christianbuehner'],
+    'profile-bg-diabetes': ['1683727186226-910f31a9da45', 'Sweet Life', 'sweetlifediabetes'],
+    'profile-bg-fullbody': ['1512621776951-a57141f2eefd', 'Anna Pelzer', 'annapelzer'],
+    'centre-photo-1': ['1519494026892-80bbd2d6fd0d', 'Martha Dominguez de Gouveia', 'm_dominguez_marketing'],
+    'centre-photo-2': ['1762625570087-6d98fca29531', 'Amy Vosters', 'amyvosters'],
+    'centre-photo-3': ['1614935151651-0bea6508db6b', 'Julia Koblitz', 'jkoblitz'],
+    'centre-photo-4': ['1704455306925-1401c3012117', 'Kari Bjorn Photography', 'karibjorn'],
+    'centre-photo-5': ['1758685848543-5c8ba81bc822', 'Vitaly Gariev', 'silverkblack'],
+    'centre-photo-6': ['1639772823849-6efbd173043c', 'Akram Huseyn', 'akramhuseyn'],
+    'centre-photo-7': ['1758691462863-9e1b8a863140', 'Vitaly Gariev', 'silverkblack'],
+    'centre-photo-8': ['1602052577122-f73b9710adba', 'Trnava University', 'trnavskauni'],
+    'centre-photo-9': ['1777269749032-d8d458ae594d', 'Tasha Kostyuk', 'tashakostyuk'],
+    'centre-photo-10': ['1576091160550-2173dba999ef', 'National Cancer Institute', 'nci'],
+  };
   static SLOTS = [['6–8 AM', 6], ['8–10 AM', 8], ['10–12 PM', 10], ['12–2 PM', 12], ['4–6 PM', 16], ['6–8 PM', 18]];
   static PF = [['all', 'All'], ['wellness', 'Wellness'], ['vitamins', 'Vitamins'], ['thyroid', 'Thyroid'], ['women', 'Women'], ['men', 'Men'], ['diabetes', 'Diabetes']];
 
@@ -1053,6 +1075,11 @@ class Component extends DCLogic {
         this.setState({ region, geo: 'ok', pin: '', pinInput: code === 'IN' && /^\d{6}$/.test(post) ? post : '', pinMsg: '' });
       } else this.setState({ geo: 'outside', geoCountry: country || 'your country' });
     }, err => this.setState({ geo: err && err.code === 1 ? 'denied' : 'error' }), { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
+  }
+  photo(slot) {
+    const p = Component.PHOTOS[slot];
+    if (!p) return { photoSrc: '', photoCredit: '', photoHref: '' };
+    return { photoSrc: 'https://images.unsplash.com/photo-' + p[0] + '?auto=format&fit=crop&w=800&q=80', photoCredit: 'Photo by ' + p[1] + ' on Unsplash', photoHref: 'https://unsplash.com/@' + p[2] };
   }
   wa(msg) { return 'https://wa.me/' + this.opts().wa + '?text=' + encodeURIComponent(msg); }
   openWA(msg) { window.open(this.wa(msg), '_blank', 'noopener'); }
@@ -1372,7 +1399,7 @@ class Component extends DCLogic {
     const testVM = t => {
       const ps = D.inProf[t.id] || [], inC = has('test', t.id);
       const pc = C.CATS.find(c => c.id === t.cat[0]) || C.CATS[0];
-      return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, tatF: t.tat + ' report', tatH: t.tat.replace('hrs', 'hours').replace('hr', 'hour'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), offCap: off(t.mrp, t.price).replace('off', 'Off'), cardBg: 'radial-gradient(70% 90% at 100% 0%, #EFEDFB 0%, rgba(239,237,251,0) 72%), #fff', paramsF: t.params + (t.params > 1 ? ' parameters' : ' parameter'), tat: t.tat, fasting: t.fasting,
+      return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, tatF: t.tat + ' report', tatH: t.tat.replace('hrs', 'hours').replace('hr', 'hour'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), offCap: off(t.mrp, t.price).replace('off', 'Off'), cardBg: 'radial-gradient(75% 70% at 100% 0%, #F0EDFE 0%, rgba(240,237,254,0) 65%), radial-gradient(55% 50% at 0% 100%, rgba(255,236,240,0.55) 0%, rgba(255,236,240,0) 70%), #FFFFFF', paramsF: t.params + (t.params > 1 ? ' parameters' : ' parameter'), tat: t.tat, fasting: t.fasting,
         hasProf: ps.length > 0, profLabel: 'In ' + ps.length + (ps.length > 1 ? ' profiles' : ' profile'), openProf: e => { e.stopPropagation(); ps.length && this.openReels(ps[0].i); }, open: () => this.openTest(t.id),
         mrpF: inr(t.mrp), off: off(t.mrp, t.price), priceF: inr(t.price), inCart: inC, notInCart: !inC, toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); } };
     };
@@ -1438,7 +1465,7 @@ class Component extends DCLogic {
     const stH = Math.round(Math.min(s.h * 0.9, 860));
     const reels = s.reelsOpen ? D.P.map(p => {
       const sl = s.slides[p.i] || 0, inC = has('profile', p.id);
-      return { sym: p.sym, slotId: 'profile-bg-' + p.id,   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, testsN: p.tests.length, ideal: p.ideal, benefits: p.benefits, tat: p.tat,
+      return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, testsN: p.tests.length, ideal: p.ideal, benefits: p.benefits, tat: p.tat,
         fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })),
         mrpF: inr(p.mrp), priceF: inr(p.price), off: off(p.mrp, p.price), pos: (p.i + 1) + ' / ' + n, slideLabel: ['Overview', 'Tests included', 'Good to know'][sl],
         segs: [0, 1, 2].map(k => ({ w: k === sl ? '22px' : '7px', bg: k === sl ? '#3B2C9E' : '#D4D1E6', go: () => this.goSlide(p.i, k) })), onH: e => this.onH(p.i, e), toTests: () => this.goSlide(p.i, 1),
@@ -1464,11 +1491,10 @@ class Component extends DCLogic {
       postPh: RG.postPh, addrPh: 'House / flat no., street, landmark, ' + RG.postLabel.toLowerCase(), postLabelLc: RG.postLabel.toLowerCase(), regionPlace: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name, regionAddr: (this.props || {})[RG.addrProp] || RG.addrDef, relocate: () => this.locate(),
       ...(() => {
         const regs = Object.values(C.REGIONS), k = (s.tick || 0) % regs.length;
-        const rows = regs.map((r, i) => { const on = i === k; return { dotW: on ? '20px' : '6px', dotBg: on ? '#3B2C9E' : '#D4D1E6', name: r.name, code: r.code === 'SA' ? 'KSA' : r.code, bg: on ? '#EFEDFB' : '#fff', bd: on ? '#D9D5F0' : '#ECEBF3', chip: on ? '#3B2C9E' : '#F1F0F8', chipInk: on ? '#fff' : '#5D5A7A', arrow: on ? '#3B2C9E' : '#C9C6E0', go: () => this.setState({ tick: i }) }; });
-        const ph = ['Centre front', 'Collection room', 'Team'], all = [];
-        regs.forEach(r => ph.forEach((p, i) => all.push({ id: 'centre-' + r.code.toLowerCase() + '-' + (i + 1), ph: r.name + ' · ' + p })));
-        const A = all.filter((_, i) => i % 2 === 0), B = all.filter((_, i) => i % 2 === 1);
-        return { centreRows: rows, centreY: 'translateY(' + (-k * 60) + 'px)', centreCount: regs.length, centreShots: all.concat(all) };
+        const rows = regs.map((r, i) => { const on = i === k; return { dotW: on ? '20px' : '6px', dotBg: on ? '#3B2C9E' : '#D4D1E6', name: r.name, code: r.code === 'SA' ? 'KSA' : r.code, go: () => this.setState({ tick: i }) }; });
+        // 10 centre photo slots; the list is doubled so the marquee loops seamlessly.
+        const all = Array.from({ length: 10 }, (_, i) => ({ id: 'centre-photo-' + (i + 1), ...this.photo('centre-photo-' + (i + 1)), ph: 'Centre photo ' + (i + 1) }));
+        return { centreRows: rows, centreY: 'translateY(' + (-k * 46) + 'px)', centreCount: regs.length, centreShots: all.concat(all) };
       })(),
       hero1Mrp: inr(D.P[3].mrp), hero1Price: inr(D.P[3].price), hero2Mrp: inr(D.P[1].mrp), hero2Price: inr(D.P[1].price),
       ...gateVM,
@@ -1500,9 +1526,9 @@ class Component extends DCLogic {
         ? D.P.map(p => ({ label: p.name, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, go: () => this.openReels(p.i) }))
         : cats.map(c => ({ label: c.label, icon: c.icon, soft: c.soft, ink: c.ink, go: c.go })),
       // Lift the hero "Explore profiles" bar so it centres on the category circles beside it (labels sit below them).
-      exploreMb: isDesktop ? '41px' : '0px',
+      exploreMb: isDesktop ? '43px' : '0px',
       rowDisplay: isDesktop ? 'grid' : 'flex', rowOverflow: isDesktop ? 'visible' : 'auto',
-      reelTiles: D.P.map(p => ({ slotId: 'profile-bg-' + p.id, name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: inr(p.price), mrpF: inr(p.mrp), bg: reelBg(p.hue), open: () => this.openReels(p.i) })),
+      reelTiles: D.P.map(p => ({ slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: inr(p.price), mrpF: inr(p.mrp), bg: reelBg(p.hue), open: () => this.openReels(p.i) })),
       popular: C.POPULAR.map(id => testVM(D.T[id])),
       catTitle: s.cat === 'all' ? 'All lab tests' : (C.CATS.find(c => c.id === s.cat) || {}).label + ' tests',
       testsCountLabel: tList.length + (tList.length === 1 ? ' test' : ' tests'),
@@ -1515,7 +1541,7 @@ class Component extends DCLogic {
       profilesView: D.P.filter(p => s.pf === 'all' || p.tags.includes(s.pf)).map(p => {
         const inC = has('profile', p.id);
         return { name: p.name, tag: p.tag, sym: p.sym, tagline: p.tagline, testsN: p.tests.length, params: p.params, fastLabel: p.fasting ? 'Fasting needed' : 'No fasting',
-          soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, symColor: `oklch(0.45 0.16 ${p.hue} / 0.14)`, slotId: 'profile-bg-' + p.id, veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.96) 0%, oklch(0.95 0.035 ${p.hue} / 0.75) 40%, oklch(0.95 0.035 ${p.hue} / 0) 75%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
+          soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, symColor: `oklch(0.45 0.16 ${p.hue} / 0.14)`, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.96) 0%, oklch(0.95 0.035 ${p.hue} / 0.75) 40%, oklch(0.95 0.035 ${p.hue} / 0) 75%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
           preview: p.ts.slice(0, 4).map(t => t.short), hasMore: p.ts.length > 4, moreLabel: '+' + (p.ts.length - 4) + ' more',
           mrpF: inr(p.mrp), off: off(p.mrp, p.price), priceF: inr(p.price), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i), book: book(p) };
       }),

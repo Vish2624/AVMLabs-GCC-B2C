@@ -27,7 +27,7 @@
     const testVM = t => {
       const ps = D.inProf[t.id] || [], inC = has('test', t.id);
       const pc = C.CATS.find(c => c.id === t.cat[0]) || C.CATS[0];
-      return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, tatF: t.tat + ' report', tatH: t.tat.replace('hrs', 'hours').replace('hr', 'hour'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), offCap: off(t.mrp, t.price).replace('off', 'Off'), cardBg: 'radial-gradient(70% 90% at 100% 0%, #EFEDFB 0%, rgba(239,237,251,0) 72%), #fff', paramsF: t.params + (t.params > 1 ? ' parameters' : ' parameter'), tat: t.tat, fasting: t.fasting,
+      return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, tatF: t.tat + ' report', tatH: t.tat.replace('hrs', 'hours').replace('hr', 'hour'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), offCap: off(t.mrp, t.price).replace('off', 'Off'), cardBg: 'radial-gradient(75% 70% at 100% 0%, #F0EDFE 0%, rgba(240,237,254,0) 65%), radial-gradient(55% 50% at 0% 100%, rgba(255,236,240,0.55) 0%, rgba(255,236,240,0) 70%), #FFFFFF', paramsF: t.params + (t.params > 1 ? ' parameters' : ' parameter'), tat: t.tat, fasting: t.fasting,
         hasProf: ps.length > 0, profLabel: 'In ' + ps.length + (ps.length > 1 ? ' profiles' : ' profile'), openProf: e => { e.stopPropagation(); ps.length && this.openReels(ps[0].i); }, open: () => this.openTest(t.id),
         mrpF: inr(t.mrp), off: off(t.mrp, t.price), priceF: inr(t.price), inCart: inC, notInCart: !inC, toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); } };
     };
@@ -93,7 +93,7 @@
     const stH = Math.round(Math.min(s.h * 0.9, 860));
     const reels = s.reelsOpen ? D.P.map(p => {
       const sl = s.slides[p.i] || 0, inC = has('profile', p.id);
-      return { sym: p.sym, slotId: 'profile-bg-' + p.id,   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, testsN: p.tests.length, ideal: p.ideal, benefits: p.benefits, tat: p.tat,
+      return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, testsN: p.tests.length, ideal: p.ideal, benefits: p.benefits, tat: p.tat,
         fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })),
         mrpF: inr(p.mrp), priceF: inr(p.price), off: off(p.mrp, p.price), pos: (p.i + 1) + ' / ' + n, slideLabel: ['Overview', 'Tests included', 'Good to know'][sl],
         segs: [0, 1, 2].map(k => ({ w: k === sl ? '22px' : '7px', bg: k === sl ? '#3B2C9E' : '#D4D1E6', go: () => this.goSlide(p.i, k) })), onH: e => this.onH(p.i, e), toTests: () => this.goSlide(p.i, 1),
@@ -119,11 +119,10 @@
       postPh: RG.postPh, addrPh: 'House / flat no., street, landmark, ' + RG.postLabel.toLowerCase(), postLabelLc: RG.postLabel.toLowerCase(), regionPlace: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name, regionAddr: (this.props || {})[RG.addrProp] || RG.addrDef, relocate: () => this.locate(),
       ...(() => {
         const regs = Object.values(C.REGIONS), k = (s.tick || 0) % regs.length;
-        const rows = regs.map((r, i) => { const on = i === k; return { dotW: on ? '20px' : '6px', dotBg: on ? '#3B2C9E' : '#D4D1E6', name: r.name, code: r.code === 'SA' ? 'KSA' : r.code, bg: on ? '#EFEDFB' : '#fff', bd: on ? '#D9D5F0' : '#ECEBF3', chip: on ? '#3B2C9E' : '#F1F0F8', chipInk: on ? '#fff' : '#5D5A7A', arrow: on ? '#3B2C9E' : '#C9C6E0', go: () => this.setState({ tick: i }) }; });
-        const ph = ['Centre front', 'Collection room', 'Team'], all = [];
-        regs.forEach(r => ph.forEach((p, i) => all.push({ id: 'centre-' + r.code.toLowerCase() + '-' + (i + 1), ph: r.name + ' · ' + p })));
-        const A = all.filter((_, i) => i % 2 === 0), B = all.filter((_, i) => i % 2 === 1);
-        return { centreRows: rows, centreY: 'translateY(' + (-k * 60) + 'px)', centreCount: regs.length, centreShots: all.concat(all) };
+        const rows = regs.map((r, i) => { const on = i === k; return { dotW: on ? '20px' : '6px', dotBg: on ? '#3B2C9E' : '#D4D1E6', name: r.name, code: r.code === 'SA' ? 'KSA' : r.code, go: () => this.setState({ tick: i }) }; });
+        // 10 centre photo slots; the list is doubled so the marquee loops seamlessly.
+        const all = Array.from({ length: 10 }, (_, i) => ({ id: 'centre-photo-' + (i + 1), ...this.photo('centre-photo-' + (i + 1)), ph: 'Centre photo ' + (i + 1) }));
+        return { centreRows: rows, centreY: 'translateY(' + (-k * 46) + 'px)', centreCount: regs.length, centreShots: all.concat(all) };
       })(),
       hero1Mrp: inr(D.P[3].mrp), hero1Price: inr(D.P[3].price), hero2Mrp: inr(D.P[1].mrp), hero2Price: inr(D.P[1].price),
       ...gateVM,
@@ -155,9 +154,9 @@
         ? D.P.map(p => ({ label: p.name, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, go: () => this.openReels(p.i) }))
         : cats.map(c => ({ label: c.label, icon: c.icon, soft: c.soft, ink: c.ink, go: c.go })),
       // Lift the hero "Explore profiles" bar so it centres on the category circles beside it (labels sit below them).
-      exploreMb: isDesktop ? '41px' : '0px',
+      exploreMb: isDesktop ? '43px' : '0px',
       rowDisplay: isDesktop ? 'grid' : 'flex', rowOverflow: isDesktop ? 'visible' : 'auto',
-      reelTiles: D.P.map(p => ({ slotId: 'profile-bg-' + p.id, name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: inr(p.price), mrpF: inr(p.mrp), bg: reelBg(p.hue), open: () => this.openReels(p.i) })),
+      reelTiles: D.P.map(p => ({ slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: inr(p.price), mrpF: inr(p.mrp), bg: reelBg(p.hue), open: () => this.openReels(p.i) })),
       popular: C.POPULAR.map(id => testVM(D.T[id])),
       catTitle: s.cat === 'all' ? 'All lab tests' : (C.CATS.find(c => c.id === s.cat) || {}).label + ' tests',
       testsCountLabel: tList.length + (tList.length === 1 ? ' test' : ' tests'),
@@ -170,7 +169,7 @@
       profilesView: D.P.filter(p => s.pf === 'all' || p.tags.includes(s.pf)).map(p => {
         const inC = has('profile', p.id);
         return { name: p.name, tag: p.tag, sym: p.sym, tagline: p.tagline, testsN: p.tests.length, params: p.params, fastLabel: p.fasting ? 'Fasting needed' : 'No fasting',
-          soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, symColor: `oklch(0.45 0.16 ${p.hue} / 0.14)`, slotId: 'profile-bg-' + p.id, veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.96) 0%, oklch(0.95 0.035 ${p.hue} / 0.75) 40%, oklch(0.95 0.035 ${p.hue} / 0) 75%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
+          soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, symColor: `oklch(0.45 0.16 ${p.hue} / 0.14)`, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.96) 0%, oklch(0.95 0.035 ${p.hue} / 0.75) 40%, oklch(0.95 0.035 ${p.hue} / 0) 75%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
           preview: p.ts.slice(0, 4).map(t => t.short), hasMore: p.ts.length > 4, moreLabel: '+' + (p.ts.length - 4) + ' more',
           mrpF: inr(p.mrp), off: off(p.mrp, p.price), priceF: inr(p.price), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i), book: book(p) };
       }),
