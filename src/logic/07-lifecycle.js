@@ -19,6 +19,12 @@
     this._tickT = setInterval(() => { if (!this.state.reelsOpen && this.state.page === 'home') this.setState(s => ({ tick: (s.tick || 0) + 1 })); }, 2200);
     this._heroT = setInterval(() => { if (this.state.page === 'home' && !this.state.reelsOpen) this.setState(s => ({ hero: (s.hero + 1) % 3 })); }, 6000);
     if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) this.typeLoop();
+    requestAnimationFrame(() => this.fillSlots());
+  }
+  // Templated image-slots get src/credit after they're created and can miss their first fill;
+  // re-setting credit makes them render the photo.
+  fillSlots() {
+    document.querySelectorAll('image-slot[src^="http"][credit]:not([data-filled]):not([data-attribution-error])').forEach(el => el.setAttribute('credit', el.getAttribute('credit')));
   }
   // Types search terms into the home search placeholder. Writes to the DOM directly so it never re-renders the page.
   typeLoop() {
@@ -35,6 +41,7 @@
     this._tyT = setTimeout(() => this.typeLoop(), wait);
   }
   componentDidUpdate() {
+    this.fillSlots();
     const open = !!this.state.reelsOpen;
     if (this._wasOpen !== open) {
       this._wasOpen = open;
