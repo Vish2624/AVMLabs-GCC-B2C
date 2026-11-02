@@ -54,6 +54,7 @@ changes within a minute (the public API is cached at Vercel's edge for 60 second
 
 1. Create a Supabase project. In its SQL Editor run `supabase/migrations/0001_profiles.sql`,
    then `supabase/seed.sql`.
-2. In Vercel → Project Settings → Environment Variables, add the four values listed in
-   `.env.example`, then redeploy.
+2. In Vercel → Project Settings → Environment Variables, add the values listed in
+   `.env.example` (SESSION_SECRET is optional), then redeploy. Connecting Supabase
+   through Vercel → Storage adds the two Supabase values automatically.
 3. For local development, copy `.env.example` to `.env` and fill it in.
