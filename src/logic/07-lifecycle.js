@@ -141,10 +141,12 @@
               };
               el.addEventListener('wheel', this._onWheel, { passive: false });
               const canScrollY = (t) => { while (t && t !== el) { if (t.scrollHeight > t.clientHeight + 2 && /(auto|scroll)/.test(getComputedStyle(t).overflowY)) return true; t = t.parentElement; } return false; };
-              this._ts = ev => { this.armHint(); if (ev.touches.length !== 1) { this._drag = null; return; } const p = ev.touches[0]; this._drag = { x: p.clientX, y: p.clientY, t: Date.now(), axis: null, skip: canScrollY(ev.target), dy: 0 }; };
+              this._ts = ev => { this.armHint(); if (ev.touches.length !== 1) { this._drag = null; return; } const p = ev.touches[0]; this._drag = { x: p.clientX, y: p.clientY, t: Date.now(), axis: null, skip: canScrollY(ev.target), dy: 0, moved: false, target: ev.target }; };
               this._tm = ev => {
-                const d = this._drag; if (!d || d.skip) return;
+                const d = this._drag; if (!d) return;
                 const p = ev.touches[0], dx = p.clientX - d.x, dy = p.clientY - d.y;
+                if (Math.abs(dx) > 6 || Math.abs(dy) > 6) d.moved = true; // not a tap (also inside scrolling lists)
+                if (d.skip) return;
                 if (!d.axis) { if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return; d.axis = Math.abs(dy) > Math.abs(dx) ? 'y' : 'x'; }
                 if (d.axis !== 'y') return;
                 ev.preventDefault();
@@ -154,7 +156,9 @@
                 this.applyTrack(i, false, -i * H + off);
               };
               this._te = () => {
-                const d = this._drag; this._drag = null; if (!d || d.axis !== 'y') return;
+                const d = this._drag; this._drag = null; if (!d) return;
+                if (!d.moved && Date.now() - d.t < 300) { this.reelTap(d, el); return; }
+                if (d.axis !== 'y') return;
                 const H = el.clientHeight, v = d.dy / Math.max(1, Date.now() - d.t);
                 const step = (d.dy < -H * 0.16 || v < -0.4) ? 1 : (d.dy > H * 0.16 || v > 0.4) ? -1 : 0;
                 this.goReel(this.cur() + step);

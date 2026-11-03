@@ -96,7 +96,25 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 /* Footer columns: brand and contact get more room on wide screens, two columns on tablets, one on phones */
 [data-foot-grid]{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.4fr;gap:36px 32px}
 @media (max-width:900px){[data-foot-grid]{grid-template-columns:1fr 1fr}}
-@media (max-width:520px){[data-foot-grid]{grid-template-columns:1fr}}
+/* Phones: brand and contact full width, Explore + Popular tests side by side, tighter spacing */
+@media (max-width:520px){
+[data-foot-grid]{grid-template-columns:1fr 1fr;gap:22px 16px;padding-top:26px!important;padding-bottom:18px!important}
+[data-foot-brand],[data-foot-contact]{grid-column:1/-1}
+[data-foot-brand]{gap:10px!important}
+[data-foot-brand] img{height:40px!important}
+[data-foot-brand]>span:nth-child(2){font-size:13px!important;line-height:1.55!important}
+[data-foot-tags]{display:none!important}
+[data-foot-grid]>div{gap:10px!important}
+[data-foot-grid]>div:not([data-foot-contact]) button{padding:2px 0!important;font-size:13.5px!important}
+[data-foot-contact] button{height:34px!important;padding:0 12px!important;font-size:12.5px!important}
+[data-foot-bottom]{padding-top:12px!important;padding-bottom:14px!important;gap:6px 12px!important;font-size:11.5px!important}
+}
+
+/* Reels double-tap heart (mobile, just for show): pops at the finger with a slight tilt, settles, then floats up and fades */
+@keyframes avmDtap{0%{opacity:0;transform:rotate(var(--tilt)) scale(0)}14%{opacity:1;transform:rotate(var(--tilt)) scale(1.25)}26%{transform:rotate(var(--tilt)) scale(.9)}38%{transform:rotate(var(--tilt)) scale(1.06)}48%,68%{opacity:1;transform:rotate(var(--tilt)) scale(1)}100%{opacity:0;transform:rotate(var(--tilt)) translateY(-120px) scale(.7)}}
+[data-dtap]{position:absolute;z-index:7;width:108px;height:108px;margin:-54px 0 0 -54px;pointer-events:none;filter:drop-shadow(0 10px 22px rgba(255,48,64,.45));animation:avmDtap 1s cubic-bezier(.2,.8,.3,1) forwards}
+[data-dtap] i{display:block;width:100%;height:100%;background:linear-gradient(160deg,#FF6A8E 0%,#FF3040 50%,#E3164D 100%);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") center / contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") center / contain no-repeat}
+@media (prefers-reduced-motion:reduce){[data-dtap]{animation-duration:.6s}}
 
 /* Reels swipe hint (mobile): two cascading chevrons + label in the gap above "Book now", shown for 5s after 4s idle */
 @keyframes avmSwipeLife{0%{opacity:0;transform:translateY(8px) scale(.9)}7%{opacity:1;transform:none}93%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-4px) scale(.95)}}
@@ -138,7 +156,29 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 @media (prefers-reduced-motion:reduce){[data-add-btn],[data-add-fx],[data-add-big],[data-toast]{animation:none!important}[data-add-fx],[data-add-big]{display:none}}
 
 /* Test page header: compact two columns on desktop; below 1024px it keeps the original stacked layout */
-@media (max-width:1023px){[data-td-hero]{flex-direction:column!important;align-items:stretch!important;flex-wrap:nowrap!important;padding:clamp(22px,4vw,48px)!important;gap:clamp(14px,2vw,20px)!important}[data-td-hero] h1{font-size:clamp(28px,4.2vw,46px)!important;line-height:1.08!important}[data-td-info],[data-td-panel]{display:contents!important}[data-td-icon]{width:40px!important;height:40px!important;border-radius:12px!important}[data-td-btn]{flex:1 1 180px!important;max-width:260px!important;height:52px!important}}
+@media (max-width:1023px){[data-td-hero]{flex-direction:column!important;align-items:stretch!important;flex-wrap:nowrap!important;padding:clamp(22px,4vw,48px)!important;gap:clamp(14px,2vw,20px)!important}[data-td-hero] h1{font-size:clamp(28px,4.2vw,46px)!important;line-height:1.08!important}[data-td-info],[data-td-panel]{display:contents!important}[data-td-icon]{width:40px!important;height:40px!important;border-radius:12px!important}[data-td-btn]{flex:1 1 180px!important;max-width:260px!important;height:52px!important}[data-td-save]{display:none!important}}
+
+/* "Save more with profiles" button: a light sweep across the gold plus three twinkling sparkles */
+@keyframes avmSaveSweep{0%,55%{transform:translateX(-120%) skewX(-20deg)}85%,100%{transform:translateX(320%) skewX(-20deg)}}
+@keyframes avmTwinkle{0%,100%{opacity:0;transform:scale(.2) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(90deg)}}
+[data-td-save]{position:relative;z-index:0;overflow:hidden;border-radius:0 0 18px 18px!important;color:#2A1A00!important;font-weight:800!important;letter-spacing:-.005em;background:linear-gradient(180deg,#FFE58F 0%,#F7C948 45%,#E3A92A 100%)!important;border:1px solid #D39A22!important;border-top:none!important;box-shadow:0 14px 26px -12px rgba(201,138,20,.75),inset 0 -1px 0 rgba(255,255,255,.35),inset 0 4px 5px -3px rgba(70,40,0,.28)!important;text-shadow:0 1px 0 rgba(255,240,190,.6)}
+[data-td-save] avm-i{color:#5A3A00}
+/* Sit just below the header (not tucked 10px under it) and above its drop shadow, so the gold isn't greyed out */
+[data-td-save]{z-index:2!important;margin-top:calc(-1 * clamp(22px,3vw,36px))!important;height:44px!important;padding:0 18px!important}
+[data-td-save] [data-spark="1"],[data-td-save] [data-spark="3"]{top:5px!important}
+[data-td-save]:hover{transform:translateY(2px)!important}
+[data-td-save] [data-spark="1"],[data-td-save] [data-spark="3"]{top:14px}
+[data-td-save]::after{content:'';position:absolute;top:0;bottom:0;left:0;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);pointer-events:none;animation:avmSaveSweep 3.2s ease-in-out infinite}
+[data-spark]{position:absolute;width:12px;height:12px;pointer-events:none;background:#fff;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);filter:drop-shadow(0 0 1px rgba(120,70,0,1)) drop-shadow(0 0 3px rgba(255,255,255,.9)) drop-shadow(0 0 6px rgba(255,190,40,1));animation:avmTwinkle 1.8s ease-in-out infinite}
+[data-spark="1"]{top:4px;left:18%}
+[data-spark="2"]{bottom:4px;left:58%;width:9px;height:9px;animation-delay:.6s}
+[data-spark="3"]{top:4px;right:9%;width:10px;height:10px;animation-delay:1.2s}
+@media (prefers-reduced-motion:reduce){[data-td-save]::after,[data-spark]{animation:none;display:none}}
+/* Profile rows inside a gold card (test page "Save more with a profile") */
+[data-gold-item]{background:rgba(255,255,255,.88);border:1px solid #F0E2BE;box-shadow:0 10px 24px -20px rgba(160,112,20,.5);transition:transform .2s,box-shadow .2s,border-color .2s}
+[data-gold-item]:hover{transform:translateY(-2px);border-color:#E3C57A;box-shadow:0 16px 30px -18px rgba(160,112,20,.6)}
+[data-gold-rich]{background:radial-gradient(75% 130% at 45% 55%,#FFFFFF 0%,rgba(255,255,255,.92) 40%,rgba(255,255,255,0) 80%),radial-gradient(40% 110% at 100% 0%,#F6DC98 0%,rgba(246,220,152,0) 70%),linear-gradient(90deg,#FFFFFF 0%,#FFFFFF 45%,#FFF6E0 100%);border:1.5px solid #E6C976;box-shadow:0 24px 48px -30px rgba(160,112,20,.55),inset 0 1px 0 #fff}
+
 </style>
 </helmet>
 <div style="min-height:100dvh;background:#F6F6FA;color:#16133A;overflow-x:clip">
@@ -657,7 +697,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 <sc-if value="{{ isTest }}" hint-placeholder-val="{{ false }}">
 <main style="max-width:1200px;margin:0 auto;padding:clamp(14px,2.5vw,28px) clamp(14px,3vw,28px) 24px;display:flex;flex-direction:column;gap:clamp(22px,3vw,36px)">
   <button onClick="{{ backTests }}" style="align-self:flex-start;white-space:nowrap;display:flex;align-items:center;gap:6px;height:36px;padding:0 14px 0 10px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;font-size:13.5px;font-weight:700;cursor:pointer"><avm-i n="arrow-left" s="16"></avm-i>All tests</button>
-  <section data-td-hero="1" style="position:relative;overflow:hidden;border-radius:clamp(22px,3vw,32px);background:linear-gradient(140deg,#1C1650 0%,#2C2180 55%,#3B2C9E 100%);color:#fff;padding:clamp(20px,3vw,34px);display:flex;flex-wrap:wrap;align-items:center;gap:clamp(18px,2.5vw,32px);box-shadow:0 30px 60px -30px rgba(42,31,122,0.6)">
+  <section data-td-hero="1" style="position:relative;z-index:1;overflow:hidden;border-radius:clamp(22px,3vw,32px);background:linear-gradient(140deg,#1C1650 0%,#2C2180 55%,#3B2C9E 100%);color:#fff;padding:clamp(20px,3vw,34px);display:flex;flex-wrap:wrap;align-items:center;gap:clamp(18px,2.5vw,32px);box-shadow:0 30px 60px -30px rgba(42,31,122,0.6)">
     <span style="position:absolute;right:-40px;bottom:-60px;width:280px;height:280px;border-radius:999px;background:radial-gradient(circle,rgba(255,255,255,0.10),transparent 70%);pointer-events:none"></span>
     <div data-td-info="1" style="flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:clamp(12px,1.6vw,16px)">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
@@ -688,6 +728,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
     </div>
     </div>
   </section>
+  <sc-if value="{{ td.hasProfs }}"><button data-gold-btn="1" data-td-save="1" onClick="{{ td.toProfs }}" style="align-self:flex-end;margin:calc(-10px - clamp(22px,3vw,36px)) clamp(28px,3.6vw,44px) 0 0;height:48px;padding:10px 18px 0;font-size:13.5px;display:flex;align-items:center;gap:7px"><i data-spark="1"></i><i data-spark="2"></i><i data-spark="3"></i><avm-i n="crown" s="15"></avm-i>Save more with profiles<avm-i n="arrow-down" s="15"></avm-i></button></sc-if>
 
   <section style="display:flex;flex-direction:column;gap:14px">
     <h2 style="margin:0;font-size:clamp(22px,2.6vw,30px);font-weight:800;letter-spacing:-0.03em">{{ td.paramsTitle }}</h2>
@@ -704,10 +745,13 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
   </section>
 
   <sc-if value="{{ td.hasProfs }}">
-  <section style="display:flex;flex-direction:column;gap:14px">
-    <div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0;font-size:clamp(20px,2.4vw,26px);font-weight:800;letter-spacing:-0.03em">Save more with a profile</h2><span style="font-size:14px;color:#5D5A7A">This test is included in these health profiles.</span></div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:10px">
-      <sc-for list="{{ td.profs }}" as="p" hint-placeholder-count="2"><button onClick="{{ p.open }}" style="display:flex;align-items:center;gap:12px;text-align:left;padding:12px 14px;border-radius:18px;border:1px solid #ECEBF3;background:#fff;color:#16133A;cursor:pointer" style-hover="border-color:#DAD5F7;box-shadow:0 12px 28px -18px rgba(42,31,122,0.4)"><span style="width:42px;height:42px;border-radius:13px;background:{{ p.soft }};color:{{ p.ink }};display:grid;place-items:center;flex:none"><avm-i n="{{ p.icon }}" s="20"></avm-i></span><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-size:14.5px;font-weight:700">{{ p.name }}</span><span style="font-size:12.5px;color:#5D5A7A">{{ p.meta }}</span></span><avm-i n="chevron-right" s="18"></avm-i></button></sc-for>
+  <section data-td-profs="1" data-gold-card="1" data-gold-rich="1" style="padding:clamp(18px,2.6vw,26px);display:flex;flex-direction:column;gap:16px;scroll-margin-top:96px">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <span data-gold-badge="1" style="width:42px;height:42px;color:#4A3306;background:linear-gradient(135deg,#FBE7A1 0%,#E3B64B 55%,#C08D25 100%);box-shadow:0 8px 18px -8px rgba(184,134,31,.8),inset 0 1px 0 rgba(255,255,255,.6)"><avm-i n="crown" s="19"></avm-i></span>
+      <div style="display:flex;flex-direction:column;gap:3px;min-width:0"><span data-gold-label="1">Premium savings</span><h2 style="margin:0;font-size:clamp(20px,2.4vw,26px);font-weight:800;letter-spacing:-0.03em;color:#2B2110">Save more with a profile</h2><span style="font-size:14px;color:#6B5A3A">This test is included in these health profiles — get more tests for a little more.</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:12px">
+      <sc-for list="{{ td.profs }}" as="p" hint-placeholder-count="2"><button onClick="{{ p.open }}" data-gold-item="1" style="display:flex;align-items:center;gap:12px;text-align:left;padding:14px;border-radius:18px;color:#2B2110;cursor:pointer"><span style="width:44px;height:44px;border-radius:14px;background:{{ p.soft }};color:{{ p.ink }};display:grid;place-items:center;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7)"><avm-i n="{{ p.icon }}" s="20"></avm-i></span><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:800">{{ p.name }}</span><span style="font-size:12.5px;color:#6B5A3A">{{ p.meta }}</span></span><span data-gold-btn="1" style="height:34px;padding:0 14px;font-size:13px;display:flex;align-items:center;gap:4px;flex:none">View<avm-i n="chevron-right" s="15"></avm-i></span></button></sc-for>
     </div>
   </section>
   </sc-if>
@@ -759,10 +803,10 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
   </div>
 
   <div data-foot-grid="1" style="max-width:1200px;margin:0 auto;padding:clamp(36px,5vw,56px) clamp(16px,3vw,28px) clamp(28px,4vw,40px);position:relative">
-    <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+    <div data-foot-brand="1" style="display:flex;flex-direction:column;gap:16px;min-width:0">
       <span style="align-self:flex-start;background:#fff;border-radius:12px;padding:6px 8px;display:flex;box-shadow:0 10px 24px -14px rgba(0,0,0,0.6)"><img src="./assets/avm-logo.png" alt="AVM Labs" style="height:48px;display:block"></span>
       <span style="font-size:14px;line-height:1.7;color:#A9A5C9;max-width:320px">Lab tests and health profiles for hormones, vitamins and everyday wellness, with free home sample collection.</span>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <div data-foot-tags="1" style="display:flex;gap:6px;flex-wrap:wrap">
         <span style="font-size:12px;font-weight:600;color:#D4CFF7;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)">Hormones</span>
         <span style="font-size:12px;font-weight:600;color:#D4CFF7;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)">Vitamins</span>
         <span style="font-size:12px;font-weight:600;color:#D4CFF7;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)">Wellness</span>
@@ -776,7 +820,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
       <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Popular tests<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
       <div style="display:flex;flex-direction:column;gap:4px"><sc-for list="{{ footTests }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.go }}" style="align-self:flex-start;white-space:nowrap;border:none;background:none;padding:4px 0;text-align:left;color:#C9C6E0;font-size:14.5px;cursor:pointer;transition:color .2s,transform .2s" style-hover="color:#fff;transform:translateX(3px)">{{ f.label }}</button></sc-for></div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+    <div data-foot-contact="1" style="display:flex;flex-direction:column;gap:14px;min-width:0">
       <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Visit or contact<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
       <div style="display:flex;align-items:flex-start;gap:12px"><span style="width:34px;height:34px;border-radius:10px;background:rgba(123,108,240,0.14);color:#A79CF5;display:grid;place-items:center;flex:none"><avm-i n="map-pin" s="16"></avm-i></span><span style="display:flex;flex-direction:column;gap:1px;min-width:0"><small style="font-size:11.5px;color:#8D88B0">Our centre</small><span style="font-size:14px;line-height:1.5;color:#E4E1F5">{{ regionAddr }}</span></span></div>
       <div style="display:flex;align-items:flex-start;gap:12px"><span style="width:34px;height:34px;border-radius:10px;background:rgba(123,108,240,0.14);color:#A79CF5;display:grid;place-items:center;flex:none"><avm-i n="clock" s="16"></avm-i></span><span style="display:flex;flex-direction:column;gap:1px"><small style="font-size:11.5px;color:#8D88B0">Open</small><span style="font-size:14px;color:#E4E1F5">7 AM – 8 PM, all days</span></span></div>
@@ -788,7 +832,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
   </div>
 
   <div style="border-top:1px solid rgba(255,255,255,0.07);position:relative">
-    <div style="max-width:1200px;margin:0 auto;padding:18px clamp(16px,3vw,28px) 22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;font-size:12.5px;line-height:1.6;color:#8D88B0">
+    <div data-foot-bottom="1" style="max-width:1200px;margin:0 auto;padding:18px clamp(16px,3vw,28px) 22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;font-size:12.5px;line-height:1.6;color:#8D88B0">
       <span>© 2026 AVM Labs · Wellness Laboratory</span>
       <span style="display:flex;align-items:center;gap:6px"><avm-i n="info" s="13"></avm-i>Lab results support, but do not replace, medical advice.</span>
       <button onClick="{{ toTop }}" style="white-space:nowrap;height:32px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.12);background:none;color:#C9C6E0;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;transition:color .2s,border-color .2s" style-hover="color:#fff;border-color:rgba(255,255,255,0.3)"><avm-i n="arrow-up" s="13"></avm-i>Back to top</button>
@@ -1377,6 +1421,23 @@ class Component extends DCLogic {
       this._ht2 = setTimeout(() => { this.setState({ hint: false }); this.armHint(); }, 5000);
     }, 4000);
   }
+  // Instagram-style double tap on a phone: a heart pops where the finger is, then floats up and fades.
+  // Just for show: it doesn't like, add or change anything. Drawn straight into the page, no re-render.
+  reelTap(d, host) {
+    if (this.state.w >= 1024 || d.target.closest('button, a, input, select, textarea, details')) { this._lastTap = null; return; }
+    const now = Date.now(), last = this._lastTap;
+    this._lastTap = { t: now, x: d.x, y: d.y };
+    if (!last || now - last.t > 320 || Math.hypot(d.x - last.x, d.y - last.y) > 60) return;
+    // Further quick taps keep adding hearts, as on Instagram.
+    const r = host.getBoundingClientRect(), h = document.createElement('span');
+    h.setAttribute('data-dtap', '');
+    h.style.left = Math.round(d.x - r.left) + 'px';
+    h.style.top = Math.round(d.y - r.top) + 'px';
+    h.style.setProperty('--tilt', (Math.random() * 40 - 20).toFixed(1) + 'deg');
+    h.appendChild(document.createElement('i'));
+    h.addEventListener('animationend', () => h.remove());
+    host.appendChild(h);
+  }
   scroller() { return (this.reelsRef && this.reelsRef.current) || document.querySelector('[data-reels-scroller]'); }
   cur() { return this._ri != null ? this._ri : this.state.reelIdx; }
   track() { const el = this.scroller(); return el && el.querySelector('[data-reel-track]'); }
@@ -1582,10 +1643,12 @@ class Component extends DCLogic {
               };
               el.addEventListener('wheel', this._onWheel, { passive: false });
               const canScrollY = (t) => { while (t && t !== el) { if (t.scrollHeight > t.clientHeight + 2 && /(auto|scroll)/.test(getComputedStyle(t).overflowY)) return true; t = t.parentElement; } return false; };
-              this._ts = ev => { this.armHint(); if (ev.touches.length !== 1) { this._drag = null; return; } const p = ev.touches[0]; this._drag = { x: p.clientX, y: p.clientY, t: Date.now(), axis: null, skip: canScrollY(ev.target), dy: 0 }; };
+              this._ts = ev => { this.armHint(); if (ev.touches.length !== 1) { this._drag = null; return; } const p = ev.touches[0]; this._drag = { x: p.clientX, y: p.clientY, t: Date.now(), axis: null, skip: canScrollY(ev.target), dy: 0, moved: false, target: ev.target }; };
               this._tm = ev => {
-                const d = this._drag; if (!d || d.skip) return;
+                const d = this._drag; if (!d) return;
                 const p = ev.touches[0], dx = p.clientX - d.x, dy = p.clientY - d.y;
+                if (Math.abs(dx) > 6 || Math.abs(dy) > 6) d.moved = true; // not a tap (also inside scrolling lists)
+                if (d.skip) return;
                 if (!d.axis) { if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return; d.axis = Math.abs(dy) > Math.abs(dx) ? 'y' : 'x'; }
                 if (d.axis !== 'y') return;
                 ev.preventDefault();
@@ -1595,7 +1658,9 @@ class Component extends DCLogic {
                 this.applyTrack(i, false, -i * H + off);
               };
               this._te = () => {
-                const d = this._drag; this._drag = null; if (!d || d.axis !== 'y') return;
+                const d = this._drag; this._drag = null; if (!d) return;
+                if (!d.moved && Date.now() - d.t < 300) { this.reelTap(d, el); return; }
+                if (d.axis !== 'y') return;
                 const H = el.clientHeight, v = d.dy / Math.max(1, Date.now() - d.t);
                 const step = (d.dy < -H * 0.16 || v < -0.4) ? 1 : (d.dy > H * 0.16 || v > 0.4) ? -1 : 0;
                 this.goReel(this.cur() + step);
@@ -1664,7 +1729,7 @@ class Component extends DCLogic {
       td = { ...vm, aka: dt[0], hasAka: !!dt[0], about: dt[1], params: dt[2].map((n, k) => ({ n: k + 1, name: n })), paramsTitle: t.params + (t.params > 1 ? ' parameters' : ' parameter'),
         sample: dt[3], sampleIcon: dt[3] === 'Urine' ? 'flask-conical' : 'droplet', fastTitle: t.fasting ? 'Fasting required' : 'No fasting required', fastSub: t.fasting ? '10–12 hrs overnight, water is fine' : 'Eat and drink as usual',
         reportT: 'Report in ' + t.tat, book: () => this.bookWA([{ type: 'test', id: t.id }]),
-        profs: ps.map(p => ({ name: p.name, meta: p.tests.length + ' tests · ' + inr(p.price), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.i) })), hasProfs: ps.length > 0 };
+        profs: ps.map(p => ({ name: p.name, meta: p.tests.length + ' tests · ' + inr(p.price), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.i) })), toProfs: () => { const el = document.querySelector('[data-td-profs]'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, hasProfs: ps.length > 0 };
     }
     const book = p => () => this.bookWA([{ type: 'profile', id: p.id }]);
 

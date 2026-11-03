@@ -1,6 +1,6 @@
 <main style="max-width:1200px;margin:0 auto;padding:clamp(14px,2.5vw,28px) clamp(14px,3vw,28px) 24px;display:flex;flex-direction:column;gap:clamp(22px,3vw,36px)">
   <button onClick="{{ backTests }}" style="align-self:flex-start;white-space:nowrap;display:flex;align-items:center;gap:6px;height:36px;padding:0 14px 0 10px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;font-size:13.5px;font-weight:700;cursor:pointer"><avm-i n="arrow-left" s="16"></avm-i>All tests</button>
-  <section data-td-hero="1" style="position:relative;overflow:hidden;border-radius:clamp(22px,3vw,32px);background:linear-gradient(140deg,#1C1650 0%,#2C2180 55%,#3B2C9E 100%);color:#fff;padding:clamp(20px,3vw,34px);display:flex;flex-wrap:wrap;align-items:center;gap:clamp(18px,2.5vw,32px);box-shadow:0 30px 60px -30px rgba(42,31,122,0.6)">
+  <section data-td-hero="1" style="position:relative;z-index:1;overflow:hidden;border-radius:clamp(22px,3vw,32px);background:linear-gradient(140deg,#1C1650 0%,#2C2180 55%,#3B2C9E 100%);color:#fff;padding:clamp(20px,3vw,34px);display:flex;flex-wrap:wrap;align-items:center;gap:clamp(18px,2.5vw,32px);box-shadow:0 30px 60px -30px rgba(42,31,122,0.6)">
     <span style="position:absolute;right:-40px;bottom:-60px;width:280px;height:280px;border-radius:999px;background:radial-gradient(circle,rgba(255,255,255,0.10),transparent 70%);pointer-events:none"></span>
     <div data-td-info="1" style="flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:clamp(12px,1.6vw,16px)">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
@@ -31,6 +31,7 @@
     </div>
     </div>
   </section>
+  <sc-if value="{{ td.hasProfs }}"><button data-gold-btn="1" data-td-save="1" onClick="{{ td.toProfs }}" style="align-self:flex-end;margin:calc(-10px - clamp(22px,3vw,36px)) clamp(28px,3.6vw,44px) 0 0;height:48px;padding:10px 18px 0;font-size:13.5px;display:flex;align-items:center;gap:7px"><i data-spark="1"></i><i data-spark="2"></i><i data-spark="3"></i><avm-i n="crown" s="15"></avm-i>Save more with profiles<avm-i n="arrow-down" s="15"></avm-i></button></sc-if>
 
   <section style="display:flex;flex-direction:column;gap:14px">
     <h2 style="margin:0;font-size:clamp(22px,2.6vw,30px);font-weight:800;letter-spacing:-0.03em">{{ td.paramsTitle }}</h2>
@@ -47,10 +48,13 @@
   </section>
 
   <sc-if value="{{ td.hasProfs }}">
-  <section style="display:flex;flex-direction:column;gap:14px">
-    <div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0;font-size:clamp(20px,2.4vw,26px);font-weight:800;letter-spacing:-0.03em">Save more with a profile</h2><span style="font-size:14px;color:#5D5A7A">This test is included in these health profiles.</span></div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:10px">
-      <sc-for list="{{ td.profs }}" as="p" hint-placeholder-count="2"><button onClick="{{ p.open }}" style="display:flex;align-items:center;gap:12px;text-align:left;padding:12px 14px;border-radius:18px;border:1px solid #ECEBF3;background:#fff;color:#16133A;cursor:pointer" style-hover="border-color:#DAD5F7;box-shadow:0 12px 28px -18px rgba(42,31,122,0.4)"><span style="width:42px;height:42px;border-radius:13px;background:{{ p.soft }};color:{{ p.ink }};display:grid;place-items:center;flex:none"><avm-i n="{{ p.icon }}" s="20"></avm-i></span><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-size:14.5px;font-weight:700">{{ p.name }}</span><span style="font-size:12.5px;color:#5D5A7A">{{ p.meta }}</span></span><avm-i n="chevron-right" s="18"></avm-i></button></sc-for>
+  <section data-td-profs="1" data-gold-card="1" data-gold-rich="1" style="padding:clamp(18px,2.6vw,26px);display:flex;flex-direction:column;gap:16px;scroll-margin-top:96px">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <span data-gold-badge="1" style="width:42px;height:42px;color:#4A3306;background:linear-gradient(135deg,#FBE7A1 0%,#E3B64B 55%,#C08D25 100%);box-shadow:0 8px 18px -8px rgba(184,134,31,.8),inset 0 1px 0 rgba(255,255,255,.6)"><avm-i n="crown" s="19"></avm-i></span>
+      <div style="display:flex;flex-direction:column;gap:3px;min-width:0"><span data-gold-label="1">Premium savings</span><h2 style="margin:0;font-size:clamp(20px,2.4vw,26px);font-weight:800;letter-spacing:-0.03em;color:#2B2110">Save more with a profile</h2><span style="font-size:14px;color:#6B5A3A">This test is included in these health profiles — get more tests for a little more.</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:12px">
+      <sc-for list="{{ td.profs }}" as="p" hint-placeholder-count="2"><button onClick="{{ p.open }}" data-gold-item="1" style="display:flex;align-items:center;gap:12px;text-align:left;padding:14px;border-radius:18px;color:#2B2110;cursor:pointer"><span style="width:44px;height:44px;border-radius:14px;background:{{ p.soft }};color:{{ p.ink }};display:grid;place-items:center;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7)"><avm-i n="{{ p.icon }}" s="20"></avm-i></span><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:800">{{ p.name }}</span><span style="font-size:12.5px;color:#6B5A3A">{{ p.meta }}</span></span><span data-gold-btn="1" style="height:34px;padding:0 14px;font-size:13px;display:flex;align-items:center;gap:4px;flex:none">View<avm-i n="chevron-right" s="15"></avm-i></span></button></sc-for>
     </div>
   </section>
   </sc-if>

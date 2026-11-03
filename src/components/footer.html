@@ -18,10 +18,10 @@
   </div>
 
   <div data-foot-grid="1" style="max-width:1200px;margin:0 auto;padding:clamp(36px,5vw,56px) clamp(16px,3vw,28px) clamp(28px,4vw,40px);position:relative">
-    <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+    <div data-foot-brand="1" style="display:flex;flex-direction:column;gap:16px;min-width:0">
       <span style="align-self:flex-start;background:#fff;border-radius:12px;padding:6px 8px;display:flex;box-shadow:0 10px 24px -14px rgba(0,0,0,0.6)"><img src="./assets/avm-logo.png" alt="AVM Labs" style="height:48px;display:block"></span>
       <span style="font-size:14px;line-height:1.7;color:#A9A5C9;max-width:320px">Lab tests and health profiles for hormones, vitamins and everyday wellness, with free home sample collection.</span>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <div data-foot-tags="1" style="display:flex;gap:6px;flex-wrap:wrap">
         <span style="font-size:12px;font-weight:600;color:#D4CFF7;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)">Hormones</span>
         <span style="font-size:12px;font-weight:600;color:#D4CFF7;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)">Vitamins</span>
         <span style="font-size:12px;font-weight:600;color:#D4CFF7;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)">Wellness</span>
@@ -35,7 +35,7 @@
       <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Popular tests<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
       <div style="display:flex;flex-direction:column;gap:4px"><sc-for list="{{ footTests }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.go }}" style="align-self:flex-start;white-space:nowrap;border:none;background:none;padding:4px 0;text-align:left;color:#C9C6E0;font-size:14.5px;cursor:pointer;transition:color .2s,transform .2s" style-hover="color:#fff;transform:translateX(3px)">{{ f.label }}</button></sc-for></div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+    <div data-foot-contact="1" style="display:flex;flex-direction:column;gap:14px;min-width:0">
       <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Visit or contact<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
       <div style="display:flex;align-items:flex-start;gap:12px"><span style="width:34px;height:34px;border-radius:10px;background:rgba(123,108,240,0.14);color:#A79CF5;display:grid;place-items:center;flex:none"><avm-i n="map-pin" s="16"></avm-i></span><span style="display:flex;flex-direction:column;gap:1px;min-width:0"><small style="font-size:11.5px;color:#8D88B0">Our centre</small><span style="font-size:14px;line-height:1.5;color:#E4E1F5">{{ regionAddr }}</span></span></div>
       <div style="display:flex;align-items:flex-start;gap:12px"><span style="width:34px;height:34px;border-radius:10px;background:rgba(123,108,240,0.14);color:#A79CF5;display:grid;place-items:center;flex:none"><avm-i n="clock" s="16"></avm-i></span><span style="display:flex;flex-direction:column;gap:1px"><small style="font-size:11.5px;color:#8D88B0">Open</small><span style="font-size:14px;color:#E4E1F5">7 AM – 8 PM, all days</span></span></div>
@@ -47,7 +47,7 @@
   </div>
 
   <div style="border-top:1px solid rgba(255,255,255,0.07);position:relative">
-    <div style="max-width:1200px;margin:0 auto;padding:18px clamp(16px,3vw,28px) 22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;font-size:12.5px;line-height:1.6;color:#8D88B0">
+    <div data-foot-bottom="1" style="max-width:1200px;margin:0 auto;padding:18px clamp(16px,3vw,28px) 22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;font-size:12.5px;line-height:1.6;color:#8D88B0">
       <span>© 2026 AVM Labs · Wellness Laboratory</span>
       <span style="display:flex;align-items:center;gap:6px"><avm-i n="info" s="13"></avm-i>Lab results support, but do not replace, medical advice.</span>
       <button onClick="{{ toTop }}" style="white-space:nowrap;height:32px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.12);background:none;color:#C9C6E0;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;transition:color .2s,border-color .2s" style-hover="color:#fff;border-color:rgba(255,255,255,0.3)"><avm-i n="arrow-up" s="13"></avm-i>Back to top</button>

@@ -79,7 +79,25 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 /* Footer columns: brand and contact get more room on wide screens, two columns on tablets, one on phones */
 [data-foot-grid]{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.4fr;gap:36px 32px}
 @media (max-width:900px){[data-foot-grid]{grid-template-columns:1fr 1fr}}
-@media (max-width:520px){[data-foot-grid]{grid-template-columns:1fr}}
+/* Phones: brand and contact full width, Explore + Popular tests side by side, tighter spacing */
+@media (max-width:520px){
+[data-foot-grid]{grid-template-columns:1fr 1fr;gap:22px 16px;padding-top:26px!important;padding-bottom:18px!important}
+[data-foot-brand],[data-foot-contact]{grid-column:1/-1}
+[data-foot-brand]{gap:10px!important}
+[data-foot-brand] img{height:40px!important}
+[data-foot-brand]>span:nth-child(2){font-size:13px!important;line-height:1.55!important}
+[data-foot-tags]{display:none!important}
+[data-foot-grid]>div{gap:10px!important}
+[data-foot-grid]>div:not([data-foot-contact]) button{padding:2px 0!important;font-size:13.5px!important}
+[data-foot-contact] button{height:34px!important;padding:0 12px!important;font-size:12.5px!important}
+[data-foot-bottom]{padding-top:12px!important;padding-bottom:14px!important;gap:6px 12px!important;font-size:11.5px!important}
+}
+
+/* Reels double-tap heart (mobile, just for show): pops at the finger with a slight tilt, settles, then floats up and fades */
+@keyframes avmDtap{0%{opacity:0;transform:rotate(var(--tilt)) scale(0)}14%{opacity:1;transform:rotate(var(--tilt)) scale(1.25)}26%{transform:rotate(var(--tilt)) scale(.9)}38%{transform:rotate(var(--tilt)) scale(1.06)}48%,68%{opacity:1;transform:rotate(var(--tilt)) scale(1)}100%{opacity:0;transform:rotate(var(--tilt)) translateY(-120px) scale(.7)}}
+[data-dtap]{position:absolute;z-index:7;width:108px;height:108px;margin:-54px 0 0 -54px;pointer-events:none;filter:drop-shadow(0 10px 22px rgba(255,48,64,.45));animation:avmDtap 1s cubic-bezier(.2,.8,.3,1) forwards}
+[data-dtap] i{display:block;width:100%;height:100%;background:linear-gradient(160deg,#FF6A8E 0%,#FF3040 50%,#E3164D 100%);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") center / contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") center / contain no-repeat}
+@media (prefers-reduced-motion:reduce){[data-dtap]{animation-duration:.6s}}
 
 /* Reels swipe hint (mobile): two cascading chevrons + label in the gap above "Book now", shown for 5s after 4s idle */
 @keyframes avmSwipeLife{0%{opacity:0;transform:translateY(8px) scale(.9)}7%{opacity:1;transform:none}93%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-4px) scale(.95)}}
@@ -121,4 +139,26 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 @media (prefers-reduced-motion:reduce){[data-add-btn],[data-add-fx],[data-add-big],[data-toast]{animation:none!important}[data-add-fx],[data-add-big]{display:none}}
 
 /* Test page header: compact two columns on desktop; below 1024px it keeps the original stacked layout */
-@media (max-width:1023px){[data-td-hero]{flex-direction:column!important;align-items:stretch!important;flex-wrap:nowrap!important;padding:clamp(22px,4vw,48px)!important;gap:clamp(14px,2vw,20px)!important}[data-td-hero] h1{font-size:clamp(28px,4.2vw,46px)!important;line-height:1.08!important}[data-td-info],[data-td-panel]{display:contents!important}[data-td-icon]{width:40px!important;height:40px!important;border-radius:12px!important}[data-td-btn]{flex:1 1 180px!important;max-width:260px!important;height:52px!important}}
+@media (max-width:1023px){[data-td-hero]{flex-direction:column!important;align-items:stretch!important;flex-wrap:nowrap!important;padding:clamp(22px,4vw,48px)!important;gap:clamp(14px,2vw,20px)!important}[data-td-hero] h1{font-size:clamp(28px,4.2vw,46px)!important;line-height:1.08!important}[data-td-info],[data-td-panel]{display:contents!important}[data-td-icon]{width:40px!important;height:40px!important;border-radius:12px!important}[data-td-btn]{flex:1 1 180px!important;max-width:260px!important;height:52px!important}[data-td-save]{display:none!important}}
+
+/* "Save more with profiles" button: a light sweep across the gold plus three twinkling sparkles */
+@keyframes avmSaveSweep{0%,55%{transform:translateX(-120%) skewX(-20deg)}85%,100%{transform:translateX(320%) skewX(-20deg)}}
+@keyframes avmTwinkle{0%,100%{opacity:0;transform:scale(.2) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(90deg)}}
+[data-td-save]{position:relative;z-index:0;overflow:hidden;border-radius:0 0 18px 18px!important;color:#2A1A00!important;font-weight:800!important;letter-spacing:-.005em;background:linear-gradient(180deg,#FFE58F 0%,#F7C948 45%,#E3A92A 100%)!important;border:1px solid #D39A22!important;border-top:none!important;box-shadow:0 14px 26px -12px rgba(201,138,20,.75),inset 0 -1px 0 rgba(255,255,255,.35),inset 0 4px 5px -3px rgba(70,40,0,.28)!important;text-shadow:0 1px 0 rgba(255,240,190,.6)}
+[data-td-save] avm-i{color:#5A3A00}
+/* Sit just below the header (not tucked 10px under it) and above its drop shadow, so the gold isn't greyed out */
+[data-td-save]{z-index:2!important;margin-top:calc(-1 * clamp(22px,3vw,36px))!important;height:44px!important;padding:0 18px!important}
+[data-td-save] [data-spark="1"],[data-td-save] [data-spark="3"]{top:5px!important}
+[data-td-save]:hover{transform:translateY(2px)!important}
+[data-td-save] [data-spark="1"],[data-td-save] [data-spark="3"]{top:14px}
+[data-td-save]::after{content:'';position:absolute;top:0;bottom:0;left:0;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);pointer-events:none;animation:avmSaveSweep 3.2s ease-in-out infinite}
+[data-spark]{position:absolute;width:12px;height:12px;pointer-events:none;background:#fff;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);filter:drop-shadow(0 0 1px rgba(120,70,0,1)) drop-shadow(0 0 3px rgba(255,255,255,.9)) drop-shadow(0 0 6px rgba(255,190,40,1));animation:avmTwinkle 1.8s ease-in-out infinite}
+[data-spark="1"]{top:4px;left:18%}
+[data-spark="2"]{bottom:4px;left:58%;width:9px;height:9px;animation-delay:.6s}
+[data-spark="3"]{top:4px;right:9%;width:10px;height:10px;animation-delay:1.2s}
+@media (prefers-reduced-motion:reduce){[data-td-save]::after,[data-spark]{animation:none;display:none}}
+/* Profile rows inside a gold card (test page "Save more with a profile") */
+[data-gold-item]{background:rgba(255,255,255,.88);border:1px solid #F0E2BE;box-shadow:0 10px 24px -20px rgba(160,112,20,.5);transition:transform .2s,box-shadow .2s,border-color .2s}
+[data-gold-item]:hover{transform:translateY(-2px);border-color:#E3C57A;box-shadow:0 16px 30px -18px rgba(160,112,20,.6)}
+[data-gold-rich]{background:radial-gradient(75% 130% at 45% 55%,#FFFFFF 0%,rgba(255,255,255,.92) 40%,rgba(255,255,255,0) 80%),radial-gradient(40% 110% at 100% 0%,#F6DC98 0%,rgba(246,220,152,0) 70%),linear-gradient(90deg,#FFFFFF 0%,#FFFFFF 45%,#FFF6E0 100%);border:1.5px solid #E6C976;box-shadow:0 24px 48px -30px rgba(160,112,20,.55),inset 0 1px 0 #fff}
+

@@ -28,6 +28,23 @@
       this._ht2 = setTimeout(() => { this.setState({ hint: false }); this.armHint(); }, 5000);
     }, 4000);
   }
+  // Instagram-style double tap on a phone: a heart pops where the finger is, then floats up and fades.
+  // Just for show: it doesn't like, add or change anything. Drawn straight into the page, no re-render.
+  reelTap(d, host) {
+    if (this.state.w >= 1024 || d.target.closest('button, a, input, select, textarea, details')) { this._lastTap = null; return; }
+    const now = Date.now(), last = this._lastTap;
+    this._lastTap = { t: now, x: d.x, y: d.y };
+    if (!last || now - last.t > 320 || Math.hypot(d.x - last.x, d.y - last.y) > 60) return;
+    // Further quick taps keep adding hearts, as on Instagram.
+    const r = host.getBoundingClientRect(), h = document.createElement('span');
+    h.setAttribute('data-dtap', '');
+    h.style.left = Math.round(d.x - r.left) + 'px';
+    h.style.top = Math.round(d.y - r.top) + 'px';
+    h.style.setProperty('--tilt', (Math.random() * 40 - 20).toFixed(1) + 'deg');
+    h.appendChild(document.createElement('i'));
+    h.addEventListener('animationend', () => h.remove());
+    host.appendChild(h);
+  }
   scroller() { return (this.reelsRef && this.reelsRef.current) || document.querySelector('[data-reels-scroller]'); }
   cur() { return this._ri != null ? this._ri : this.state.reelIdx; }
   track() { const el = this.scroller(); return el && el.querySelector('[data-reel-track]'); }
