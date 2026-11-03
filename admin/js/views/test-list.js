@@ -23,7 +23,7 @@ export function TestListView({ catalog, subProfiles, profiles, onNew, onEdit, on
           <span class="card-icon">${icon(t.sample === 'Urine' ? 'flask-conical' : 'test-tube')}</span>
           <div class="card-title">
             <h2>${t.name}</h2>
-            <p class="tagline">${t.cat.map((c) => categoryLabel.get(c) || c).join(' · ')} · ${t.sample} · Report in ${t.tat}${t.fasting ? ' · Fasting' : ''}</p>
+            <p class="tagline">${t.cat.map((c) => categoryLabel.get(c) || c).join(' · ')} · ${t.sample} sample · Report in ${t.tat}${t.fasting ? ' · Fasting' : ''}</p>
           </div>
           <span class="pill ${t.published ? 'live' : 'draft'}">${t.published ? 'Live' : 'Hidden'}</span>
         </div>
@@ -37,7 +37,7 @@ export function TestListView({ catalog, subProfiles, profiles, onNew, onEdit, on
               ${off > 0 && html`<s>${formatPrice(t.mrp)}</s><span class="off">${off}% off</span>`}
             </div>
             <div class="card-actions">
-              <button class="btn small outline" data-act="edit" data-id="${t.id}">${icon('pencil')}Edit</button>
+              ${catalog.testsReadOnly ? html`<button class="btn small" disabled title="${catalog.testsReadOnly}">${icon('lock')}Editing off</button>` : html`<button class="btn small outline" data-act="edit" data-id="${t.id}">${icon('pencil')}Edit</button>`}
             </div>
           </div>
           <p class="used-in">${used.length ? html`Used in ${used.join(', ')}` : 'Not in any sub-profile or profile yet.'}</p>
@@ -58,7 +58,7 @@ export function TestListView({ catalog, subProfiles, profiles, onNew, onEdit, on
     return html`
       ${appBar(html`
         <button class="btn small" data-act="logout">${icon('log-out')}Log out</button>
-        <button class="btn primary" data-act="new">${icon('plus')}New test</button>`)}
+        ${!catalog.testsReadOnly && html`<button class="btn primary" data-act="new">${icon('plus')}New test</button>`}`)}
       <main class="page">
         <div class="pagehead">
           <div>
