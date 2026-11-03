@@ -5,9 +5,26 @@
   }
   wa(msg) { return 'https://wa.me/' + this.opts().wa + '?text=' + encodeURIComponent(msg); }
   openWA(msg) { window.open(this.wa(msg), '_blank', 'noopener'); }
-  go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); }
-  openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); }
+  go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); this.setHash(page === 'home' ? '' : page); }
+  openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); this.setHash('test/' + id); }
+  // The current page lives in the URL hash (#tests, #cart, #test/vitd…) so a refresh reopens it.
+  // An open reel is added on as reel=<profile id> (#reel=essential, #profiles&reel=thyroid).
+  setHash(h) { const want = h ? '#' + h : ''; if (location.hash !== want) history.pushState(null, '', want || location.pathname + location.search); }
+  replaceHash(h) { history.replaceState(null, '', h ? '#' + h : location.pathname + location.search); }
+  pageHash() { const s = this.state; return s.page === 'home' ? '' : s.page === 'test' ? 'test/' + s.testId : s.page; }
+  reelHash(i) { const p = Component.PROFILES[i], b = this.pageHash(); return p ? (b ? b + '&' : '') + 'reel=' + p.id : b; }
+  fromHash() {
+    const raw = decodeURIComponent(location.hash.slice(1)), reel = (raw.match(/(?:^|&)reel=([^&]*)/) || [])[1];
+    const [p, id] = raw.replace(/&?reel=[^&]*/, '').split('/');
+    const page = p === 'test' && Component.TESTS.some(t => t.id === id) ? { page: 'test', testId: id } : ['tests', 'profiles', 'cart', 'about'].includes(p) ? { page: p } : { page: 'home' };
+    if (!reel) return { ...page, reelsOpen: false };
+    // Admin profiles load after start-up; loadProfiles() re-finds this id once they arrive.
+    this._wantReel = reel;
+    return { ...page, reelsOpen: true, reelIdx: Math.max(0, Component.PROFILES.findIndex(x => x.id === reel)), slides: {}, hint: false };
+  }
   flash(msg) { this.setState({ toast: msg }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: '' }), 2200); }
+  // Marks an item as just added so its button plays the add animation once.
+  pop(id) { this.setState({ pop: id }); clearTimeout(this._pt); this._pt = setTimeout(() => this.setState({ pop: null }), 900); }
 
   setCart(fn, msg) {
     const cart = fn(this.state.cart);
@@ -26,6 +43,7 @@
     } else {
       const p = D.PM[id], dup = p ? this.state.cart.filter(c => c.type === 'test' && p.tests.includes(c.id)).length : 0;
       this.setCart(c => [...c.filter(x => !(x.type === 'test' && p && p.tests.includes(x.id))), { type, id }], dup ? 'Added ' + name + ' · removed ' + dup + ' duplicate test' + (dup > 1 ? 's' : '') : 'Added ' + name);
+      this.pop(id);
     }
   }
   switchTo(p, ov) { this.setCart(c => [...c.filter(x => !(x.type === 'test' && ov.includes(x.id))), { type: 'profile', id: p.id }], 'Switched to ' + p.name); }
@@ -72,7 +90,7 @@
       const lp = this.loc(x.price); mrp += this.loc(x.mrp); price += lp; raw += x.price;
       items.push({ name: x.name + (c.type === 'profile' ? ' (Profile)' : ''), price: lp });
     });
-    const hc = raw < o.freeAbove ? this.loc(o.fee) : 0;
+    const hc = this.state.mode === 'home' && raw < o.freeAbove ? this.loc(o.fee) : 0;
     const pay = price + hc;
     return { items, mrp, price, raw, saving: mrp - price, hc, pay };
   }

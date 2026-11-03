@@ -68,7 +68,11 @@ function toApi(row) {
   };
 }
 
+// Set only by scripts/dev.js when Supabase is not configured locally.
+const devStore = () => globalThis.AVM_DEV_STORE;
+
 export async function listProfiles({ publishedOnly = false } = {}) {
+  if (devStore()) return devStore().list({ publishedOnly });
   let query = db().from('profiles').select(SELECT).order('sort_order').order('name');
   if (publishedOnly) query = query.eq('published', true);
   return unwrap(await query).map(toApi);
@@ -80,11 +84,13 @@ async function exists(id) {
 }
 
 export async function createProfile(profile) {
+  if (devStore()) return devStore().create(profile);
   if (await exists(profile.id)) throw new HttpError(409, 'A profile with this ID already exists');
   await save(profile);
 }
 
 export async function updateProfile(id, profile) {
+  if (devStore()) return devStore().update(id, profile);
   if (profile.id !== id) throw new HttpError(400, 'Profile ID cannot be changed');
   if (!(await exists(id))) throw new HttpError(404, 'Profile not found');
   await save(profile);
@@ -111,6 +117,7 @@ async function save(p) {
 }
 
 export async function deleteProfile(id) {
+  if (devStore()) return devStore().remove(id);
   const rows = unwrap(await db().from('profiles').delete().eq('id', id).select('id'));
   if (!rows.length) throw new HttpError(404, 'Profile not found');
 }

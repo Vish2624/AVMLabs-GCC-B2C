@@ -3,7 +3,7 @@
     for (let i = 0; i < 6; i++) {
       const d = new Date(d0); d.setDate(d0.getDate() + i);
       const key = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-      out.push({ key, i, top: i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-IN', { weekday: 'short' }), bottom: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), full: d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }) });
+      out.push({ key, i, top: i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-IN', { weekday: 'short' }), bottom: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), num: d.getDate(), mon: d.toLocaleDateString('en-IN', { month: 'short' }), full: d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }) });
     }
     return out;
   }
@@ -33,12 +33,12 @@
     const f = this.state.form, inr = x => this.inr(x), o = this.opts();
     const day = (this.days().find(d => d.key === f.date) || {}).full || '';
     const lines = ['Hi AVM Labs! I would like to book:', '', ...b.items.map((it, i) => (i + 1) + '. ' + it.name + ' – ' + this.money(it.price)), '',
-      '*Collection:* Home sample collection' + (b.hc ? ' (' + this.money(b.hc) + ')' : ' (Free)'),
+      this.state.mode === 'home' ? '*Collection:* Home sample collection' + (b.hc ? ' (' + this.money(b.hc) + ')' : ' (Free)') : '*Collection:* Walk-in at centre',
       '*Date & slot:* ' + day + ' · ' + f.slot,
       '*Patient:* ' + f.name.trim() + ', ' + f.age + ', ' + f.gender,
       '*Mobile:* ' + this.region().dial + ' ' + f.phone];
     if (f.nid) lines.push('*' + this.region().idLabel + ':* ' + f.nid);
-    lines.push('*Address:* ' + f.address.trim());
+    if (this.state.mode === 'home') lines.push('*Address:* ' + f.address.trim());
     lines.push('', 'Item total: ' + this.money(b.price));
     lines.push('*To pay: ' + this.money(b.pay) + '*');
     const url = this.wa(lines.join('\n'));

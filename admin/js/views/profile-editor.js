@@ -23,7 +23,7 @@ const newSub = (sub = {}, open = true) => ({
   open,
 });
 
-export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onClose }) {
+export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onDelete, onClose }) {
   const isNew = !profile;
   const tests = new Map(catalog.tests.map((t) => [t.id, t]));
   const byName = new Map(catalog.tests.map((t) => [t.name.toLowerCase(), t]));
@@ -47,6 +47,8 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
   let dirty = false;
   let saving = false;
   let confirmDiscard = false;
+  let confirmDelete = false;
+  let deleting = false;
   let error = '';
 
   const uniqueTests = () => [...new Set(draft.subs.flatMap((s) => s.tests))];
@@ -198,6 +200,24 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
     </div>
     <div class="subs">${draft.subs.map(sub)}</div>
     <button class="add-sub" type="button" data-act="add-sub">+ Add sub-profile</button>
+    ${
+      !isNew &&
+      html`
+      <section class="panel danger-zone">
+        <div>
+          <h2>Delete profile</h2>
+          <p>Removes “${profile.name}” from the website. This can’t be undone.</p>
+        </div>
+        <div class="row">
+          ${
+            confirmDelete
+              ? html`<button class="btn" type="button" data-act="cancel-delete" ${deleting ? 'disabled' : ''}>Keep</button>
+                   <button class="btn danger solid" type="button" data-act="delete" ${deleting ? 'disabled' : ''}>${icon('trash-2')}${deleting ? 'Deleting…' : 'Yes, delete'}</button>`
+              : html`<button class="btn danger" type="button" data-act="ask-delete">${icon('trash-2')}Delete profile</button>`
+          }
+        </div>
+      </section>`
+    }
     </main>
 
     <datalist id="test-options">${catalog.tests.map((t) => html`<option value="${t.name}"></option>`)}</datalist>
@@ -285,6 +305,18 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
     }
   }
 
+  async function remove() {
+    deleting = true;
+    update();
+    if (await onDelete(profile.id)) {
+      dirty = false;
+      return;
+    }
+    deleting = false;
+    confirmDelete = false;
+    update();
+  }
+
   el.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-act]');
     if (!btn) return;
@@ -306,6 +338,17 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onC
         break;
       case 'save':
         save();
+        break;
+      case 'ask-delete':
+        confirmDelete = true;
+        update();
+        break;
+      case 'cancel-delete':
+        confirmDelete = false;
+        update();
+        break;
+      case 'delete':
+        remove();
         break;
       case 'icon':
         draft.icon = btn.dataset.value;

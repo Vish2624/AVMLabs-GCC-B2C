@@ -1,10 +1,16 @@
   openReels(i) {
     this._ri = i || 0;
     this.setState({ reelsOpen: true, reelIdx: i || 0, slides: {}, hint: false, locOpen: false });
+    this.setHash(this.reelHash(i || 0));
+    this._reelPushed = true;
     this._hc = 0;
     this.armHint();
   }
-  closeReels() { clearTimeout(this._ht); clearTimeout(this._ht2); this.setState({ reelsOpen: false, hint: false }); }
+  closeReels() {
+    clearTimeout(this._ht); clearTimeout(this._ht2); this.setState({ reelsOpen: false, hint: false });
+    // Step back over the entry openReels() added, so Back afterwards doesn't land on the same page again.
+    if (this._reelPushed) { this._reelPushed = false; history.back(); } else this.replaceHash(this.pageHash());
+  }
   // Mobile reels: after 4s without any touch, show a swipe hint above the side buttons for 5s, then start counting again.
   // Alternates between "swipe left" (test details) and "swipe up/down" (other profiles).
   armHint() {
@@ -32,6 +38,7 @@
     const n = Component.PROFILES.length; i = Math.max(0, Math.min(n - 1, i));
     this._ri = i;
     this.applyTrack(i, true);
+    this.replaceHash(this.reelHash(i));
     this.armHint();
     // commit to state only after the slide finishes — re-rendering mid-animation causes stutter
     clearTimeout(this._gT);
@@ -50,7 +57,7 @@
     clearTimeout(this._vT);
     this._vT = setTimeout(() => {
       const i = Math.round(el.scrollTop / el.clientHeight);
-      if (i !== this.state.reelIdx) this.setState({ reelIdx: i });
+      if (i !== this.state.reelIdx) { this.setState({ reelIdx: i }); this.replaceHash(this.reelHash(i)); }
     }, 120);
   }
   onH(i, e) {

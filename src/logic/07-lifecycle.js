@@ -20,11 +20,20 @@
     window.addEventListener('keydown', this._onKey);
     this._onScroll = () => { const scrolled = window.scrollY > 240; if (scrolled !== !!this.state.scrolled) this.setState({ scrolled }); };
     window.addEventListener('scroll', this._onScroll, { passive: true });
+    this._onPop = () => {
+      const h = this.fromHash();
+      this._reelPushed = false;
+      this.setState({ locOpen: false, qFocus: false, ...h });
+      if (h.reelsOpen) { this._ri = h.reelIdx; this.armHint(); } else { clearTimeout(this._ht); clearTimeout(this._ht2); window.scrollTo(0, 0); }
+    };
+    window.addEventListener('popstate', this._onPop);
     this._tickT = setInterval(() => { if (!this.state.reelsOpen && this.state.page === 'home') this.setState(s => ({ tick: (s.tick || 0) + 1 })); }, 2200);
     this._heroT = setInterval(() => { if (this.state.page === 'home' && !this.state.reelsOpen) this.setState(s => ({ hero: (s.hero + 1) % 3 })); }, 6000);
     if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) this.typeLoop();
     requestAnimationFrame(() => this.fillSlots());
     this.centreLoop();
+    // Opened straight onto a reel (refresh or shared link).
+    if (this.state.reelsOpen) { this._ri = this.state.reelIdx; this.armHint(); this.componentDidUpdate(); }
   }
   // Centres gallery: the tile passing the middle of the strip grows, then eases back to normal size as it moves on.
   centreLoop() {
@@ -126,7 +135,7 @@
     }
   }
   componentWillUnmount() {
-    window.removeEventListener('resize', this._onResize); window.removeEventListener('keydown', this._onKey); window.removeEventListener('scroll', this._onScroll);
+    window.removeEventListener('resize', this._onResize); window.removeEventListener('keydown', this._onKey); window.removeEventListener('scroll', this._onScroll); window.removeEventListener('popstate', this._onPop);
     if (window.visualViewport) window.visualViewport.removeEventListener('resize', this._onResize);
     clearInterval(this._heroT); clearInterval(this._tickT); cancelAnimationFrame(this._cRaf);
     [this._tt, this._ht, this._ht2, this._gT, this._vT, this._hT, this._tyT].forEach(clearTimeout);

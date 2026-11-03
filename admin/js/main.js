@@ -14,6 +14,11 @@ const show = (el) => {
   window.scrollTo(0, 0);
 };
 
+// The open screen lives in the URL hash (#new, #edit/<id>) so a refresh reopens it.
+const setHash = (h) => {
+  if (location.hash.slice(1) !== h) history.replaceState(null, '', h ? '#' + h : location.pathname + location.search);
+};
+
 // Any request can find the session expired; send the user back to login.
 async function guard(fn) {
   try {
@@ -64,23 +69,13 @@ async function showList() {
       catalog,
       onNew: () => showEditor(null),
       onEdit: (profile) => showEditor(profile),
-      onDelete: async (id) => {
-        try {
-          await guard(() => api.deleteProfile(id));
-          profiles = profiles.filter((p) => p.id !== id);
-          toast('Profile deleted');
-          return true;
-        } catch (err) {
-          toast(err.message);
-          return false;
-        }
-      },
       onLogout: async () => {
         await api.logout().catch(() => {});
         showLogin();
       },
     }),
   );
+  setHash('');
 }
 
 function showEditor(profile) {
@@ -90,6 +85,22 @@ function showEditor(profile) {
       catalog,
       nextSortOrder: profiles.reduce((max, p) => Math.max(max, p.sortOrder + 1), 0),
       onClose: showList,
+      onDelete: async (id) => {
+        let deleted = false;
+        try {
+          await guard(async () => {
+            await api.deleteProfile(id);
+            deleted = true;
+          });
+        } catch (err) {
+          toast(err.message);
+          return false;
+        }
+        if (!deleted) return false; // session ended; the login screen is showing
+        toast('Profile deleted');
+        await showList();
+        return true;
+      },
       onSave: async (payload, isNew) => {
         const saved = await guard(() => (isNew ? api.createProfile(payload) : api.updateProfile(payload)));
         if (!saved) return;
@@ -98,13 +109,26 @@ function showEditor(profile) {
       },
     }),
   );
+  setHash(profile ? 'edit/' + encodeURIComponent(profile.id) : 'new');
+}
+
+// Reopens the screen named in the hash once the profiles have loaded.
+function openRoute(route) {
+  if (!catalog) return; // the list failed to load
+  if (route === 'new') return showEditor(null);
+  const id = route.startsWith('edit/') && decodeURIComponent(route.slice(5));
+  const profile = id && profiles.find((p) => p.id === id);
+  if (profile) showEditor(profile);
 }
 
 async function start() {
+  const route = location.hash.slice(1);
   try {
     const { authed } = await api.session();
-    if (authed) await showList();
-    else showLogin();
+    if (authed) {
+      await showList();
+      openRoute(route);
+    } else showLogin();
   } catch (err) {
     showError(err);
   }

@@ -12,6 +12,19 @@ const PORT = Number(process.env.PORT) || 3000;
 
 if (fs.existsSync(path.join(ROOT, '.env'))) process.loadEnvFile(path.join(ROOT, '.env'));
 
+// No ADMIN_PASSWORD locally -> skip the admin login so /admin/ opens straight away.
+if (!process.env.ADMIN_PASSWORD) {
+  globalThis.AVM_DEV_NO_LOGIN = true;
+  console.warn('ADMIN_PASSWORD is not set: admin login is disabled on this dev server.');
+}
+
+// No Supabase key locally -> serve profiles from supabase/seed.sql, kept in memory.
+if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  const { createDevStore } = await import('./dev-store.js');
+  globalThis.AVM_DEV_STORE = createDevStore(path.join(ROOT, 'supabase', 'seed.sql'));
+  console.warn('SUPABASE_SERVICE_ROLE_KEY is not set: using sample profiles from seed.sql (in memory).');
+}
+
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',

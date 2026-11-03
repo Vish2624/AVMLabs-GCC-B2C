@@ -59,13 +59,34 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-hero-card]:has(image-slot:not([data-filled]):not([data-editable])) [data-hero-text]{flex:1 1 auto!important}
 
 
-/* Reels swipe hint (mobile): two cascading chevrons + label above the side buttons, shown for 5s after 4s idle */
+/* Premium "profile match" card (cart + tests page): cream-gold card, slow sheen, gold crown badge and gold button */
+@keyframes avmGoldSheen{0%,70%{transform:translateX(-140%) skewX(-18deg)}100%{transform:translateX(260%) skewX(-18deg)}}
+[data-gold-card]{position:relative;overflow:hidden;border-radius:24px;color:#2B2110;background:radial-gradient(90% 120% at 100% 0%,#FCEBC0 0%,rgba(252,235,192,0) 55%),linear-gradient(160deg,#FFF8E6 0%,#FFFDF8 60%,#FFF4DA 100%);border:1px solid #E9CF8E;box-shadow:0 22px 44px -30px rgba(160,112,20,.6),inset 0 1px 0 #fff}
+[data-gold-card]::after{content:'';position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.65),transparent);pointer-events:none;animation:avmGoldSheen 6s ease-in-out infinite}
+[data-gold-card]>*{position:relative;z-index:1}
+[data-gold-badge]{width:30px;height:30px;border-radius:999px;display:grid;place-items:center;color:#4A3306;background:linear-gradient(135deg,#FBE7A1 0%,#E3B64B 50%,#B8861F 100%);box-shadow:0 6px 14px -6px rgba(184,134,31,.8),inset 0 1px 0 rgba(255,255,255,.6);flex:none}
+[data-gold-label]{font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:linear-gradient(90deg,#9A6B12,#C99A2E);-webkit-background-clip:text;background-clip:text;color:transparent}
+[data-gold-pill]{font-size:12px;font-weight:800;color:#F7DE8C;background:#2B2110;padding:3px 10px;border-radius:999px;white-space:nowrap}
+[data-gold-chip]{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.85);border:1px solid #EDD9A6;color:#2B2110}
+[data-gold-chip] b{color:#B8861F;font-weight:800}
+[data-gold-btn]{white-space:nowrap;height:44px;border-radius:999px;border:none;cursor:pointer;font-size:14px;font-weight:800;color:#3A2A06;background:linear-gradient(180deg,#F8DD8A 0%,#E0B04A 55%,#C08D25 100%);box-shadow:0 10px 22px -10px rgba(184,134,31,.85),inset 0 1px 0 rgba(255,255,255,.55);transition:transform .2s,box-shadow .2s}
+[data-gold-btn]:hover{transform:translateY(-1px);box-shadow:0 14px 26px -10px rgba(184,134,31,.95),inset 0 1px 0 rgba(255,255,255,.55)}
+[data-gold-ghost]{white-space:nowrap;height:44px;padding:0 16px;border-radius:999px;border:1px solid #E3C57A;background:rgba(255,255,255,.8);color:#8A6414;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
+[data-gold-ghost]:hover{background:#fff}
+@media (prefers-reduced-motion:reduce){[data-gold-card]::after{animation:none;display:none}}
+
+/* Footer columns: brand and contact get more room on wide screens, two columns on tablets, one on phones */
+[data-foot-grid]{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.4fr;gap:36px 32px}
+@media (max-width:900px){[data-foot-grid]{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){[data-foot-grid]{grid-template-columns:1fr}}
+
+/* Reels swipe hint (mobile): two cascading chevrons + label in the gap above "Book now", shown for 5s after 4s idle */
 @keyframes avmSwipeLife{0%{opacity:0;transform:translateY(8px) scale(.9)}7%{opacity:1;transform:none}93%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-4px) scale(.95)}}
 @keyframes avmChev{0%{opacity:.2;transform:translate(0,0)}45%{opacity:1}100%{opacity:.2;transform:translate(var(--sx),var(--sy))}}
-[data-swipe]{--sx:0px;--sy:-4px;position:absolute;bottom:100%;left:50%;margin:0 0 56px -36px;width:72px;display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none;color:#2A1F7A;animation:avmSwipeLife 5s cubic-bezier(.2,.8,.2,1) both}
+[data-swipe]{--sx:0px;--sy:-4px;display:flex;align-items:center;gap:7px;pointer-events:none;color:#2A1F7A;animation:avmSwipeLife 5s cubic-bezier(.2,.8,.2,1) both}
 [data-swipe="down"]{--sy:4px}
 [data-swipe="left"]{--sx:-4px;--sy:0px}
-[data-swipe-arrows]{display:flex;flex-direction:column;align-items:center;margin-bottom:2px;color:#3B2C9E;filter:drop-shadow(0 0 .4px #3B2C9E) drop-shadow(0 0 5px rgba(255,255,255,.95))}
+[data-swipe-arrows]{display:flex;flex-direction:column;align-items:center;color:#3B2C9E;filter:drop-shadow(0 0 .4px #3B2C9E) drop-shadow(0 0 5px rgba(255,255,255,.95))}
 [data-swipe-arrows] avm-i{display:block;animation:avmChev 1s ease-in-out infinite}
 [data-swipe-arrows] avm-i+avm-i{margin-top:-10px}
 [data-swipe="left"] [data-swipe-arrows]{flex-direction:row}
@@ -74,6 +95,29 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-swipe] b{font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;line-height:1.1;text-shadow:0 0 10px #fff,0 0 5px #fff,0 0 2px #fff}
 [data-swipe] small{font-size:10px;font-weight:600;color:#4A4668;line-height:1.1;white-space:nowrap;text-shadow:0 0 10px #fff,0 0 5px #fff,0 0 2px #fff}
 @media (prefers-reduced-motion:reduce){[data-swipe],[data-swipe-arrows] avm-i{animation:none!important}}
+
+/* Reels "Add" button: the circle pops, two waves ripple out, sparks burst, and a big check pops in the middle of the reel */
+@keyframes avmAddPop{0%{transform:scale(1)}20%{transform:scale(.8)}50%{transform:scale(1.18)}72%{transform:scale(.96)}100%{transform:scale(1)}}
+@keyframes avmCheckIn{0%{opacity:0;transform:scale(.2) rotate(-60deg)}55%{opacity:1;transform:scale(1.25) rotate(8deg)}100%{opacity:1;transform:none}}
+@keyframes avmGlow{0%{opacity:.55;transform:scale(.9)}100%{opacity:0;transform:scale(2)}}
+@keyframes avmWave{0%{opacity:.8;transform:scale(1)}100%{opacity:0;transform:scale(2.2)}}
+@keyframes avmSpark{0%{opacity:0;transform:rotate(var(--r)) translateY(-24px) scaleY(.3)}20%{opacity:1;transform:rotate(var(--r)) translateY(-30px) scaleY(1)}100%{opacity:0;transform:rotate(var(--r)) translateY(var(--d)) scaleY(.2)}}
+@keyframes avmBig{0%{opacity:0;transform:scale(.3)}30%{opacity:1;transform:scale(1.15)}45%{transform:scale(.95)}60%{transform:scale(1.02)}80%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.25)}}
+[data-add-btn="1"]{animation:avmAddPop .6s cubic-bezier(.3,1.4,.5,1) both;box-shadow:0 8px 22px -8px rgba(59,44,158,.7)}
+[data-add-btn="1"]>avm-i{animation:avmCheckIn .5s .05s cubic-bezier(.3,1.4,.5,1) both}
+[data-add-fx]{position:absolute;inset:-1px;pointer-events:none;z-index:-1}
+[data-add-fx]::before{content:'';position:absolute;inset:0;border-radius:999px;background:radial-gradient(circle,rgba(123,108,240,.55),rgba(59,44,158,0) 70%);animation:avmGlow .7s ease-out both}
+[data-add-fx] i{position:absolute;inset:0;border-radius:999px;border:1.5px solid #3B2C9E;animation:avmWave .75s cubic-bezier(.2,.7,.3,1) both}
+[data-add-fx] i[data-wave="2"]{border-color:rgba(123,108,240,.7);animation-delay:.15s;animation-duration:.9s}
+[data-add-fx] b{--d:-46px;position:absolute;left:50%;top:50%;width:3px;height:9px;margin:-4.5px 0 0 -1.5px;border-radius:999px;background:#3B2C9E;transform-origin:50% 50%;animation:avmSpark .55s .1s cubic-bezier(.15,.7,.3,1) both}
+[data-add-fx] b:nth-child(even){--d:-38px;height:6px;background:#22B463;animation-delay:.16s}
+[data-add-big]{position:absolute;inset:0;z-index:5;display:grid;place-items:center;pointer-events:none}
+[data-add-big] span{width:112px;height:112px;border-radius:999px;display:grid;place-items:center;color:#fff;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);box-shadow:0 20px 50px -14px rgba(59,44,158,.75),0 0 0 10px rgba(59,44,158,.12);animation:avmBig .85s cubic-bezier(.2,.8,.2,1) both}
+
+/* Toast drops in from the top */
+@keyframes avmToastIn{0%{opacity:0;transform:translate(-50%,-140%) scale(.9)}60%{opacity:1;transform:translate(-50%,6px) scale(1.02)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
+[data-toast]{transform:translate(-50%,0);animation:avmToastIn .45s cubic-bezier(.2,.8,.2,1) both}
+@media (prefers-reduced-motion:reduce){[data-add-btn],[data-add-fx],[data-add-big],[data-toast]{animation:none!important}[data-add-fx],[data-add-big]{display:none}}
 </style>
 </helmet>
 <div style="min-height:100dvh;background:#F6F6FA;color:#16133A;overflow-x:clip">
@@ -356,6 +400,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             <span style="white-space:nowrap;font-size:21px;font-weight:800;letter-spacing:-0.02em;color:#16133A;line-height:1">{{ t.priceF }}</span>
           </div>
           <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 14px -10px rgba(59,44,158,0.7);transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
+          <sc-if value="{{ t.covered }}"><span onClick="{{ t.stop }}" title="{{ t.coveredBy }}" style="max-width:170px;min-height:46px;padding:5px 16px 5px 12px;border-radius:999px;border:1.5px solid #BFE8D2;background:#EAF7EF;color:#0E7350;display:flex;align-items:center;gap:8px;cursor:default"><avm-i n="circle-check" s="18"></avm-i><span style="display:flex;flex-direction:column;min-width:0;line-height:1.15"><b style="font-size:14px;font-weight:800">Included</b><small style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.coveredBy }}</small></span></span></sc-if>
           <sc-if value="{{ t.inCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 22px;border-radius:999px;border:1.5px solid #3B2C9E;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 18px -10px rgba(59,44,158,0.85)"><avm-i n="check" s="17"></avm-i>Added</button></sc-if>
         </div>
       </div>
@@ -421,6 +466,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             <span style="white-space:nowrap;font-size:21px;font-weight:800;letter-spacing:-0.02em;color:#16133A;line-height:1">{{ t.priceF }}</span>
           </div>
           <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 14px -10px rgba(59,44,158,0.7);transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
+          <sc-if value="{{ t.covered }}"><span onClick="{{ t.stop }}" title="{{ t.coveredBy }}" style="max-width:170px;min-height:46px;padding:5px 16px 5px 12px;border-radius:999px;border:1.5px solid #BFE8D2;background:#EAF7EF;color:#0E7350;display:flex;align-items:center;gap:8px;cursor:default"><avm-i n="circle-check" s="18"></avm-i><span style="display:flex;flex-direction:column;min-width:0;line-height:1.15"><b style="font-size:14px;font-weight:800">Included</b><small style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.coveredBy }}</small></span></span></sc-if>
           <sc-if value="{{ t.inCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 22px;border-radius:999px;border:1.5px solid #3B2C9E;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 18px -10px rgba(59,44,158,0.85)"><avm-i n="check" s="17"></avm-i>Added</button></sc-if>
         </div>
       </div>
@@ -441,12 +487,12 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
           </sc-if>
         </div>
         <sc-for list="{{ topMatch }}" as="m" hint-placeholder-count="0">
-          <div style="border-radius:24px;padding:18px;background:linear-gradient(160deg,#ECE9FD,#FFFFFF 75%);border:1px solid #DAD5F7;display:flex;flex-direction:column;gap:10px">
-            <div style="display:flex;align-items:center;gap:8px"><span style="width:28px;height:28px;border-radius:999px;background:#3B2C9E;color:#fff;display:grid;place-items:center"><avm-i n="sparkles" s="14"></avm-i></span><span style="font-size:11.5px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#3B2C9E">Profile match</span><span style="flex:1"></span><span style="font-size:12px;font-weight:800;color:#0E7350;background:#E3F4EB;padding:3px 9px;border-radius:999px">{{ m.pill }}</span></div>
+          <div data-gold-card="1" style="padding:18px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:8px"><span data-gold-badge="1"><avm-i n="crown" s="15"></avm-i></span><span data-gold-label="1">Premium match</span><span style="flex:1"></span><span data-gold-pill="1">{{ m.pill }}</span></div>
             <div style="font-size:16px;font-weight:800;line-height:1.3">{{ m.headline }}</div>
-            <div style="font-size:13.5px;color:#5D5A7A;line-height:1.5">{{ m.detail }}</div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ m.extras }}" as="x" hint-placeholder-count="0"><span style="font-size:12px;font-weight:600;padding:4px 9px;border-radius:999px;background:#fff;border:1px solid #E2DEF7;color:#16133A">+ {{ x }}</span></sc-for></div>
-            <div style="display:flex;gap:8px;margin-top:4px"><button onClick="{{ m.switchIt }}" style="flex:1;height:44px;border-radius:999px;border:none;background:#3B2C9E;color:#fff;font-size:14px;font-weight:800;cursor:pointer">Switch to profile</button><button onClick="{{ m.view }}" style="white-space:nowrap;height:44px;padding:0 16px;border-radius:999px;border:1px solid #DAD5F7;background:#fff;color:#3B2C9E;font-size:14px;font-weight:700;cursor:pointer">View</button></div>
+            <div style="font-size:13.5px;color:#6B5A3A;line-height:1.5">{{ m.detail }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ m.extras }}" as="x" hint-placeholder-count="0"><span data-gold-chip="1"><b>+</b>{{ x }}</span></sc-for></div>
+            <div style="display:flex;gap:8px;margin-top:4px"><button onClick="{{ m.switchIt }}" data-gold-btn="1" style="flex:1">Switch to profile</button><button onClick="{{ m.view }}" data-gold-ghost="1">View</button></div>
           </div>
         </sc-for>
       </aside>
@@ -520,23 +566,24 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
         </sc-for>
       </div>
       <sc-for list="{{ cartMatches }}" as="m" hint-placeholder-count="0">
-        <div style="border-radius:24px;padding:18px 20px;background:linear-gradient(160deg,#ECE9FD,#FFFFFF 75%);border:1px solid #DAD5F7;display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+        <div data-gold-card="1" style="padding:18px 20px;display:flex;flex-wrap:wrap;gap:14px;align-items:center">
           <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:8px">
-            <div style="display:flex;align-items:center;gap:8px"><span style="width:28px;height:28px;border-radius:999px;background:#3B2C9E;color:#fff;display:grid;place-items:center"><avm-i n="sparkles" s="14"></avm-i></span><span style="font-size:11.5px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#3B2C9E">Profile match</span><span style="font-size:12px;font-weight:800;color:#0E7350;background:#E3F4EB;padding:3px 9px;border-radius:999px">{{ m.pill }}</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><span data-gold-badge="1"><avm-i n="crown" s="15"></avm-i></span><span data-gold-label="1">Premium match</span><span data-gold-pill="1">{{ m.pill }}</span></div>
             <div style="font-size:16px;font-weight:800;line-height:1.3">{{ m.headline }}</div>
-            <div style="font-size:13.5px;color:#5D5A7A;line-height:1.5">{{ m.detail }}</div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ m.extras }}" as="x" hint-placeholder-count="0"><span style="font-size:12px;font-weight:600;padding:4px 9px;border-radius:999px;background:#fff;border:1px solid #E2DEF7">+ {{ x }}</span></sc-for></div>
+            <div style="font-size:13.5px;color:#6B5A3A;line-height:1.5">{{ m.detail }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ m.extras }}" as="x" hint-placeholder-count="0"><span data-gold-chip="1"><b>+</b>{{ x }}</span></sc-for></div>
           </div>
-          <div style="display:flex;gap:8px;flex:0 0 auto"><button onClick="{{ m.switchIt }}" style="white-space:nowrap;height:44px;padding:0 18px;border-radius:999px;border:none;background:#3B2C9E;color:#fff;font-size:14px;font-weight:800;cursor:pointer">Switch to profile</button><button onClick="{{ m.view }}" style="white-space:nowrap;height:44px;padding:0 16px;border-radius:999px;border:1px solid #DAD5F7;background:#fff;color:#3B2C9E;font-size:14px;font-weight:700;cursor:pointer">View</button></div>
+          <div style="display:flex;gap:8px;flex:0 0 auto"><button onClick="{{ m.switchIt }}" data-gold-btn="1" style="padding:0 18px">Switch to profile</button><button onClick="{{ m.view }}" data-gold-ghost="1">View</button></div>
         </div>
       </sc-for>
       <div style="background:#fff;border:1px solid #ECEBF3;border-radius:24px;padding:clamp(16px,2.5vw,24px);display:flex;flex-direction:column;gap:14px">
         <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;background:#16133A;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800">2</span><span style="font-size:17px;font-weight:800">Sample collection</span></div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px">
-          <button onClick="{{ pickHome }}" style="text-align:left;cursor:pointer;border-radius:20px;padding:16px;border:2px solid {{ modeHome.bd }};background:{{ modeHome.bg }};display:flex;flex-direction:column;gap:8px;color:#16133A;transition:all .2s">
-            <span style="display:flex;align-items:center;gap:10px;width:100%"><span style="width:38px;height:38px;border-radius:12px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center"><avm-i n="house" s="19"></avm-i></span><span style="flex:1;font-size:15px;font-weight:800">Home collection</span><span style="color:#0E7350;display:flex"><avm-i n="circle-check" s="20"></avm-i></span></span>
-            <span style="font-size:24px;font-weight:800;letter-spacing:-0.02em;color:#0E7350">{{ hcBig }}</span>
-            <span style="font-size:13px;color:#5D5A7A;line-height:1.45">{{ hcSub }}</span>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+          <button onClick="{{ pickHome }}" style="text-align:left;cursor:pointer;border-radius:20px;padding:14px 16px;border:2px solid {{ modeHome.bd }};background:{{ modeHome.bg }};display:flex;align-items:center;gap:10px;color:#16133A;transition:all .2s">
+            <span style="width:38px;height:38px;border-radius:12px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="house" s="19"></avm-i></span><span style="flex:1;font-size:15px;font-weight:800">HC</span><span style="width:20px;height:20px;border-radius:999px;border:2px solid {{ modeHome.ring }};display:grid;place-items:center;flex:none"><span style="width:10px;height:10px;border-radius:999px;background:{{ modeHome.dot }}"></span></span>
+          </button>
+          <button onClick="{{ pickWalk }}" style="text-align:left;cursor:pointer;border-radius:20px;padding:14px 16px;border:2px solid {{ modeWalk.bd }};background:{{ modeWalk.bg }};display:flex;align-items:center;gap:10px;color:#16133A;transition:all .2s">
+            <span style="width:38px;height:38px;border-radius:12px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="map-pin" s="19"></avm-i></span><span style="flex:1;font-size:15px;font-weight:800">Walk-in</span><span style="width:20px;height:20px;border-radius:999px;border:2px solid {{ modeWalk.ring }};display:grid;place-items:center;flex:none"><span style="width:10px;height:10px;border-radius:999px;background:{{ modeWalk.dot }}"></span></span>
           </button>
         </div>
       </div>
@@ -552,14 +599,18 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
       </div>
       <div style="background:#fff;border:1px solid #ECEBF3;border-radius:24px;padding:clamp(16px,2.5vw,24px);display:flex;flex-direction:column;gap:14px">
         <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;background:#16133A;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800">4</span><span style="font-size:17px;font-weight:800">{{ slotTitle }}</span></div>
-        <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px"><sc-for list="{{ days }}" as="d" hint-placeholder-count="6"><button onClick="{{ d.pick }}" style="flex:none;width:76px;height:66px;border-radius:16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1.5px solid {{ d.bd }};background:{{ d.bg }};color:{{ d.fg }}"><span style="font-size:12px;font-weight:600;opacity:0.85">{{ d.top }}</span><span style="font-size:15px;font-weight:800">{{ d.bottom }}</span></button></sc-for></div>
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8A8698;margin-top:2px">Pick a date</span>
+        <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 6px;margin:-2px -2px -6px"><sc-for list="{{ days }}" as="d" hint-placeholder-count="6"><button onClick="{{ d.pick }}" style="flex:none;width:72px;padding:10px 0 9px;border-radius:16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;border:1.5px solid {{ d.bd }};background:{{ d.bg }};color:{{ d.fg }};box-shadow:{{ d.sh }};transform:{{ d.lift }};transition:background .2s,color .2s,border-color .2s,box-shadow .2s,transform .2s"><span style="font-size:11.5px;font-weight:700;color:{{ d.sub }}">{{ d.top }}</span><span style="font-size:24px;font-weight:800;line-height:1.15;letter-spacing:-0.02em">{{ d.num }}</span><span style="font-size:11.5px;font-weight:600;color:{{ d.sub }}">{{ d.mon }}</span></button></sc-for></div>
         <sc-if value="{{ err.date }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.date }}</span></sc-if>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px"><sc-for list="{{ slots }}" as="s" hint-placeholder-count="6"><button onClick="{{ s.pick }}" disabled="{{ s.disabled }}" style="white-space:nowrap;height:46px;border-radius:14px;font-size:14px;font-weight:700;cursor:{{ s.cursor }};border:1.5px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};text-decoration:{{ s.td }}">{{ s.label }}</button></sc-for></div>
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8A8698;margin-top:4px">Pick a time</span>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"><sc-for list="{{ slots }}" as="s" hint-placeholder-count="6"><button onClick="{{ s.pick }}" disabled="{{ s.disabled }}" style="min-width:0;padding:10px 6px;border-radius:14px;cursor:{{ s.cursor }};border:1.5px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};box-shadow:{{ s.sh }};display:flex;flex-direction:column;align-items:center;gap:3px;transition:background .2s,color .2s,border-color .2s,box-shadow .2s"><span style="color:{{ s.ico }};display:flex"><avm-i n="{{ s.icon }}" s="17"></avm-i></span><span style="white-space:nowrap;font-size:14px;font-weight:800;text-decoration:{{ s.td }}">{{ s.label }}</span><span style="font-size:11px;font-weight:600;color:{{ s.sub }}">{{ s.part }}</span></button></sc-for></div>
         <sc-if value="{{ err.slot }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.slot }}</span></sc-if>
+        <sc-if value="{{ slotPicked }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;background:#EAF7EF;color:#0E7350;font-size:14px;font-weight:700"><avm-i n="calendar-check" s="18"></avm-i><span>{{ slotSummary }}</span></div></sc-if>
       </div>
       <div style="background:#fff;border:1px solid #ECEBF3;border-radius:24px;padding:clamp(16px,2.5vw,24px);display:flex;flex-direction:column;gap:14px">
         <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;background:#16133A;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800">5</span><span style="font-size:17px;font-weight:800">{{ placeTitle }}</span></div>
         <sc-if value="{{ isHomeMode }}"><label style="display:flex;flex-direction:column;gap:6px"><textarea value="{{ form.address }}" onChange="{{ on.address }}" rows="3" placeholder="{{ addrPh }}" style="border-radius:14px;border:1.5px solid {{ bc.address }};background:#FBFBFD;padding:12px 14px;font-size:15px;line-height:1.5;color:#16133A;outline:none;width:100%;resize:vertical" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"></textarea><sc-if value="{{ err.address }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.address }}</span></sc-if></label></sc-if>
+        <sc-if value="{{ isWalkMode }}"><span style="font-size:15px;line-height:1.5;color:#16133A;display:flex;align-items:flex-start;gap:10px"><span style="padding-top:2px;color:#3B2C9E;display:flex"><avm-i n="map-pin" s="18"></avm-i></span>{{ regionAddr }}</span></sc-if>
       </div>
     </div>
     <aside style="flex:1 1 320px;min-width:0;position:{{ asidePos }};top:92px;display:flex;flex-direction:column;gap:14px">
@@ -606,6 +657,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <sc-if value="{{ td.notInCart }}"><button onClick="{{ td.toggle }}" style="white-space:nowrap;flex:1 1 180px;max-width:260px;height:52px;border-radius:999px;border:none;background:#fff;color:#2A1F7A;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:0 12px 26px -12px rgba(0,0,0,0.5)"><avm-i n="plus" s="18"></avm-i>Add to cart</button></sc-if>
       <sc-if value="{{ td.inCart }}"><button onClick="{{ td.toggle }}" style="white-space:nowrap;flex:1 1 180px;max-width:260px;height:52px;border-radius:999px;border:1.5px solid #7BE3B4;background:rgba(123,227,180,0.14);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer"><avm-i n="check" s="18"></avm-i>Added to cart</button></sc-if>
+      <sc-if value="{{ td.covered }}"><span style="white-space:nowrap;flex:1 1 180px;max-width:260px;height:52px;padding:0 18px;border-radius:999px;border:1.5px solid #7BE3B4;background:rgba(123,227,180,0.14);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;overflow:hidden"><avm-i n="circle-check" s="18"></avm-i><span style="overflow:hidden;text-overflow:ellipsis">Included · {{ td.coveredBy }}</span></span></sc-if>
       <button onClick="{{ td.book }}" style="white-space:nowrap;flex:1 1 180px;max-width:260px;height:52px;border-radius:999px;border:none;background:linear-gradient(180deg,#22B463,#138A47);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;box-shadow:0 14px 30px -12px rgba(19,138,71,0.85),inset 0 1px 0 rgba(255,255,255,0.25)"><avm-i n="whatsapp" s="19"></avm-i>Book now</button>
     </div>
   </section>
@@ -660,46 +712,59 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 </main>
 </sc-if>
 
-<footer style="background:#100D2C;color:#C9C6E0;margin-top:clamp(40px,6vw,72px)">
-  <div style="max-width:1280px;margin:0 auto;padding:clamp(28px,4vw,44px) clamp(14px,3vw,28px) 0">
-    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;padding:clamp(20px,3vw,28px);border-radius:24px;background:linear-gradient(140deg,#1C1650,#2C2180 60%,#3B2C9E);border:1px solid rgba(255,255,255,0.08)">
-      <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1 1 280px">
-        <span style="font-size:clamp(20px,2.4vw,26px);font-weight:800;letter-spacing:-0.02em;color:#fff;text-wrap:balance">Book a test in under a minute</span>
-        <span style="font-size:14px;color:#C9C4EE">Home sample collection available.</span>
+<footer style="position:relative;overflow:hidden;background:#0F0C29;color:#C9C6E0;margin-top:clamp(40px,6vw,72px)">
+  <div style="position:absolute;width:520px;height:520px;border-radius:50%;background:#5B46D6;opacity:.14;filter:blur(120px);top:-260px;left:-160px;pointer-events:none"></div>
+  <div style="max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,48px) clamp(16px,3vw,28px) 0;position:relative">
+    <div style="position:relative;overflow:hidden;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px 28px;padding:clamp(22px,3vw,32px) clamp(20px,3.5vw,40px);border-radius:28px;background:linear-gradient(120deg,#231B66 0%,#3B2C9E 65%,#5B46D6 100%);box-shadow:0 30px 60px -36px rgba(91,70,214,0.8),inset 0 1px 0 rgba(255,255,255,0.12)">
+      <div style="position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.18),transparent 70%);right:-60px;top:-140px;pointer-events:none"></div>
+      <div style="display:flex;align-items:center;gap:16px;min-width:0;flex:1 1 300px;position:relative">
+        <span style="width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);color:#fff;display:grid;place-items:center;flex:none"><avm-i n="house" s="24"></avm-i></span>
+        <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+          <span style="font-size:clamp(20px,2.4vw,26px);font-weight:800;letter-spacing:-0.02em;color:#fff;line-height:1.2;text-wrap:balance">Book a test in under a minute</span>
+          <span style="font-size:14px;color:#D4CFF7">Free home sample collection, or walk in to our centre.</span>
+        </div>
       </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button onClick="{{ waGeneral }}" style="white-space:nowrap;height:48px;padding:0 20px;border-radius:999px;border:none;background:linear-gradient(180deg,#22B463,#138A47);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;gap:9px;cursor:pointer;box-shadow:0 12px 26px -12px rgba(19,138,71,0.8)"><avm-i n="whatsapp" s="18"></avm-i>Book on WhatsApp</button>
-        <button onClick="{{ goTests }}" style="white-space:nowrap;height:48px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;cursor:pointer" style-hover="background:rgba(255,255,255,0.14)">Browse tests<avm-i n="arrow-right" s="16"></avm-i></button>
-      </div>
-    </div>
-  </div>
-  <div style="max-width:1280px;margin:0 auto;padding:clamp(28px,4vw,44px) clamp(14px,3vw,28px) 28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:32px 28px">
-    <div style="display:flex;flex-direction:column;gap:16px;grid-column:span 1;min-width:0">
-      <span style="align-self:flex-start;background:#fff;border-radius:14px;padding:8px 10px;display:flex"><img src="./assets/avm-logo.png" alt="AVM Labs" style="height:56px;display:block"></span>
-      <span style="font-size:14px;line-height:1.65;color:#B9B5D6;max-width:300px">Hormones · Vitamins · Wellness. Lab tests and health profiles with free home collection.</span>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <span style="font-size:12px;font-weight:800;color:#fff;letter-spacing:.1em;text-transform:uppercase">Explore</span>
-      <div style="display:flex;flex-direction:column;gap:6px"><sc-for list="{{ footLinks }}" as="f" hint-placeholder-count="4"><button onClick="{{ f.go }}" style="align-self:flex-start;white-space:nowrap;border:none;background:none;padding:3px 0;text-align:left;color:#C9C6E0;font-size:14.5px;cursor:pointer;transition:color .2s" style-hover="color:#fff">{{ f.label }}</button></sc-for></div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <span style="font-size:12px;font-weight:800;color:#fff;letter-spacing:.1em;text-transform:uppercase">Popular tests</span>
-      <div style="display:flex;flex-direction:column;gap:6px"><sc-for list="{{ footTests }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.go }}" style="align-self:flex-start;white-space:nowrap;border:none;background:none;padding:3px 0;text-align:left;color:#C9C6E0;font-size:14.5px;cursor:pointer;transition:color .2s" style-hover="color:#fff">{{ f.label }}</button></sc-for></div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <span style="font-size:12px;font-weight:800;color:#fff;letter-spacing:.1em;text-transform:uppercase">Visit or contact</span>
-      <span style="font-size:14.5px;display:flex;align-items:flex-start;gap:10px;line-height:1.5"><span style="padding-top:2px;color:#9C95E8"><avm-i n="map-pin" s="16"></avm-i></span>{{ regionAddr }}</span>
-      <span style="font-size:14.5px;display:flex;align-items:center;gap:10px"><span style="color:#9C95E8;display:flex"><avm-i n="clock" s="16"></avm-i></span>7 AM – 8 PM, all days</span>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
-        <button onClick="{{ waGeneral }}" style="white-space:nowrap;height:38px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer" style-hover="border-color:#9C95E8"><avm-i n="whatsapp" s="15"></avm-i>WhatsApp</button>
-        <button onClick="{{ directions }}" style="white-space:nowrap;height:38px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer" style-hover="border-color:#9C95E8"><avm-i n="navigation" s="15"></avm-i>Directions</button>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;position:relative">
+        <button onClick="{{ waGeneral }}" style="white-space:nowrap;height:50px;padding:0 22px;border-radius:999px;border:none;background:linear-gradient(180deg,#22B463,#138A47);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;gap:9px;cursor:pointer;box-shadow:0 12px 26px -12px rgba(19,138,71,0.9),inset 0 1px 0 rgba(255,255,255,0.25)"><avm-i n="whatsapp" s="19"></avm-i>Book on WhatsApp</button>
+        <button onClick="{{ goTests }}" style="white-space:nowrap;height:50px;padding:0 22px;border-radius:999px;border:none;background:#fff;color:#2A1F7A;font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;transition:transform .2s" style-hover="transform:translateY(-1px)">Browse tests<avm-i n="arrow-right" s="16"></avm-i></button>
       </div>
     </div>
   </div>
-  <div style="border-top:1px solid rgba(255,255,255,0.08)">
-    <div style="max-width:1280px;margin:0 auto;padding:16px clamp(14px,3vw,28px) 22px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;font-size:12.5px;line-height:1.6;color:#A9A5C9">
+
+  <div data-foot-grid="1" style="max-width:1200px;margin:0 auto;padding:clamp(36px,5vw,56px) clamp(16px,3vw,28px) clamp(28px,4vw,40px);position:relative">
+    <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+      <span style="align-self:flex-start;background:#fff;border-radius:12px;padding:6px 8px;display:flex;box-shadow:0 10px 24px -14px rgba(0,0,0,0.6)"><img src="./assets/avm-logo.png" alt="AVM Labs" style="height:48px;display:block"></span>
+      <span style="font-size:14px;line-height:1.7;color:#A9A5C9;max-width:320px">Lab tests and health profiles for hormones, vitamins and everyday wellness, with free home sample collection.</span>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="font-size:12px;font-weight:600;color:#D4CFF7;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)">Hormones</span>
+        <span style="font-size:12px;font-weight:600;color:#D4CFF7;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)">Vitamins</span>
+        <span style="font-size:12px;font-weight:600;color:#D4CFF7;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)">Wellness</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Explore<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
+      <div style="display:flex;flex-direction:column;gap:4px"><sc-for list="{{ footLinks }}" as="f" hint-placeholder-count="4"><button onClick="{{ f.go }}" style="align-self:flex-start;white-space:nowrap;border:none;background:none;padding:4px 0;text-align:left;color:#C9C6E0;font-size:14.5px;cursor:pointer;transition:color .2s,transform .2s" style-hover="color:#fff;transform:translateX(3px)">{{ f.label }}</button></sc-for></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Popular tests<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
+      <div style="display:flex;flex-direction:column;gap:4px"><sc-for list="{{ footTests }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.go }}" style="align-self:flex-start;white-space:nowrap;border:none;background:none;padding:4px 0;text-align:left;color:#C9C6E0;font-size:14.5px;cursor:pointer;transition:color .2s,transform .2s" style-hover="color:#fff;transform:translateX(3px)">{{ f.label }}</button></sc-for></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+      <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Visit or contact<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
+      <div style="display:flex;align-items:flex-start;gap:12px"><span style="width:34px;height:34px;border-radius:10px;background:rgba(123,108,240,0.14);color:#A79CF5;display:grid;place-items:center;flex:none"><avm-i n="map-pin" s="16"></avm-i></span><span style="display:flex;flex-direction:column;gap:1px;min-width:0"><small style="font-size:11.5px;color:#8D88B0">Our centre</small><span style="font-size:14px;line-height:1.5;color:#E4E1F5">{{ regionAddr }}</span></span></div>
+      <div style="display:flex;align-items:flex-start;gap:12px"><span style="width:34px;height:34px;border-radius:10px;background:rgba(123,108,240,0.14);color:#A79CF5;display:grid;place-items:center;flex:none"><avm-i n="clock" s="16"></avm-i></span><span style="display:flex;flex-direction:column;gap:1px"><small style="font-size:11.5px;color:#8D88B0">Open</small><span style="font-size:14px;color:#E4E1F5">7 AM – 8 PM, all days</span></span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:2px">
+        <button onClick="{{ waGeneral }}" style="white-space:nowrap;height:38px;padding:0 14px;border-radius:999px;border:1px solid rgba(34,180,99,0.45);background:rgba(34,180,99,0.12);color:#7BE3B4;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer;transition:background .2s" style-hover="background:rgba(34,180,99,0.22)"><avm-i n="whatsapp" s="15"></avm-i>WhatsApp</button>
+        <button onClick="{{ directions }}" style="white-space:nowrap;height:38px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer;transition:background .2s" style-hover="background:rgba(255,255,255,0.12)"><avm-i n="navigation" s="15"></avm-i>Directions</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid rgba(255,255,255,0.07);position:relative">
+    <div style="max-width:1200px;margin:0 auto;padding:18px clamp(16px,3vw,28px) 22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;font-size:12.5px;line-height:1.6;color:#8D88B0">
       <span>© 2026 AVM Labs · Wellness Laboratory</span>
-      <span>Lab results support, but do not replace, medical advice.</span>
+      <span style="display:flex;align-items:center;gap:6px"><avm-i n="info" s="13"></avm-i>Lab results support, but do not replace, medical advice.</span>
+      <button onClick="{{ toTop }}" style="white-space:nowrap;height:32px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.12);background:none;color:#C9C6E0;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;transition:color .2s,border-color .2s" style-hover="color:#fff;border-color:rgba(255,255,255,0.3)"><avm-i n="arrow-up" s="13"></avm-i>Back to top</button>
     </div>
   </div>
 <div style="height:{{ spacerH }}"></div>
@@ -737,7 +802,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 </sc-if>
 
 <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
-  <div style="position:fixed;left:50%;transform:translateX(-50%);bottom:{{ toastBottom }};z-index:120;max-width:calc(100vw - 32px);padding:12px 18px;border-radius:999px;background:rgba(22,19,58,0.94);backdrop-filter:blur(16px);color:#fff;font-size:14px;font-weight:600;box-shadow:0 16px 40px -14px rgba(0,0,0,0.5);display:flex;align-items:center;gap:8px;pointer-events:none"><avm-i n="circle-check" s="16"></avm-i>{{ toast }}</div>
+  <div data-toast="1" role="status" style="position:fixed;left:50%;top:{{ toastTop }};z-index:130;max-width:calc(100vw - 32px);padding:8px 18px 8px 8px;border-radius:999px;background:rgba(22,19,58,0.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:#fff;font-size:14px;font-weight:600;box-shadow:0 16px 40px -14px rgba(0,0,0,0.5);display:flex;align-items:center;gap:10px;pointer-events:none"><span style="width:28px;height:28px;border-radius:999px;background:{{ toastDot }};display:grid;place-items:center;flex:none"><avm-i n="{{ toastIcon }}" s="16"></avm-i></span>{{ toast }}</div>
 </sc-if>
 
 <sc-if value="{{ isBooked }}" hint-placeholder-val="{{ false }}">
@@ -877,9 +942,10 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
               </div>
             </div>
           </div>
+          <sc-if value="{{ r.popping }}" hint-placeholder-val="{{ false }}"><div data-add-big="1" aria-hidden="true"><span><avm-i n="check" s="56"></avm-i></span></div></sc-if>
+          <sc-if value="{{ reelHint }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:0;right:0;bottom:{{ hintBottom }};z-index:5;display:flex;justify-content:center;pointer-events:none"><div data-swipe="{{ hintDir }}" aria-hidden="true"><span data-swipe-arrows="1"><avm-i n="{{ hintIcon }}" s="18"></avm-i><avm-i n="{{ hintIcon }}" s="18"></avm-i></span><b>Swipe</b><small>{{ hintLabel }}</small></div></div></sc-if>
           <div style="position:absolute;right:10px;bottom:{{ railBottom }};z-index:4;display:flex;flex-direction:column;gap:16px;align-items:center">
-            <sc-if value="{{ reelHint }}" hint-placeholder-val="{{ false }}"><div data-swipe="{{ hintDir }}" aria-hidden="true"><span data-swipe-arrows="1"><avm-i n="{{ hintIcon }}" s="18"></avm-i><avm-i n="{{ hintIcon }}" s="18"></avm-i></span><b>Swipe</b><small>{{ hintLabel }}</small></div></sc-if>
-            <button onClick="{{ r.toggle }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span style="width:48px;height:48px;border-radius:999px;background:{{ r.addBg }};color:{{ r.addInk }};border:1px solid #E7E6F0;display:grid;place-items:center"><avm-i n="{{ r.addIcon }}" s="22"></avm-i></span>{{ r.addLabel }}</button>
+            <button onClick="{{ r.toggle }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span data-add-btn="{{ r.addPop }}" style="position:relative;width:48px;height:48px;border-radius:999px;background:{{ r.addBg }};color:{{ r.addInk }};border:1px solid #E7E6F0;display:grid;place-items:center;transition:background .25s,color .25s"><avm-i n="{{ r.addIcon }}" s="22"></avm-i><sc-if value="{{ r.popping }}" hint-placeholder-val="{{ false }}"><span data-add-fx="1" aria-hidden="true"><i data-wave="1"></i><i data-wave="2"></i><b style="--r:0deg"></b><b style="--r:45deg"></b><b style="--r:90deg"></b><b style="--r:135deg"></b><b style="--r:180deg"></b><b style="--r:225deg"></b><b style="--r:270deg"></b><b style="--r:315deg"></b></span></sc-if></span>{{ r.addLabel }}</button>
             <button onClick="{{ r.share }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span style="width:48px;height:48px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:grid;place-items:center"><avm-i n="share-2" s="20"></avm-i></span>Share</button>
             <button onClick="{{ r.toTests }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span style="width:48px;height:48px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:grid;place-items:center"><avm-i n="list" s="20"></avm-i></span>Tests</button>
           </div>
@@ -994,7 +1060,7 @@ class Component extends DCLogic {
     return { page: 'home', w: window.innerWidth, h: window.innerHeight, cart, sMode: 'tests', q: '', qFocus: false, cat: 'all', tq: '', pf: 'all', hero: 0,
       reelsOpen: false, reelIdx: 0, slides: {}, hint: false, mode: 'home',
       form: { name: '', phone: '', nid: '', age: '', gender: '', date: '', slot: '', address: '' }, errors: {}, booked: null,
-      locOpen: false, toast: '' };
+      locOpen: false, toast: '', pop: null, ...this.fromHash() };
   }
 
   db() {
@@ -1022,7 +1088,10 @@ class Component extends DCLogic {
       Component.PROFILES = profiles;
       Component.PICON = { ...Component.PICON, ...Object.fromEntries(list.map(p => [p.id, p.icon])) };
       Component._db = null;
-      this.setState(s => ({ profilesVer: (s.profilesVer || 0) + 1, cart: s.cart.filter(c => c.type !== 'profile' || profiles.some(p => p.id === c.id)) }));
+      const ri = this._wantReel ? profiles.findIndex(p => p.id === this._wantReel) : -1;
+      this._wantReel = null;
+      if (ri >= 0 && this.state.reelsOpen) { this._ri = ri; requestAnimationFrame(() => this.applyTrack(ri, false)); }
+      this.setState(s => ({ profilesVer: (s.profilesVer || 0) + 1, cart: s.cart.filter(c => c.type !== 'profile' || profiles.some(p => p.id === c.id)), ...(ri >= 0 && s.reelsOpen ? { reelIdx: ri } : {}) }));
     }).catch(() => {});
   }
 
@@ -1084,9 +1153,26 @@ class Component extends DCLogic {
   }
   wa(msg) { return 'https://wa.me/' + this.opts().wa + '?text=' + encodeURIComponent(msg); }
   openWA(msg) { window.open(this.wa(msg), '_blank', 'noopener'); }
-  go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); }
-  openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); }
+  go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); this.setHash(page === 'home' ? '' : page); }
+  openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); this.setHash('test/' + id); }
+  // The current page lives in the URL hash (#tests, #cart, #test/vitd…) so a refresh reopens it.
+  // An open reel is added on as reel=<profile id> (#reel=essential, #profiles&reel=thyroid).
+  setHash(h) { const want = h ? '#' + h : ''; if (location.hash !== want) history.pushState(null, '', want || location.pathname + location.search); }
+  replaceHash(h) { history.replaceState(null, '', h ? '#' + h : location.pathname + location.search); }
+  pageHash() { const s = this.state; return s.page === 'home' ? '' : s.page === 'test' ? 'test/' + s.testId : s.page; }
+  reelHash(i) { const p = Component.PROFILES[i], b = this.pageHash(); return p ? (b ? b + '&' : '') + 'reel=' + p.id : b; }
+  fromHash() {
+    const raw = decodeURIComponent(location.hash.slice(1)), reel = (raw.match(/(?:^|&)reel=([^&]*)/) || [])[1];
+    const [p, id] = raw.replace(/&?reel=[^&]*/, '').split('/');
+    const page = p === 'test' && Component.TESTS.some(t => t.id === id) ? { page: 'test', testId: id } : ['tests', 'profiles', 'cart', 'about'].includes(p) ? { page: p } : { page: 'home' };
+    if (!reel) return { ...page, reelsOpen: false };
+    // Admin profiles load after start-up; loadProfiles() re-finds this id once they arrive.
+    this._wantReel = reel;
+    return { ...page, reelsOpen: true, reelIdx: Math.max(0, Component.PROFILES.findIndex(x => x.id === reel)), slides: {}, hint: false };
+  }
   flash(msg) { this.setState({ toast: msg }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: '' }), 2200); }
+  // Marks an item as just added so its button plays the add animation once.
+  pop(id) { this.setState({ pop: id }); clearTimeout(this._pt); this._pt = setTimeout(() => this.setState({ pop: null }), 900); }
 
   setCart(fn, msg) {
     const cart = fn(this.state.cart);
@@ -1105,6 +1191,7 @@ class Component extends DCLogic {
     } else {
       const p = D.PM[id], dup = p ? this.state.cart.filter(c => c.type === 'test' && p.tests.includes(c.id)).length : 0;
       this.setCart(c => [...c.filter(x => !(x.type === 'test' && p && p.tests.includes(x.id))), { type, id }], dup ? 'Added ' + name + ' · removed ' + dup + ' duplicate test' + (dup > 1 ? 's' : '') : 'Added ' + name);
+      this.pop(id);
     }
   }
   switchTo(p, ov) { this.setCart(c => [...c.filter(x => !(x.type === 'test' && ov.includes(x.id))), { type: 'profile', id: p.id }], 'Switched to ' + p.name); }
@@ -1151,7 +1238,7 @@ class Component extends DCLogic {
       const lp = this.loc(x.price); mrp += this.loc(x.mrp); price += lp; raw += x.price;
       items.push({ name: x.name + (c.type === 'profile' ? ' (Profile)' : ''), price: lp });
     });
-    const hc = raw < o.freeAbove ? this.loc(o.fee) : 0;
+    const hc = this.state.mode === 'home' && raw < o.freeAbove ? this.loc(o.fee) : 0;
     const pay = price + hc;
     return { items, mrp, price, raw, saving: mrp - price, hc, pay };
   }
@@ -1161,7 +1248,7 @@ class Component extends DCLogic {
     for (let i = 0; i < 6; i++) {
       const d = new Date(d0); d.setDate(d0.getDate() + i);
       const key = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-      out.push({ key, i, top: i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-IN', { weekday: 'short' }), bottom: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), full: d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }) });
+      out.push({ key, i, top: i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-IN', { weekday: 'short' }), bottom: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), num: d.getDate(), mon: d.toLocaleDateString('en-IN', { month: 'short' }), full: d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }) });
     }
     return out;
   }
@@ -1191,12 +1278,12 @@ class Component extends DCLogic {
     const f = this.state.form, inr = x => this.inr(x), o = this.opts();
     const day = (this.days().find(d => d.key === f.date) || {}).full || '';
     const lines = ['Hi AVM Labs! I would like to book:', '', ...b.items.map((it, i) => (i + 1) + '. ' + it.name + ' – ' + this.money(it.price)), '',
-      '*Collection:* Home sample collection' + (b.hc ? ' (' + this.money(b.hc) + ')' : ' (Free)'),
+      this.state.mode === 'home' ? '*Collection:* Home sample collection' + (b.hc ? ' (' + this.money(b.hc) + ')' : ' (Free)') : '*Collection:* Walk-in at centre',
       '*Date & slot:* ' + day + ' · ' + f.slot,
       '*Patient:* ' + f.name.trim() + ', ' + f.age + ', ' + f.gender,
       '*Mobile:* ' + this.region().dial + ' ' + f.phone];
     if (f.nid) lines.push('*' + this.region().idLabel + ':* ' + f.nid);
-    lines.push('*Address:* ' + f.address.trim());
+    if (this.state.mode === 'home') lines.push('*Address:* ' + f.address.trim());
     lines.push('', 'Item total: ' + this.money(b.price));
     lines.push('*To pay: ' + this.money(b.pay) + '*');
     const url = this.wa(lines.join('\n'));
@@ -1207,10 +1294,16 @@ class Component extends DCLogic {
   openReels(i) {
     this._ri = i || 0;
     this.setState({ reelsOpen: true, reelIdx: i || 0, slides: {}, hint: false, locOpen: false });
+    this.setHash(this.reelHash(i || 0));
+    this._reelPushed = true;
     this._hc = 0;
     this.armHint();
   }
-  closeReels() { clearTimeout(this._ht); clearTimeout(this._ht2); this.setState({ reelsOpen: false, hint: false }); }
+  closeReels() {
+    clearTimeout(this._ht); clearTimeout(this._ht2); this.setState({ reelsOpen: false, hint: false });
+    // Step back over the entry openReels() added, so Back afterwards doesn't land on the same page again.
+    if (this._reelPushed) { this._reelPushed = false; history.back(); } else this.replaceHash(this.pageHash());
+  }
   // Mobile reels: after 4s without any touch, show a swipe hint above the side buttons for 5s, then start counting again.
   // Alternates between "swipe left" (test details) and "swipe up/down" (other profiles).
   armHint() {
@@ -1238,6 +1331,7 @@ class Component extends DCLogic {
     const n = Component.PROFILES.length; i = Math.max(0, Math.min(n - 1, i));
     this._ri = i;
     this.applyTrack(i, true);
+    this.replaceHash(this.reelHash(i));
     this.armHint();
     // commit to state only after the slide finishes — re-rendering mid-animation causes stutter
     clearTimeout(this._gT);
@@ -1256,7 +1350,7 @@ class Component extends DCLogic {
     clearTimeout(this._vT);
     this._vT = setTimeout(() => {
       const i = Math.round(el.scrollTop / el.clientHeight);
-      if (i !== this.state.reelIdx) this.setState({ reelIdx: i });
+      if (i !== this.state.reelIdx) { this.setState({ reelIdx: i }); this.replaceHash(this.reelHash(i)); }
     }, 120);
   }
   onH(i, e) {
@@ -1305,11 +1399,20 @@ class Component extends DCLogic {
     window.addEventListener('keydown', this._onKey);
     this._onScroll = () => { const scrolled = window.scrollY > 240; if (scrolled !== !!this.state.scrolled) this.setState({ scrolled }); };
     window.addEventListener('scroll', this._onScroll, { passive: true });
+    this._onPop = () => {
+      const h = this.fromHash();
+      this._reelPushed = false;
+      this.setState({ locOpen: false, qFocus: false, ...h });
+      if (h.reelsOpen) { this._ri = h.reelIdx; this.armHint(); } else { clearTimeout(this._ht); clearTimeout(this._ht2); window.scrollTo(0, 0); }
+    };
+    window.addEventListener('popstate', this._onPop);
     this._tickT = setInterval(() => { if (!this.state.reelsOpen && this.state.page === 'home') this.setState(s => ({ tick: (s.tick || 0) + 1 })); }, 2200);
     this._heroT = setInterval(() => { if (this.state.page === 'home' && !this.state.reelsOpen) this.setState(s => ({ hero: (s.hero + 1) % 3 })); }, 6000);
     if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) this.typeLoop();
     requestAnimationFrame(() => this.fillSlots());
     this.centreLoop();
+    // Opened straight onto a reel (refresh or shared link).
+    if (this.state.reelsOpen) { this._ri = this.state.reelIdx; this.armHint(); this.componentDidUpdate(); }
   }
   // Centres gallery: the tile passing the middle of the strip grows, then eases back to normal size as it moves on.
   centreLoop() {
@@ -1411,7 +1514,7 @@ class Component extends DCLogic {
     }
   }
   componentWillUnmount() {
-    window.removeEventListener('resize', this._onResize); window.removeEventListener('keydown', this._onKey); window.removeEventListener('scroll', this._onScroll);
+    window.removeEventListener('resize', this._onResize); window.removeEventListener('keydown', this._onKey); window.removeEventListener('scroll', this._onScroll); window.removeEventListener('popstate', this._onPop);
     if (window.visualViewport) window.visualViewport.removeEventListener('resize', this._onResize);
     clearInterval(this._heroT); clearInterval(this._tickT); cancelAnimationFrame(this._cRaf);
     [this._tt, this._ht, this._ht2, this._gT, this._vT, this._hT, this._tyT].forEach(clearTimeout);
@@ -1422,7 +1525,7 @@ class Component extends DCLogic {
     // Fixed elements already sit above the browser toolbar; only clear the home-indicator safe area.
     const barPad = 'env(safe-area-inset-bottom, 0px)';
     const reelPadB = 'calc(16px + ' + barPad + ')';
-    const s = this.state, D = this.db(), o = this.opts(), C = Component, RG = this.region();
+    const s = this.state, D = this.db(), C = Component, RG = this.region();
     const gs = s.geo || 'asking', served = Object.values(C.REGIONS).map(r => r.name).join(' and ');
     const GT = {
       asking: ['map-pin', 'Allow location', 'To show prices for your area.', '', 'Allow'],
@@ -1444,12 +1547,13 @@ class Component extends DCLogic {
     const has = (t, id) => s.cart.some(c => c.type === t && c.id === id);
     const reelBg = h => `radial-gradient(70% 55% at 100% 0%, oklch(0.62 0.16 ${h} / 0.42), transparent 70%), radial-gradient(80% 60% at 0% 100%, oklch(0.42 0.17 275 / 0.55), transparent 70%), linear-gradient(160deg, #1D1852 0%, #141039 55%, #0E0B2B 100%)`;
 
+    const coveredBy = id => s.cart.filter(c => c.type === 'profile').map(c => D.PM[c.id]).find(p => p && p.tests.includes(id));
     const testVM = t => {
-      const inC = has('test', t.id);
+      const inC = has('test', t.id), cov = !inC && coveredBy(t.id);
       const pc = C.CATS.find(c => c.id === t.cat[0]) || C.CATS[0];
       return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, tatH: t.tat.replace('hrs', 'hours').replace('hr', 'hour'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), offCap: off(t.mrp, t.price).replace('off', 'Off'), cardBg: 'radial-gradient(75% 70% at 100% 0%, #F0EDFE 0%, rgba(240,237,254,0) 65%), radial-gradient(55% 50% at 0% 100%, rgba(255,236,240,0.55) 0%, rgba(255,236,240,0) 70%), #FFFFFF', tat: t.tat, fasting: t.fasting,
         open: () => this.openTest(t.id),
-        mrpF: inr(t.mrp), off: off(t.mrp, t.price), priceF: inr(t.price), inCart: inC, notInCart: !inC, toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); } };
+        mrpF: inr(t.mrp), off: off(t.mrp, t.price), priceF: inr(t.price), inCart: inC, notInCart: !inC && !cov, covered: !!cov, coveredBy: cov ? 'In ' + cov.name : '', toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); }, stop: e => e && e.stopPropagation() };
     };
     let td = null;
     if (pg === 'test' && s.testId && D.T[s.testId]) {
@@ -1470,7 +1574,7 @@ class Component extends DCLogic {
     if (s.sMode === 'tests') {
       const list = q ? C.TESTS.filter(t => (t.name + ' ' + t.short + ' ' + t.cat.join(' ')).toLowerCase().includes(q)) : C.POPULAR.map(id => D.T[id]);
       resultsLabel = q ? 'Tests' : 'Most booked';
-      results = list.slice(0, 6).map(t => { const inC = has('test', t.id); return { name: t.name, meta: t.params + ' parameter' + (t.params > 1 ? 's' : '') + ' · Reports in ' + t.tat, priceF: inr(t.price), open: () => { this.setState({ tq: t.short, cat: 'all' }); this.go('tests'); }, action: () => this.toggle('test', t.id, t.short), alabel: inC ? 'Added' : 'Add', abg: inC ? '#3B2C9E' : '#fff', afg: inC ? '#fff' : '#3B2C9E' }; });
+      results = list.slice(0, 6).map(t => { const inC = has('test', t.id), cov = !inC && coveredBy(t.id); return { name: t.name, meta: t.params + ' parameter' + (t.params > 1 ? 's' : '') + ' · Reports in ' + t.tat, priceF: inr(t.price), open: () => { this.setState({ tq: t.short, cat: 'all' }); this.go('tests'); }, action: () => !cov && this.toggle('test', t.id, t.short), alabel: inC ? 'Added' : cov ? 'Included' : 'Add', abg: inC ? '#3B2C9E' : cov ? '#EAF7EF' : '#fff', afg: inC ? '#fff' : cov ? '#0E7350' : '#3B2C9E' }; });
     } else {
       const list = q ? D.P.filter(p => (p.name + ' ' + p.tag + ' ' + p.tagline).toLowerCase().includes(q)) : D.P;
       resultsLabel = q ? 'Profiles' : 'Popular profiles';
@@ -1505,8 +1609,10 @@ class Component extends DCLogic {
     const isToday = s.form.date === (days[0] || {}).key;
     const slots = C.SLOTS.map(([label, start]) => {
       const dis = isToday && start <= nowH, a = s.form.slot === label;
-      return { label, disabled: dis, pick: () => !dis && this.setState(st => ({ form: { ...st.form, slot: label }, errors: { ...st.errors, slot: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : dis ? '#F6F6FA' : '#fff', fg: a ? '#fff' : dis ? '#A9A6BD' : '#16133A', cursor: dis ? 'not-allowed' : 'pointer', td: dis ? 'line-through' : 'none' };
+      return { label, disabled: dis, icon: start < 8 ? 'sunrise' : start < 16 ? 'sun' : start < 18 ? 'sunset' : 'moon', part: start < 12 ? 'Morning' : start < 16 ? 'Afternoon' : 'Evening',
+        pick: () => !dis && this.setState(st => ({ form: { ...st.form, slot: label }, errors: { ...st.errors, slot: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : dis ? '#F6F6FA' : '#fff', fg: a ? '#fff' : dis ? '#A9A6BD' : '#16133A', sub: a ? 'rgba(255,255,255,0.75)' : '#8A8698', ico: a ? '#fff' : dis ? '#C9C6DA' : '#3B2C9E', sh: a ? '0 10px 22px -12px rgba(59,44,158,0.8)' : 'none', cursor: dis ? 'not-allowed' : 'pointer', td: dis ? 'line-through' : 'none' };
     });
+    const pickedDay = days.find(d => d.key === s.form.date);
 
     const n = D.P.length, ri = s.reelIdx;
     const stH = Math.round(Math.min(s.h * 0.9, 860));
@@ -1516,7 +1622,7 @@ class Component extends DCLogic {
         fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })),
         mrpF: inr(p.mrp), priceF: inr(p.price), off: off(p.mrp, p.price),
         segs: [0, 1, 2].map(k => ({ w: k === sl ? '22px' : '7px', bg: k === sl ? '#3B2C9E' : '#D4D1E6', go: () => this.goSlide(p.i, k) })), onH: e => this.onH(p.i, e), toTests: () => this.goSlide(p.i, 1),
-        toggle: () => this.toggle('profile', p.id, p.name), addIcon: inC ? 'check' : 'plus', addLabel: inC ? 'Added' : 'Add', addText: inC ? 'In cart' : 'Add to cart', addBg: inC ? '#3B2C9E' : '#fff', addInk: inC ? '#fff' : '#16133A',
+        toggle: () => this.toggle('profile', p.id, p.name), addIcon: inC ? 'check' : 'plus', addLabel: inC ? 'Added' : 'Add', addText: inC ? 'In cart' : 'Add to cart', addBg: inC ? '#3B2C9E' : '#fff', addInk: inC ? '#fff' : '#16133A', popping: inC && s.pop === p.id, addPop: inC && s.pop === p.id ? '1' : '0',
         share: () => this.share(p), book: book(p) };
     }) : [];
     const cur = D.P[ri] || D.P[0];
@@ -1592,32 +1698,32 @@ class Component extends DCLogic {
           preview: p.ts.slice(0, 4).map(t => t.short), hasMore: p.ts.length > 4, moreLabel: '+' + (p.ts.length - 4) + ' more',
           mrpF: inr(p.mrp), off: off(p.mrp, p.price), priceF: inr(p.price), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i), book: book(p) };
       }),
-      cartLines, pickHome: () => this.setState({ mode: 'home' }), 
-      modeHome: modeStyle(isHomeMode), isHomeMode,
-      hcBig: b.raw < o.freeAbove ? inr(o.fee) : 'FREE', hcSub: b.raw < o.freeAbove ? 'Free on orders above ' + inr(o.freeAbove) : inr(o.fee) + ' collection fee waived',
+      cartLines, pickHome: () => this.setState({ mode: 'home' }), pickWalk: () => this.setState({ mode: 'walkin' }),
+      modeHome: modeStyle(isHomeMode), modeWalk: modeStyle(!isHomeMode), isHomeMode, isWalkMode: !isHomeMode,
       form: s.form, err: s.errors, dial: RG.dial, phPh: RG.phPh, phPad: (RG.dial.length * 10 + 24) + 'px', idLabel: RG.idLabel + (RG.idOpt ? ' (optional)' : ''), idPh: RG.idPh,
       on: { name: setF('name'), phone: setF('phone', digits(RG.phLen)), nid: setF('nid', digits(RG.idLen)), age: setF('age', digits(3)), address: setF('address') },
       bc: { name: bcOf('name'), phone: bcOf('phone'), nid: bcOf('nid'), age: bcOf('age'), gender: bcOf('gender'), address: bcOf('address') },
       genders: ['Male', 'Female', 'Other'].map(g => { const a = s.form.gender === g; return { label: g, pick: () => this.setState(st => ({ form: { ...st.form, gender: g }, errors: { ...st.errors, gender: undefined } })), bg: a ? '#fff' : 'transparent', fg: a ? '#3B2C9E' : '#5D5A7A', sh: a ? '0 2px 8px -2px rgba(22,19,58,0.2)' : 'none' }; }),
       slotTitle: isHomeMode ? 'Collection date & time' : 'Visit date & time', placeTitle: isHomeMode ? 'Collection address' : 'Visit our centre',
-      days: days.map(d => { const a = s.form.date === d.key; return { top: d.top, bottom: d.bottom, pick: () => this.setState(st => ({ form: { ...st.form, date: d.key, slot: d.i === 0 ? '' : st.form.slot }, errors: { ...st.errors, date: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : '#fff', fg: a ? '#fff' : '#16133A' }; }),
-      slots, asidePos: isWide ? 'sticky' : 'static',
+      days: days.map(d => { const a = s.form.date === d.key; return { top: d.top, num: d.num, mon: d.mon, pick: () => this.setState(st => ({ form: { ...st.form, date: d.key, slot: d.i === 0 ? '' : st.form.slot }, errors: { ...st.errors, date: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : '#fff', fg: a ? '#fff' : '#16133A', sub: a ? 'rgba(255,255,255,0.8)' : '#5D5A7A', sh: a ? '0 12px 24px -12px rgba(59,44,158,0.85)' : 'none', lift: a ? 'translateY(-2px)' : 'none' }; }),
+      slots, slotPicked: !!(pickedDay && s.form.slot), slotSummary: pickedDay ? pickedDay.full + ' · ' + s.form.slot : '', asidePos: isWide ? 'sticky' : 'static',
       bill: { mrpF: this.money(b.mrp), priceF: this.money(b.price), savingF: this.money(b.saving), hcF: b.hc ? this.money(b.hc) : 'FREE', hcColor: b.hc ? '#16133A' : '#0E7350', payF: this.money(b.pay), totalSaveF: this.money(Math.max(0, b.mrp - b.pay)) },
       confirm: () => this.confirm(),
       isBooked: !!s.booked, bookedUrl: s.booked ? s.booked.url : '#',
       finishBooked: () => { this.setCart(() => []); this.setState({ booked: null }); this.go('home'); },
       footTests: ['vitd', 'thyroid', 'hba1c', 'cbc', 'lipid'].map(id => ({ label: D.T[id].short === 'Thyroid Profile' ? 'Thyroid Profile' : D.T[id].short + ' test', go: () => this.openTest(id) })),
-      footLinks: [['Home', 'home'], ['All tests', 'tests'], ['Health profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p) })),
+      toTop: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
+      footLinks:[['Home', 'home'], ['All tests', 'tests'], ['Health profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p) })),
       spacerH, showTabs, showTestsBar, showCartBar, tab: { home: tabC('home'), tests: tabC('tests'), profiles: tabC('profiles'), cart: tabC('cart') },
       showFab, fabBottom: isMobile ? 'calc(92px + ' + barPad + ')' : '24px',
-      hasToast: !!s.toast, toast: s.toast, toastBottom: 'calc(' + (showCartBar ? '96px' : showTabs ? '100px' : '28px') + ' + ' + barPad + ')',
+      hasToast: !!s.toast, toast: s.toast, toastIcon: /^Removed/.test(s.toast) ? 'minus' : 'check', toastDot: /^Removed/.test(s.toast) ? 'rgba(255,255,255,0.18)' : '#22B463', toastTop: 'calc(' + (s.reelsOpen ? '72px' : '14px') + ' + env(safe-area-inset-top))',
       reelsOpen: s.reelsOpen, reels, reelsRef: this.reelsRef, onReelsScroll: e => this.onReelsScroll(e), closeReels: () => this.closeReels(),
       stageW: isDesktop ? Math.round(stH * 9 / 16) + 'px' : '100%', stageH: isDesktop ? stH + 'px' : '100%', stageR: isDesktop ? '28px' : '0px',
       reelAmbient: `radial-gradient(60% 60% at 50% 30%, oklch(0.93 0.04 275 / 0.7), transparent 70%)`,
       reelList: D.P.map(p => ({ sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, name: p.name, meta: p.tests.length + ' tests · ' + inr(p.price), go: () => this.goReel(p.i), bg: p.i === ri ? '#EEECF8' : 'transparent', bd: p.i === ri ? '#D9D5F0' : 'transparent' })),
       mobileReels: s.reelsOpen && isMobile, desktopReels: s.reelsOpen && isDesktop, reelDots: D.P.map(p => ({ h: p.i === ri ? '26px' : '8px', bg: p.i === ri ? '#3B2C9E' : '#D4D1E6', go: () => this.goReel(p.i) })), reelUp: () => this.goReel(this.cur() - 1), reelDown: () => this.goReel(this.cur() + 1), reelPos: (ri + 1) + ' / ' + n,
       prevSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) - 1); }, nextSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) + 1); },
-      reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')',
+      reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')', hintBottom: 'calc(82px + ' + reelPadB + ')',
       reelHint: !!s.hint && isMobile, hintDir: s.hint || 'up', hintIcon: 'chevron-' + (s.hint || 'up'),
       hintLabel: s.hint === 'left' ? 'details' : s.hint === 'down' ? 'back' : 'next'
     };

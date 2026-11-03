@@ -43,6 +43,8 @@ function readCookie(req) {
 }
 
 export function isAuthed(req) {
+  // Set only by scripts/dev.js when ADMIN_PASSWORD is empty; never on Vercel.
+  if (globalThis.AVM_DEV_NO_LOGIN) return true;
   const [expires, sig] = readCookie(req).split('.');
   if (!expires || !sig) return false;
   const expected = Buffer.from(sign(expires));

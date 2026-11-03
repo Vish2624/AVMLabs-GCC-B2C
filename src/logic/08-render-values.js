@@ -2,7 +2,7 @@
     // Fixed elements already sit above the browser toolbar; only clear the home-indicator safe area.
     const barPad = 'env(safe-area-inset-bottom, 0px)';
     const reelPadB = 'calc(16px + ' + barPad + ')';
-    const s = this.state, D = this.db(), o = this.opts(), C = Component, RG = this.region();
+    const s = this.state, D = this.db(), C = Component, RG = this.region();
     const gs = s.geo || 'asking', served = Object.values(C.REGIONS).map(r => r.name).join(' and ');
     const GT = {
       asking: ['map-pin', 'Allow location', 'To show prices for your area.', '', 'Allow'],
@@ -24,12 +24,13 @@
     const has = (t, id) => s.cart.some(c => c.type === t && c.id === id);
     const reelBg = h => `radial-gradient(70% 55% at 100% 0%, oklch(0.62 0.16 ${h} / 0.42), transparent 70%), radial-gradient(80% 60% at 0% 100%, oklch(0.42 0.17 275 / 0.55), transparent 70%), linear-gradient(160deg, #1D1852 0%, #141039 55%, #0E0B2B 100%)`;
 
+    const coveredBy = id => s.cart.filter(c => c.type === 'profile').map(c => D.PM[c.id]).find(p => p && p.tests.includes(id));
     const testVM = t => {
-      const inC = has('test', t.id);
+      const inC = has('test', t.id), cov = !inC && coveredBy(t.id);
       const pc = C.CATS.find(c => c.id === t.cat[0]) || C.CATS[0];
       return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, tatH: t.tat.replace('hrs', 'hours').replace('hr', 'hour'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), offCap: off(t.mrp, t.price).replace('off', 'Off'), cardBg: 'radial-gradient(75% 70% at 100% 0%, #F0EDFE 0%, rgba(240,237,254,0) 65%), radial-gradient(55% 50% at 0% 100%, rgba(255,236,240,0.55) 0%, rgba(255,236,240,0) 70%), #FFFFFF', tat: t.tat, fasting: t.fasting,
         open: () => this.openTest(t.id),
-        mrpF: inr(t.mrp), off: off(t.mrp, t.price), priceF: inr(t.price), inCart: inC, notInCart: !inC, toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); } };
+        mrpF: inr(t.mrp), off: off(t.mrp, t.price), priceF: inr(t.price), inCart: inC, notInCart: !inC && !cov, covered: !!cov, coveredBy: cov ? 'In ' + cov.name : '', toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); }, stop: e => e && e.stopPropagation() };
     };
     let td = null;
     if (pg === 'test' && s.testId && D.T[s.testId]) {
@@ -50,7 +51,7 @@
     if (s.sMode === 'tests') {
       const list = q ? C.TESTS.filter(t => (t.name + ' ' + t.short + ' ' + t.cat.join(' ')).toLowerCase().includes(q)) : C.POPULAR.map(id => D.T[id]);
       resultsLabel = q ? 'Tests' : 'Most booked';
-      results = list.slice(0, 6).map(t => { const inC = has('test', t.id); return { name: t.name, meta: t.params + ' parameter' + (t.params > 1 ? 's' : '') + ' · Reports in ' + t.tat, priceF: inr(t.price), open: () => { this.setState({ tq: t.short, cat: 'all' }); this.go('tests'); }, action: () => this.toggle('test', t.id, t.short), alabel: inC ? 'Added' : 'Add', abg: inC ? '#3B2C9E' : '#fff', afg: inC ? '#fff' : '#3B2C9E' }; });
+      results = list.slice(0, 6).map(t => { const inC = has('test', t.id), cov = !inC && coveredBy(t.id); return { name: t.name, meta: t.params + ' parameter' + (t.params > 1 ? 's' : '') + ' · Reports in ' + t.tat, priceF: inr(t.price), open: () => { this.setState({ tq: t.short, cat: 'all' }); this.go('tests'); }, action: () => !cov && this.toggle('test', t.id, t.short), alabel: inC ? 'Added' : cov ? 'Included' : 'Add', abg: inC ? '#3B2C9E' : cov ? '#EAF7EF' : '#fff', afg: inC ? '#fff' : cov ? '#0E7350' : '#3B2C9E' }; });
     } else {
       const list = q ? D.P.filter(p => (p.name + ' ' + p.tag + ' ' + p.tagline).toLowerCase().includes(q)) : D.P;
       resultsLabel = q ? 'Profiles' : 'Popular profiles';
@@ -85,8 +86,10 @@
     const isToday = s.form.date === (days[0] || {}).key;
     const slots = C.SLOTS.map(([label, start]) => {
       const dis = isToday && start <= nowH, a = s.form.slot === label;
-      return { label, disabled: dis, pick: () => !dis && this.setState(st => ({ form: { ...st.form, slot: label }, errors: { ...st.errors, slot: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : dis ? '#F6F6FA' : '#fff', fg: a ? '#fff' : dis ? '#A9A6BD' : '#16133A', cursor: dis ? 'not-allowed' : 'pointer', td: dis ? 'line-through' : 'none' };
+      return { label, disabled: dis, icon: start < 8 ? 'sunrise' : start < 16 ? 'sun' : start < 18 ? 'sunset' : 'moon', part: start < 12 ? 'Morning' : start < 16 ? 'Afternoon' : 'Evening',
+        pick: () => !dis && this.setState(st => ({ form: { ...st.form, slot: label }, errors: { ...st.errors, slot: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : dis ? '#F6F6FA' : '#fff', fg: a ? '#fff' : dis ? '#A9A6BD' : '#16133A', sub: a ? 'rgba(255,255,255,0.75)' : '#8A8698', ico: a ? '#fff' : dis ? '#C9C6DA' : '#3B2C9E', sh: a ? '0 10px 22px -12px rgba(59,44,158,0.8)' : 'none', cursor: dis ? 'not-allowed' : 'pointer', td: dis ? 'line-through' : 'none' };
     });
+    const pickedDay = days.find(d => d.key === s.form.date);
 
     const n = D.P.length, ri = s.reelIdx;
     const stH = Math.round(Math.min(s.h * 0.9, 860));
@@ -96,7 +99,7 @@
         fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })),
         mrpF: inr(p.mrp), priceF: inr(p.price), off: off(p.mrp, p.price),
         segs: [0, 1, 2].map(k => ({ w: k === sl ? '22px' : '7px', bg: k === sl ? '#3B2C9E' : '#D4D1E6', go: () => this.goSlide(p.i, k) })), onH: e => this.onH(p.i, e), toTests: () => this.goSlide(p.i, 1),
-        toggle: () => this.toggle('profile', p.id, p.name), addIcon: inC ? 'check' : 'plus', addLabel: inC ? 'Added' : 'Add', addText: inC ? 'In cart' : 'Add to cart', addBg: inC ? '#3B2C9E' : '#fff', addInk: inC ? '#fff' : '#16133A',
+        toggle: () => this.toggle('profile', p.id, p.name), addIcon: inC ? 'check' : 'plus', addLabel: inC ? 'Added' : 'Add', addText: inC ? 'In cart' : 'Add to cart', addBg: inC ? '#3B2C9E' : '#fff', addInk: inC ? '#fff' : '#16133A', popping: inC && s.pop === p.id, addPop: inC && s.pop === p.id ? '1' : '0',
         share: () => this.share(p), book: book(p) };
     }) : [];
     const cur = D.P[ri] || D.P[0];
@@ -172,32 +175,32 @@
           preview: p.ts.slice(0, 4).map(t => t.short), hasMore: p.ts.length > 4, moreLabel: '+' + (p.ts.length - 4) + ' more',
           mrpF: inr(p.mrp), off: off(p.mrp, p.price), priceF: inr(p.price), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i), book: book(p) };
       }),
-      cartLines, pickHome: () => this.setState({ mode: 'home' }), 
-      modeHome: modeStyle(isHomeMode), isHomeMode,
-      hcBig: b.raw < o.freeAbove ? inr(o.fee) : 'FREE', hcSub: b.raw < o.freeAbove ? 'Free on orders above ' + inr(o.freeAbove) : inr(o.fee) + ' collection fee waived',
+      cartLines, pickHome: () => this.setState({ mode: 'home' }), pickWalk: () => this.setState({ mode: 'walkin' }),
+      modeHome: modeStyle(isHomeMode), modeWalk: modeStyle(!isHomeMode), isHomeMode, isWalkMode: !isHomeMode,
       form: s.form, err: s.errors, dial: RG.dial, phPh: RG.phPh, phPad: (RG.dial.length * 10 + 24) + 'px', idLabel: RG.idLabel + (RG.idOpt ? ' (optional)' : ''), idPh: RG.idPh,
       on: { name: setF('name'), phone: setF('phone', digits(RG.phLen)), nid: setF('nid', digits(RG.idLen)), age: setF('age', digits(3)), address: setF('address') },
       bc: { name: bcOf('name'), phone: bcOf('phone'), nid: bcOf('nid'), age: bcOf('age'), gender: bcOf('gender'), address: bcOf('address') },
       genders: ['Male', 'Female', 'Other'].map(g => { const a = s.form.gender === g; return { label: g, pick: () => this.setState(st => ({ form: { ...st.form, gender: g }, errors: { ...st.errors, gender: undefined } })), bg: a ? '#fff' : 'transparent', fg: a ? '#3B2C9E' : '#5D5A7A', sh: a ? '0 2px 8px -2px rgba(22,19,58,0.2)' : 'none' }; }),
       slotTitle: isHomeMode ? 'Collection date & time' : 'Visit date & time', placeTitle: isHomeMode ? 'Collection address' : 'Visit our centre',
-      days: days.map(d => { const a = s.form.date === d.key; return { top: d.top, bottom: d.bottom, pick: () => this.setState(st => ({ form: { ...st.form, date: d.key, slot: d.i === 0 ? '' : st.form.slot }, errors: { ...st.errors, date: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : '#fff', fg: a ? '#fff' : '#16133A' }; }),
-      slots, asidePos: isWide ? 'sticky' : 'static',
+      days: days.map(d => { const a = s.form.date === d.key; return { top: d.top, num: d.num, mon: d.mon, pick: () => this.setState(st => ({ form: { ...st.form, date: d.key, slot: d.i === 0 ? '' : st.form.slot }, errors: { ...st.errors, date: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : '#fff', fg: a ? '#fff' : '#16133A', sub: a ? 'rgba(255,255,255,0.8)' : '#5D5A7A', sh: a ? '0 12px 24px -12px rgba(59,44,158,0.85)' : 'none', lift: a ? 'translateY(-2px)' : 'none' }; }),
+      slots, slotPicked: !!(pickedDay && s.form.slot), slotSummary: pickedDay ? pickedDay.full + ' · ' + s.form.slot : '', asidePos: isWide ? 'sticky' : 'static',
       bill: { mrpF: this.money(b.mrp), priceF: this.money(b.price), savingF: this.money(b.saving), hcF: b.hc ? this.money(b.hc) : 'FREE', hcColor: b.hc ? '#16133A' : '#0E7350', payF: this.money(b.pay), totalSaveF: this.money(Math.max(0, b.mrp - b.pay)) },
       confirm: () => this.confirm(),
       isBooked: !!s.booked, bookedUrl: s.booked ? s.booked.url : '#',
       finishBooked: () => { this.setCart(() => []); this.setState({ booked: null }); this.go('home'); },
       footTests: ['vitd', 'thyroid', 'hba1c', 'cbc', 'lipid'].map(id => ({ label: D.T[id].short === 'Thyroid Profile' ? 'Thyroid Profile' : D.T[id].short + ' test', go: () => this.openTest(id) })),
-      footLinks: [['Home', 'home'], ['All tests', 'tests'], ['Health profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p) })),
+      toTop: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
+      footLinks:[['Home', 'home'], ['All tests', 'tests'], ['Health profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p) })),
       spacerH, showTabs, showTestsBar, showCartBar, tab: { home: tabC('home'), tests: tabC('tests'), profiles: tabC('profiles'), cart: tabC('cart') },
       showFab, fabBottom: isMobile ? 'calc(92px + ' + barPad + ')' : '24px',
-      hasToast: !!s.toast, toast: s.toast, toastBottom: 'calc(' + (showCartBar ? '96px' : showTabs ? '100px' : '28px') + ' + ' + barPad + ')',
+      hasToast: !!s.toast, toast: s.toast, toastIcon: /^Removed/.test(s.toast) ? 'minus' : 'check', toastDot: /^Removed/.test(s.toast) ? 'rgba(255,255,255,0.18)' : '#22B463', toastTop: 'calc(' + (s.reelsOpen ? '72px' : '14px') + ' + env(safe-area-inset-top))',
       reelsOpen: s.reelsOpen, reels, reelsRef: this.reelsRef, onReelsScroll: e => this.onReelsScroll(e), closeReels: () => this.closeReels(),
       stageW: isDesktop ? Math.round(stH * 9 / 16) + 'px' : '100%', stageH: isDesktop ? stH + 'px' : '100%', stageR: isDesktop ? '28px' : '0px',
       reelAmbient: `radial-gradient(60% 60% at 50% 30%, oklch(0.93 0.04 275 / 0.7), transparent 70%)`,
       reelList: D.P.map(p => ({ sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, name: p.name, meta: p.tests.length + ' tests · ' + inr(p.price), go: () => this.goReel(p.i), bg: p.i === ri ? '#EEECF8' : 'transparent', bd: p.i === ri ? '#D9D5F0' : 'transparent' })),
       mobileReels: s.reelsOpen && isMobile, desktopReels: s.reelsOpen && isDesktop, reelDots: D.P.map(p => ({ h: p.i === ri ? '26px' : '8px', bg: p.i === ri ? '#3B2C9E' : '#D4D1E6', go: () => this.goReel(p.i) })), reelUp: () => this.goReel(this.cur() - 1), reelDown: () => this.goReel(this.cur() + 1), reelPos: (ri + 1) + ' / ' + n,
       prevSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) - 1); }, nextSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) + 1); },
-      reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')',
+      reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')', hintBottom: 'calc(82px + ' + reelPadB + ')',
       reelHint: !!s.hint && isMobile, hintDir: s.hint || 'up', hintIcon: 'chevron-' + (s.hint || 'up'),
       hintLabel: s.hint === 'left' ? 'details' : s.hint === 'down' ? 'back' : 'next'
     };

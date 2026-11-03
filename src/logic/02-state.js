@@ -10,7 +10,7 @@
     return { page: 'home', w: window.innerWidth, h: window.innerHeight, cart, sMode: 'tests', q: '', qFocus: false, cat: 'all', tq: '', pf: 'all', hero: 0,
       reelsOpen: false, reelIdx: 0, slides: {}, hint: false, mode: 'home',
       form: { name: '', phone: '', nid: '', age: '', gender: '', date: '', slot: '', address: '' }, errors: {}, booked: null,
-      locOpen: false, toast: '' };
+      locOpen: false, toast: '', pop: null, ...this.fromHash() };
   }
 
   db() {
@@ -38,7 +38,10 @@
       Component.PROFILES = profiles;
       Component.PICON = { ...Component.PICON, ...Object.fromEntries(list.map(p => [p.id, p.icon])) };
       Component._db = null;
-      this.setState(s => ({ profilesVer: (s.profilesVer || 0) + 1, cart: s.cart.filter(c => c.type !== 'profile' || profiles.some(p => p.id === c.id)) }));
+      const ri = this._wantReel ? profiles.findIndex(p => p.id === this._wantReel) : -1;
+      this._wantReel = null;
+      if (ri >= 0 && this.state.reelsOpen) { this._ri = ri; requestAnimationFrame(() => this.applyTrack(ri, false)); }
+      this.setState(s => ({ profilesVer: (s.profilesVer || 0) + 1, cart: s.cart.filter(c => c.type !== 'profile' || profiles.some(p => p.id === c.id)), ...(ri >= 0 && s.reelsOpen ? { reelIdx: ri } : {}) }));
     }).catch(() => {});
   }
 
