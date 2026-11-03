@@ -140,7 +140,6 @@
       tileNext: () => { const el = document.querySelector('[data-tile-row]'); if (!el) return; const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4; el.scrollTo({ left: end ? 0 : el.scrollLeft + Math.max(240, el.clientWidth * 0.75), behavior: 'smooth' }); }, cats, catNext: () => { const el = document.querySelector('[data-cat-row]'); if (!el) return; const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4; el.scrollTo({ left: end ? 0 : el.scrollLeft + Math.max(200, el.clientWidth * 0.7), behavior: 'smooth' }); },
       heroX: 'translateX(-' + (s.hero * 100) + '%)', heroPrev: () => this.setState(st => ({ hero: (st.hero + 2) % 3 })), heroNext: () => this.setState(st => ({ hero: (st.hero + 1) % 3 })),
       heroDots: [0, 1, 2].map(i => ({ w: s.hero === i ? '26px' : '8px', bg: s.hero === i ? '#3B2C9E' : '#D4D1E6', go: () => this.setState({ hero: i }) })),
-      heroTS: e => { this._hx = e.touches[0].clientX; }, heroTE: e => { const dx = e.changedTouches[0].clientX - (this._hx || 0); if (Math.abs(dx) > 40) this.setState(st => ({ hero: (st.hero + (dx < 0 ? 1 : 2)) % 3 })); },
       heroGo1: () => (heroW ? this.openReels(heroW.i) : this.go('profiles')), heroGo2: () => (heroV ? this.openReels(heroV.i) : this.go('profiles')),
       directions: () => window.open('https://www.google.com/maps/search/?api=1&query=AVM+Labs', '_blank', 'noopener'),
       waGeneral: () => this.openWA("Hi AVM Labs! I'd like to know more about your tests and profiles."),
