@@ -29,8 +29,16 @@ export const testSchema = z
       .min(1, 'Pick at least one category')
       .max(6)
       .transform((ids) => [...new Set(ids)]),
-    price: z.number().int().min(0).max(1_000_000),
-    mrp: z.number().int().min(0).max(1_000_000),
+    price: z
+      .number({ message: 'Enter the price' })
+      .int('Price must be whole rupees')
+      .min(0, 'Price can’t be negative')
+      .max(1_000_000, 'Price looks too high'),
+    mrp: z
+      .number({ message: 'Enter the MRP' })
+      .int('MRP must be whole rupees')
+      .min(0, 'MRP can’t be negative')
+      .max(1_000_000, 'MRP looks too high'),
     tat: text(30).min(1, 'Enter the report time').default('24 hrs'),
     fasting: z.boolean().default(false),
     sample: z.enum(SAMPLES).default('Blood'),
@@ -39,7 +47,12 @@ export const testSchema = z
     // What it measures; not edited in the admin. Defaults to the test itself.
     parameters: names(80).default([]),
     calculated: names(40).default([]),
-    sortOrder: z.number().int().min(0).max(9999).default(0),
+    sortOrder: z
+      .number({ message: 'Enter a display order' })
+      .int('Display order must be a whole number')
+      .min(0, 'Display order can’t be negative')
+      .max(9999, 'Display order must be 9999 or less')
+      .default(0),
     published: z.boolean().default(true),
   })
   .refine((t) => t.mrp >= t.price, { message: 'MRP can’t be lower than the price', path: ['mrp'] })

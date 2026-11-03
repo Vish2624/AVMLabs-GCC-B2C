@@ -66,9 +66,9 @@ describe('parseProfile', () => {
     rejects(parseProfile, { ...valid(), icon: 'rocket' });
   });
 
-  it('rejects a negative or fractional price', () => {
-    rejects(parseProfile, { ...valid(), price: -1 });
-    rejects(parseProfile, { ...valid(), price: 10.5 });
+  it('rejects a negative or fractional price with a plain message', () => {
+    rejects(parseProfile, { ...valid(), price: -1 }, 'Price can’t be negative');
+    rejects(parseProfile, { ...valid(), price: 10.5 }, 'Price must be whole rupees');
   });
 
   it('requires at least one sub-profile or test', () => {

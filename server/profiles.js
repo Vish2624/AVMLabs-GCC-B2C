@@ -21,10 +21,19 @@ export const profileSchema = z
     tag: text(24).default(''),
     category: z.enum(CATEGORIES.map((c) => c.id)),
     tagline: text(140).default(''),
-    price: z.number().int().min(0).max(1_000_000),
+    price: z
+      .number({ message: 'Enter the price' })
+      .int('Price must be whole rupees')
+      .min(0, 'Price can’t be negative')
+      .max(1_000_000, 'Price looks too high'),
     icon: z.enum(ICONS).default('layers'),
     hue: z.number().int().min(0).max(359).default(275),
-    sortOrder: z.number().int().min(0).max(9999).default(0),
+    sortOrder: z
+      .number({ message: 'Enter a display order' })
+      .int('Display order must be a whole number')
+      .min(0, 'Display order can’t be negative')
+      .max(9999, 'Display order must be 9999 or less')
+      .default(0),
     published: z.boolean().default(true),
     subProfiles: z
       .array(z.number().int().positive())
