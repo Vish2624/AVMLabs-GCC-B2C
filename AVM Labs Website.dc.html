@@ -87,11 +87,18 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-inc-meta]{font-size:12px;color:#5D5A7A;white-space:nowrap}
 [data-inc-chev]{display:flex;color:#8A8698;transition:transform .2s;flex:none}
 [data-inc][open] [data-inc-chev]{transform:rotate(180deg);color:#3B2C9E}
-[data-inc-list]{display:flex;flex-direction:column;gap:8px;padding:2px 14px 12px 52px;border-top:1px dashed #ECEBF3;padding-top:10px}
-[data-inc-item]{display:flex;flex-direction:column;gap:2px;position:relative}
-[data-inc-item]::before{content:'';position:absolute;left:-14px;top:7px;width:5px;height:5px;border-radius:999px;background:#B8B1EC}
-[data-inc-item] b{font-size:13px;font-weight:600;color:#16133A;line-height:1.35}
-[data-inc-item] small{font-size:11.5px;color:#6F6C8A;line-height:1.45}
+[data-inc-list]{display:flex;flex-direction:column;gap:14px;padding:12px 14px 14px;border-top:1px dashed #ECEBF3}
+[data-inc-item]{display:flex;flex-direction:column;gap:8px}
+[data-inc-item]+[data-inc-item]{padding-top:12px;border-top:1px solid #F1F0F6}
+[data-inc-item] b{font-size:13.5px;font-weight:700;color:#16133A;line-height:1.35}
+/* Parameters as tags; calculated ones in a gold group under a small label */
+[data-pchips]{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+[data-pchip]{display:inline-flex;align-items:center;min-height:26px;padding:3px 10px;border-radius:8px;background:#fff;border:1px solid #E7E6F0;color:#3D3A5C;font-size:12px;font-weight:600;line-height:1.3}
+[data-inc-wide] [data-pchip]{background:#fff}
+[data-pchip="calc"]{background:#FFF8E8;border-color:#F0DFB2;color:#7A560F}
+[data-calc-label]{width:100%;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#A07A1E;margin-top:2px}
+/* Desktop: an open row spans the full width so it doesn't leave a gap beside it */
+[data-inc-wide] [data-inc][open]{grid-column:1/-1}
 
 /* "Calculated" tag: parameters worked out from other results (e.g. LDL / HDL Ratio) */
 [data-calc]{display:inline-flex;align-items:center;height:20px;padding:0 7px;margin-left:6px;border-radius:999px;background:#FFF4DA;border:1px solid #F0DFB2;color:#8A6414;font-size:10.5px;font-weight:700;letter-spacing:.02em;white-space:nowrap;vertical-align:middle;flex:none}
@@ -942,7 +949,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
               <div style="flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#D4D1E6 transparent;padding:28px 30px 34px;display:flex;flex-direction:column;gap:22px">
                 <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap"><span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">What's included</span><span style="font-size:13.5px;font-weight:600;color:#5D5A7A">{{ r.testsN }} tests · {{ r.params }} parameters</span></div>
                 <div data-inc-wide="1" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;align-items:start">
-                  <sc-for list="{{ r.groups }}" as="g" hint-placeholder-count="6"><details data-inc="1"><summary><span data-inc-n="1">{{ g.n }}</span><span data-inc-name="1">{{ g.name }}</span><span data-inc-meta="1">{{ g.meta }}</span><span data-inc-chev="1"><avm-i n="chevron-down" s="16"></avm-i></span></summary><div data-inc-list="1"><sc-for list="{{ g.items }}" as="i" hint-placeholder-count="0"><div data-inc-item="1"><b>{{ i.name }}<sc-if value="{{ i.calc }}" hint-placeholder-val="{{ false }}"><span data-calc="1">Calculated</span></sc-if></b><sc-if value="{{ i.hasSub }}" hint-placeholder-val="{{ false }}"><small>{{ i.sub }}</small></sc-if></div></sc-for></div></details></sc-for>
+                  <sc-for list="{{ r.groups }}" as="g" hint-placeholder-count="6"><details data-inc="1"><summary><span data-inc-n="1">{{ g.n }}</span><span data-inc-name="1">{{ g.name }}</span><span data-inc-meta="1">{{ g.meta }}</span><span data-inc-chev="1"><avm-i n="chevron-down" s="16"></avm-i></span></summary><div data-inc-list="1"><sc-for list="{{ g.items }}" as="i" hint-placeholder-count="0"><div data-inc-item="1"><sc-if value="{{ i.showName }}" hint-placeholder-val="{{ false }}"><b>{{ i.name }}</b></sc-if><sc-if value="{{ i.hasParams }}" hint-placeholder-val="{{ false }}"><div data-pchips="1"><sc-for list="{{ i.params }}" as="x" hint-placeholder-count="0"><span data-pchip="1">{{ x }}</span></sc-for></div></sc-if><sc-if value="{{ i.hasCalcs }}" hint-placeholder-val="{{ false }}"><div data-pchips="calc"><span data-calc-label="1">Calculated</span><sc-for list="{{ i.calcs }}" as="x" hint-placeholder-count="0"><span data-pchip="calc">{{ x }}</span></sc-for></div></sc-if></div></sc-for></div></details></sc-for>
                 </div>
                 <span style="font-size:13.5px;color:#5D5A7A">Worth {{ r.mrpF }} if booked separately — you pay {{ r.priceF }}.</span>
                 <div style="height:1px;background:#fff"></div>
@@ -1001,7 +1008,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
               <span style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5D5A7A">What's included</span>
               <span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">{{ r.testsN }} tests · {{ r.params }} parameters</span>
               <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;scrollbar-width:none">
-                <sc-for list="{{ r.groups }}" as="g" hint-placeholder-count="4"><details data-inc="1"><summary><span data-inc-n="1">{{ g.n }}</span><span data-inc-name="1">{{ g.name }}</span><span data-inc-meta="1">{{ g.meta }}</span><span data-inc-chev="1"><avm-i n="chevron-down" s="16"></avm-i></span></summary><div data-inc-list="1"><sc-for list="{{ g.items }}" as="i" hint-placeholder-count="0"><div data-inc-item="1"><b>{{ i.name }}<sc-if value="{{ i.calc }}" hint-placeholder-val="{{ false }}"><span data-calc="1">Calculated</span></sc-if></b><sc-if value="{{ i.hasSub }}" hint-placeholder-val="{{ false }}"><small>{{ i.sub }}</small></sc-if></div></sc-for></div></details></sc-for>
+                <sc-for list="{{ r.groups }}" as="g" hint-placeholder-count="4"><details data-inc="1"><summary><span data-inc-n="1">{{ g.n }}</span><span data-inc-name="1">{{ g.name }}</span><span data-inc-meta="1">{{ g.meta }}</span><span data-inc-chev="1"><avm-i n="chevron-down" s="16"></avm-i></span></summary><div data-inc-list="1"><sc-for list="{{ g.items }}" as="i" hint-placeholder-count="0"><div data-inc-item="1"><sc-if value="{{ i.showName }}" hint-placeholder-val="{{ false }}"><b>{{ i.name }}</b></sc-if><sc-if value="{{ i.hasParams }}" hint-placeholder-val="{{ false }}"><div data-pchips="1"><sc-for list="{{ i.params }}" as="x" hint-placeholder-count="0"><span data-pchip="1">{{ x }}</span></sc-for></div></sc-if><sc-if value="{{ i.hasCalcs }}" hint-placeholder-val="{{ false }}"><div data-pchips="calc"><span data-calc-label="1">Calculated</span><sc-for list="{{ i.calcs }}" as="x" hint-placeholder-count="0"><span data-pchip="calc">{{ x }}</span></sc-for></div></sc-if></div></sc-for></div></details></sc-for>
               </div>
               <span style="font-size:13px;color:#5D5A7A">Worth {{ r.mrpF }} if booked separately</span>
             </div>
@@ -1777,14 +1784,18 @@ class Component extends DCLogic {
     // "What's included" rows. Profiles with several sub-profiles list those (tap: their tests and parameters);
     // otherwise each test is a row (tap: its parameters).
     const plural = (k, w) => k + ' ' + w + (k === 1 ? '' : 's');
-    const paramsOf = t => [...(t.parameters || []), ...(t.calculated || [])];
-    const paramText = t => (t.parameters || []).join(' · ') + ((t.calculated || []).length ? ' · Calculated: ' + t.calculated.join(' · ') : '');
+    // A test inside an open row: its name (unless the row is that test) and its parameters as tags,
+    // calculated ones in their own group. A lone parameter that just repeats the test's name isn't shown.
+    const incTest = (t, showName) => {
+      const params = (t.parameters || []).filter(x => !(t.parameters.length === 1 && !(t.calculated || []).length && x.toLowerCase() === t.name.toLowerCase()));
+      const calcs = t.calculated || [];
+      return { name: t.name, showName, params, calcs, hasParams: params.length > 0, hasCalcs: calcs.length > 0 };
+    };
     const incGroups = p => {
       const subs = (p.subs || []).map(x => ({ name: x.name, ts: x.tests.map(id => D.T[id]).filter(Boolean) })).filter(x => x.ts.length);
       return subs.length > 1
-        ? subs.map((x, k) => ({ n: k + 1, name: x.name, meta: plural(x.ts.length, 'test') + ' · ' + plural(x.ts.reduce((a, t) => a + t.params, 0), 'param'),
-            items: x.ts.map(t => ({ name: t.name, sub: paramText(t), hasSub: paramsOf(t).length > 1, calc: false })) }))
-        : p.ts.map((t, k) => ({ n: k + 1, name: t.name, meta: plural(t.params, 'param'), items: [...(t.parameters || []).map(x => ({ name: x, sub: '', hasSub: false, calc: false })), ...(t.calculated || []).map(x => ({ name: x, sub: '', hasSub: false, calc: true }))] }));
+        ? subs.map((x, k) => ({ n: k + 1, name: x.name, meta: plural(x.ts.length, 'test') + ' · ' + plural(x.ts.reduce((a, t) => a + t.params, 0), 'param'), items: x.ts.map(t => incTest(t, true)) }))
+        : p.ts.map((t, k) => ({ n: k + 1, name: t.name, meta: plural(t.params, 'param'), items: [incTest(t, false)] }));
     };
     const reels = s.reelsOpen ? D.P.map(p => {
       const sl = s.slides[p.i] || 0, inC = has('profile', p.id);

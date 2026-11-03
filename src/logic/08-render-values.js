@@ -99,14 +99,18 @@
     // "What's included" rows. Profiles with several sub-profiles list those (tap: their tests and parameters);
     // otherwise each test is a row (tap: its parameters).
     const plural = (k, w) => k + ' ' + w + (k === 1 ? '' : 's');
-    const paramsOf = t => [...(t.parameters || []), ...(t.calculated || [])];
-    const paramText = t => (t.parameters || []).join(' · ') + ((t.calculated || []).length ? ' · Calculated: ' + t.calculated.join(' · ') : '');
+    // A test inside an open row: its name (unless the row is that test) and its parameters as tags,
+    // calculated ones in their own group. A lone parameter that just repeats the test's name isn't shown.
+    const incTest = (t, showName) => {
+      const params = (t.parameters || []).filter(x => !(t.parameters.length === 1 && !(t.calculated || []).length && x.toLowerCase() === t.name.toLowerCase()));
+      const calcs = t.calculated || [];
+      return { name: t.name, showName, params, calcs, hasParams: params.length > 0, hasCalcs: calcs.length > 0 };
+    };
     const incGroups = p => {
       const subs = (p.subs || []).map(x => ({ name: x.name, ts: x.tests.map(id => D.T[id]).filter(Boolean) })).filter(x => x.ts.length);
       return subs.length > 1
-        ? subs.map((x, k) => ({ n: k + 1, name: x.name, meta: plural(x.ts.length, 'test') + ' · ' + plural(x.ts.reduce((a, t) => a + t.params, 0), 'param'),
-            items: x.ts.map(t => ({ name: t.name, sub: paramText(t), hasSub: paramsOf(t).length > 1, calc: false })) }))
-        : p.ts.map((t, k) => ({ n: k + 1, name: t.name, meta: plural(t.params, 'param'), items: [...(t.parameters || []).map(x => ({ name: x, sub: '', hasSub: false, calc: false })), ...(t.calculated || []).map(x => ({ name: x, sub: '', hasSub: false, calc: true }))] }));
+        ? subs.map((x, k) => ({ n: k + 1, name: x.name, meta: plural(x.ts.length, 'test') + ' · ' + plural(x.ts.reduce((a, t) => a + t.params, 0), 'param'), items: x.ts.map(t => incTest(t, true)) }))
+        : p.ts.map((t, k) => ({ n: k + 1, name: t.name, meta: plural(t.params, 'param'), items: [incTest(t, false)] }));
     };
     const reels = s.reelsOpen ? D.P.map(p => {
       const sl = s.slides[p.i] || 0, inC = has('profile', p.id);
