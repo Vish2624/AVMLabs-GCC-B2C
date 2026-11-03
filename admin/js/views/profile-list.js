@@ -1,8 +1,8 @@
 // List of all profiles with search, edit and delete.
 import { html } from '../html.js';
-import { appBar, formatPrice, icon, plural, view } from '../ui.js';
+import { appBar, formatPrice, icon, plural, tabs, view } from '../ui.js';
 
-export function ProfileListView({ profiles, catalog, onNew, onEdit, onLogout }) {
+export function ProfileListView({ profiles, catalog, onNew, onEdit, onTab, onLogout }) {
   const tests = new Map(catalog.tests.map((t) => [t.id, t]));
   const categoryLabel = new Map(catalog.categories.map((c) => [c.id, c.label]));
   let query = '';
@@ -25,7 +25,7 @@ export function ProfileListView({ profiles, catalog, onNew, onEdit, onLogout }) 
           <span class="pill ${p.published ? 'live' : 'draft'}">${p.published ? 'Live' : 'Draft'}</span>
         </div>
         <div class="card-body">
-          <p class="meta">${categoryLabel.get(p.category) || p.category} · ${plural(count, 'test')} · ${plural(p.subs.length, 'sub-profile')}</p>
+          <p class="meta">${categoryLabel.get(p.category) || p.category} · ${plural(count, 'test')} · ${plural(p.subProfiles.length, 'sub-profile')}${p.tests.length ? ` + ${plural(p.tests.length, 'extra test')}` : ''}</p>
           <div class="pricebox">
             <div class="price">
               <span class="now">${formatPrice(p.price)}</span>
@@ -68,6 +68,7 @@ export function ProfileListView({ profiles, catalog, onNew, onEdit, onLogout }) 
             <p class="subtitle">Changes show on the website within a minute.</p>
           </div>
         </div>
+        ${tabs('profiles')}
         <div class="toolbar">
           <label class="search">${icon('search')}<input type="search" data-input="search" placeholder="Search profiles" aria-label="Search profiles" value="${query}"></label>
           <span class="stats">${plural(profiles.length, 'profile')} · ${live} live</span>
@@ -81,10 +82,11 @@ export function ProfileListView({ profiles, catalog, onNew, onEdit, onLogout }) 
   el.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-act]');
     if (!btn) return;
-    const { act, id } = btn.dataset;
+    const { act, id, tab } = btn.dataset;
     if (act === 'new') onNew();
     else if (act === 'logout') onLogout();
     else if (act === 'edit') onEdit(profiles.find((p) => p.id === id));
+    else if (act === 'tab') onTab(tab);
   });
 
   el.addEventListener('input', (e) => {

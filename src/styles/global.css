@@ -119,3 +119,6 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 @keyframes avmToastIn{0%{opacity:0;transform:translate(-50%,-140%) scale(.9)}60%{opacity:1;transform:translate(-50%,6px) scale(1.02)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
 [data-toast]{transform:translate(-50%,0);animation:avmToastIn .45s cubic-bezier(.2,.8,.2,1) both}
 @media (prefers-reduced-motion:reduce){[data-add-btn],[data-add-fx],[data-add-big],[data-toast]{animation:none!important}[data-add-fx],[data-add-big]{display:none}}
+
+/* Test page header: compact two columns on desktop; below 1024px it keeps the original stacked layout */
+@media (max-width:1023px){[data-td-hero]{flex-direction:column!important;align-items:stretch!important;flex-wrap:nowrap!important;padding:clamp(22px,4vw,48px)!important;gap:clamp(14px,2vw,20px)!important}[data-td-hero] h1{font-size:clamp(28px,4.2vw,46px)!important;line-height:1.08!important}[data-td-info],[data-td-panel]{display:contents!important}[data-td-icon]{width:40px!important;height:40px!important;border-radius:12px!important}[data-td-btn]{flex:1 1 180px!important;max-width:260px!important;height:52px!important}}

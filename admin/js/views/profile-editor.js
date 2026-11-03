@@ -1,6 +1,6 @@
-// Create or edit a profile: details, look, and sub-profiles with tests.
+// Create or edit a profile: details, look, the sub-profiles it's built from, and any extra tests.
 import { html } from '../html.js';
-import { appBar, cardBg, formatPrice, icon, ink, plural, toast, view } from '../ui.js';
+import { appBar, cardBg, formatPrice, icon, ink, plural, testOptions, testPicker, toast, view } from '../ui.js';
 
 const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -14,19 +14,20 @@ const slugify = (s) =>
     .slice(0, 40)
     .replace(/-+$/, '');
 
-let keySeq = 0;
-const newSub = (sub = {}, open = true) => ({
-  key: ++keySeq,
-  name: sub.name || '',
-  description: sub.description || '',
-  tests: [...(sub.tests || [])],
-  open,
-});
-
-export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onDelete, onClose }) {
+export function ProfileEditorView({
+  profile,
+  catalog,
+  subProfiles,
+  nextSortOrder,
+  onSave,
+  onDelete,
+  onClose,
+  onManageSubs,
+}) {
   const isNew = !profile;
   const tests = new Map(catalog.tests.map((t) => [t.id, t]));
   const byName = new Map(catalog.tests.map((t) => [t.name.toLowerCase(), t]));
+  const library = new Map(subProfiles.map((s) => [s.id, s]));
 
   const draft = isNew
     ? {
@@ -40,9 +41,15 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onD
         hue: catalog.colours[0].hue,
         sortOrder: nextSortOrder,
         published: true,
-        subs: [newSub()],
+        subProfiles: [],
+        tests: [],
       }
-    : { ...profile, price: String(profile.price), subs: profile.subs.map((s, i) => newSub(s, i === 0)) };
+    : {
+        ...profile,
+        price: String(profile.price),
+        subProfiles: profile.subProfiles.filter((id) => library.has(id)),
+        tests: [...profile.tests],
+      };
   let idTouched = !isNew;
   let dirty = false;
   let saving = false;
@@ -51,8 +58,10 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onD
   let deleting = false;
   let error = '';
 
-  const uniqueTests = () => [...new Set(draft.subs.flatMap((s) => s.tests))];
+  const chosen = () => draft.subProfiles.map((id) => library.get(id)).filter(Boolean);
+  const uniqueTests = () => [...new Set([...chosen().flatMap((s) => s.tests), ...draft.tests])];
   const subMrp = (s) => s.tests.reduce((sum, id) => sum + (tests.get(id)?.mrp || 0), 0);
+  const testNames = (ids) => ids.map((id) => tests.get(id)?.name || id).join(', ');
 
   const summary = () => {
     const ids = uniqueTests();
@@ -67,47 +76,23 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onD
       ${price > mrp && mrp > 0 && html`<span class="warn">Price is above MRP</span>`}`;
   };
 
-  const sub = (s, i) => html`
-    <div class="sub ${s.open ? 'open' : ''}">
-      <div class="sub-head">
-        <button class="toggle" type="button" data-act="toggle" data-sub="${i}" aria-expanded="${s.open}">
-          <span class="chev" aria-hidden="true">›</span>
-          <span class="name" data-sub-title="${i}">${s.name || 'Untitled sub-profile'}</span>
-          <span class="count">${plural(s.tests.length, 'test')} · ${formatPrice(subMrp(s))}</span>
-        </button>
-        <button class="btn small icon-only danger" type="button" data-act="remove-sub" data-sub="${i}" aria-label="Remove ${s.name || 'sub-profile'}">${icon('trash-2')}</button>
+  // A chosen sub-profile: its tests, MRP, and controls to reorder or remove it.
+  const chosenRow = (sp, i, n) => html`
+    <div class="pick">
+      <div class="pick-main">
+        <span class="pick-name">${sp.name}</span>
+        <span class="pick-tests">${testNames(sp.tests)}</span>
       </div>
-      ${
-        s.open &&
-        html`
-        <div class="sub-body">
-          <div class="grid">
-            <div class="field">
-              <label for="sub-name-${i}">Sub-profile name</label>
-              <input id="sub-name-${i}" data-field="sub-name" data-sub="${i}" value="${s.name}" placeholder="e.g. Lipid Profile" autocomplete="off">
-            </div>
-            <div class="field">
-              <label for="sub-desc-${i}">Description <span class="hint">(optional)</span></label>
-              <input id="sub-desc-${i}" data-field="sub-desc" data-sub="${i}" value="${s.description}" autocomplete="off">
-            </div>
-          </div>
-          <div class="field">
-            <span class="label">Tests</span>
-            ${
-              s.tests.length
-                ? html`<div class="chips">${s.tests.map(
-                    (id, j) => html`
-                  <span class="chip">${tests.get(id)?.name || id}<small>${formatPrice(tests.get(id)?.mrp)}</small>
-                    <button type="button" data-act="remove-test" data-sub="${i}" data-test="${j}" aria-label="Remove ${tests.get(id)?.name || id}">×</button>
-                  </span>`,
-                  )}</div>`
-                : html`<p class="empty-note">No tests yet.</p>`
-            }
-            <label class="add-test">${icon('plus')}<input id="test-add-${i}" data-field="test-add" data-sub="${i}" list="test-options" placeholder="Type to add a test, e.g. Vitamin D" autocomplete="off" aria-label="Add a test"></label>
-          </div>
-        </div>`
-      }
+      <span class="count">${plural(sp.tests.length, 'test')} · ${formatPrice(subMrp(sp))}</span>
+      <div class="pick-actions">
+        <button class="btn small icon-only" type="button" data-act="sub-up" data-i="${i}" ${i === 0 ? 'disabled' : ''} aria-label="Move ${sp.name} up">${icon('arrow-up')}</button>
+        <button class="btn small icon-only" type="button" data-act="sub-down" data-i="${i}" ${i === n - 1 ? 'disabled' : ''} aria-label="Move ${sp.name} down">${icon('arrow-down')}</button>
+        <button class="btn small icon-only danger" type="button" data-act="sub-remove" data-i="${i}" aria-label="Remove ${sp.name}">${icon('x')}</button>
+      </div>
     </div>`;
+
+  // Sub-profiles not yet in this profile, for the "Add" menu.
+  const available = () => subProfiles.filter((sp) => !draft.subProfiles.includes(sp.id));
 
   const { el, update } = view(
     () => html`
@@ -117,7 +102,7 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onD
       <div>
         <div class="eyebrow">${isNew ? 'New profile' : 'Edit profile'}</div>
         <h1>${isNew ? 'Create a health profile' : draft.name}</h1>
-        <p class="subtitle">Group tests into sub-profiles. Price and MRP update as you go.</p>
+        <p class="subtitle">Build it from sub-profiles, then add any extra tests. Price and MRP update as you go.</p>
       </div>
     </div>
     ${error && html`<div class="alert" role="alert">${icon('circle-alert')}${error}</div>`}
@@ -191,15 +176,26 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onD
       </div>
     </section>
 
-    <div class="section-head">
-      <div><div class="eyebrow">Step 3</div><h2>Sub-profiles (${draft.subs.length})</h2></div>
-      <div class="row">
-        <button class="btn link" type="button" data-act="expand-all">Expand all</button>
-        <button class="btn link" type="button" data-act="collapse-all">Collapse all</button>
+    <section class="panel">
+      <div class="panel-head"><span class="num">3</span><div><h2>Sub-profiles (${draft.subProfiles.length})</h2><p>Groups of tests from the Sub-profiles tab, shown in this order.</p></div></div>
+      ${
+        draft.subProfiles.length
+          ? html`<div class="picks">${chosen().map((sp, i, all) => chosenRow(sp, i, all.length))}</div>`
+          : html`<p class="empty-note">No sub-profiles yet.</p>`
+      }
+      <div class="add-row">
+        <select id="sub-add" data-field="sub-add" aria-label="Add a sub-profile">
+          <option value="">${available().length ? '+ Add a sub-profile…' : 'All sub-profiles are added'}</option>
+          ${available().map((sp) => html`<option value="${sp.id}">${sp.name} — ${testNames(sp.tests)}</option>`)}
+        </select>
+        <button class="btn link" type="button" data-act="manage-subs">${icon('external-link')}Create or edit sub-profiles</button>
       </div>
-    </div>
-    <div class="subs">${draft.subs.map(sub)}</div>
-    <button class="add-sub" type="button" data-act="add-sub">+ Add sub-profile</button>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><span class="num">4</span><div><h2>Additional tests (${draft.tests.length})</h2><p>Tests on their own, outside any sub-profile. Shown as one more group.</p></div></div>
+      <div class="field">${testPicker('extra', draft.tests, tests, 'None — optional.')}</div>
+    </section>
     ${
       !isNew &&
       html`
@@ -220,7 +216,7 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onD
     }
     </main>
 
-    <datalist id="test-options">${catalog.tests.map((t) => html`<option value="${t.name}"></option>`)}</datalist>
+    ${testOptions(catalog)}
 
     <div class="savebar"><div class="savebar-in">
       <p class="summary" data-summary>${summary()}</p>
@@ -244,26 +240,25 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onD
     dirty = true;
   };
 
-  function addTest(i, input) {
+  function addTest(input) {
     const value = input.value.trim();
     if (!value) return;
     const test = byName.get(value.toLowerCase()) || tests.get(value);
     if (!test) return toast('Pick a test from the list');
-    const s = draft.subs[i];
-    if (s.tests.includes(test.id)) {
-      input.value = '';
-      return toast(`${test.name} is already in this sub-profile`);
-    }
-    s.tests.push(test.id);
+    input.value = '';
+    if (draft.tests.includes(test.id)) return toast(`${test.name} is already added`);
+    const inSub = chosen().find((sp) => sp.tests.includes(test.id));
+    if (inSub) return toast(`${test.name} is already in ${inSub.name}`);
+    draft.tests.push(test.id);
     markDirty();
-    update(`#test-add-${i}`);
+    update('#test-add-extra');
   }
 
   function validate() {
     if (!draft.name.trim()) return 'Enter a profile name.';
     if (!ID_PATTERN.test(draft.id)) return 'Profile ID can only use lowercase letters, numbers and dashes.';
     if (draft.price === '' || !(Number(draft.price) >= 0)) return 'Enter a price.';
-    if (!uniqueTests().length) return 'Add at least one test.';
+    if (!uniqueTests().length) return 'Add at least one sub-profile or test.';
     return '';
   }
 
@@ -284,13 +279,8 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onD
       hue: draft.hue,
       sortOrder: Math.max(0, Math.round(Number(draft.sortOrder) || 0)),
       published: draft.published,
-      subs: draft.subs
-        .filter((s) => s.name.trim() || s.description.trim() || s.tests.length)
-        .map((s) => ({
-          name: s.name.trim() || 'Untitled sub-profile',
-          description: s.description.trim(),
-          tests: s.tests,
-        })),
+      subProfiles: draft.subProfiles,
+      tests: draft.tests,
     };
     saving = true;
     update();
@@ -320,7 +310,7 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onD
   el.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-act]');
     if (!btn) return;
-    const i = Number(btn.dataset.sub);
+    const i = Number(btn.dataset.i);
     switch (btn.dataset.act) {
       case 'home': // logo: same as Cancel, so unsaved changes still ask first
       case 'close':
@@ -361,37 +351,29 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onD
         markDirty();
         update();
         break;
-      case 'toggle':
-        draft.subs[i].open = !draft.subs[i].open;
-        update();
-        break;
-      case 'expand-all':
-        draft.subs.forEach((s) => {
-          s.open = true;
-        });
-        update();
-        break;
-      case 'collapse-all':
-        draft.subs.forEach((s) => {
-          s.open = false;
-        });
-        update();
-        break;
-      case 'add-sub':
-        draft.subs.push(newSub());
+      case 'sub-up':
+      case 'sub-down': {
+        const j = btn.dataset.act === 'sub-up' ? i - 1 : i + 1;
+        [draft.subProfiles[i], draft.subProfiles[j]] = [draft.subProfiles[j], draft.subProfiles[i]];
         markDirty();
-        update(`#sub-name-${draft.subs.length - 1}`);
+        update();
         break;
-      case 'remove-sub':
-        draft.subs.splice(i, 1);
-        if (!draft.subs.length) draft.subs.push(newSub());
+      }
+      case 'sub-remove':
+        draft.subProfiles.splice(i, 1);
         markDirty();
         update();
         break;
       case 'remove-test':
-        draft.subs[i].tests.splice(Number(btn.dataset.test), 1);
+        draft.tests.splice(Number(btn.dataset.test), 1);
         markDirty();
-        update(`#test-add-${i}`);
+        update('#test-add-extra');
+        break;
+      case 'manage-subs':
+        if (dirty) {
+          confirmDiscard = true;
+          update();
+        } else onManageSubs();
         break;
     }
   });
@@ -400,18 +382,22 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onD
     const t = e.target;
     const field = t.dataset.field;
     if (!field) return;
-    const i = Number(t.dataset.sub);
     if (field === 'test-add') {
       // Picking from the suggestion list fills in an exact test name.
-      if (byName.has(t.value.trim().toLowerCase())) addTest(i, t);
+      if (byName.has(t.value.trim().toLowerCase())) addTest(t);
+      return;
+    }
+    if (field === 'sub-add') {
+      const id = Number(t.value);
+      if (library.has(id) && !draft.subProfiles.includes(id)) {
+        draft.subProfiles.push(id);
+        markDirty();
+        update('#sub-add');
+      }
       return;
     }
     markDirty();
     if (field === 'published') draft.published = t.checked;
-    else if (field === 'sub-name') {
-      draft.subs[i].name = t.value;
-      el.querySelector(`[data-sub-title="${i}"]`).textContent = t.value || 'Untitled sub-profile';
-    } else if (field === 'sub-desc') draft.subs[i].description = t.value;
     else if (field === 'id') {
       draft.id = t.value;
       idTouched = true;
@@ -431,7 +417,7 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onD
   el.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && e.target.dataset.field === 'test-add') {
       e.preventDefault();
-      addTest(Number(e.target.dataset.sub), e.target);
+      addTest(e.target);
     }
   });
 

@@ -4,17 +4,21 @@ import { toast } from './ui.js';
 import { LoginView } from './views/login.js';
 import { ProfileEditorView } from './views/profile-editor.js';
 import { ProfileListView } from './views/profile-list.js';
+import { SubProfileEditorView } from './views/subprofile-editor.js';
+import { SubProfileListView } from './views/subprofile-list.js';
 
 const app = document.getElementById('app');
 let catalog = null;
 let profiles = [];
+let subProfiles = [];
 
 const show = (el) => {
   app.replaceChildren(el);
   window.scrollTo(0, 0);
 };
 
-// The open screen lives in the URL hash (#new, #edit/<id>) so a refresh reopens it.
+// The open screen lives in the URL hash (#new, #edit/<id>, #subs, #subs/new, #subs/edit/<id>)
+// so a refresh reopens it.
 const setHash = (h) => {
   if (location.hash.slice(1) !== h) history.replaceState(null, '', h ? '#' + h : location.pathname + location.search);
 };
@@ -51,29 +55,51 @@ function showError(err) {
   show(p);
 }
 
-async function showList() {
-  let loaded;
+// Loads profiles and sub-profiles (and the catalogue once). False if the screen already changed.
+async function load() {
   try {
-    loaded = await guard(async () => {
-      [catalog, profiles] = await Promise.all([catalog || api.catalog(), api.listProfiles()]);
+    return !!(await guard(async () => {
+      [catalog, profiles, subProfiles] = await Promise.all([
+        catalog || api.catalog(),
+        api.listProfiles(),
+        api.listSubProfiles(),
+      ]);
       return true;
+    }));
+  } catch (err) {
+    showError(err);
+    return false;
+  }
+}
+
+const logout = async () => {
+  await api.logout().catch(() => {});
+  showLogin();
+};
+const onTab = (tab) => (tab === 'subs' ? showSubList() : showList());
+
+// Runs a delete; true once it's gone and the list is showing again.
+async function remove(fn, done, back) {
+  let deleted = false;
+  try {
+    await guard(async () => {
+      await fn();
+      deleted = true;
     });
   } catch (err) {
-    return showError(err);
+    toast(err.message);
+    return false;
   }
-  if (!loaded) return;
+  if (!deleted) return false; // session ended; the login screen is showing
+  toast(done);
+  await back();
+  return true;
+}
 
+async function showList() {
+  if (!(await load())) return;
   show(
-    ProfileListView({
-      profiles,
-      catalog,
-      onNew: () => showEditor(null),
-      onEdit: (profile) => showEditor(profile),
-      onLogout: async () => {
-        await api.logout().catch(() => {});
-        showLogin();
-      },
-    }),
+    ProfileListView({ profiles, catalog, onNew: () => showEditor(null), onEdit: showEditor, onTab, onLogout: logout }),
   );
   setHash('');
 }
@@ -83,24 +109,11 @@ function showEditor(profile) {
     ProfileEditorView({
       profile,
       catalog,
+      subProfiles,
       nextSortOrder: profiles.reduce((max, p) => Math.max(max, p.sortOrder + 1), 0),
       onClose: showList,
-      onDelete: async (id) => {
-        let deleted = false;
-        try {
-          await guard(async () => {
-            await api.deleteProfile(id);
-            deleted = true;
-          });
-        } catch (err) {
-          toast(err.message);
-          return false;
-        }
-        if (!deleted) return false; // session ended; the login screen is showing
-        toast('Profile deleted');
-        await showList();
-        return true;
-      },
+      onManageSubs: showSubList,
+      onDelete: (id) => remove(() => api.deleteProfile(id), 'Profile deleted', showList),
       onSave: async (payload, isNew) => {
         const saved = await guard(() => (isNew ? api.createProfile(payload) : api.updateProfile(payload)));
         if (!saved) return;
@@ -112,10 +125,51 @@ function showEditor(profile) {
   setHash(profile ? 'edit/' + encodeURIComponent(profile.id) : 'new');
 }
 
-// Reopens the screen named in the hash once the profiles have loaded.
+async function showSubList() {
+  if (!(await load())) return;
+  show(
+    SubProfileListView({
+      subProfiles,
+      profiles,
+      catalog,
+      onNew: () => showSubEditor(null),
+      onEdit: showSubEditor,
+      onTab,
+      onLogout: logout,
+    }),
+  );
+  setHash('subs');
+}
+
+function showSubEditor(sub) {
+  show(
+    SubProfileEditorView({
+      sub,
+      profiles,
+      catalog,
+      onClose: showSubList,
+      onDelete: (id) => remove(() => api.deleteSubProfile(id), 'Sub-profile deleted', showSubList),
+      onSave: async (payload, id) => {
+        const saved = await guard(() => (id ? api.updateSubProfile(id, payload) : api.createSubProfile(payload)));
+        if (!saved) return;
+        toast(id ? 'Sub-profile saved' : 'Sub-profile created');
+        await showSubList();
+      },
+    }),
+  );
+  setHash(sub ? 'subs/edit/' + sub.id : 'subs/new');
+}
+
+// Reopens the screen named in the hash once the lists have loaded.
 function openRoute(route) {
-  if (!catalog) return; // the list failed to load
+  if (!catalog) return; // the lists failed to load
   if (route === 'new') return showEditor(null);
+  if (route === 'subs') return showSubList();
+  if (route === 'subs/new') return showSubEditor(null);
+  if (route.startsWith('subs/edit/')) {
+    const sub = subProfiles.find((s) => String(s.id) === route.slice(10));
+    return sub ? showSubEditor(sub) : showSubList();
+  }
   const id = route.startsWith('edit/') && decodeURIComponent(route.slice(5));
   const profile = id && profiles.find((p) => p.id === id);
   if (profile) showEditor(profile);

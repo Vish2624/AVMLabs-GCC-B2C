@@ -35,6 +35,31 @@ export const appBar = (actions) => html`
     </div>
   </header>`;
 
+// The two admin sections. Views handle data-act="tab" and pass data-tab to main.js.
+export const tabs = (active) => html`
+  <nav class="tabs" aria-label="Admin sections">
+    <button type="button" data-act="tab" data-tab="profiles" aria-current="${active === 'profiles' ? 'page' : 'false'}">${icon('layers')}Profiles</button>
+    <button type="button" data-act="tab" data-tab="subs" aria-current="${active === 'subs' ? 'page' : 'false'}">${icon('list-checks')}Sub-profiles</button>
+  </nav>`;
+
+// Chips for a list of test ids, each removable, plus a type-to-add box.
+// `key` keeps several pickers on one screen apart (data-picker).
+export const testPicker = (key, ids, testsById, emptyText = 'No tests yet.') => html`
+  ${
+    ids.length
+      ? html`<div class="chips">${ids.map(
+          (id, j) => html`
+        <span class="chip">${testsById.get(id)?.name || id}<small>${formatPrice(testsById.get(id)?.mrp)}</small>
+          <button type="button" data-act="remove-test" data-picker="${key}" data-test="${j}" aria-label="Remove ${testsById.get(id)?.name || id}">×</button>
+        </span>`,
+        )}</div>`
+      : html`<p class="empty-note">${emptyText}</p>`
+  }
+  <label class="add-test">${icon('plus')}<input id="test-add-${key}" data-field="test-add" data-picker="${key}" list="test-options" placeholder="Type to add a test, e.g. Vitamin D" autocomplete="off" aria-label="Add a test"></label>`;
+
+export const testOptions = (catalog) =>
+  html`<datalist id="test-options">${catalog.tests.map((t) => html`<option value="${t.name}"></option>`)}</datalist>`;
+
 // Element with the given HTML that re-renders itself; event handlers are
 // attached once to the element and survive re-renders.
 export function view(render) {

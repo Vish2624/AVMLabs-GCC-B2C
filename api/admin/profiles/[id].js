@@ -1,5 +1,5 @@
 // PUT    /api/admin/profiles/:id — update a profile
-// DELETE /api/admin/profiles/:id — delete a profile and its sub-profiles
+// DELETE /api/admin/profiles/:id — delete a profile (its sub-profiles stay, for other profiles)
 import { requireAdmin } from '../../../server/auth.js';
 import { pathParam, readJson, route, send } from '../../../server/http.js';
 import { deleteProfile, parseProfile, updateProfile } from '../../../server/profiles.js';

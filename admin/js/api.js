@@ -21,6 +21,7 @@ async function request(method, url, body) {
 }
 
 const profileUrl = (id) => `/api/admin/profiles/${encodeURIComponent(id)}`;
+const subUrl = (id) => `/api/admin/subprofiles/${encodeURIComponent(id)}`;
 
 export const api = {
   session: () => request('GET', '/api/admin/session'),
@@ -31,4 +32,8 @@ export const api = {
   createProfile: (profile) => request('POST', '/api/admin/profiles', profile),
   updateProfile: (profile) => request('PUT', profileUrl(profile.id), profile),
   deleteProfile: (id) => request('DELETE', profileUrl(id)),
+  listSubProfiles: () => request('GET', '/api/admin/subprofiles'),
+  createSubProfile: (sub) => request('POST', '/api/admin/subprofiles', sub),
+  updateSubProfile: (id, sub) => request('PUT', subUrl(id), sub),
+  deleteSubProfile: (id) => request('DELETE', subUrl(id)),
 };
