@@ -3,7 +3,7 @@
     for (let i = 0; i < 6; i++) {
       const d = new Date(d0); d.setDate(d0.getDate() + i);
       const key = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-      out.push({ key, i, top: i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-IN', { weekday: 'short' }), bottom: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), num: d.getDate(), mon: d.toLocaleDateString('en-IN', { month: 'short' }), full: d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }) });
+      out.push({ key, i, top: i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-GB', { weekday: 'short' }), bottom: d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }), num: d.getDate(), mon: d.toLocaleDateString('en-GB', { month: 'short' }), full: d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }) });
     }
     return out;
   }
@@ -29,20 +29,18 @@
   // Message for a quick "Book now" (cards, reels, test page, footer): what is being booked with price and prep,
   // where, and any patient details already typed into the cart form.
   bookWA(items) {
-    const D = this.db(), inr = x => this.inr(x), RG = this.region(), s = this.state, f = s.form;
-    const pct = (mrp, price) => { const a = this.loc(mrp), b = this.loc(price); return a > b ? Math.round((1 - b / a) * 100) : 0; };
+    const D = this.db(), RG = this.region(), s = this.state, f = s.form;
     const list = items.map(c => ({ c, x: c.type === 'profile' ? D.PM[c.id] : D.T[c.id] })).filter(i => i.x);
     if (!list.length) return;
     const many = list.length > 1, lines = ['Hi AVM Labs! I would like to book:', ''];
     let total = 0, fasting = false, tat = '';
     list.forEach(({ c, x }, i) => {
-      const p = pct(x.mrp, x.price);
-      total += this.loc(x.price); fasting = fasting || !!x.fasting;
-      if (!tat || parseFloat(x.tat) > parseFloat(tat)) tat = x.tat;
+      total += this.pr(x); fasting = fasting || !!x.fasting;
+      if (this.tatHrs(this.tat(x)) > this.tatHrs(tat)) tat = this.tat(x);
       lines.push((many ? (i + 1) + '. ' : '') + '*' + x.name + '*' + (c.type === 'profile' ? ' (Health profile)' : ' (Lab test)'));
       if (c.type === 'profile') lines.push('   Includes ' + x.ts.length + ' tests: ' + x.ts.map(t => t.short).join(', '));
       else lines.push('   ' + x.params + ' parameter' + (x.params > 1 ? 's' : ''));
-      lines.push('   Price: ' + inr(x.price) + (p ? ' (MRP ' + inr(x.mrp) + ', ' + p + '% off)' : ''));
+      lines.push('   Price: ' + this.cost(x));
     });
     if (many) lines.push('', '*Total:* ' + this.money(total));
     lines.push('', '*Reports:* within ' + (tat || '24 hrs'), '*Preparation:* ' + (fasting ? '10–12 hrs fasting needed' : 'No fasting needed'),
@@ -58,10 +56,10 @@
     const b = this.bill(); if (!b.items.length) return;
     const e = this.validate();
     if (Object.keys(e).length) { this.setState({ errors: e }); this.flash('Please complete the highlighted details'); return; }
-    const f = this.state.form, inr = x => this.inr(x), o = this.opts();
+    const f = this.state.form;
     const day = (this.days().find(d => d.key === f.date) || {}).full || '';
     const lines = ['Hi AVM Labs! I would like to book:', '', ...b.items.map((it, i) => (i + 1) + '. ' + it.name + ' – ' + this.money(it.price)), '',
-      this.state.mode === 'home' ? '*Collection:* Home sample collection' + (b.hc ? ' (' + this.money(b.hc) + ')' : ' (Free)') : '*Collection:* Walk-in at centre',
+      this.state.mode === 'home' ? '*Collection:* Home sample collection (Free)' : '*Collection:* Walk-in at centre',
       '*Date & slot:* ' + day + ' · ' + f.slot,
       '*Patient:* ' + f.name.trim() + ', ' + f.age + ', ' + f.gender,
       '*Mobile:* ' + this.region().dial + ' ' + f.phone];

@@ -9,7 +9,6 @@
     "editor": "enum",
     "options": [
       "auto",
-      "IN",
       "BH",
       "SA",
       "AE"
@@ -17,18 +16,6 @@
     "default": "auto",
     "tsType": "string",
     "section": "Location"
-  },
-  "whatsappNumber": {
-    "editor": "text",
-    "default": "919999999999",
-    "tsType": "string",
-    "section": "India"
-  },
-  "addressIndia": {
-    "editor": "text",
-    "default": "[India centre address]",
-    "tsType": "string",
-    "section": "India"
   },
   "whatsappNumberBahrain": {
     "editor": "text",
@@ -65,25 +52,5 @@
     "default": "[UAE centre address]",
     "tsType": "string",
     "section": "UAE"
-  },
-  "homeCollectionFee": {
-    "editor": "int",
-    "default": 250,
-    "min": 0,
-    "max": 1000,
-    "step": 50,
-    "unit": "₹",
-    "tsType": "number",
-    "section": "Booking"
-  },
-  "freeHomeCollectionAbove": {
-    "editor": "int",
-    "default": 0,
-    "min": 0,
-    "max": 5000,
-    "step": 100,
-    "unit": "₹",
-    "tsType": "number",
-    "section": "Booking"
   }
 }

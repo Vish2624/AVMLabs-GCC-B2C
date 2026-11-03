@@ -1,6 +1,6 @@
 // Create or edit a reusable sub-profile: a name and the tests it contains.
 import { html } from '../html.js';
-import { appBar, formatPrice, icon, plural, testOptions, testPicker, toast, view } from '../ui.js';
+import { appBar, formatPrices, icon, plural, sumPrices, testOptions, testPicker, toast, view } from '../ui.js';
 
 export function SubProfileEditorView({ sub, profiles, catalog, onSave, onDelete, onClose }) {
   const isNew = !sub;
@@ -20,10 +20,9 @@ export function SubProfileEditorView({ sub, profiles, catalog, onSave, onDelete,
   let error = '';
 
   const summary = () => {
-    const mrp = draft.tests.reduce((sum, id) => sum + (tests.get(id)?.mrp || 0), 0);
     const params = draft.tests.reduce((sum, id) => sum + (tests.get(id)?.params || 0), 0);
     return html`<span><b>${plural(draft.tests.length, 'test')}</b> · ${plural(params, 'parameter')}</span>
-      ${mrp > 0 && html`<span>MRP <b>${formatPrice(mrp)}</b></span>`}`;
+      ${draft.tests.length > 0 && html`<span>Tests total <b>${formatPrices(sumPrices(draft.tests, tests))}</b></span>`}`;
   };
 
   const { el, update } = view(

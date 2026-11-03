@@ -60,15 +60,17 @@
       const ov = p.tests.filter(id => tIds.includes(id));
       if (!ov.length) return;
       const others = p.tests.filter(id => !tIds.includes(id));
-      const extra = p.price - ov.reduce((a, id) => a + D.T[id].price, 0);
+      // Local prices; rounded so BD decimals compare exactly.
+      const r3 = v => Math.round(v * 1000) / 1000;
+      const extra = r3(this.pr(p) - this.sumPr(ov.map(id => D.T[id])));
       if (!others.length && extra >= 0) return;
-      out.push({ p, ov, others, extra, worth: others.reduce((a, id) => a + D.T[id].mrp, 0) });
+      out.push({ p, ov, others, extra, worth: r3(this.sumPr(others.map(id => D.T[id]))) });
     });
     out.sort((a, b) => b.ov.length - a.ov.length || a.extra - b.extra);
     return out;
   }
   matchVM(m) {
-    const D = this.db(), inr = x => this.inr(x);
+    const D = this.db(), inr = x => this.money(x); // m.extra and m.worth are already local amounts
     const names = m.ov.map(id => D.T[id].short);
     const list = names.length <= 2 ? names.join(' & ') : names.slice(0, -1).join(', ') + ' & ' + names[names.length - 1];
     const n = m.others.length, k = m.ov.length, save = m.extra < 0, free = m.extra === 0;
@@ -82,17 +84,17 @@
     };
   }
 
+  // Offer prices in the visitor's country. Home collection is free.
   bill() {
-    const D = this.db(), o = this.opts();
-    let mrp = 0, price = 0, raw = 0;
+    const D = this.db();
+    let price = 0;
     const items = [];
     this.state.cart.forEach(c => {
       const x = c.type === 'profile' ? D.PM[c.id] : D.T[c.id]; if (!x) return;
-      const lp = this.loc(x.price); mrp += this.loc(x.mrp); price += lp; raw += x.price;
+      const lp = this.pr(x); price += lp;
       items.push({ name: x.name + (c.type === 'profile' ? ' (Profile)' : ''), price: lp });
     });
-    const hc = this.state.mode === 'home' && raw < o.freeAbove ? this.loc(o.fee) : 0;
-    const pay = price + hc;
-    return { items, mrp, price, raw, saving: mrp - price, hc, pay };
+    price = Math.round(price * 1000) / 1000;
+    return { items, price, hc: 0, pay: price };
   }
 

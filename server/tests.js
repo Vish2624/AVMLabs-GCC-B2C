@@ -1,10 +1,11 @@
 // Lab tests: validation and database access. Each test lists the parameters it
 // measures and, optionally, calculated parameters (worked out from other
-// results, e.g. LDL / HDL Ratio). Until migration 0003 runs, the built-in tests
-// (src/data/tests.json) are served and editing is refused.
+// results, e.g. LDL / HDL Ratio). Prices and report times are set per country.
+// Until migration 0004 runs, the built-in tests (src/data/tests.json) are served
+// and editing is refused.
 import { z } from 'zod';
-import { SAMPLES, STATIC_TESTS, TEST_CATEGORIES } from './catalog.js';
-import { db, requireTable, tableReady, unwrap } from './db.js';
+import { COUNTRIES, SAMPLES, STATIC_TESTS, TEST_CATEGORIES } from './catalog.js';
+import { db, pricesReady, requirePrices, unwrap } from './db.js';
 import { HttpError } from './http.js';
 
 const text = (max) => z.string().trim().max(max);
@@ -13,6 +14,17 @@ const names = (maxItems) =>
     .array(text(120).min(1, 'Parameter names can’t be empty'))
     .max(maxItems)
     .transform((list) => [...new Set(list)]);
+
+// One value per country, e.g. { AE: 17, SA: 17, BH: 1.7 }.
+const perCountry = (value) => z.object(Object.fromEntries(COUNTRIES.map((c) => [c.code, value(c)])));
+const priceIn = (c) =>
+  z
+    .number({ message: `Enter the ${c.currency} price` })
+    .min(0, `The ${c.currency} price can’t be negative`)
+    .max(100_000, `The ${c.currency} price looks too high`)
+    .transform((n) => Number(n.toFixed(c.decimals)));
+export const pricesSchema = perCountry(priceIn);
+const tatIn = (c) => text(30).min(1, `Enter the report time for ${c.name}`);
 
 export const testSchema = z
   .object({
@@ -29,17 +41,8 @@ export const testSchema = z
       .min(1, 'Pick at least one category')
       .max(6)
       .transform((ids) => [...new Set(ids)]),
-    price: z
-      .number({ message: 'Enter the price' })
-      .int('Price must be whole rupees')
-      .min(0, 'Price can’t be negative')
-      .max(1_000_000, 'Price looks too high'),
-    mrp: z
-      .number({ message: 'Enter the MRP' })
-      .int('MRP must be whole rupees')
-      .min(0, 'MRP can’t be negative')
-      .max(1_000_000, 'MRP looks too high'),
-    tat: text(30).min(1, 'Enter the report time').default('24 hrs'),
+    prices: pricesSchema,
+    tats: perCountry(tatIn),
     fasting: z.boolean().default(false),
     sample: z.enum(SAMPLES).default('Blood'),
     aka: text(200).default(''),
@@ -47,15 +50,15 @@ export const testSchema = z
     // What it measures; not edited in the admin. Defaults to the test itself.
     parameters: names(80).default([]),
     calculated: names(40).default([]),
+    // Popularity rank: 1 is the most booked. The first 20 are shown as popular tests.
     sortOrder: z
-      .number({ message: 'Enter a display order' })
-      .int('Display order must be a whole number')
-      .min(0, 'Display order can’t be negative')
-      .max(9999, 'Display order must be 9999 or less')
-      .default(0),
+      .number({ message: 'Enter a popularity rank' })
+      .int('Popularity rank must be a whole number')
+      .min(1, 'Popularity rank starts at 1')
+      .max(9999, 'Popularity rank must be 9999 or less')
+      .default(9999),
     published: z.boolean().default(true),
   })
-  .refine((t) => t.mrp >= t.price, { message: 'MRP can’t be lower than the price', path: ['mrp'] })
   .transform((t) => ({
     ...t,
     short: t.short || t.name,
@@ -80,11 +83,11 @@ export function toApi(t) {
     name: t.name,
     short: t.short || t.name,
     cat: t.categories,
+    rank: t.sortOrder,
     params: t.parameters.length + t.calculated.length,
-    tat: t.tat,
+    prices: t.prices,
+    tats: t.tats,
     fasting: t.fasting,
-    mrp: t.mrp,
-    price: t.price,
     aka: t.aka,
     about: t.about,
     sample: t.sample,
@@ -97,21 +100,20 @@ export function toApi(t) {
 }
 
 // The built-in tests.json rows in the stored shape.
-export const fromStatic = (t, i) => ({
+export const fromStatic = (t) => ({
   id: t.id,
   name: t.name,
   short: t.short,
   categories: t.cat,
-  price: t.price,
-  mrp: t.mrp,
-  tat: t.tat,
+  prices: t.prices,
+  tats: t.tats,
   fasting: t.fasting,
   sample: t.sample || 'Blood',
   aka: t.aka || '',
   about: t.about || '',
   parameters: t.parameters || [t.name],
   calculated: t.calculated || [],
-  sortOrder: i,
+  sortOrder: t.rank,
   published: true,
   updatedAt: null,
 });
@@ -121,9 +123,8 @@ const fromRow = (r) => ({
   name: r.name,
   short: r.short,
   categories: r.categories,
-  price: r.price,
-  mrp: r.mrp,
-  tat: r.tat,
+  prices: r.prices,
+  tats: r.tats,
   fasting: r.fasting,
   sample: r.sample,
   aka: r.aka,
@@ -140,9 +141,8 @@ const toRow = (t) => ({
   name: t.name,
   short: t.short,
   categories: t.categories,
-  price: t.price,
-  mrp: t.mrp,
-  tat: t.tat,
+  prices: t.prices,
+  tats: t.tats,
   fasting: t.fasting,
   sample: t.sample,
   aka: t.aka,
@@ -159,7 +159,7 @@ const devStore = () => globalThis.AVM_DEV_STORE;
 export async function listTests({ publishedOnly = false } = {}) {
   let tests;
   if (devStore()) tests = devStore().listTests();
-  else if (!(await tableReady('tests'))) tests = STATIC_TESTS.map(fromStatic);
+  else if (!(await pricesReady())) tests = STATIC_TESTS.map(fromStatic);
   else tests = unwrap(await db().from('tests').select('*').order('sort_order').order('name')).map(fromRow);
   return tests.filter((t) => !publishedOnly || t.published).map(toApi);
 }
@@ -174,7 +174,7 @@ export async function assertKnownTests(ids) {
 
 export async function createTest(t) {
   if (devStore()) return devStore().createTest(t);
-  await requireTable('tests');
+  await requirePrices();
   const rows = unwrap(await db().from('tests').select('id').eq('id', t.id).limit(1));
   if (rows.length) throw new HttpError(409, 'A test with this ID already exists');
   unwrap(await db().from('tests').insert(toRow(t)));
@@ -182,7 +182,7 @@ export async function createTest(t) {
 
 export async function updateTest(id, t) {
   if (devStore()) return devStore().updateTest(id, t);
-  await requireTable('tests');
+  await requirePrices();
   if (t.id !== id) throw new HttpError(400, 'Test ID cannot be changed');
   const rows = unwrap(
     await db()
@@ -197,7 +197,7 @@ export async function updateTest(id, t) {
 // Refuses while a sub-profile or profile still includes it, naming them.
 export async function deleteTest(id) {
   if (devStore()) return devStore().removeTest(id);
-  await requireTable('tests');
+  await requirePrices();
   const subs = unwrap(await db().from('sub_profile_library').select('name').contains('test_ids', [id]));
   const profiles = unwrap(await db().from('profiles').select('name').contains('test_ids', [id]));
   const users = [...subs.map((s) => s.name), ...profiles.map((p) => p.name)];

@@ -101,7 +101,7 @@
     }, 120);
   }
   share(p) {
-    const text = p.name + ' — ' + this.inr(p.price) + ' at AVM Labs';
+    const text = p.name + ' — ' + this.cost(p) + ' at AVM Labs';
     if (navigator.share) navigator.share({ title: p.name, text, url: location.href }).catch(() => {});
     else if (navigator.clipboard) navigator.clipboard.writeText(text + ' ' + location.href).then(() => this.flash('Link copied'), () => this.flash("Couldn't copy the link"));
     else this.flash("Couldn't copy the link");

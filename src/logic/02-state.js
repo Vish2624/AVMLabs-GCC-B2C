@@ -18,7 +18,8 @@
     const T = {}; Component.TESTS.forEach(t => { T[t.id] = t; });
     const P = Component.PROFILES.map((p, i) => {
       const ts = p.tests.map(id => T[id]);
-      return { ...p, i, ts, params: ts.reduce((a, t) => a + t.params, 0), mrp: ts.reduce((a, t) => a + t.mrp, 0), fasting: ts.some(t => t.fasting) };
+      const tats = Object.fromEntries(Object.keys(Component.REGIONS).map(code => [code, ts.map(t => (t.tats || {})[code] || '').reduce((a, v) => (this.tatHrs(v) > this.tatHrs(a) ? v : a), '')]));
+      return { ...p, i, ts, tats, params: ts.reduce((a, t) => a + t.params, 0), fasting: ts.some(t => t.fasting) };
     });
     const PM = {}; P.forEach(p => { PM[p.id] = p; });
     const inProf = {}; P.forEach(p => p.tests.forEach(id => { (inProf[id] = inProf[id] || []).push(p); }));
@@ -32,7 +33,7 @@
   loadCatalog() {
     fetch('/api/tests').then(r => (r.ok ? r.json() : null)).then(list => {
       if (Array.isArray(list) && list.length) {
-        Component.TESTS = list.map(t => ({ ...t, cat: t.cat && t.cat.length ? t.cat : ['blood'], params: (t.parameters || []).length + (t.calculated || []).length || 1 }));
+        Component.TESTS = list.map(t => ({ ...t, cat: t.cat && t.cat.length ? t.cat : ['routine'], params: (t.parameters || []).length + (t.calculated || []).length || 1 }));
         Component._db = null;
         // A link to a test that only exists in the admin (#test/<new id>) couldn't open before the list arrived.
         const h = this.fromHash();
@@ -46,14 +47,13 @@
     fetch('/api/profiles').then(r => (r.ok ? r.json() : null)).then(list => {
       if (!Array.isArray(list) || !list.length) return;
       const known = new Set(Component.TESTS.map(t => t.id));
-      // The admin doesn't store report time or the "ideal for"/benefit lists: reuse the built-in profile's,
-      // and otherwise take the slowest test's report time (the report is ready when its last test is).
+      // The admin doesn't store the "ideal for"/benefit lists: reuse the built-in profile's.
+      // Report times come from the tests (see tats in db()).
       const builtIn = Object.fromEntries(Component.PROFILES.map(p => [p.id, p]));
-      const tatOf = ids => ids.map(id => Component.TESTS.find(t => t.id === id).tat).sort((a, b) => parseFloat(b) - parseFloat(a))[0];
       const profiles = list.map(p => {
         const tests = [...new Set(p.subs.flatMap(s => s.tests))].filter(id => known.has(id)), b = builtIn[p.id] || {};
-        return { id: p.id, name: p.name, tag: p.tag, sym: sym(p.name), hue: p.hue, tags: [p.category], tagline: p.tagline, tests, price: p.price, subs: p.subs,
-          tat: b.tat || (tests.length ? tatOf(tests) : ''), ideal: b.ideal || [], benefits: b.benefits || [] };
+        return { id: p.id, name: p.name, tag: p.tag, sym: sym(p.name), hue: p.hue, tags: [p.category], tagline: p.tagline, tests, prices: p.prices || {}, subs: p.subs,
+          ideal: b.ideal || [], benefits: b.benefits || [] };
       }).filter(p => p.tests.length);
       if (!profiles.length) return;
       Component.PROFILES = profiles;
@@ -67,9 +67,7 @@
   }
 
   opts() {
-    const p = this.props || {};
-    const n = (v, d) => (v === undefined || v === null || v === '' || isNaN(+v)) ? d : +v;
-    const rg = this.region();
-    return { wa: String(p[rg.waProp] || rg.waDef).replace(/\D/g, ''), fee: n(p.homeCollectionFee, 250), freeAbove: n(p.freeHomeCollectionAbove, 0) };
+    const p = this.props || {}, rg = this.region();
+    return { wa: String(p[rg.waProp] || rg.waDef).replace(/\D/g, '') };
   }
 

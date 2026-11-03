@@ -2,6 +2,7 @@
 // named group of tests that profiles pick from; editing it updates every
 // profile that uses it.
 import { z } from 'zod';
+import { remapTests } from './catalog.js';
 import { db, requireLibrary, unwrap } from './db.js';
 import { HttpError } from './http.js';
 import { assertKnownTests } from './tests.js';
@@ -41,7 +42,7 @@ function toApi(row) {
     id: row.id,
     name: row.name,
     description: row.description,
-    tests: row.test_ids,
+    tests: remapTests(row.test_ids),
     updatedAt: row.updated_at,
     usedBy: (row.profile_sub_profiles || []).map((l) => l.profile_id),
   };

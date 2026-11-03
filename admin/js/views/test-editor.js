@@ -1,7 +1,7 @@
-// Create or edit a lab test: details, price, the parameters it measures and
-// (optionally) calculated parameters worked out from other results.
+// Create or edit a lab test: details, price and report time per country, the parameters
+// it measures and (optionally) calculated parameters worked out from other results.
 import { html } from '../html.js';
-import { appBar, formatPrice, icon, nameList, plural, toast, view } from '../ui.js';
+import { appBar, COUNTRIES, formatMoney, icon, nameList, plural, readPrices, toast, view } from '../ui.js';
 import { testUsage } from './test-list.js';
 
 const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -24,23 +24,22 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
         name: '',
         short: '',
         categories: [],
-        price: '',
-        mrp: '',
-        tat: '24 hrs',
+        prices: Object.fromEntries(COUNTRIES.map((c) => [c.code, ''])),
+        tats: Object.fromEntries(COUNTRIES.map((c) => [c.code, '24 hrs'])),
         fasting: false,
         sample: 'Blood',
         aka: '',
         about: '',
         parameters: [],
         calculated: [],
-        sortOrder: catalog.tests.reduce((max, t) => Math.max(max, t.sortOrder + 1), 0),
+        sortOrder: catalog.tests.reduce((max, t) => Math.max(max, t.sortOrder + 1), 1),
         published: true,
       }
     : {
         ...test,
         categories: [...test.cat],
-        price: String(test.price),
-        mrp: String(test.mrp),
+        prices: Object.fromEntries(COUNTRIES.map((c) => [c.code, String(test.prices?.[c.code] ?? '')])),
+        tats: Object.fromEntries(COUNTRIES.map((c) => [c.code, test.tats?.[c.code] || ''])),
         parameters: [...test.parameters],
         calculated: [...test.calculated],
       };
@@ -52,16 +51,9 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
   let deleting = false;
   let error = '';
 
-  const summary = () => {
-    const price = Number(draft.price);
-    const mrp = Number(draft.mrp);
-    const off = mrp > 0 && price >= 0 && price < mrp ? Math.round((1 - price / mrp) * 100) : 0;
-    return html`
-      ${draft.price !== '' && html`<span class="now">${formatPrice(price)}</span>`}
-      ${draft.mrp !== '' && mrp > price && html`<s>${formatPrice(mrp)}</s>`}${off > 0 && html`<span class="pill off">${off}% off</span>`}
-      <span><b>${draft.calculated.length ? plural(draft.calculated.length, 'calculated parameter') : 'No calculated parameters'}</b></span>
-      ${draft.mrp !== '' && draft.price !== '' && mrp < price && html`<span class="warn">MRP is below the price</span>`}`;
-  };
+  const summary = () => html`
+      ${COUNTRIES.filter((c) => draft.prices[c.code] !== '').map((c) => html`<span class="now">${formatMoney(c.code, draft.prices[c.code])}</span>`)}
+      <span><b>${draft.calculated.length ? plural(draft.calculated.length, 'calculated parameter') : 'No calculated parameters'}</b></span>`;
 
   const { el, update } = view(
     () => html`
@@ -104,10 +96,6 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
           </select>
         </div>
         <div class="field">
-          <label for="tat">Report time</label>
-          <input id="tat" data-field="tat" value="${draft.tat}" placeholder="e.g. 24 hrs" maxlength="30" autocomplete="off">
-        </div>
-        <div class="field">
           <span class="label">Preparation</span>
           <label class="switch"><input type="checkbox" data-field="fasting" ${draft.fasting ? 'checked' : ''}><span class="track"></span>Fasting needed</label>
         </div>
@@ -124,26 +112,29 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
           <label class="switch"><input type="checkbox" data-field="published" ${draft.published ? 'checked' : ''}><span class="track"></span>Show on website</label>
         </div>
         <div class="field">
-          <label for="sortOrder">Display order</label>
-          <input id="sortOrder" data-field="sortOrder" type="number" min="0" step="1" value="${draft.sortOrder}">
-          <span class="hint">Lower numbers show first.</span>
+          <label for="sortOrder">Popularity rank</label>
+          <input id="sortOrder" data-field="sortOrder" type="number" min="1" step="1" value="${draft.sortOrder}">
+          <span class="hint">1 is the most booked. Ranks 1–20 show as popular tests; the Tests page lists in this order.</span>
         </div>
       </div>
     </section>
 
     <section class="panel">
-      <div class="panel-head"><span class="num">2</span><div><h2>Price</h2><p>In rupees. Converted automatically for other countries.</p></div></div>
-      <div class="grid">
-        <div class="field">
-          <label for="price">Price</label>
-          <div class="prefix"><span>₹</span><input id="price" data-field="price" type="number" min="0" step="1" inputmode="numeric" value="${draft.price}"></div>
-        </div>
-        <div class="field">
-          <label for="mrp">MRP</label>
-          <div class="prefix"><span>₹</span><input id="mrp" data-field="mrp" type="number" min="0" step="1" inputmode="numeric" value="${draft.mrp}"></div>
-          <span class="hint">Shown struck through, with the discount.</span>
-        </div>
-      </div>
+      <div class="panel-head"><span class="num">2</span><div><h2>Price &amp; report time</h2><p>Set for each country. The price is the offer price customers pay.</p></div></div>
+      <div class="country-grid">${COUNTRIES.map(
+        (c) => html`
+        <div class="country-row">
+          <span class="country-name">${c.name}</span>
+          <div class="field">
+            <label for="price-${c.code}">Price</label>
+            <div class="prefix"><span>${c.label}</span><input id="price-${c.code}" data-field="price" data-country="${c.code}" type="number" min="0" step="${c.decimals ? '0.1' : '1'}" inputmode="decimal" value="${draft.prices[c.code]}"></div>
+          </div>
+          <div class="field">
+            <label for="tat-${c.code}">Report time</label>
+            <input id="tat-${c.code}" data-field="tat" data-country="${c.code}" value="${draft.tats[c.code]}" placeholder="e.g. 24 hrs or 2 days" maxlength="30" autocomplete="off">
+          </div>
+        </div>`,
+      )}</div>
     </section>
 
     <section class="panel">
@@ -227,10 +218,11 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
     if (!draft.name.trim()) return 'Enter a test name.';
     if (!ID_PATTERN.test(draft.id)) return 'Test ID can only use lowercase letters, numbers and dashes.';
     if (!draft.categories.length) return 'Pick at least one category.';
-    if (draft.price === '' || !(Number(draft.price) >= 0)) return 'Enter a price.';
-    if (draft.mrp === '' || !(Number(draft.mrp) >= 0)) return 'Enter the MRP.';
-    if (Number(draft.mrp) < Number(draft.price)) return 'MRP can’t be lower than the price.';
-    if (!draft.tat.trim()) return 'Enter the report time.';
+    const { error: priceError } = readPrices(draft.prices);
+    if (priceError) return priceError;
+    const noTat = COUNTRIES.find((c) => !draft.tats[c.code].trim());
+    if (noTat) return `Enter the report time for ${noTat.name}.`;
+    if (!(Number(draft.sortOrder) >= 1)) return 'Popularity rank starts at 1.';
     return '';
   }
 
@@ -245,9 +237,8 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
       name: draft.name.trim(),
       short: draft.short.trim(),
       categories: draft.categories,
-      price: Math.round(Number(draft.price)),
-      mrp: Math.round(Number(draft.mrp)),
-      tat: draft.tat.trim(),
+      prices: readPrices(draft.prices).prices,
+      tats: Object.fromEntries(COUNTRIES.map((c) => [c.code, draft.tats[c.code].trim()])),
       fasting: draft.fasting,
       sample: draft.sample,
       aka: draft.aka.trim(),
@@ -255,7 +246,7 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
       // Measured parameters aren't edited here: keep the saved list; a new test counts as its own parameter.
       parameters: draft.parameters.length ? draft.parameters : [draft.name.trim()],
       calculated: draft.calculated,
-      sortOrder: Math.max(0, Math.round(Number(draft.sortOrder) || 0)),
+      sortOrder: Math.max(1, Math.round(Number(draft.sortOrder) || 1)),
       published: draft.published,
     };
     saving = true;
@@ -342,6 +333,8 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
     if (!field || field === 'name-add') return;
     dirty = true;
     if (field === 'fasting' || field === 'published') draft[field] = t.checked;
+    else if (field === 'price') draft.prices[t.dataset.country] = t.value;
+    else if (field === 'tat') draft.tats[t.dataset.country] = t.value;
     else if (field === 'id') {
       draft.id = t.value;
       idTouched = true;
@@ -350,7 +343,7 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
       draft.id = slugify(t.value);
       el.querySelector('#id').value = draft.id;
     }
-    if (field === 'price' || field === 'mrp') refreshSummary();
+    if (field === 'price') refreshSummary();
   });
 
   el.addEventListener('keydown', (e) => {

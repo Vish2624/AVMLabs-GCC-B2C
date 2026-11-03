@@ -10,18 +10,39 @@ export const STATIC_TESTS = tests;
 
 // Test categories: must match the test filters on the site (CATS in src/logic/01-data.js).
 export const TEST_CATEGORIES = [
-  { id: 'vitamins', label: 'Vitamins' },
-  { id: 'hormones', label: 'Hormones' },
-  { id: 'thyroid', label: 'Thyroid' },
+  { id: 'routine', label: 'Liver, Kidney & Routine' },
   { id: 'diabetes', label: 'Diabetes' },
-  { id: 'women', label: "Women's Health" },
-  { id: 'men', label: "Men's Health" },
-  { id: 'heart', label: 'Heart' },
-  { id: 'liver', label: 'Liver' },
-  { id: 'kidney', label: 'Kidney' },
-  { id: 'blood', label: 'Blood' },
-  { id: 'bone', label: 'Bone' },
+  { id: 'thyroid', label: 'Thyroid' },
+  { id: 'vitamins', label: 'Vitamins & Minerals' },
+  { id: 'heart', label: 'Heart & Lipids' },
+  { id: 'hormones', label: 'Hormones' },
+  { id: 'infections', label: 'Infections & Immunity' },
+  { id: 'tumour', label: 'Tumour Markers' },
 ];
+
+// Countries the site serves. Every test and profile has a price and report time for each
+// (must match REGIONS in src/logic/03-region-pricing.js).
+export const COUNTRIES = [
+  { code: 'AE', name: 'UAE', currency: 'AED', decimals: 0 },
+  { code: 'SA', name: 'Saudi Arabia', currency: 'SAR', decimals: 0 },
+  { code: 'BH', name: 'Bahrain', currency: 'BHD', decimals: 2 },
+];
+
+// Panels from the first catalogue, replaced by the single tests they contained (migration 0004).
+// Applied when reading older data, so a profile saved before the change still lists real tests.
+// No current test id may appear here as a key.
+export const OLD_TEST_IDS = {
+  thyroid: ['t3', 't4', 'tsh'],
+  lipid: ['cholesterol', 'triglycerides', 'hdl', 'ldl'],
+  lft: ['bilirubin-total', 'bilirubin-direct', 'sgot', 'sgpt', 'alp', 'ggt', 'total-protein', 'albumin'],
+  kft: ['creatinine', 'bun', 'uric-acid', 'electrolytes'],
+  iron: ['serum-iron', 'tibc'],
+  antitpo: ['anti-tpo'],
+  crp: ['hscrp'],
+};
+
+// Test ids with the old panels swapped for their tests, first occurrence kept.
+export const remapTests = (ids) => [...new Set((ids || []).flatMap((id) => OLD_TEST_IDS[id] || [id]))];
 
 export const SAMPLES = ['Blood', 'Urine', 'Stool', 'Swab', 'Other'];
 

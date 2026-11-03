@@ -1,6 +1,6 @@
 // Reusable sub-profiles: search, see where each is used, open to edit.
 import { html } from '../html.js';
-import { appBar, formatPrice, icon, plural, tabs, view } from '../ui.js';
+import { appBar, formatPrices, icon, plural, sumPrices, tabs, view } from '../ui.js';
 
 export function SubProfileListView({ subProfiles, profiles, catalog, onNew, onEdit, onTab, onLogout }) {
   const tests = new Map(catalog.tests.map((t) => [t.id, t]));
@@ -8,7 +8,6 @@ export function SubProfileListView({ subProfiles, profiles, catalog, onNew, onEd
   let query = '';
 
   const card = (s) => {
-    const mrp = s.tests.reduce((sum, id) => sum + (tests.get(id)?.mrp || 0), 0);
     const params = s.tests.reduce((sum, id) => sum + (tests.get(id)?.params || 0), 0);
     const used = s.usedBy.map((id) => profileName.get(id) || id);
     return html`
@@ -22,7 +21,7 @@ export function SubProfileListView({ subProfiles, profiles, catalog, onNew, onEd
           <span class="pill ${used.length ? 'live' : 'draft'}">${used.length ? `In ${plural(used.length, 'profile')}` : 'Not used'}</span>
         </div>
         <div class="card-body">
-          <p class="meta">${plural(s.tests.length, 'test')} · ${plural(params, 'parameter')} · MRP ${formatPrice(mrp)}</p>
+          <p class="meta">${plural(s.tests.length, 'test')} · ${plural(params, 'parameter')} · ${formatPrices(sumPrices(s.tests, tests))}</p>
           <ul class="test-list">${s.tests.map((id) => html`<li>${tests.get(id)?.name || id}</li>`)}</ul>
           <div class="pricebox">
             <p class="used-in">${used.length ? html`Used in ${used.join(', ')}` : 'Add it to a profile from the Profiles tab.'}</p>

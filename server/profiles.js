@@ -1,11 +1,11 @@
 // Profile validation and database access. A profile is built from reusable
 // sub-profiles (server/subprofiles.js) plus any tests added on their own.
 import { z } from 'zod';
-import { CATEGORIES, ICONS } from './catalog.js';
-import { db, libraryReady, requireLibrary, unwrap } from './db.js';
+import { CATEGORIES, COUNTRIES, ICONS, remapTests } from './catalog.js';
+import { db, libraryReady, pricesReady, requireLibrary, requirePrices, unwrap } from './db.js';
 import { HttpError } from './http.js';
 import { testList } from './subprofiles.js';
-import { assertKnownTests } from './tests.js';
+import { assertKnownTests, listTests, pricesSchema } from './tests.js';
 
 const text = (max) => z.string().trim().max(max);
 
@@ -21,11 +21,7 @@ export const profileSchema = z
     tag: text(24).default(''),
     category: z.enum(CATEGORIES.map((c) => c.id)),
     tagline: text(140).default(''),
-    price: z
-      .number({ message: 'Enter the price' })
-      .int('Price must be whole rupees')
-      .min(0, 'Price can’t be negative')
-      .max(1_000_000, 'Price looks too high'),
+    prices: pricesSchema,
     icon: z.enum(ICONS).default('layers'),
     hue: z.number().int().min(0).max(359).default(275),
     sortOrder: z
@@ -63,31 +59,43 @@ export function expandSubs(subs, tests) {
   return out;
 }
 
-const SELECT =
-  'id, name, tag, category, tagline, price, icon, hue, sort_order, published, test_ids, updated_at, ' +
+// `prices` exists from migration 0004; before it, profiles had one rupee price that no longer applies.
+const select = (prices) =>
+  `id, name, tag, category, tagline, ${prices ? 'prices, ' : ''}icon, hue, sort_order, published, test_ids, updated_at, ` +
   'profile_sub_profiles (sort_order, sub_profile_library (id, name, description, test_ids))';
+
+// What the profile's tests cost together in each country, rounded like a price.
+export function sumPrices(ids, testsById) {
+  return Object.fromEntries(
+    COUNTRIES.map((c) => [
+      c.code,
+      Number(ids.reduce((sum, id) => sum + (testsById.get(id)?.prices?.[c.code] || 0), 0).toFixed(c.decimals)),
+    ]),
+  );
+}
 
 function toApi(row) {
   const subs = [...(row.profile_sub_profiles || [])]
     .sort((a, b) => a.sort_order - b.sort_order)
     .map((l) => l.sub_profile_library)
     .filter(Boolean)
-    .map((s) => ({ id: s.id, name: s.name, description: s.description, tests: s.test_ids }));
+    .map((s) => ({ id: s.id, name: s.name, description: s.description, tests: remapTests(s.test_ids) }));
+  const tests = remapTests(row.test_ids);
   return {
     id: row.id,
     name: row.name,
     tag: row.tag,
     category: row.category,
     tagline: row.tagline,
-    price: row.price,
+    prices: row.prices || null,
     icon: row.icon,
     hue: row.hue,
     sortOrder: row.sort_order,
     published: row.published,
     updatedAt: row.updated_at,
     subProfiles: subs.map((s) => s.id),
-    tests: row.test_ids || [],
-    subs: expandSubs(subs, row.test_ids || []),
+    tests,
+    subs: expandSubs(subs, tests),
   };
 }
 
@@ -96,26 +104,30 @@ const devStore = () => globalThis.AVM_DEV_STORE;
 
 // Before migration 0002: each profile's own sub-profile rows, shaped like the new API.
 const LEGACY_SELECT =
-  'id, name, tag, category, tagline, price, icon, hue, sort_order, published, updated_at, sub_profiles (name, description, test_ids, sort_order)';
+  'id, name, tag, category, tagline, icon, hue, sort_order, published, updated_at, sub_profiles (name, description, test_ids, sort_order)';
 
 function legacyToApi(row) {
   const subs = [...(row.sub_profiles || [])]
     .sort((a, b) => a.sort_order - b.sort_order)
-    .map((s) => ({ id: null, name: s.name, description: s.description, tests: s.test_ids }));
+    .map((s) => ({ id: null, name: s.name, description: s.description, tests: remapTests(s.test_ids) }));
   const { sub_profiles, ...rest } = row;
   return { ...toApi({ ...rest, test_ids: [], profile_sub_profiles: [] }), subs };
 }
 
 export async function listProfiles({ publishedOnly = false } = {}) {
   if (devStore()) return devStore().list({ publishedOnly });
-  const ready = await libraryReady();
+  const [ready, priced] = await Promise.all([libraryReady(), pricesReady()]);
   let query = db()
     .from('profiles')
-    .select(ready ? SELECT : LEGACY_SELECT)
+    .select(ready ? select(priced) : LEGACY_SELECT)
     .order('sort_order')
     .order('name');
   if (publishedOnly) query = query.eq('published', true);
-  return unwrap(await query).map(ready ? toApi : legacyToApi);
+  const profiles = unwrap(await query).map(ready ? toApi : legacyToApi);
+  if (priced) return profiles;
+  // Until migration 0004 runs, a profile costs what its tests cost together.
+  const testsById = new Map((await listTests()).map((t) => [t.id, t]));
+  return profiles.map((p) => ({ ...p, prices: sumPrices([...new Set(p.subs.flatMap((s) => s.tests))], testsById) }));
 }
 
 async function exists(id) {
@@ -133,6 +145,7 @@ export async function createProfile(profile) {
   await assertKnownTests(profile.tests);
   if (devStore()) return devStore().create(profile);
   await requireLibrary();
+  await requirePrices();
   if (await exists(profile.id)) throw new HttpError(409, 'A profile with this ID already exists');
   await checkSubProfiles(profile.subProfiles);
   await save(profile);
@@ -142,6 +155,7 @@ export async function updateProfile(id, profile) {
   await assertKnownTests(profile.tests);
   if (devStore()) return devStore().update(id, profile);
   await requireLibrary();
+  await requirePrices();
   if (profile.id !== id) throw new HttpError(400, 'Profile ID cannot be changed');
   if (!(await exists(id))) throw new HttpError(404, 'Profile not found');
   await checkSubProfiles(profile.subProfiles);
@@ -157,7 +171,7 @@ async function save(p) {
         tag: p.tag,
         category: p.category,
         tagline: p.tagline,
-        price: p.price,
+        prices: p.prices,
         icon: p.icon,
         hue: p.hue,
         sort_order: p.sortOrder,

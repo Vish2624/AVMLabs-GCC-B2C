@@ -1,6 +1,6 @@
 // List of all profiles with search, edit and delete.
 import { html } from '../html.js';
-import { appBar, formatPrice, icon, plural, tabs, view } from '../ui.js';
+import { appBar, COUNTRIES, formatMoney, icon, plural, tabs, view } from '../ui.js';
 
 export function ProfileListView({ profiles, catalog, onNew, onEdit, onTab, onLogout }) {
   const tests = new Map(catalog.tests.map((t) => [t.id, t]));
@@ -8,12 +8,9 @@ export function ProfileListView({ profiles, catalog, onNew, onEdit, onTab, onLog
   let query = '';
 
   const uniqueTests = (p) => [...new Set(p.subs.flatMap((s) => s.tests))];
-  const mrp = (p) => uniqueTests(p).reduce((sum, id) => sum + (tests.get(id)?.mrp || 0), 0);
 
   const card = (p) => {
     const count = uniqueTests(p).length;
-    const full = mrp(p);
-    const off = full > p.price ? Math.round((1 - p.price / full) * 100) : 0;
     return html`
       <section class="card">
         <div class="card-top">
@@ -27,10 +24,7 @@ export function ProfileListView({ profiles, catalog, onNew, onEdit, onTab, onLog
         <div class="card-body">
           <p class="meta">${categoryLabel.get(p.category) || p.category} · ${plural(count, 'test')} · ${plural(p.subProfiles.length, 'sub-profile')}${p.tests.length ? ` + ${plural(p.tests.length, 'extra test')}` : ''}</p>
           <div class="pricebox">
-            <div class="price">
-              <span class="now">${formatPrice(p.price)}</span>
-              ${off > 0 && html`<s>${formatPrice(full)}</s><span class="off">${off}% off</span>`}
-            </div>
+            <div class="price">${COUNTRIES.map((c) => html`<span class="now">${formatMoney(c.code, p.prices?.[c.code])}</span>`)}</div>
             <div class="card-actions">
               <button class="btn small outline" data-act="edit" data-id="${p.id}">${icon('pencil')}Edit</button>
             </div>

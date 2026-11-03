@@ -1227,3 +1227,66 @@ textarea::placeholder {
   font-size: 14px;
   color: var(--text);
 }
+
+/* ── Per-country prices ── */
+/* Price and report time per country (test editor): one row per country. */
+.country-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.country-row {
+  display: grid;
+  grid-template-columns: 120px repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 12px 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+}
+.country-name {
+  align-self: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+/* Price boxes side by side (profile editor). */
+.country-prices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: 12px;
+}
+.country-grid .prefix > input,
+.country-prices .prefix > input {
+  padding-left: 52px;
+}
+/* Several prices in a list card or the save bar: smaller, with a divider between them. */
+.pricebox .price .now,
+.summary .now {
+  font-size: 15px;
+}
+.pricebox .price .now + .now,
+.summary .now + .now {
+  padding-left: 8px;
+  border-left: 1px solid var(--line);
+}
+.pill.rank {
+  background: var(--accent-soft);
+  border-color: var(--accent-ring);
+  color: var(--accent);
+}
+.linkish {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+@media (max-width: 560px) {
+  .country-row {
+    grid-template-columns: 1fr;
+  }
+}

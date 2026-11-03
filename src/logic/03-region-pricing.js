@@ -1,19 +1,22 @@
   static REGIONS = {
-    IN: { code: 'IN', name: 'India', dial: '+91', phLen: 10, phRe: /^[6-9]\d{9}$/, phPh: '10-digit mobile', idLabel: 'Aadhaar number', idOpt: true, idLen: 12, idRe: /^\d{12}$/, idPh: '12-digit Aadhaar (optional)', rate: 1, step: 1, show: v => '₹' + Math.round(v).toLocaleString('en-IN'), postLabel: 'Pincode', postPh: '6-digit pincode', postRe: /^\d{6}$/, postMax: 6, waProp: 'whatsappNumber', waDef: '919999999999', addrProp: 'addressIndia', addrDef: '[India centre address]' },
-    BH: { code: 'BH', name: 'Bahrain', dial: '+973', phLen: 8, phRe: /^[36]\d{7}$/, phPh: '8-digit mobile', idLabel: 'CPR number', idLen: 9, idRe: /^\d{9}$/, idPh: '9-digit CPR', rate: 0.0045, step: 0.5, show: v => 'BD ' + (Number.isInteger(v) ? v : v.toFixed(1)), postLabel: 'Block number', postPh: 'Block no. (e.g. 338)', postRe: /^\d{3,4}$/, postMax: 4, waProp: 'whatsappNumberBahrain', waDef: '97300000000', addrProp: 'addressBahrain', addrDef: '[Bahrain centre address]' },
-    SA: { code: 'SA', name: 'Saudi Arabia', dial: '+966', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', idLabel: 'National ID / Iqama', idLen: 10, idRe: /^[12]\d{9}$/, idPh: '10-digit ID or Iqama', rate: 0.045, step: 5, show: v => 'SAR ' + v.toLocaleString('en-US'), postLabel: 'Postal code', postPh: '5-digit postal code', postRe: /^\d{5}$/, postMax: 5, waProp: 'whatsappNumberKSA', waDef: '966500000000', addrProp: 'addressKSA', addrDef: '[KSA centre address]' },
-    AE: { code: 'AE', name: 'UAE', dial: '+971', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', idLabel: 'Emirates ID', idLen: 15, idRe: /^784\d{12}$/, idPh: '784-XXXX-XXXXXXX-X', rate: 0.044, step: 5, show: v => 'AED ' + v.toLocaleString('en-US'), postLabel: 'Area', postPh: 'Area (e.g. Al Barsha)', postRe: /\S{2,}/, postMax: 40, text: true, waProp: 'whatsappNumberUAE', waDef: '971500000000', addrProp: 'addressUAE', addrDef: '[UAE centre address]' }
+    BH: { code: 'BH', name: 'Bahrain', dial: '+973', phLen: 8, phRe: /^[36]\d{7}$/, phPh: '8-digit mobile', idLabel: 'CPR number', idLen: 9, idRe: /^\d{9}$/, idPh: '9-digit CPR', show: v => 'BD ' + Number(v.toFixed(3)), postLabel: 'Block number', postPh: 'Block no. (e.g. 338)', postRe: /^\d{3,4}$/, postMax: 4, waProp: 'whatsappNumberBahrain', waDef: '97300000000', addrProp: 'addressBahrain', addrDef: '[Bahrain centre address]' },
+    SA: { code: 'SA', name: 'Saudi Arabia', dial: '+966', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', idLabel: 'National ID / Iqama', idLen: 10, idRe: /^[12]\d{9}$/, idPh: '10-digit ID or Iqama', show: v => 'SAR ' + Number(v.toFixed(2)).toLocaleString('en-US'), postLabel: 'Postal code', postPh: '5-digit postal code', postRe: /^\d{5}$/, postMax: 5, waProp: 'whatsappNumberKSA', waDef: '966500000000', addrProp: 'addressKSA', addrDef: '[KSA centre address]' },
+    AE: { code: 'AE', name: 'UAE', dial: '+971', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', idLabel: 'Emirates ID', idLen: 15, idRe: /^784\d{12}$/, idPh: '784-XXXX-XXXXXXX-X', show: v => 'AED ' + Number(v.toFixed(2)).toLocaleString('en-US'), postLabel: 'Area', postPh: 'Area (e.g. Al Barsha)', postRe: /\S{2,}/, postMax: 40, text: true, waProp: 'whatsappNumberUAE', waDef: '971500000000', addrProp: 'addressUAE', addrDef: '[UAE centre address]' }
   };
   region() {
     const p = this.props || {}, R = Component.REGIONS;
     if (p.previewRegion && R[p.previewRegion]) return R[p.previewRegion];
-    const r = this.state.region; return (r && R[r.code]) || R.IN;
+    const r = this.state.region; return (r && R[r.code]) || R.BH;
   }
-  // Prices are authored in INR; loc() converts + rounds to the local currency step, money() formats an already-local amount.
-  roundStep(v) { const st = this.region().step; return Math.round(v / st) * st; }
-  loc(n) { const r = this.region(); if (!(n > 0)) return 0; return Math.max(r.step, this.roundStep(n * r.rate)); }
-  money(v) { return this.region().show(this.roundStep(v)); }
-  inr(n) { return this.money(this.loc(n)); }
+  // Tests and profiles carry a price and report time per country (prices: { AE, SA, BH }, tats: { … }).
+  // pr() is the price in the visitor's country, money() formats a local amount, cost() does both.
+  pr(x) { const v = x && x.prices && x.prices[this.region().code]; return v > 0 ? v : 0; }
+  money(v) { return this.region().show(Math.max(0, v || 0)); }
+  cost(x) { return this.money(this.pr(x)); }
+  sumPr(list) { return list.reduce((a, x) => a + this.pr(x), 0); }
+  // Report time in the visitor's country, e.g. '24 hrs' or '2 days'; tatHrs() turns one into hours to compare.
+  tat(x) { return (x && x.tats && x.tats[this.region().code]) || ''; }
+  tatHrs(t) { const m = /(\d+(?:\.\d+)?)\s*(h|d)/i.exec(t || ''); return m ? +m[1] * (m[2].toLowerCase() === 'd' ? 24 : 1) : 0; }
   gateOn() { const p = this.props || {}; return p.requireLocation !== false && !(p.previewRegion && Component.REGIONS[p.previewRegion]); }
   pickRegion(code) {
     const region = { code, city: '', post: '', manual: true, ts: Date.now() };
@@ -33,7 +36,6 @@
         if (la > 25.5 && la < 26.4 && lo > 50.3 && lo < 50.9) { code = 'BH'; country = 'Bahrain'; }
         else if (la > 22.6 && la < 26.3 && lo > 51.5 && lo < 56.5) { code = 'AE'; country = 'UAE'; }
         else if (la > 16 && la < 32.2 && lo > 34.5 && lo < 55.7) { code = 'SA'; country = 'Saudi Arabia'; }
-        else if (la > 6 && la < 37.5 && lo > 68 && lo < 97.5) { code = 'IN'; country = 'India'; }
       }
       if (Component.REGIONS[code]) {
         const region = { code, city, post, ts: Date.now() };

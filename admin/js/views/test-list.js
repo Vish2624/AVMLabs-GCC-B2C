@@ -1,6 +1,6 @@
 // All lab tests: search, see where each is used, open to edit.
 import { html } from '../html.js';
-import { appBar, formatPrice, icon, plural, tabs, view } from '../ui.js';
+import { appBar, COUNTRIES, formatMoney, icon, plural, tabs, view } from '../ui.js';
 
 // Sub-profiles and profiles that include a test (profiles only through their extra tests).
 export function testUsage(id, subProfiles, profiles) {
@@ -16,26 +16,24 @@ export function TestListView({ catalog, subProfiles, profiles, onNew, onEdit, on
 
   const card = (t) => {
     const used = testUsage(t.id, subProfiles, profiles);
-    const off = t.mrp > t.price ? Math.round((1 - t.price / t.mrp) * 100) : 0;
     return html`
       <section class="card">
         <div class="card-top">
           <span class="card-icon">${icon(t.sample === 'Urine' ? 'flask-conical' : 'test-tube')}</span>
           <div class="card-title">
             <h2>${t.name}</h2>
-            <p class="tagline">${t.cat.map((c) => categoryLabel.get(c) || c).join(' · ')} · ${t.sample} sample · Report in ${t.tat}${t.fasting ? ' · Fasting' : ''}</p>
+            <p class="tagline">${t.cat.map((c) => categoryLabel.get(c) || c).join(' · ')} · ${t.sample} sample${t.fasting ? ' · Fasting' : ''}</p>
           </div>
+          <span class="pill rank" title="Popularity rank">#${t.rank}${t.rank <= 20 ? ' · Popular' : ''}</span>
           <span class="pill ${t.published ? 'live' : 'draft'}">${t.published ? 'Live' : 'Hidden'}</span>
         </div>
         <div class="card-body">
           <p class="meta">
             ${plural(t.parameters.length, 'parameter')}${t.calculated.length > 0 && html` · <b class="calc-count">${t.calculated.length} calculated</b>`}
+            · Report: ${COUNTRIES.map((c) => `${c.name} ${t.tats?.[c.code] || '—'}`).join(' · ')}
           </p>
           <div class="pricebox">
-            <div class="price">
-              <span class="now">${formatPrice(t.price)}</span>
-              ${off > 0 && html`<s>${formatPrice(t.mrp)}</s><span class="off">${off}% off</span>`}
-            </div>
+            <div class="price">${COUNTRIES.map((c) => html`<span class="now">${formatMoney(c.code, t.prices?.[c.code])}</span>`)}</div>
             <div class="card-actions">
               ${catalog.testsReadOnly ? html`<button class="btn small" disabled title="${catalog.testsReadOnly}">${icon('lock')}Editing off</button>` : html`<button class="btn small outline" data-act="edit" data-id="${t.id}">${icon('pencil')}Edit</button>`}
             </div>

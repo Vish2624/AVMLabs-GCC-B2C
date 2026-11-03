@@ -1,6 +1,22 @@
 // Create or edit a profile: details, look, the sub-profiles it's built from, and any extra tests.
 import { html } from '../html.js';
-import { appBar, cardBg, formatPrice, icon, ink, plural, testOptions, testPicker, toast, view } from '../ui.js';
+import {
+  appBar,
+  cardBg,
+  COUNTRIES,
+  formatMoney,
+  formatPrices,
+  icon,
+  ink,
+  plural,
+  priceInputs,
+  readPrices,
+  sumPrices,
+  testOptions,
+  testPicker,
+  toast,
+  view,
+} from '../ui.js';
 
 const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -36,7 +52,7 @@ export function ProfileEditorView({
         tag: '',
         category: catalog.categories[0].id,
         tagline: '',
-        price: '',
+        prices: Object.fromEntries(COUNTRIES.map((c) => [c.code, ''])),
         icon: 'layers',
         hue: catalog.colours[0].hue,
         sortOrder: nextSortOrder,
@@ -46,7 +62,7 @@ export function ProfileEditorView({
       }
     : {
         ...profile,
-        price: String(profile.price),
+        prices: Object.fromEntries(COUNTRIES.map((c) => [c.code, String(profile.prices?.[c.code] ?? '')])),
         subProfiles: profile.subProfiles.filter((id) => library.has(id)),
         tests: [...profile.tests],
       };
@@ -60,30 +76,35 @@ export function ProfileEditorView({
 
   const chosen = () => draft.subProfiles.map((id) => library.get(id)).filter(Boolean);
   const uniqueTests = () => [...new Set([...chosen().flatMap((s) => s.tests), ...draft.tests])];
-  const subMrp = (s) => s.tests.reduce((sum, id) => sum + (tests.get(id)?.mrp || 0), 0);
   const testNames = (ids) => ids.map((id) => tests.get(id)?.name || id).join(', ');
 
   const summary = () => {
     const ids = uniqueTests();
-    const mrp = ids.reduce((sum, id) => sum + (tests.get(id)?.mrp || 0), 0);
     const params = ids.reduce((sum, id) => sum + (tests.get(id)?.params || 0), 0);
-    const price = Number(draft.price);
-    const off = mrp > 0 && price >= 0 && price < mrp ? Math.round((1 - price / mrp) * 100) : 0;
+    const total = sumPrices(ids, tests);
+    const above = COUNTRIES.filter((c) => draft.prices[c.code] !== '' && Number(draft.prices[c.code]) > total[c.code]);
     return html`
-      ${draft.price !== '' && html`<span class="now">${formatPrice(price)}</span>`}
-      ${mrp > 0 && html`<s>${formatPrice(mrp)}</s>`}${off > 0 && html`<span class="pill off">${off}% off</span>`}
+      ${COUNTRIES.filter((c) => draft.prices[c.code] !== '').map((c) => html`<span class="now">${formatMoney(c.code, draft.prices[c.code])}</span>`)}
       <span><b>${plural(ids.length, 'test')}</b> · ${plural(params, 'parameter')}</span>
-      ${price > mrp && mrp > 0 && html`<span class="warn">Price is above MRP</span>`}`;
+      ${above.length > 0 && html`<span class="warn">Above the tests’ total in ${above.map((c) => c.name).join(', ')}</span>`}`;
   };
 
-  // A chosen sub-profile: its tests, MRP, and controls to reorder or remove it.
+  // The tests' total per country, shown beside the price boxes.
+  const totalHint = () => {
+    const ids = uniqueTests();
+    return ids.length
+      ? html`Tests booked separately: ${formatPrices(sumPrices(ids, tests))}`
+      : 'Add tests to see what they cost separately.';
+  };
+
+  // A chosen sub-profile: its tests, what they cost, and controls to reorder or remove it.
   const chosenRow = (sp, i, n) => html`
     <div class="pick">
       <div class="pick-main">
         <span class="pick-name">${sp.name}</span>
         <span class="pick-tests">${testNames(sp.tests)}</span>
       </div>
-      <span class="count">${plural(sp.tests.length, 'test')} · ${formatPrice(subMrp(sp))}</span>
+      <span class="count">${plural(sp.tests.length, 'test')} · ${formatPrices(sumPrices(sp.tests, tests))}</span>
       <div class="pick-actions">
         <button class="btn small icon-only" type="button" data-act="sub-up" data-i="${i}" ${i === 0 ? 'disabled' : ''} aria-label="Move ${sp.name} up">${icon('arrow-up')}</button>
         <button class="btn small icon-only" type="button" data-act="sub-down" data-i="${i}" ${i === n - 1 ? 'disabled' : ''} aria-label="Move ${sp.name} down">${icon('arrow-down')}</button>
@@ -102,7 +123,7 @@ export function ProfileEditorView({
       <div>
         <div class="eyebrow">${isNew ? 'New profile' : 'Edit profile'}</div>
         <h1>${isNew ? 'Create a health profile' : draft.name}</h1>
-        <p class="subtitle">Build it from sub-profiles, then add any extra tests. Price and MRP update as you go.</p>
+        <p class="subtitle">Build it from sub-profiles, then add any extra tests. Then set its price for each country.</p>
       </div>
     </div>
     ${error && html`<div class="alert" role="alert">${icon('circle-alert')}${error}</div>`}
@@ -134,10 +155,10 @@ export function ProfileEditorView({
           <label for="tagline">Tagline</label>
           <input id="tagline" data-field="tagline" value="${draft.tagline}" placeholder="e.g. Cycles, fertility & energy — understand your hormones." maxlength="140" autocomplete="off">
         </div>
-        <div class="field">
-          <label for="price">Price</label>
-          <div class="prefix"><span>₹</span><input id="price" data-field="price" type="number" min="0" step="1" inputmode="numeric" value="${draft.price}"></div>
-          <span class="hint">In rupees. Converted automatically for other countries.</span>
+        <div class="field full">
+          <span class="label">Price per country</span>
+          ${priceInputs(draft.prices)}
+          <span class="hint"><span data-total>${totalHint()}</span> <button class="linkish" type="button" data-act="fill-prices">Use these</button></span>
         </div>
         <div class="field">
           <label for="sortOrder">Display order</label>
@@ -257,8 +278,9 @@ export function ProfileEditorView({
   function validate() {
     if (!draft.name.trim()) return 'Enter a profile name.';
     if (!ID_PATTERN.test(draft.id)) return 'Profile ID can only use lowercase letters, numbers and dashes.';
-    if (draft.price === '' || !(Number(draft.price) >= 0)) return 'Enter a price.';
     if (!uniqueTests().length) return 'Add at least one sub-profile or test.';
+    const { error: priceError } = readPrices(draft.prices);
+    if (priceError) return priceError;
     return '';
   }
 
@@ -274,7 +296,7 @@ export function ProfileEditorView({
       tag: draft.tag.trim(),
       category: draft.category,
       tagline: draft.tagline.trim(),
-      price: Math.round(Number(draft.price)),
+      prices: readPrices(draft.prices).prices,
       icon: draft.icon,
       hue: draft.hue,
       sortOrder: Math.max(0, Math.round(Number(draft.sortOrder) || 0)),
@@ -323,6 +345,13 @@ export function ProfileEditorView({
         confirmDiscard = false;
         update();
         break;
+      case 'fill-prices': {
+        const total = sumPrices(uniqueTests(), tests);
+        for (const c of COUNTRIES) draft.prices[c.code] = String(total[c.code]);
+        markDirty();
+        update();
+        break;
+      }
       case 'discard':
         dirty = false;
         onClose();
@@ -398,6 +427,7 @@ export function ProfileEditorView({
     }
     markDirty();
     if (field === 'published') draft.published = t.checked;
+    else if (field === 'price') draft.prices[t.dataset.country] = t.value;
     else if (field === 'id') {
       draft.id = t.value;
       idTouched = true;

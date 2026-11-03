@@ -1,10 +1,11 @@
 // In-memory stand-in for the Supabase tables (tests, sub-profiles, profiles), used by scripts/dev.js when
-// SUPABASE_SERVICE_ROLE_KEY is not set. Starts from supabase/seed.sql;
+// SUPABASE_SERVICE_ROLE_KEY is not set. Starts from supabase/seed.sql, brought up to date the way
+// migration 0004 does it (old panels swapped for their tests, profile prices = what their tests cost);
 // changes last until the dev server restarts.
 import fs from 'node:fs';
-import { STATIC_TESTS } from '../server/catalog.js';
+import { remapTests, STATIC_TESTS } from '../server/catalog.js';
 import { HttpError } from '../server/http.js';
-import { expandSubs } from '../server/profiles.js';
+import { expandSubs, sumPrices } from '../server/profiles.js';
 import { inUse } from '../server/subprofiles.js';
 import { fromStatic, testInUse } from '../server/tests.js';
 
@@ -15,7 +16,7 @@ function parseSeed(sql) {
   const library = new Map();
   const libRe = /\((\d+), ('(?:[^']|'')*'), ('(?:[^']|'')*'), array\[([^\]]*)\]::text\[\]\)/g;
   for (const m of sql.matchAll(libRe)) {
-    const tests = [...m[4].matchAll(/'([^']+)'/g)].map((t) => t[1]);
+    const tests = remapTests([...m[4].matchAll(/'([^']+)'/g)].map((t) => t[1]));
     library.set(+m[1], { id: +m[1], name: str(m[2]), description: str(m[3]), tests, updatedAt: now() });
   }
 
@@ -29,7 +30,6 @@ function parseSeed(sql) {
       tag: str(m[3]),
       category: m[4],
       tagline: str(m[5]),
-      price: +m[6],
       icon: m[7],
       hue: +m[8],
       sortOrder: +m[9],
@@ -50,7 +50,11 @@ function parseSeed(sql) {
 
 export function createDevStore(seedFile) {
   const { library, profiles } = parseSeed(fs.readFileSync(seedFile, 'utf8'));
-  const tests = new Map(STATIC_TESTS.map((t, i) => [t.id, fromStatic(t, i)]));
+  const tests = new Map(STATIC_TESTS.map((t) => [t.id, fromStatic(t)]));
+  for (const p of profiles.values()) {
+    const ids = [...new Set([...p.subProfiles.flatMap((id) => library.get(id)?.tests || []), ...p.tests])];
+    p.prices = sumPrices(ids, tests);
+  }
   let nextSubId = Math.max(0, ...library.keys()) + 1;
   const copy = (x) => structuredClone(x);
   const withSubs = (p) => {

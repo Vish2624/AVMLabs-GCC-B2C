@@ -11,7 +11,54 @@ export function toast(message) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
 }
 
-export const formatPrice = (n) => '₹' + Number(n || 0).toLocaleString('en-IN');
+// The countries the site serves, as in server/catalog.js (COUNTRIES). Prices are set per country.
+export const COUNTRIES = [
+  { code: 'AE', label: 'AED', name: 'UAE', decimals: 0 },
+  { code: 'SA', label: 'SAR', name: 'Saudi Arabia', decimals: 0 },
+  { code: 'BH', label: 'BD', name: 'Bahrain', decimals: 2 },
+];
+
+const round = (n, decimals) => Number(Number(n || 0).toFixed(decimals));
+export const formatMoney = (code, n) => {
+  const c = COUNTRIES.find((x) => x.code === code);
+  return `${c.label} ${round(n, c.decimals).toLocaleString('en-US')}`;
+};
+// e.g. "AED 17 · SAR 17 · BD 1.7"
+export const formatPrices = (prices) => COUNTRIES.map((c) => formatMoney(c.code, prices?.[c.code])).join(' · ');
+
+// What a set of tests costs together in each country.
+export const sumPrices = (ids, testsById) =>
+  Object.fromEntries(
+    COUNTRIES.map((c) => [
+      c.code,
+      round(
+        ids.reduce((sum, id) => sum + (testsById.get(id)?.prices?.[c.code] || 0), 0),
+        c.decimals,
+      ),
+    ]),
+  );
+
+// One price box per country. `values` holds what is typed, keyed by country code.
+export const priceInputs = (values) => html`
+  <div class="country-prices">${COUNTRIES.map(
+    (c) => html`
+    <div class="field">
+      <label for="price-${c.code}">${c.name}</label>
+      <div class="prefix"><span>${c.label}</span><input id="price-${c.code}" data-field="price" data-country="${c.code}" type="number" min="0" step="${c.decimals ? '0.1' : '1'}" inputmode="decimal" value="${values[c.code] ?? ''}"></div>
+    </div>`,
+  )}</div>`;
+
+// The typed price boxes as numbers; the first empty or invalid one is reported as a message.
+export function readPrices(values) {
+  const prices = {};
+  for (const c of COUNTRIES) {
+    const raw = values[c.code];
+    if (raw === '' || raw === undefined || raw === null || !(Number(raw) >= 0))
+      return { error: `Enter the ${c.label} price for ${c.name}.` };
+    prices[c.code] = round(raw, c.decimals);
+  }
+  return { prices };
+}
 
 export const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
@@ -66,7 +113,7 @@ export const testPicker = (key, ids, testsById, emptyText = 'No tests yet.') => 
     ids.length
       ? html`<div class="chips">${ids.map(
           (id, j) => html`
-        <span class="chip">${testsById.get(id)?.name || id}<small>${formatPrice(testsById.get(id)?.mrp)}</small>
+        <span class="chip">${testsById.get(id)?.name || id}<small>${formatPrices(testsById.get(id)?.prices)}</small>
           <button type="button" data-act="remove-test" data-picker="${key}" data-test="${j}" aria-label="Remove ${testsById.get(id)?.name || id}">×</button>
         </span>`,
         )}</div>`

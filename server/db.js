@@ -42,6 +42,30 @@ export async function requireTable(table) {
   }
 }
 
+// Per-country prices (migration 0004): true once tests and profiles have a `prices` column.
+// Until then the site serves the built-in tests and works out profile prices from them.
+const PRICES_MIGRATION = '0004_country_prices.sql';
+export async function pricesReady() {
+  const k = known.get('prices');
+  if (k && (k.ready || Date.now() - k.at < 60_000)) return k.ready;
+  let ready = await tableReady('tests');
+  if (ready) {
+    const { error } = await db().from('tests').select('prices').limit(1);
+    // 42703: undefined column. Any other failure is a real error.
+    if (error && !(error.code === '42703' || /column .* does not exist/i.test(error.message || ''))) unwrap({ error });
+    ready = !error;
+  }
+  known.set('prices', { ready, at: Date.now() });
+  if (!ready) console.warn(`Per-country prices not set up; run supabase/migrations/${PRICES_MIGRATION}`);
+  return ready;
+}
+
+export async function requirePrices() {
+  if (!(await pricesReady())) {
+    throw new HttpError(503, `The database needs an update: run supabase/migrations/${PRICES_MIGRATION} in Supabase`);
+  }
+}
+
 // The sub-profile library (migration 0002). Until it runs, the old save_profile would drop sub-profiles.
 export const libraryReady = () => tableReady('sub_profile_library');
 export const requireLibrary = () => requireTable('sub_profile_library');
