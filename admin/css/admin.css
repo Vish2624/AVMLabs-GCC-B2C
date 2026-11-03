@@ -1013,6 +1013,41 @@ textarea::placeholder {
   }
 }
 
+/* Test categories: on/off chips */
+.toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.toggle-chip {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.toggle-chip:hover {
+  border-color: #9ca3af;
+}
+.toggle-chip[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.calc-count {
+  color: #8a6414;
+  font-weight: 600;
+}
+.panel-head h2 .hint {
+  font-weight: 500;
+  margin-left: 4px;
+}
+
 /* Delete section at the end of the editor */
 .danger-zone {
   margin-top: 28px;

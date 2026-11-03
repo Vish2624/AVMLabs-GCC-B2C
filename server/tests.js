@@ -1,0 +1,194 @@
+// Lab tests: validation and database access. Each test lists the parameters it
+// measures and, optionally, calculated parameters (worked out from other
+// results, e.g. LDL / HDL Ratio). Until migration 0003 runs, the built-in tests
+// (src/data/tests.json) are served and editing is refused.
+import { z } from 'zod';
+import { SAMPLES, STATIC_TESTS, TEST_CATEGORIES } from './catalog.js';
+import { db, requireTable, tableReady, unwrap } from './db.js';
+import { HttpError } from './http.js';
+
+const text = (max) => z.string().trim().max(max);
+const names = (maxItems) =>
+  z
+    .array(text(120).min(1, 'Parameter names can’t be empty'))
+    .max(maxItems)
+    .transform((list) => [...new Set(list)]);
+
+export const testSchema = z
+  .object({
+    id: z
+      .string()
+      .trim()
+      .min(1)
+      .max(40)
+      .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'Use lowercase letters, numbers and dashes'),
+    name: text(120).min(1, 'Test name is required'),
+    short: text(60).default(''),
+    categories: z
+      .array(z.enum(TEST_CATEGORIES.map((c) => c.id)))
+      .min(1, 'Pick at least one category')
+      .max(6)
+      .transform((ids) => [...new Set(ids)]),
+    price: z.number().int().min(0).max(1_000_000),
+    mrp: z.number().int().min(0).max(1_000_000),
+    tat: text(30).min(1, 'Enter the report time').default('24 hrs'),
+    fasting: z.boolean().default(false),
+    sample: z.enum(SAMPLES).default('Blood'),
+    aka: text(200).default(''),
+    about: text(800).default(''),
+    parameters: names(80).refine((list) => list.length > 0, 'Add at least one parameter'),
+    calculated: names(40).default([]),
+    sortOrder: z.number().int().min(0).max(9999).default(0),
+    published: z.boolean().default(true),
+  })
+  .refine((t) => t.mrp >= t.price, { message: 'MRP can’t be lower than the price', path: ['mrp'] })
+  .transform((t) => ({
+    ...t,
+    short: t.short || t.name,
+    // A name listed in both stays measured.
+    calculated: t.calculated.filter((n) => !t.parameters.includes(n)),
+  }));
+
+export function parseTest(body) {
+  const result = testSchema.safeParse(body);
+  if (!result.success) {
+    const issues = result.error.issues.map((i) => ({ path: i.path.join('.'), message: i.message }));
+    throw new HttpError(422, issues[0].message, issues);
+  }
+  return result.data;
+}
+
+// Same shape the website already uses (cat, params), plus the full details.
+export function toApi(t) {
+  return {
+    id: t.id,
+    name: t.name,
+    short: t.short || t.name,
+    cat: t.categories,
+    params: t.parameters.length + t.calculated.length,
+    tat: t.tat,
+    fasting: t.fasting,
+    mrp: t.mrp,
+    price: t.price,
+    aka: t.aka,
+    about: t.about,
+    sample: t.sample,
+    parameters: t.parameters,
+    calculated: t.calculated,
+    sortOrder: t.sortOrder,
+    published: t.published,
+    updatedAt: t.updatedAt,
+  };
+}
+
+// The built-in tests.json rows in the stored shape.
+export const fromStatic = (t, i) => ({
+  id: t.id,
+  name: t.name,
+  short: t.short,
+  categories: t.cat,
+  price: t.price,
+  mrp: t.mrp,
+  tat: t.tat,
+  fasting: t.fasting,
+  sample: t.sample || 'Blood',
+  aka: t.aka || '',
+  about: t.about || '',
+  parameters: t.parameters || [t.name],
+  calculated: t.calculated || [],
+  sortOrder: i,
+  published: true,
+  updatedAt: null,
+});
+
+const fromRow = (r) => ({
+  id: r.id,
+  name: r.name,
+  short: r.short,
+  categories: r.categories,
+  price: r.price,
+  mrp: r.mrp,
+  tat: r.tat,
+  fasting: r.fasting,
+  sample: r.sample,
+  aka: r.aka,
+  about: r.about,
+  parameters: r.parameters,
+  calculated: r.calculated,
+  sortOrder: r.sort_order,
+  published: r.published,
+  updatedAt: r.updated_at,
+});
+
+const toRow = (t) => ({
+  id: t.id,
+  name: t.name,
+  short: t.short,
+  categories: t.categories,
+  price: t.price,
+  mrp: t.mrp,
+  tat: t.tat,
+  fasting: t.fasting,
+  sample: t.sample,
+  aka: t.aka,
+  about: t.about,
+  parameters: t.parameters,
+  calculated: t.calculated,
+  sort_order: t.sortOrder,
+  published: t.published,
+});
+
+// Set only by scripts/dev.js when Supabase is not configured locally.
+const devStore = () => globalThis.AVM_DEV_STORE;
+
+export async function listTests({ publishedOnly = false } = {}) {
+  let tests;
+  if (devStore()) tests = devStore().listTests();
+  else if (!(await tableReady('tests'))) tests = STATIC_TESTS.map(fromStatic);
+  else tests = unwrap(await db().from('tests').select('*').order('sort_order').order('name')).map(fromRow);
+  return tests.filter((t) => !publishedOnly || t.published).map(toApi);
+}
+
+// Every test id the admin may use in a sub-profile or profile (unpublished included).
+export async function assertKnownTests(ids) {
+  if (!ids.length) return;
+  const known = new Set((await listTests()).map((t) => t.id));
+  const unknown = ids.filter((id) => !known.has(id));
+  if (unknown.length) throw new HttpError(422, `Unknown test: ${unknown.join(', ')}`);
+}
+
+export async function createTest(t) {
+  if (devStore()) return devStore().createTest(t);
+  await requireTable('tests');
+  const rows = unwrap(await db().from('tests').select('id').eq('id', t.id).limit(1));
+  if (rows.length) throw new HttpError(409, 'A test with this ID already exists');
+  unwrap(await db().from('tests').insert(toRow(t)));
+}
+
+export async function updateTest(id, t) {
+  if (devStore()) return devStore().updateTest(id, t);
+  await requireTable('tests');
+  if (t.id !== id) throw new HttpError(400, 'Test ID cannot be changed');
+  const rows = unwrap(
+    await db()
+      .from('tests')
+      .update({ ...toRow(t), updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select('id'),
+  );
+  if (!rows.length) throw new HttpError(404, 'Test not found');
+}
+
+// Refuses while a sub-profile or profile still includes it, naming them.
+export async function deleteTest(id) {
+  if (devStore()) return devStore().removeTest(id);
+  await requireTable('tests');
+  const subs = unwrap(await db().from('sub_profile_library').select('name').contains('test_ids', [id]));
+  const profiles = unwrap(await db().from('profiles').select('name').contains('test_ids', [id]));
+  const users = [...subs.map((s) => s.name), ...profiles.map((p) => p.name)];
+  if (users.length) throw testInUse(users);
+  const rows = unwrap(await db().from('tests').delete().eq('id', id).select('id'));
+  if (!rows.length) throw new HttpError(404, 'Test not found');
+}
+
+export const testInUse = (names) => new HttpError(409, `Remove it from these first: ${names.join(', ')}`);

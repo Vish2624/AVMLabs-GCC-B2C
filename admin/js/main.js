@@ -6,6 +6,8 @@ import { ProfileEditorView } from './views/profile-editor.js';
 import { ProfileListView } from './views/profile-list.js';
 import { SubProfileEditorView } from './views/subprofile-editor.js';
 import { SubProfileListView } from './views/subprofile-list.js';
+import { TestEditorView } from './views/test-editor.js';
+import { TestListView } from './views/test-list.js';
 
 const app = document.getElementById('app');
 let catalog = null;
@@ -17,7 +19,7 @@ const show = (el) => {
   window.scrollTo(0, 0);
 };
 
-// The open screen lives in the URL hash (#new, #edit/<id>, #subs, #subs/new, #subs/edit/<id>)
+// The open screen lives in the URL hash (#new, #edit/<id>, #subs…, #tests, #tests/new, #tests/edit/<id>)
 // so a refresh reopens it.
 const setHash = (h) => {
   if (location.hash.slice(1) !== h) history.replaceState(null, '', h ? '#' + h : location.pathname + location.search);
@@ -59,11 +61,8 @@ function showError(err) {
 async function load() {
   try {
     return !!(await guard(async () => {
-      [catalog, profiles, subProfiles] = await Promise.all([
-        catalog || api.catalog(),
-        api.listProfiles(),
-        api.listSubProfiles(),
-      ]);
+      // The catalogue holds the tests, which can change in the admin, so it's reloaded too.
+      [catalog, profiles, subProfiles] = await Promise.all([api.catalog(), api.listProfiles(), api.listSubProfiles()]);
       return true;
     }));
   } catch (err) {
@@ -76,7 +75,7 @@ const logout = async () => {
   await api.logout().catch(() => {});
   showLogin();
 };
-const onTab = (tab) => (tab === 'subs' ? showSubList() : showList());
+const onTab = (tab) => (tab === 'subs' ? showSubList() : tab === 'tests' ? showTestList() : showList());
 
 // Runs a delete; true once it's gone and the list is showing again.
 async function remove(fn, done, back) {
@@ -160,11 +159,54 @@ function showSubEditor(sub) {
   setHash(sub ? 'subs/edit/' + sub.id : 'subs/new');
 }
 
+async function showTestList() {
+  if (!(await load())) return;
+  show(
+    TestListView({
+      catalog,
+      subProfiles,
+      profiles,
+      onNew: () => showTestEditor(null),
+      onEdit: showTestEditor,
+      onTab,
+      onLogout: logout,
+    }),
+  );
+  setHash('tests');
+}
+
+function showTestEditor(test) {
+  if (catalog.testsReadOnly) return toast(catalog.testsReadOnly);
+  show(
+    TestEditorView({
+      test,
+      catalog,
+      subProfiles,
+      profiles,
+      onClose: showTestList,
+      onDelete: (id) => remove(() => api.deleteTest(id), 'Test deleted', showTestList),
+      onSave: async (payload, isNew) => {
+        const saved = await guard(() => (isNew ? api.createTest(payload) : api.updateTest(payload)));
+        if (!saved) return;
+        toast(isNew ? 'Test added' : 'Test saved');
+        await showTestList();
+      },
+    }),
+  );
+  setHash(test ? 'tests/edit/' + encodeURIComponent(test.id) : 'tests/new');
+}
+
 // Reopens the screen named in the hash once the lists have loaded.
 function openRoute(route) {
   if (!catalog) return; // the lists failed to load
   if (route === 'new') return showEditor(null);
   if (route === 'subs') return showSubList();
+  if (route === 'tests') return showTestList();
+  if (route === 'tests/new') return catalog.testsReadOnly ? showTestList() : showTestEditor(null);
+  if (route.startsWith('tests/edit/')) {
+    const test = catalog.tests.find((t) => t.id === decodeURIComponent(route.slice(11)));
+    return test && !catalog.testsReadOnly ? showTestEditor(test) : showTestList();
+  }
   if (route === 'subs/new') return showSubEditor(null);
   if (route.startsWith('subs/edit/')) {
     const sub = subProfiles.find((s) => String(s.id) === route.slice(10));

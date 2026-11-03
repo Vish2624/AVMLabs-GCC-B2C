@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 import { HttpError } from '../../server/http.js';
 import { expandSubs, parseProfile } from '../../server/profiles.js';
 import { parseSubProfile, parseSubProfileId } from '../../server/subprofiles.js';
+import { assertKnownTests, parseTest } from '../../server/tests.js';
 
 const valid = () => ({
   id: 'womens-hormone',
@@ -58,8 +59,7 @@ describe('parseProfile', () => {
     rejects(parseProfile, { ...valid(), id: '-women' });
   });
 
-  it('rejects unknown tests, bad sub-profile ids, categories and icons', () => {
-    rejects(parseProfile, { ...valid(), tests: ['not-a-test'] }, 'Unknown test');
+  it('rejects bad sub-profile ids, categories and icons', () => {
     rejects(parseProfile, { ...valid(), subProfiles: [0] });
     rejects(parseProfile, { ...valid(), subProfiles: ['9'] });
     rejects(parseProfile, { ...valid(), category: 'pets' });
@@ -91,10 +91,9 @@ describe('parseSubProfile', () => {
     });
   });
 
-  it('requires a name and at least one known test', () => {
+  it('requires a name and at least one test', () => {
     rejects(parseSubProfile, { ...sub(), name: '' }, 'Sub-profile name is required');
     rejects(parseSubProfile, { ...sub(), tests: [] }, 'Add at least one test');
-    rejects(parseSubProfile, { ...sub(), tests: ['not-a-test'] }, 'Unknown test');
   });
 
   it('only accepts positive whole-number ids', () => {
@@ -124,5 +123,56 @@ describe('expandSubs', () => {
 
   it('adds no extra group without extra tests', () => {
     assert.equal(expandSubs([heart], []).length, 1);
+  });
+});
+
+// Checked against the in-memory store scripts/dev.js uses when Supabase isn't configured.
+describe('assertKnownTests', () => {
+  it('accepts known tests and names unknown ones', async () => {
+    const { createDevStore } = await import('../../scripts/dev-store.js');
+    globalThis.AVM_DEV_STORE = createDevStore(new URL('../../supabase/seed.sql', import.meta.url));
+    try {
+      await assertKnownTests(['vitd', 'lipid']);
+      await assert.rejects(
+        assertKnownTests(['vitd', 'nope']),
+        (err) => err.status === 422 && err.message === 'Unknown test: nope',
+      );
+    } finally {
+      delete globalThis.AVM_DEV_STORE;
+    }
+  });
+});
+
+describe('parseTest', () => {
+  const test = () => ({
+    id: 'vitd',
+    name: 'Vitamin D (25-OH)',
+    categories: ['vitamins'],
+    price: 699,
+    mrp: 1500,
+    parameters: ['25-OH Vitamin D'],
+  });
+
+  it('fills defaults: short name, report time, sample, no calculated parameters', () => {
+    const t = parseTest(test());
+    assert.equal(t.short, 'Vitamin D (25-OH)');
+    assert.equal(t.tat, '24 hrs');
+    assert.equal(t.sample, 'Blood');
+    assert.deepEqual(t.calculated, []);
+  });
+
+  it('keeps calculated parameters optional and separate from measured ones', () => {
+    const t = parseTest({ ...test(), parameters: ['HDL', 'LDL', 'HDL'], calculated: ['LDL / HDL Ratio', 'HDL'] });
+    assert.deepEqual(t.parameters, ['HDL', 'LDL']);
+    assert.deepEqual(t.calculated, ['LDL / HDL Ratio']);
+  });
+
+  it('requires a name, a category, a parameter and an MRP at least the price', () => {
+    rejects(parseTest, { ...test(), name: ' ' }, 'Test name is required');
+    rejects(parseTest, { ...test(), categories: [] }, 'Pick at least one category');
+    rejects(parseTest, { ...test(), parameters: [] }, 'Add at least one parameter');
+    rejects(parseTest, { ...test(), mrp: 500 }, 'MRP can’t be lower than the price');
+    rejects(parseTest, { ...test(), categories: ['pets'] });
+    rejects(parseTest, { ...test(), id: 'Vit D' });
   });
 });

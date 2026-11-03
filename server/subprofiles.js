@@ -2,17 +2,17 @@
 // named group of tests that profiles pick from; editing it updates every
 // profile that uses it.
 import { z } from 'zod';
-import { TEST_IDS } from './catalog.js';
 import { db, requireLibrary, unwrap } from './db.js';
 import { HttpError } from './http.js';
+import { assertKnownTests } from './tests.js';
 
 const text = (max) => z.string().trim().max(max);
 
+// Test ids; that each exists is checked when saving (tests are managed in the admin).
 export const testList = z
-  .array(z.string())
+  .array(z.string().trim().min(1))
   .max(60)
-  .transform((ids) => [...new Set(ids)])
-  .refine((ids) => ids.every((id) => TEST_IDS.has(id)), 'Unknown test');
+  .transform((ids) => [...new Set(ids)]);
 
 export const subProfileSchema = z.object({
   name: text(80).min(1, 'Sub-profile name is required'),
@@ -64,6 +64,7 @@ export async function listSubProfiles() {
 }
 
 export async function createSubProfile(sub) {
+  await assertKnownTests(sub.tests);
   if (devStore()) return devStore().createSub(sub);
   await requireLibrary();
   const row = unwrap(
@@ -77,6 +78,7 @@ export async function createSubProfile(sub) {
 }
 
 export async function updateSubProfile(id, sub) {
+  await assertKnownTests(sub.tests);
   if (devStore()) return devStore().updateSub(id, sub);
   await requireLibrary();
   const rows = unwrap(

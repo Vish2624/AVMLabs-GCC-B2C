@@ -62,14 +62,19 @@ changes within a minute (the public API is cached at Vercel's edge for 60 second
 | `PUT/DELETE /api/admin/profiles/:id` | update, delete |
 | `GET/POST /api/admin/subprofiles` | list reusable sub-profiles (with the profiles using each), create |
 | `PUT/DELETE /api/admin/subprofiles/:id` | update, delete (refused while a profile uses it) |
+| `GET/POST /api/admin/tests` | list all tests (including hidden), create |
+| `PUT/DELETE /api/admin/tests/:id` | update, delete (refused while a sub-profile or profile uses it) |
+| `GET /api/tests` | published tests for the website |
 
 ## Setup
 
 1. Create a Supabase project. In its SQL Editor run `supabase/migrations/0001_profiles.sql`,
-   then `supabase/migrations/0002_sub_profile_library.sql`, then `supabase/seed.sql`.
+   then `supabase/migrations/0002_sub_profile_library.sql`, then `supabase/migrations/0003_tests.sql`,
+   then `supabase/seed.sql`.
    An existing project only needs `0002_sub_profile_library.sql`: it moves each profile's
    sub-profiles into the shared library. Until it runs, the website keeps working and the
-   admin shows a message asking for it.
+   admin shows a message asking for it. `0003_tests.sql` moves the tests into the database so
+   they can be managed in the admin; until it runs, the built-in `src/data/tests.json` is used.
 2. In Vercel → Project Settings → Environment Variables, add the values listed in
    `.env.example` (SESSION_SECRET is optional), then redeploy. Connecting Supabase
    through Vercel → Storage adds the two Supabase values automatically.

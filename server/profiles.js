@@ -5,6 +5,7 @@ import { CATEGORIES, ICONS } from './catalog.js';
 import { db, libraryReady, requireLibrary, unwrap } from './db.js';
 import { HttpError } from './http.js';
 import { testList } from './subprofiles.js';
+import { assertKnownTests } from './tests.js';
 
 const text = (max) => z.string().trim().max(max);
 
@@ -120,6 +121,7 @@ async function checkSubProfiles(ids) {
 }
 
 export async function createProfile(profile) {
+  await assertKnownTests(profile.tests);
   if (devStore()) return devStore().create(profile);
   await requireLibrary();
   if (await exists(profile.id)) throw new HttpError(409, 'A profile with this ID already exists');
@@ -128,6 +130,7 @@ export async function createProfile(profile) {
 }
 
 export async function updateProfile(id, profile) {
+  await assertKnownTests(profile.tests);
   if (devStore()) return devStore().update(id, profile);
   await requireLibrary();
   if (profile.id !== id) throw new HttpError(400, 'Profile ID cannot be changed');

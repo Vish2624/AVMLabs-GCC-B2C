@@ -35,12 +35,29 @@ export const appBar = (actions) => html`
     </div>
   </header>`;
 
-// The two admin sections. Views handle data-act="tab" and pass data-tab to main.js.
+// The admin sections. Views handle data-act="tab" and pass data-tab to main.js.
 export const tabs = (active) => html`
   <nav class="tabs" aria-label="Admin sections">
     <button type="button" data-act="tab" data-tab="profiles" aria-current="${active === 'profiles' ? 'page' : 'false'}">${icon('layers')}Profiles</button>
     <button type="button" data-act="tab" data-tab="subs" aria-current="${active === 'subs' ? 'page' : 'false'}">${icon('list-checks')}Sub-profiles</button>
+    <button type="button" data-act="tab" data-tab="tests" aria-current="${active === 'tests' ? 'page' : 'false'}">${icon('test-tube')}Tests</button>
   </nav>`;
+
+// Editable list of names (e.g. a test's parameters): removable chips plus a box to add more.
+export const nameList = (key, items, placeholder, emptyText) => html`
+  ${
+    items.length
+      ? html`<div class="chips">${items.map(
+          (name, j) => html`
+        <span class="chip">${name}<button type="button" data-act="remove-name" data-list="${key}" data-i="${j}" aria-label="Remove ${name}">×</button></span>`,
+        )}</div>`
+      : html`<p class="empty-note">${emptyText}</p>`
+  }
+  <div class="add-row">
+    <label class="add-test">${icon('plus')}<input id="name-add-${key}" data-field="name-add" data-list="${key}" placeholder="${placeholder}" autocomplete="off" aria-label="${placeholder}"></label>
+    <button class="btn small" type="button" data-act="add-name" data-list="${key}">Add</button>
+  </div>
+  <span class="hint">Press Enter to add. Paste several separated by commas or new lines.</span>`;
 
 // Chips for a list of test ids, each removable, plus a type-to-add box.
 // `key` keeps several pickers on one screen apart (data-picker).

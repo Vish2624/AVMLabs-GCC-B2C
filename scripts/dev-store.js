@@ -1,10 +1,12 @@
-// In-memory stand-in for the Supabase tables, used by scripts/dev.js when
+// In-memory stand-in for the Supabase tables (tests, sub-profiles, profiles), used by scripts/dev.js when
 // SUPABASE_SERVICE_ROLE_KEY is not set. Starts from supabase/seed.sql;
 // changes last until the dev server restarts.
 import fs from 'node:fs';
+import { STATIC_TESTS } from '../server/catalog.js';
 import { HttpError } from '../server/http.js';
 import { expandSubs } from '../server/profiles.js';
 import { inUse } from '../server/subprofiles.js';
+import { fromStatic, testInUse } from '../server/tests.js';
 
 const str = (s) => s.slice(1, -1).replace(/''/g, "'");
 const now = () => new Date().toISOString();
@@ -48,6 +50,7 @@ function parseSeed(sql) {
 
 export function createDevStore(seedFile) {
   const { library, profiles } = parseSeed(fs.readFileSync(seedFile, 'utf8'));
+  const tests = new Map(STATIC_TESTS.map((t, i) => [t.id, fromStatic(t, i)]));
   let nextSubId = Math.max(0, ...library.keys()) + 1;
   const copy = (x) => structuredClone(x);
   const withSubs = (p) => {
@@ -79,6 +82,28 @@ export function createDevStore(seedFile) {
     },
     remove(id) {
       if (!profiles.delete(id)) throw new HttpError(404, 'Profile not found');
+    },
+
+    listTests() {
+      return [...tests.values()].sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name)).map(copy);
+    },
+    createTest(t) {
+      if (tests.has(t.id)) throw new HttpError(409, 'A test with this ID already exists');
+      tests.set(t.id, { ...copy(t), updatedAt: now() });
+    },
+    updateTest(id, t) {
+      if (t.id !== id) throw new HttpError(400, 'Test ID cannot be changed');
+      if (!tests.has(id)) throw new HttpError(404, 'Test not found');
+      tests.set(id, { ...copy(t), updatedAt: now() });
+    },
+    removeTest(id) {
+      if (!tests.has(id)) throw new HttpError(404, 'Test not found');
+      const users = [
+        ...[...library.values()].filter((s) => s.tests.includes(id)).map((s) => s.name),
+        ...[...profiles.values()].filter((p) => p.tests.includes(id)).map((p) => p.name),
+      ];
+      if (users.length) throw testInUse(users);
+      tests.delete(id);
     },
 
     listSubs() {

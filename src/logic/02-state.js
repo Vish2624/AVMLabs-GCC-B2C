@@ -27,6 +27,20 @@
 
   // Swaps the built-in profiles for the ones managed in the admin (/api/profiles).
   // Keeps the built-in list when the API can't be reached.
+  // Swaps the built-in tests for the ones managed in the admin (/api/tests), then loads profiles,
+  // which may use new tests. Keeps the built-in tests when the API can't be reached.
+  loadCatalog() {
+    fetch('/api/tests').then(r => (r.ok ? r.json() : null)).then(list => {
+      if (Array.isArray(list) && list.length) {
+        Component.TESTS = list.map(t => ({ ...t, cat: t.cat && t.cat.length ? t.cat : ['blood'], params: (t.parameters || []).length + (t.calculated || []).length || 1 }));
+        Component._db = null;
+        // A link to a test that only exists in the admin (#test/<new id>) couldn't open before the list arrived.
+        const h = this.fromHash();
+        this.setState(s => ({ catalogVer: (s.catalogVer || 0) + 1, ...(h.page === 'test' && s.page !== 'test' ? { page: 'test', testId: h.testId } : {}) }));
+      }
+    }).catch(() => {}).then(() => this.loadProfiles());
+  }
+
   loadProfiles() {
     const sym = name => { const w = name.replace(/[^A-Za-z ]/g, '').split(/s+/).filter(Boolean); return w.length > 1 ? w[0][0].toUpperCase() + w[1][0].toLowerCase() : (w[0] || '··').slice(0, 2); };
     fetch('/api/profiles').then(r => (r.ok ? r.json() : null)).then(list => {

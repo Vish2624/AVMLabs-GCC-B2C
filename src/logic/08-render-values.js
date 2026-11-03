@@ -34,10 +34,13 @@
     };
     let td = null;
     if (pg === 'test' && s.testId && D.T[s.testId]) {
-      const t = D.T[s.testId], vm = testVM(t), dt = C.DETAILS[t.id] || ['', '', [t.name], 'Blood'];
+      const t = D.T[s.testId], vm = testVM(t), sample = t.sample || 'Blood';
+      const measured = t.parameters && t.parameters.length ? t.parameters : [t.name], calc = t.calculated || [];
       const ps = D.inProf[t.id] || [];
-      td = { ...vm, aka: dt[0], hasAka: !!dt[0], about: dt[1], params: dt[2].map((n, k) => ({ n: k + 1, name: n })), paramsTitle: t.params + (t.params > 1 ? ' parameters' : ' parameter'),
-        sample: dt[3], sampleIcon: dt[3] === 'Urine' ? 'flask-conical' : 'droplet', fastTitle: t.fasting ? 'Fasting required' : 'No fasting required', fastSub: t.fasting ? '10–12 hrs overnight, water is fine' : 'Eat and drink as usual',
+      td = { ...vm, aka: t.aka || '', hasAka: !!t.aka, about: t.about || '',
+        params: [...measured.map(name => ({ name, calc: false })), ...calc.map(name => ({ name, calc: true }))].map((x, k) => ({ ...x, n: k + 1 })),
+        paramsTitle: t.params + (t.params > 1 ? ' parameters' : ' parameter') + (calc.length ? ' · ' + calc.length + ' calculated' : ''),
+        sample, sampleIcon: sample === 'Urine' ? 'flask-conical' : 'droplet', fastTitle: t.fasting ? 'Fasting required' : 'No fasting required', fastSub: t.fasting ? '10–12 hrs overnight, water is fine' : 'Eat and drink as usual',
         reportT: 'Report in ' + t.tat, book: () => this.bookWA([{ type: 'test', id: t.id }]),
         profs: ps.map(p => ({ name: p.name, meta: p.tests.length + ' tests · ' + inr(p.price), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.i) })), toProfs: () => { const el = document.querySelector('[data-td-profs]'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, hasProfs: ps.length > 0 };
     }
@@ -49,7 +52,7 @@
     const q = s.q.trim().toLowerCase();
     let results = [], resultsLabel = '';
     if (s.sMode === 'tests') {
-      const list = q ? C.TESTS.filter(t => (t.name + ' ' + t.short + ' ' + t.cat.join(' ')).toLowerCase().includes(q)) : C.POPULAR.map(id => D.T[id]);
+      const list = q ? C.TESTS.filter(t => (t.name + ' ' + t.short + ' ' + t.cat.join(' ')).toLowerCase().includes(q)) : C.POPULAR.map(id => D.T[id]).filter(Boolean);
       resultsLabel = q ? 'Tests' : 'Most booked';
       results = list.slice(0, 6).map(t => { const inC = has('test', t.id), cov = !inC && coveredBy(t.id); return { name: t.name, meta: t.params + ' parameter' + (t.params > 1 ? 's' : '') + ' · Reports in ' + t.tat, priceF: inr(t.price), open: () => { this.setState({ tq: t.short, cat: 'all' }); this.go('tests'); }, action: () => !cov && this.toggle('test', t.id, t.short), alabel: inC ? 'Added' : cov ? 'Included' : 'Add', abg: inC ? '#3B2C9E' : cov ? '#EAF7EF' : '#fff', afg: inC ? '#fff' : cov ? '#0E7350' : '#3B2C9E' }; });
     } else {
@@ -96,13 +99,14 @@
     // "What's included" rows. Profiles with several sub-profiles list those (tap: their tests and parameters);
     // otherwise each test is a row (tap: its parameters).
     const plural = (k, w) => k + ' ' + w + (k === 1 ? '' : 's');
-    const paramsOf = t => (C.DETAILS[t.id] || [])[2] || [];
+    const paramsOf = t => [...(t.parameters || []), ...(t.calculated || [])];
+    const paramText = t => (t.parameters || []).join(' · ') + ((t.calculated || []).length ? ' · Calculated: ' + t.calculated.join(' · ') : '');
     const incGroups = p => {
       const subs = (p.subs || []).map(x => ({ name: x.name, ts: x.tests.map(id => D.T[id]).filter(Boolean) })).filter(x => x.ts.length);
       return subs.length > 1
         ? subs.map((x, k) => ({ n: k + 1, name: x.name, meta: plural(x.ts.length, 'test') + ' · ' + plural(x.ts.reduce((a, t) => a + t.params, 0), 'param'),
-            items: x.ts.map(t => ({ name: t.name, sub: paramsOf(t).join(' · '), hasSub: paramsOf(t).length > 1 })) }))
-        : p.ts.map((t, k) => ({ n: k + 1, name: t.name, meta: plural(t.params, 'param'), items: paramsOf(t).map(x => ({ name: x, sub: '', hasSub: false })) }));
+            items: x.ts.map(t => ({ name: t.name, sub: paramText(t), hasSub: paramsOf(t).length > 1, calc: false })) }))
+        : p.ts.map((t, k) => ({ n: k + 1, name: t.name, meta: plural(t.params, 'param'), items: [...(t.parameters || []).map(x => ({ name: x, sub: '', hasSub: false, calc: false })), ...(t.calculated || []).map(x => ({ name: x, sub: '', hasSub: false, calc: true }))] }));
     };
     const reels = s.reelsOpen ? D.P.map(p => {
       const sl = s.slides[p.i] || 0, inC = has('profile', p.id);
@@ -178,7 +182,7 @@
       exploreMb: isDesktop ? '43px' : '0px',
       rowDisplay: isDesktop ? 'grid' : 'flex', rowOverflow: isDesktop ? 'visible' : 'auto',
       reelTiles: D.P.map(p => ({ slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: inr(p.price), mrpF: inr(p.mrp), bg: reelBg(p.hue), open: () => this.openReels(p.i) })),
-      popular: C.POPULAR.map(id => testVM(D.T[id])),
+      popular: C.POPULAR.map(id => D.T[id]).filter(Boolean).map(testVM),
       catTitle: s.cat === 'all' ? 'All lab tests' : (C.CATS.find(c => c.id === s.cat) || {}).label + ' tests',
       testsCountLabel: tList.length + (tList.length === 1 ? ' test' : ' tests'),
       tq: s.tq, onTq: e => this.setState({ tq: e.target.value }), hasTq: !!s.tq, clearTq: () => this.setState({ tq: '' }),
@@ -207,7 +211,7 @@
       confirm: () => this.confirm(),
       isBooked: !!s.booked, bookedUrl: s.booked ? s.booked.url : '#',
       finishBooked: () => { this.setCart(() => []); this.setState({ booked: null }); this.go('home'); },
-      footTests: ['vitd', 'thyroid', 'hba1c', 'cbc', 'lipid'].map(id => ({ label: D.T[id].short === 'Thyroid Profile' ? 'Thyroid Profile' : D.T[id].short + ' test', go: () => this.openTest(id) })),
+      footTests: ['vitd', 'thyroid', 'hba1c', 'cbc', 'lipid'].filter(id => D.T[id]).map(id => ({ label: D.T[id].short === 'Thyroid Profile' ? 'Thyroid Profile' : D.T[id].short + ' test', go: () => this.openTest(id) })),
       toTop: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
       footLinks:[['Home', 'home'], ['All tests', 'tests'], ['Health profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p) })),
       spacerH, showTabs, showTestsBar, showCartBar, tab: { home: tabC('home'), tests: tabC('tests'), profiles: tabC('profiles'), cart: tabC('cart') },
