@@ -76,6 +76,23 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-gold-ghost]:hover{background:#fff}
 @media (prefers-reduced-motion:reduce){[data-gold-card]::after{animation:none;display:none}}
 
+/* Reels "What's included": tap a row to show its tests / parameters */
+[data-inc]{flex:none;border-radius:14px;background:#fff;border:1px solid #E7E6F0;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+[data-inc-wide] [data-inc]{background:#F6F6FA;border-radius:16px}
+[data-inc][open]{border-color:#D4CFF2;box-shadow:0 8px 20px -14px rgba(59,44,158,.45)}
+[data-inc] summary{list-style:none;display:flex;align-items:center;gap:12px;padding:10px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+[data-inc] summary::-webkit-details-marker{display:none}
+[data-inc-n]{width:28px;height:28px;border-radius:9px;background:#EEECF8;color:#3B2C9E;display:grid;place-items:center;font-size:12px;font-weight:800;flex:none}
+[data-inc-name]{flex:1;min-width:0;font-size:14px;font-weight:600;line-height:1.3}
+[data-inc-meta]{font-size:12px;color:#5D5A7A;white-space:nowrap}
+[data-inc-chev]{display:flex;color:#8A8698;transition:transform .2s;flex:none}
+[data-inc][open] [data-inc-chev]{transform:rotate(180deg);color:#3B2C9E}
+[data-inc-list]{display:flex;flex-direction:column;gap:8px;padding:2px 14px 12px 52px;border-top:1px dashed #ECEBF3;padding-top:10px}
+[data-inc-item]{display:flex;flex-direction:column;gap:2px;position:relative}
+[data-inc-item]::before{content:'';position:absolute;left:-14px;top:7px;width:5px;height:5px;border-radius:999px;background:#B8B1EC}
+[data-inc-item] b{font-size:13px;font-weight:600;color:#16133A;line-height:1.35}
+[data-inc-item] small{font-size:11.5px;color:#6F6C8A;line-height:1.45}
+
 /* Footer columns: brand and contact get more room on wide screens, two columns on tablets, one on phones */
 [data-foot-grid]{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.4fr;gap:36px 32px}
 @media (max-width:900px){[data-foot-grid]{grid-template-columns:1fr 1fr}}
@@ -870,8 +887,8 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             <div style="flex:1 1 54%;min-width:0;margin:16px 16px 16px 0;border-radius:24px;background:#fff;backdrop-filter:blur(22px);border:1px solid #E7E6F0;display:flex;flex-direction:column;overflow:hidden;position:relative">
               <div style="flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#D4D1E6 transparent;padding:28px 30px 34px;display:flex;flex-direction:column;gap:22px">
                 <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap"><span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">What's included</span><span style="font-size:13.5px;font-weight:600;color:#5D5A7A">{{ r.testsN }} tests · {{ r.params }} parameters</span></div>
-                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px">
-                  <sc-for list="{{ r.tests }}" as="t" hint-placeholder-count="6"><div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:#F6F6FA;border:1px solid #E7E6F0"><span style="width:32px;height:32px;border-radius:10px;background:#EEECF8;color:#3B2C9E;display:grid;place-items:center;font-size:13px;font-weight:800;flex:none">{{ t.n }}</span><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:700;line-height:1.3">{{ t.name }}</span><span style="font-size:12px;color:#5D5A7A">{{ t.p }}</span></span></div></sc-for>
+                <div data-inc-wide="1" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;align-items:start">
+                  <sc-for list="{{ r.groups }}" as="g" hint-placeholder-count="6"><details data-inc="1"><summary><span data-inc-n="1">{{ g.n }}</span><span data-inc-name="1">{{ g.name }}</span><span data-inc-meta="1">{{ g.meta }}</span><span data-inc-chev="1"><avm-i n="chevron-down" s="16"></avm-i></span></summary><div data-inc-list="1"><sc-for list="{{ g.items }}" as="i" hint-placeholder-count="0"><div data-inc-item="1"><b>{{ i.name }}</b><sc-if value="{{ i.hasSub }}" hint-placeholder-val="{{ false }}"><small>{{ i.sub }}</small></sc-if></div></sc-for></div></details></sc-for>
                 </div>
                 <span style="font-size:13.5px;color:#5D5A7A">Worth {{ r.mrpF }} if booked separately — you pay {{ r.priceF }}.</span>
                 <div style="height:1px;background:#fff"></div>
@@ -930,7 +947,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
               <span style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5D5A7A">What's included</span>
               <span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">{{ r.testsN }} tests · {{ r.params }} parameters</span>
               <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;scrollbar-width:none">
-                <sc-for list="{{ r.tests }}" as="t" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:#fff;border:1px solid #E7E6F0"><span style="width:28px;height:28px;border-radius:9px;background:#EEECF8;color:#3B2C9E;display:grid;place-items:center;font-size:12px;font-weight:800;flex:none">{{ t.n }}</span><span style="flex:1;font-size:14px;font-weight:600;line-height:1.3">{{ t.name }}</span><span style="font-size:12px;color:#5D5A7A;white-space:nowrap">{{ t.p }}</span></div></sc-for>
+                <sc-for list="{{ r.groups }}" as="g" hint-placeholder-count="4"><details data-inc="1"><summary><span data-inc-n="1">{{ g.n }}</span><span data-inc-name="1">{{ g.name }}</span><span data-inc-meta="1">{{ g.meta }}</span><span data-inc-chev="1"><avm-i n="chevron-down" s="16"></avm-i></span></summary><div data-inc-list="1"><sc-for list="{{ g.items }}" as="i" hint-placeholder-count="0"><div data-inc-item="1"><b>{{ i.name }}</b><sc-if value="{{ i.hasSub }}" hint-placeholder-val="{{ false }}"><small>{{ i.sub }}</small></sc-if></div></sc-for></div></details></sc-for>
               </div>
               <span style="font-size:13px;color:#5D5A7A">Worth {{ r.mrpF }} if booked separately</span>
             </div>
@@ -953,7 +970,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             <button onClick="{{ r.toTests }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span style="width:48px;height:48px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:grid;place-items:center"><avm-i n="list" s="20"></avm-i></span>Tests</button>
           </div>
           <div style="position:absolute;left:0;right:0;bottom:0;z-index:4;padding:40px 16px {{ reelPadB }};background:linear-gradient(180deg,rgba(246,246,250,0) 0%,rgba(246,246,250,0.97) 45%);display:flex;align-items:center;gap:14px">
-            <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;color:#5D5A7A;text-decoration:line-through">{{ r.mrpF }}</span><span style="white-space:nowrap;font-size:11.5px;font-weight:800;color:#0B3B26;background:#7BE3B4;padding:2px 8px;border-radius:999px">{{ r.off }}</span></div><span style="font-size:26px;font-weight:800;letter-spacing:-0.02em">{{ r.priceF }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;color:#5D5A7A;text-decoration:line-through">{{ r.mrpF }}</span><span style="white-space:nowrap;font-size:11.5px;font-weight:800;color:#0B3B26;background:#7BE3B4;padding:2px 8px;border-radius:999px">{{ r.off }}</span></div><span style="font-size:30px;font-weight:800;letter-spacing:-0.025em;line-height:1.1">{{ r.priceF }}</span></div>
             <button onClick="{{ r.book }}" style="flex:1;height:54px;border-radius:999px;border:none;cursor:pointer;background:linear-gradient(180deg,#22B463,#138A47);color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 12px 30px -10px rgba(19,138,71,0.8),inset 0 1px 0 rgba(255,255,255,0.25)"><avm-i n="whatsapp" s="20"></avm-i>Book now</button>
           </div>
         </div>
@@ -1323,8 +1340,10 @@ class Component extends DCLogic {
     this.openWA(url, true);
   }
 
-  openReels(i) {
+  // slide: 0 = overview, 1 = What's included, 2 = Good to know (phones; desktop shows all of it at once).
+  openReels(i, slide) {
     this._ri = i || 0;
+    this._openSlide = slide || 0;
     this.setState({ reelsOpen: true, reelIdx: i || 0, slides: {}, hint: false, locOpen: false });
     this.setHash(this.reelHash(i || 0));
     this._reelPushed = true;
@@ -1368,7 +1387,10 @@ class Component extends DCLogic {
     this.armHint();
     // commit to state only after the slide finishes — re-rendering mid-animation causes stutter
     clearTimeout(this._gT);
-    this._gT = setTimeout(() => { if (this.state.reelIdx !== this._ri) this.setState({ reelIdx: this._ri }); }, 430);
+    // Desktop shows the current reel in its side list and counter, so it re-renders after the slide.
+    // Phones show nothing that depends on it: skip the re-render, which redraws the whole page under the reels
+    // and stalls the swipe for ~60-100 ms on mid-range phones. this._ri and the URL already track the reel.
+    if (this.state.w >= 1024) this._gT = setTimeout(() => { if (this.state.reelIdx !== this._ri) this.setState({ reelIdx: this._ri }); }, 430);
     return;
   }
   goSlide(i, k) {
@@ -1535,6 +1557,11 @@ class Component extends DCLogic {
           const el = this.scroller();
           if (el && el.clientHeight) {
             this.applyTrack(idx, false);
+            if (this._openSlide) {
+              const h = el.querySelectorAll('[data-h]')[idx];
+              if (h) h.scrollLeft = this._openSlide * h.clientWidth;
+              this._openSlide = 0;
+            }
             if (this._wheelEl !== el) {
               if (this._wheelEl) { const w = this._wheelEl; w.removeEventListener('wheel', this._onWheel); w.removeEventListener('touchstart', this._ts); w.removeEventListener('touchmove', this._tm); w.removeEventListener('touchend', this._te); w.removeEventListener('touchcancel', this._te); }
               this._onWheel = ev => {
@@ -1684,10 +1711,21 @@ class Component extends DCLogic {
 
     const n = D.P.length, ri = s.reelIdx;
     const stH = Math.round(Math.min(s.h * 0.9, 860));
+    // "What's included" rows. Profiles with several sub-profiles list those (tap: their tests and parameters);
+    // otherwise each test is a row (tap: its parameters).
+    const plural = (k, w) => k + ' ' + w + (k === 1 ? '' : 's');
+    const paramsOf = t => (C.DETAILS[t.id] || [])[2] || [];
+    const incGroups = p => {
+      const subs = (p.subs || []).map(x => ({ name: x.name, ts: x.tests.map(id => D.T[id]).filter(Boolean) })).filter(x => x.ts.length);
+      return subs.length > 1
+        ? subs.map((x, k) => ({ n: k + 1, name: x.name, meta: plural(x.ts.length, 'test') + ' · ' + plural(x.ts.reduce((a, t) => a + t.params, 0), 'param'),
+            items: x.ts.map(t => ({ name: t.name, sub: paramsOf(t).join(' · '), hasSub: paramsOf(t).length > 1 })) }))
+        : p.ts.map((t, k) => ({ n: k + 1, name: t.name, meta: plural(t.params, 'param'), items: paramsOf(t).map(x => ({ name: x, sub: '', hasSub: false })) }));
+    };
     const reels = s.reelsOpen ? D.P.map(p => {
       const sl = s.slides[p.i] || 0, inC = has('profile', p.id);
       return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, testsN: p.tests.length, ideal: p.ideal, benefits: p.benefits, tat: p.tat,
-        fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })),
+        fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })), groups: incGroups(p),
         mrpF: inr(p.mrp), priceF: inr(p.price), off: off(p.mrp, p.price),
         segs: [0, 1, 2].map(k => ({ w: k === sl ? '22px' : '7px', bg: k === sl ? '#3B2C9E' : '#D4D1E6', go: () => this.goSlide(p.i, k) })), onH: e => this.onH(p.i, e), toTests: () => this.goSlide(p.i, 1),
         toggle: () => this.toggle('profile', p.id, p.name), addIcon: inC ? 'check' : 'plus', addLabel: inC ? 'Added' : 'Add', addText: inC ? 'In cart' : 'Add to cart', addBg: inC ? '#3B2C9E' : '#fff', addInk: inC ? '#fff' : '#16133A', popping: inC && s.pop === p.id, addPop: inC && s.pop === p.id ? '1' : '0',
@@ -1772,7 +1810,7 @@ class Component extends DCLogic {
         return { name: p.name, tag: p.tag, sym: p.sym, tagline: p.tagline, testsN: p.tests.length, params: p.params, fastLabel: p.fasting ? 'Fasting needed' : 'No fasting',
           soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, symColor: `oklch(0.45 0.16 ${p.hue} / 0.14)`, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.97) 0%, oklch(0.95 0.035 ${p.hue} / 0.94) 58%, oklch(0.95 0.035 ${p.hue} / 0.6) 78%, oklch(0.95 0.035 ${p.hue} / 0) 96%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
           preview: p.ts.slice(0, 4).map(t => t.short), hasMore: p.ts.length > 4, moreLabel: '+' + (p.ts.length - 4) + ' more',
-          mrpF: inr(p.mrp), off: off(p.mrp, p.price), priceF: inr(p.price), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i), book: book(p) };
+          mrpF: inr(p.mrp), off: off(p.mrp, p.price), priceF: inr(p.price), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i, 1), book: book(p) };
       }),
       cartLines, pickHome: () => this.setState({ mode: 'home' }), pickWalk: () => this.setState({ mode: 'walkin' }),
       modeHome: modeStyle(isHomeMode), modeWalk: modeStyle(!isHomeMode), isHomeMode, isWalkMode: !isHomeMode,

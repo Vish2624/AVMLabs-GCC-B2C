@@ -123,6 +123,11 @@
           const el = this.scroller();
           if (el && el.clientHeight) {
             this.applyTrack(idx, false);
+            if (this._openSlide) {
+              const h = el.querySelectorAll('[data-h]')[idx];
+              if (h) h.scrollLeft = this._openSlide * h.clientWidth;
+              this._openSlide = 0;
+            }
             if (this._wheelEl !== el) {
               if (this._wheelEl) { const w = this._wheelEl; w.removeEventListener('wheel', this._onWheel); w.removeEventListener('touchstart', this._ts); w.removeEventListener('touchmove', this._tm); w.removeEventListener('touchend', this._te); w.removeEventListener('touchcancel', this._te); }
               this._onWheel = ev => {

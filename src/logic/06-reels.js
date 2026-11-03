@@ -1,5 +1,7 @@
-  openReels(i) {
+  // slide: 0 = overview, 1 = What's included, 2 = Good to know (phones; desktop shows all of it at once).
+  openReels(i, slide) {
     this._ri = i || 0;
+    this._openSlide = slide || 0;
     this.setState({ reelsOpen: true, reelIdx: i || 0, slides: {}, hint: false, locOpen: false });
     this.setHash(this.reelHash(i || 0));
     this._reelPushed = true;
@@ -43,7 +45,10 @@
     this.armHint();
     // commit to state only after the slide finishes — re-rendering mid-animation causes stutter
     clearTimeout(this._gT);
-    this._gT = setTimeout(() => { if (this.state.reelIdx !== this._ri) this.setState({ reelIdx: this._ri }); }, 430);
+    // Desktop shows the current reel in its side list and counter, so it re-renders after the slide.
+    // Phones show nothing that depends on it: skip the re-render, which redraws the whole page under the reels
+    // and stalls the swipe for ~60-100 ms on mid-range phones. this._ri and the URL already track the reel.
+    if (this.state.w >= 1024) this._gT = setTimeout(() => { if (this.state.reelIdx !== this._ri) this.setState({ reelIdx: this._ri }); }, 430);
     return;
   }
   goSlide(i, k) {
