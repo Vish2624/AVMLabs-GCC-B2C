@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="./assets/avm-logo.png">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -1082,8 +1083,15 @@ class Component extends DCLogic {
     fetch('/api/profiles').then(r => (r.ok ? r.json() : null)).then(list => {
       if (!Array.isArray(list) || !list.length) return;
       const known = new Set(Component.TESTS.map(t => t.id));
-      const profiles = list.map(p => ({ id: p.id, name: p.name, tag: p.tag, sym: sym(p.name), hue: p.hue, tags: [p.category], tagline: p.tagline,
-        tests: [...new Set(p.subs.flatMap(s => s.tests))].filter(id => known.has(id)), price: p.price, subs: p.subs })).filter(p => p.tests.length);
+      // The admin doesn't store report time or the "ideal for"/benefit lists: reuse the built-in profile's,
+      // and otherwise take the slowest test's report time (the report is ready when its last test is).
+      const builtIn = Object.fromEntries(Component.PROFILES.map(p => [p.id, p]));
+      const tatOf = ids => ids.map(id => Component.TESTS.find(t => t.id === id).tat).sort((a, b) => parseFloat(b) - parseFloat(a))[0];
+      const profiles = list.map(p => {
+        const tests = [...new Set(p.subs.flatMap(s => s.tests))].filter(id => known.has(id)), b = builtIn[p.id] || {};
+        return { id: p.id, name: p.name, tag: p.tag, sym: sym(p.name), hue: p.hue, tags: [p.category], tagline: p.tagline, tests, price: p.price, subs: p.subs,
+          tat: b.tat || (tests.length ? tatOf(tests) : ''), ideal: b.ideal || [], benefits: b.benefits || [] };
+      }).filter(p => p.tests.length);
       if (!profiles.length) return;
       Component.PROFILES = profiles;
       Component.PICON = { ...Component.PICON, ...Object.fromEntries(list.map(p => [p.id, p.icon])) };
