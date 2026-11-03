@@ -86,17 +86,16 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 /* "Calculated" tag: parameters worked out from other results (e.g. LDL / HDL Ratio) */
 [data-calc]{display:inline-flex;align-items:center;height:20px;padding:0 7px;margin-left:6px;border-radius:999px;background:#FFF4DA;border:1px solid #F0DFB2;color:#8A6414;font-size:10.5px;font-weight:700;letter-spacing:.02em;white-space:nowrap;vertical-align:middle;flex:none}
 
-/* Footer columns: brand and contact get more room on wide screens, two columns on tablets, one on phones */
-[data-foot-grid]{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.4fr;gap:36px 32px}
+/* Footer columns: centre/contact first, then brand and links; on phones contact and brand take the full width */
+[data-foot-grid]{display:grid;grid-template-columns:1.3fr 1.3fr 1fr;gap:36px 40px}
 @media (max-width:900px){[data-foot-grid]{grid-template-columns:1fr 1fr}}
-/* Phones: brand and contact full width, Explore + Popular tests side by side, tighter spacing */
+/* Phones: contact and brand full width, links below, tighter spacing */
 @media (max-width:520px){
 [data-foot-grid]{grid-template-columns:1fr 1fr;gap:22px 16px;padding-top:26px!important;padding-bottom:18px!important}
 [data-foot-brand],[data-foot-contact]{grid-column:1/-1}
 [data-foot-brand]{gap:10px!important}
 [data-foot-brand] img{height:40px!important}
 [data-foot-brand]>span:nth-child(2){font-size:13px!important;line-height:1.55!important}
-[data-foot-tags]{display:none!important}
 [data-foot-grid]>div{gap:10px!important}
 [data-foot-grid]>div:not([data-foot-contact]) button{padding:2px 0!important;font-size:13.5px!important}
 [data-foot-contact] button{height:34px!important;padding:0 12px!important;font-size:12.5px!important}
@@ -171,4 +170,8 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-gold-item]{background:rgba(255,255,255,.88);border:1px solid #F0E2BE;box-shadow:0 10px 24px -20px rgba(160,112,20,.5);transition:transform .2s,box-shadow .2s,border-color .2s}
 [data-gold-item]:hover{transform:translateY(-2px);border-color:#E3C57A;box-shadow:0 16px 30px -18px rgba(160,112,20,.6)}
 [data-gold-rich]{background:radial-gradient(75% 130% at 45% 55%,#FFFFFF 0%,rgba(255,255,255,.92) 40%,rgba(255,255,255,0) 80%),radial-gradient(40% 110% at 100% 0%,#F6DC98 0%,rgba(246,220,152,0) 70%),linear-gradient(90deg,#FFFFFF 0%,#FFFFFF 45%,#FFF6E0 100%);border:1.5px solid #E6C976;box-shadow:0 24px 48px -30px rgba(160,112,20,.55),inset 0 1px 0 #fff}
+
+/* Tests page: search and category filters stay under the header while scrolling */
+[data-tests-bar]{background:rgba(246,246,250,.92);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);transition:box-shadow .2s}
+[data-tests-bar][data-stuck]{box-shadow:0 12px 24px -20px rgba(22,19,58,.55);border-bottom:1px solid rgba(22,19,58,.06)}
 

@@ -13,7 +13,6 @@
     if (f.name.trim().length < 2) e.name = "Enter the patient's full name";
     const RG = this.region();
     if (!RG.phRe.test(f.phone)) e.phone = 'Enter a valid ' + RG.phLen + '-digit mobile number';
-    if (f.nid ? !RG.idRe.test(f.nid) : !RG.idOpt) e.nid = 'Enter a valid ' + RG.idLabel;
     const a = +f.age; if (!a || a < 1 || a > 110) e.age = 'Enter age';
     if (!f.gender) e.gender = 'Select gender';
     if (!f.date) e.date = 'Pick a date';
@@ -22,7 +21,6 @@
       const sl = Component.SLOTS.find(x => x[0] === f.slot);
       if (sl && sl[1] <= new Date().getHours()) e.slot = 'That slot has passed — pick another';
     }
-    if (this.state.mode === 'home' && f.address.trim().length < 8) e.address = 'Enter the collection address';
     return e;
   }
 
@@ -63,8 +61,6 @@
       '*Date & slot:* ' + day + ' · ' + f.slot,
       '*Patient:* ' + f.name.trim() + ', ' + f.age + ', ' + f.gender,
       '*Mobile:* ' + this.region().dial + ' ' + f.phone];
-    if (f.nid) lines.push('*' + this.region().idLabel + ':* ' + f.nid);
-    if (this.state.mode === 'home') lines.push('*Address:* ' + f.address.trim());
     lines.push('', 'Item total: ' + this.money(b.price));
     lines.push('*To pay: ' + this.money(b.pay) + '*');
     const url = this.wa(lines.join('\n'));

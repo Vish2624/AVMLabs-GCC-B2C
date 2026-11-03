@@ -1,5 +1,5 @@
   componentDidMount() {
-    this._onResize = () => { const w = window.innerWidth, hh = Math.round((window.visualViewport && window.visualViewport.height) || window.innerHeight); if (w !== this.state.w || Math.abs(hh - this.state.h) > 80) this.setState({ w, h: hh }); };
+    this._onResize = () => { const w = window.innerWidth, hh = Math.round((window.visualViewport && window.visualViewport.height) || window.innerHeight); if (w !== this.state.w || Math.abs(hh - this.state.h) > 80) this.setState({ w, h: hh }); this.syncBars(); };
     window.addEventListener('resize', this._onResize);
     if (window.visualViewport) window.visualViewport.addEventListener('resize', this._onResize);
     this._onResize();
@@ -19,13 +19,10 @@
     };
     window.addEventListener('keydown', this._onKey);
     this._onScroll = () => {
-      const y = window.scrollY, scrolled = y > 240;
-      // The WhatsApp button tucks away while scrolling down so it doesn't sit on top of cards, and returns on scroll up.
-      const dy = y - (this._lastY || 0);
-      const fabAway = Math.abs(dy) < 6 ? !!this.state.fabAway : dy > 0 && y > 120;
-      this._lastY = y;
-      if (scrolled !== !!this.state.scrolled || fabAway !== !!this.state.fabAway) this.setState({ scrolled, fabAway });
+      const scrolled = window.scrollY > 240;
+      if (scrolled !== !!this.state.scrolled) this.setState({ scrolled });
       this.fixBars();
+      this.syncBars();
     };
     window.addEventListener('scroll', this._onScroll, { passive: true });
     // Phones: hide the bottom bars while typing (they would cover the form), and put them back
@@ -108,7 +105,15 @@
     const drop = this.state.kb ? 0 : Math.max(0, Math.round(v.offsetTop + v.height - window.innerHeight));
     if (drop !== this._drop) { this._drop = drop; document.documentElement.style.setProperty('--vv-drop', drop + 'px'); }
   }
+  // Sticky bars sit right under the header (--hdr-h); the Tests page search/filter bar gets a shadow once it is stuck.
+  syncBars() {
+    const hd = document.querySelector('header'), h = hd ? hd.offsetHeight : 0;
+    if (h && h !== this._hdrH) { this._hdrH = h; document.documentElement.style.setProperty('--hdr-h', h + 'px'); }
+    const bar = document.querySelector('[data-tests-bar]');
+    if (bar) { const stuck = bar.getBoundingClientRect().top <= h + 1 && window.scrollY > 0; if (stuck !== bar.hasAttribute('data-stuck')) bar.toggleAttribute('data-stuck', stuck); }
+  }
   componentDidUpdate() {
+    this.syncBars();
     this.fillSlots();
     const open = !!this.state.reelsOpen;
     if (this._wasOpen !== open) {

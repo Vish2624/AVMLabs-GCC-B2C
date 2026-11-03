@@ -103,17 +103,16 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 /* "Calculated" tag: parameters worked out from other results (e.g. LDL / HDL Ratio) */
 [data-calc]{display:inline-flex;align-items:center;height:20px;padding:0 7px;margin-left:6px;border-radius:999px;background:#FFF4DA;border:1px solid #F0DFB2;color:#8A6414;font-size:10.5px;font-weight:700;letter-spacing:.02em;white-space:nowrap;vertical-align:middle;flex:none}
 
-/* Footer columns: brand and contact get more room on wide screens, two columns on tablets, one on phones */
-[data-foot-grid]{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.4fr;gap:36px 32px}
+/* Footer columns: centre/contact first, then brand and links; on phones contact and brand take the full width */
+[data-foot-grid]{display:grid;grid-template-columns:1.3fr 1.3fr 1fr;gap:36px 40px}
 @media (max-width:900px){[data-foot-grid]{grid-template-columns:1fr 1fr}}
-/* Phones: brand and contact full width, Explore + Popular tests side by side, tighter spacing */
+/* Phones: contact and brand full width, links below, tighter spacing */
 @media (max-width:520px){
 [data-foot-grid]{grid-template-columns:1fr 1fr;gap:22px 16px;padding-top:26px!important;padding-bottom:18px!important}
 [data-foot-brand],[data-foot-contact]{grid-column:1/-1}
 [data-foot-brand]{gap:10px!important}
 [data-foot-brand] img{height:40px!important}
 [data-foot-brand]>span:nth-child(2){font-size:13px!important;line-height:1.55!important}
-[data-foot-tags]{display:none!important}
 [data-foot-grid]>div{gap:10px!important}
 [data-foot-grid]>div:not([data-foot-contact]) button{padding:2px 0!important;font-size:13.5px!important}
 [data-foot-contact] button{height:34px!important;padding:0 12px!important;font-size:12.5px!important}
@@ -188,6 +187,10 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-gold-item]{background:rgba(255,255,255,.88);border:1px solid #F0E2BE;box-shadow:0 10px 24px -20px rgba(160,112,20,.5);transition:transform .2s,box-shadow .2s,border-color .2s}
 [data-gold-item]:hover{transform:translateY(-2px);border-color:#E3C57A;box-shadow:0 16px 30px -18px rgba(160,112,20,.6)}
 [data-gold-rich]{background:radial-gradient(75% 130% at 45% 55%,#FFFFFF 0%,rgba(255,255,255,.92) 40%,rgba(255,255,255,0) 80%),radial-gradient(40% 110% at 100% 0%,#F6DC98 0%,rgba(246,220,152,0) 70%),linear-gradient(90deg,#FFFFFF 0%,#FFFFFF 45%,#FFF6E0 100%);border:1.5px solid #E6C976;box-shadow:0 24px 48px -30px rgba(160,112,20,.55),inset 0 1px 0 #fff}
+
+/* Tests page: search and category filters stay under the header while scrolling */
+[data-tests-bar]{background:rgba(246,246,250,.92);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);transition:box-shadow .2s}
+[data-tests-bar][data-stuck]{box-shadow:0 12px 24px -20px rgba(22,19,58,.55);border-bottom:1px solid rgba(22,19,58,.06)}
 
 </style>
 </helmet>
@@ -468,7 +471,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 18px;border-radius:20px;background:linear-gradient(135deg,#F7F5FF 0%,#EEEBFC 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9)">
           <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
             <span style="display:flex;align-items:center;gap:8px;white-space:nowrap"><span style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#6E6A8A">Offer price</span></span>
-            <span style="white-space:nowrap;font-size:21px;font-weight:800;letter-spacing:-0.02em;color:#16133A;line-height:1">{{ t.priceF }}</span>
+            <span style="white-space:nowrap;display:flex;align-items:baseline;gap:4px;color:#0E7350;line-height:1"><b style="font-size:24px;font-weight:800;letter-spacing:-0.02em">{{ t.priceNum }}</b><small style="font-size:12.5px;font-weight:700;letter-spacing:.02em">{{ t.priceCur }}</small></span>
           </div>
           <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 14px -10px rgba(59,44,158,0.7);transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
           <sc-if value="{{ t.covered }}"><span onClick="{{ t.stop }}" title="{{ t.coveredBy }}" style="max-width:170px;min-height:46px;padding:5px 16px 5px 12px;border-radius:999px;border:1.5px solid #BFE8D2;background:#EAF7EF;color:#0E7350;display:flex;align-items:center;gap:8px;cursor:default"><avm-i n="circle-check" s="18"></avm-i><span style="display:flex;flex-direction:column;min-width:0;line-height:1.15"><b style="font-size:14px;font-weight:800">Included</b><small style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.coveredBy }}</small></span></span></sc-if>
@@ -484,7 +487,6 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:0;border-radius:clamp(24px,3vw,34px);overflow:hidden;background:#fff;border:1px solid #ECEBF3;box-shadow:0 20px 50px -34px rgba(22,19,58,0.35)">
     <div style="position:relative;grid-column:1/-1;padding:clamp(20px,3vw,30px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:18px 32px;align-items:center;color:#16133A">
       <div style="display:flex;flex-direction:column;gap:10px">
-        <span style="align-self:flex-start;white-space:nowrap;display:flex;align-items:center;gap:7px;height:30px;padding:0 12px;border-radius:999px;background:#FDECEC;border:none;font-size:12.5px;font-weight:700;color:#C81E25"><avm-i n="map-pin" s="14"></avm-i><span>{{ centreCount }} countries</span></span>
         <h2 style="margin:0;font-size:clamp(22px,2.6vw,30px);font-weight:800;letter-spacing:-0.03em;line-height:1.12;text-wrap:balance">Step into an AVM Labs centre</h2>
         <p style="margin:0;font-size:14.5px;line-height:1.55;color:#5D5A7A;max-width:400px;text-wrap:pretty">Clean, calm collection rooms and trained staff — wherever you are.</p>
       </div>
@@ -510,16 +512,18 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 
 <sc-if value="{{ isTests }}" hint-placeholder-val="{{ false }}">
 <main style="max-width:1280px;margin:0 auto;padding:clamp(18px,3vw,36px) clamp(14px,3vw,28px) 24px">
-  <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-end;margin-bottom:18px">
+  <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-end;margin-bottom:6px">
     <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#5D5A7A;font-weight:600">Home / Tests</span><h1 style="margin:0;font-size:clamp(28px,3.6vw,44px);font-weight:800;letter-spacing:-0.035em">{{ catTitle }}</h1><span style="font-size:14px;color:#5D5A7A">{{ testsCountLabel }}</span></div>
-    <div style="flex:0 1 420px;min-width:min(100%,260px);display:flex;align-items:center;gap:10px;height:50px;padding:0 8px 0 16px;border-radius:999px;background:rgba(255,255,255,0.85);border:1px solid #E7E6F0;box-shadow:0 10px 30px -20px rgba(42,31,122,0.4);color:#5D5A7A">
+  </div>
+  <div data-tests-bar="1" style="position:sticky;top:var(--hdr-h, 64px);z-index:20;margin:0 calc(-1 * clamp(14px,3vw,28px)) 10px;padding:10px clamp(14px,3vw,28px) 8px;display:flex;flex-direction:column;gap:10px">
+    <div style="flex:none;width:min(100%,460px);display:flex;align-items:center;gap:10px;height:48px;padding:0 8px 0 16px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;box-shadow:0 10px 30px -20px rgba(42,31,122,0.4);color:#5D5A7A">
       <avm-i n="search" s="18"></avm-i>
       <input value="{{ tq }}" onChange="{{ onTq }}" placeholder="Search tests — e.g. Vitamin D, TSH" style="flex:1;min-width:0;border:none;outline:none;background:transparent;font-size:15px;color:#16133A;height:44px">
       <sc-if value="{{ hasTq }}"><button onClick="{{ clearTq }}" aria-label="Clear" style="width:34px;height:34px;border-radius:999px;border:none;background:#F0EFF7;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="x" s="14"></avm-i></button></sc-if>
     </div>
-  </div>
-  <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 14px;margin-bottom:8px">
+    <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 4px">
     <sc-for list="{{ testCats }}" as="c" hint-placeholder-count="8"><button onClick="{{ c.go }}" style="flex:none;display:flex;align-items:center;gap:8px;height:44px;padding:0 14px 0 6px;border-radius:999px;cursor:pointer;font-size:13.5px;font-weight:700;white-space:nowrap;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }}"><span style="width:32px;height:32px;border-radius:999px;display:grid;place-items:center;background:{{ c.symBg }};color:{{ c.symFg }}"><avm-i n="{{ c.icon }}" s="16"></avm-i></span>{{ c.label }}<span style="font-size:12px;font-weight:600;opacity:0.75">{{ c.count }}</span></button></sc-for>
+    </div>
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">
     <div style="flex:1 1 520px;min-width:0">
@@ -534,7 +538,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 18px;border-radius:20px;background:linear-gradient(135deg,#F7F5FF 0%,#EEEBFC 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9)">
           <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
             <span style="display:flex;align-items:center;gap:8px;white-space:nowrap"><span style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#6E6A8A">Offer price</span></span>
-            <span style="white-space:nowrap;font-size:21px;font-weight:800;letter-spacing:-0.02em;color:#16133A;line-height:1">{{ t.priceF }}</span>
+            <span style="white-space:nowrap;display:flex;align-items:baseline;gap:4px;color:#0E7350;line-height:1"><b style="font-size:24px;font-weight:800;letter-spacing:-0.02em">{{ t.priceNum }}</b><small style="font-size:12.5px;font-weight:700;letter-spacing:.02em">{{ t.priceCur }}</small></span>
           </div>
           <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 14px -10px rgba(59,44,158,0.7);transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
           <sc-if value="{{ t.covered }}"><span onClick="{{ t.stop }}" title="{{ t.coveredBy }}" style="max-width:170px;min-height:46px;padding:5px 16px 5px 12px;border-radius:999px;border:1.5px solid #BFE8D2;background:#EAF7EF;color:#0E7350;display:flex;align-items:center;gap:8px;cursor:default"><avm-i n="circle-check" s="18"></avm-i><span style="display:flex;flex-direction:column;min-width:0;line-height:1.15"><b style="font-size:14px;font-weight:800">Included</b><small style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.coveredBy }}</small></span></span></sc-if>
@@ -663,9 +667,8 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
       <div style="background:#fff;border:1px solid #ECEBF3;border-radius:24px;padding:clamp(16px,2.5vw,24px);display:flex;flex-direction:column;gap:14px">
         <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;background:#16133A;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800">3</span><span style="font-size:17px;font-weight:800">Patient details</span></div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
-          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Full name</span><input value="{{ form.name }}" onChange="{{ on.name }}" placeholder="As on ID" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.name }};background:#FBFBFD;padding:0 14px;font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"><sc-if value="{{ err.name }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.name }}</span></sc-if></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Full name</span><input value="{{ form.name }}" onChange="{{ on.name }}" placeholder="Patient's full name" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.name }};background:#FBFBFD;padding:0 14px;font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"><sc-if value="{{ err.name }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.name }}</span></sc-if></label>
           <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">WhatsApp number</span><span style="position:relative;display:block"><span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:600;color:#5D5A7A">{{ dial }}</span><input value="{{ form.phone }}" onChange="{{ on.phone }}" type="tel" placeholder="{{ phPh }}" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.phone }};background:#FBFBFD;padding:0 14px 0 {{ phPad }};font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"></span><sc-if value="{{ err.phone }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.phone }}</span></sc-if></label>
-          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">{{ idLabel }}</span><span style="position:relative;display:block"><span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#6E6A8A;display:flex"><avm-i n="id-card" s="18"></avm-i></span><input value="{{ form.nid }}" onChange="{{ on.nid }}" type="tel" inputmode="numeric" placeholder="{{ idPh }}" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.nid }};background:#FBFBFD;padding:0 14px 0 44px;font-size:15px;color:#16133A;outline:none;width:100%;letter-spacing:.02em" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"></span><sc-if value="{{ err.nid }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.nid }}</span></sc-if></label>
           <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Age</span><input value="{{ form.age }}" onChange="{{ on.age }}" type="tel" placeholder="Years" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.age }};background:#FBFBFD;padding:0 14px;font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"><sc-if value="{{ err.age }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.age }}</span></sc-if></label>
           <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Gender</span><div style="display:flex;gap:6px;height:50px;padding:4px;border-radius:14px;background:#F2F1F7;border:1.5px solid {{ bc.gender }}"><sc-for list="{{ genders }}" as="g" hint-placeholder-count="3"><button onClick="{{ g.pick }}" style="flex:1;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;background:{{ g.bg }};color:{{ g.fg }};box-shadow:{{ g.sh }}">{{ g.label }}</button></sc-for></div><sc-if value="{{ err.gender }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.gender }}</span></sc-if></div>
         </div>
@@ -679,11 +682,6 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
         <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"><sc-for list="{{ slots }}" as="s" hint-placeholder-count="6"><button onClick="{{ s.pick }}" disabled="{{ s.disabled }}" style="min-width:0;padding:10px 6px;border-radius:14px;cursor:{{ s.cursor }};border:1.5px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};box-shadow:{{ s.sh }};display:flex;flex-direction:column;align-items:center;gap:3px;transition:background .2s,color .2s,border-color .2s,box-shadow .2s"><span style="color:{{ s.ico }};display:flex"><avm-i n="{{ s.icon }}" s="17"></avm-i></span><span style="white-space:nowrap;font-size:14px;font-weight:800;text-decoration:{{ s.td }}">{{ s.label }}</span><span style="font-size:11px;font-weight:600;color:{{ s.sub }}">{{ s.part }}</span></button></sc-for></div>
         <sc-if value="{{ err.slot }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.slot }}</span></sc-if>
         <sc-if value="{{ slotPicked }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;background:#EAF7EF;color:#0E7350;font-size:14px;font-weight:700"><avm-i n="calendar-check" s="18"></avm-i><span>{{ slotSummary }}</span></div></sc-if>
-      </div>
-      <div style="background:#fff;border:1px solid #ECEBF3;border-radius:24px;padding:clamp(16px,2.5vw,24px);display:flex;flex-direction:column;gap:14px">
-        <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;background:#16133A;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800">5</span><span style="font-size:17px;font-weight:800">{{ placeTitle }}</span></div>
-        <sc-if value="{{ isHomeMode }}"><label style="display:flex;flex-direction:column;gap:6px"><textarea value="{{ form.address }}" onChange="{{ on.address }}" rows="3" placeholder="{{ addrPh }}" style="border-radius:14px;border:1.5px solid {{ bc.address }};background:#FBFBFD;padding:12px 14px;font-size:15px;line-height:1.5;color:#16133A;outline:none;width:100%;resize:vertical" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"></textarea><sc-if value="{{ err.address }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.address }}</span></sc-if></label></sc-if>
-        <sc-if value="{{ isWalkMode }}"><span style="font-size:15px;line-height:1.5;color:#16133A;display:flex;align-items:flex-start;gap:10px"><span style="padding-top:2px;color:#3B2C9E;display:flex"><avm-i n="map-pin" s="18"></avm-i></span>{{ regionAddr }}</span></sc-if>
       </div>
     </div>
     <aside style="flex:1 1 320px;min-width:0;position:{{ asidePos }};top:92px;display:flex;flex-direction:column;gap:14px">
@@ -809,31 +807,21 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
   </div>
 
   <div data-foot-grid="1" style="max-width:1200px;margin:0 auto;padding:clamp(36px,5vw,56px) clamp(16px,3vw,28px) clamp(28px,4vw,40px);position:relative">
-    <div data-foot-brand="1" style="display:flex;flex-direction:column;gap:16px;min-width:0">
-      <span style="align-self:flex-start;background:#fff;border-radius:12px;padding:6px 8px;display:flex;box-shadow:0 10px 24px -14px rgba(0,0,0,0.6)"><img src="./assets/avm-logo.png" alt="AVM Labs" style="height:48px;display:block"></span>
-      <span style="font-size:14px;line-height:1.7;color:#A9A5C9;max-width:320px">Lab tests and health profiles for hormones, vitamins and everyday wellness, with free home sample collection.</span>
-      <div data-foot-tags="1" style="display:flex;gap:6px;flex-wrap:wrap">
-        <span style="font-size:12px;font-weight:600;color:#D4CFF7;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)">Hormones</span>
-        <span style="font-size:12px;font-weight:600;color:#D4CFF7;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)">Vitamins</span>
-        <span style="font-size:12px;font-weight:600;color:#D4CFF7;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)">Wellness</span>
-      </div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Explore<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
-      <div style="display:flex;flex-direction:column;gap:4px"><sc-for list="{{ footLinks }}" as="f" hint-placeholder-count="4"><button onClick="{{ f.go }}" style="align-self:flex-start;white-space:nowrap;border:none;background:none;padding:4px 0;text-align:left;color:#C9C6E0;font-size:14.5px;cursor:pointer;transition:color .2s,transform .2s" style-hover="color:#fff;transform:translateX(3px)">{{ f.label }}</button></sc-for></div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Popular tests<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
-      <div style="display:flex;flex-direction:column;gap:4px"><sc-for list="{{ footTests }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.go }}" style="align-self:flex-start;white-space:nowrap;border:none;background:none;padding:4px 0;text-align:left;color:#C9C6E0;font-size:14.5px;cursor:pointer;transition:color .2s,transform .2s" style-hover="color:#fff;transform:translateX(3px)">{{ f.label }}</button></sc-for></div>
-    </div>
     <div data-foot-contact="1" style="display:flex;flex-direction:column;gap:14px;min-width:0">
-      <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Visit or contact<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
+      <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Visit or contact us<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
       <div style="display:flex;align-items:flex-start;gap:12px"><span style="width:34px;height:34px;border-radius:10px;background:rgba(123,108,240,0.14);color:#A79CF5;display:grid;place-items:center;flex:none"><avm-i n="map-pin" s="16"></avm-i></span><span style="display:flex;flex-direction:column;gap:1px;min-width:0"><small style="font-size:11.5px;color:#8D88B0">Our centre</small><span style="font-size:14px;line-height:1.5;color:#E4E1F5">{{ regionAddr }}</span></span></div>
-      <div style="display:flex;align-items:flex-start;gap:12px"><span style="width:34px;height:34px;border-radius:10px;background:rgba(123,108,240,0.14);color:#A79CF5;display:grid;place-items:center;flex:none"><avm-i n="clock" s="16"></avm-i></span><span style="display:flex;flex-direction:column;gap:1px"><small style="font-size:11.5px;color:#8D88B0">Open</small><span style="font-size:14px;color:#E4E1F5">7 AM – 8 PM, all days</span></span></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:2px">
         <button onClick="{{ waGeneral }}" style="white-space:nowrap;height:38px;padding:0 14px;border-radius:999px;border:1px solid rgba(34,180,99,0.45);background:rgba(34,180,99,0.12);color:#7BE3B4;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer;transition:background .2s" style-hover="background:rgba(34,180,99,0.22)"><avm-i n="whatsapp" s="15"></avm-i>WhatsApp</button>
         <button onClick="{{ directions }}" style="white-space:nowrap;height:38px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer;transition:background .2s" style-hover="background:rgba(255,255,255,0.12)"><avm-i n="navigation" s="15"></avm-i>Directions</button>
       </div>
+    </div>
+    <div data-foot-brand="1" style="display:flex;flex-direction:column;gap:16px;min-width:0">
+      <span style="align-self:flex-start;background:#fff;border-radius:12px;padding:6px 8px;display:flex;box-shadow:0 10px 24px -14px rgba(0,0,0,0.6)"><img src="./assets/avm-logo.png" alt="AVM Labs" style="height:48px;display:block"></span>
+      <span style="font-size:14px;line-height:1.7;color:#A9A5C9;max-width:320px">Lab tests and health profiles for hormones, vitamins and everyday wellness, with free home sample collection.</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Explore<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
+      <div style="display:flex;flex-direction:column;gap:4px"><sc-for list="{{ footLinks }}" as="f" hint-placeholder-count="4"><button onClick="{{ f.go }}" style="align-self:flex-start;white-space:nowrap;border:none;background:none;padding:4px 0;text-align:left;color:#C9C6E0;font-size:14.5px;cursor:pointer;transition:color .2s,transform .2s" style-hover="color:#fff;transform:translateX(3px)">{{ f.label }}</button></sc-for></div>
     </div>
   </div>
 
@@ -859,7 +847,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 
 <sc-if value="{{ showTestsBar }}" hint-placeholder-val="{{ false }}">
   <div style="position:fixed;left:10px;right:10px;bottom:{{ testsBarBottom }};transform:translateY(var(--vv-drop, 0px));z-index:58;display:flex;flex-direction:column;gap:6px">
-    <sc-for list="{{ topMatch }}" as="m" hint-placeholder-count="0"><button onClick="{{ m.switchIt }}" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:18px;background:rgba(236,233,253,0.95);backdrop-filter:blur(18px);border:1px solid #DAD5F7;text-align:left;color:#16133A;cursor:pointer"><span style="width:28px;height:28px;border-radius:999px;background:#3B2C9E;color:#fff;display:grid;place-items:center;flex:none"><avm-i n="sparkles" s="14"></avm-i></span><span style="flex:1;font-size:13px;font-weight:700;line-height:1.35">{{ m.headline }}</span><span style="font-size:12px;font-weight:800;color:#3B2C9E;flex:none">Switch</span></button></sc-for>
+    <sc-for list="{{ topMatch }}" as="m" hint-placeholder-count="0"><button onClick="{{ m.switchIt }}" data-gold-card="1" style="display:flex;align-items:center;gap:10px;padding:10px 10px 10px 12px;border-radius:18px;text-align:left;color:#2B2110;cursor:pointer;font:inherit"><span data-gold-badge="1" style="width:28px;height:28px"><avm-i n="crown" s="14"></avm-i></span><span style="flex:1;font-size:13px;font-weight:700;line-height:1.35">{{ m.headline }}</span><span data-gold-btn="1" style="height:32px;padding:0 14px;font-size:12.5px;display:flex;align-items:center;flex:none">Switch</span></button></sc-for>
     <div style="display:flex;align-items:center;gap:12px;padding:8px 8px 8px 16px;border-radius:22px;background:rgba(22,19,58,0.94);backdrop-filter:blur(18px);color:#fff;box-shadow:0 18px 40px -16px rgba(22,19,58,0.6)">
       <div style="flex:1;display:flex;flex-direction:column"><span style="font-size:12px;color:rgba(255,255,255,0.75)">{{ barCountLabel }}</span><span style="font-size:17px;font-weight:800">{{ bill.priceF }}</span></div>
       <button onClick="{{ goCart }}" style="white-space:nowrap;height:46px;padding:0 18px;border-radius:999px;border:none;background:#fff;color:#16133A;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px">View cart<avm-i n="arrow-right" s="15"></avm-i></button>
@@ -1100,7 +1088,7 @@ class Component extends DCLogic {
     cart = Array.isArray(cart) ? cart.filter(ok) : [];
     return { page: 'home', w: window.innerWidth, h: window.innerHeight, cart, sMode: 'tests', q: '', qFocus: false, cat: 'all', tq: '', pf: 'all', hero: 0,
       reelsOpen: false, reelIdx: 0, slides: {}, hint: false, mode: 'home',
-      form: { name: '', phone: '', nid: '', age: '', gender: '', date: '', slot: '', address: '' }, errors: {}, booked: null,
+      form: { name: '', phone: '', age: '', gender: '', date: '', slot: '' }, errors: {}, booked: null,
       locOpen: false, toast: '', pop: null, ...this.fromHash() };
   }
 
@@ -1163,9 +1151,9 @@ class Component extends DCLogic {
   }
 
   static REGIONS = {
-    BH: { code: 'BH', name: 'Bahrain', dial: '+973', phLen: 8, phRe: /^[36]\d{7}$/, phPh: '8-digit mobile', idLabel: 'CPR number', idLen: 9, idRe: /^\d{9}$/, idPh: '9-digit CPR', show: v => 'BD ' + Number(v.toFixed(3)), postLabel: 'Block number', postPh: 'Block no. (e.g. 338)', postRe: /^\d{3,4}$/, postMax: 4, waProp: 'whatsappNumberBahrain', waDef: '97300000000', addrProp: 'addressBahrain', addrDef: '[Bahrain centre address]' },
-    SA: { code: 'SA', name: 'Saudi Arabia', dial: '+966', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', idLabel: 'National ID / Iqama', idLen: 10, idRe: /^[12]\d{9}$/, idPh: '10-digit ID or Iqama', show: v => 'SAR ' + Number(v.toFixed(2)).toLocaleString('en-US'), postLabel: 'Postal code', postPh: '5-digit postal code', postRe: /^\d{5}$/, postMax: 5, waProp: 'whatsappNumberKSA', waDef: '966500000000', addrProp: 'addressKSA', addrDef: '[KSA centre address]' },
-    AE: { code: 'AE', name: 'UAE', dial: '+971', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', idLabel: 'Emirates ID', idLen: 15, idRe: /^784\d{12}$/, idPh: '784-XXXX-XXXXXXX-X', show: v => 'AED ' + Number(v.toFixed(2)).toLocaleString('en-US'), postLabel: 'Area', postPh: 'Area (e.g. Al Barsha)', postRe: /\S{2,}/, postMax: 40, text: true, waProp: 'whatsappNumberUAE', waDef: '971500000000', addrProp: 'addressUAE', addrDef: '[UAE centre address]' }
+    BH: { code: 'BH', name: 'Bahrain', dial: '+973', phLen: 8, phRe: /^[36]\d{7}$/, phPh: '8-digit mobile', show: v => 'BD ' + Number(v.toFixed(3)), waProp: 'whatsappNumberBahrain', waDef: '97300000000', addrProp: 'addressBahrain', addrDef: '[Bahrain centre address]' },
+    SA: { code: 'SA', name: 'Saudi Arabia', dial: '+966', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', show: v => 'SAR ' + Number(v.toFixed(2)).toLocaleString('en-US'), waProp: 'whatsappNumberKSA', waDef: '966500000000', addrProp: 'addressKSA', addrDef: '[KSA centre address]' },
+    AE: { code: 'AE', name: 'UAE', dial: '+971', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', show: v => 'AED ' + Number(v.toFixed(2)).toLocaleString('en-US'), waProp: 'whatsappNumberUAE', waDef: '971500000000', addrProp: 'addressUAE', addrDef: '[UAE centre address]' }
   };
   region() {
     const p = this.props || {}, R = Component.REGIONS;
@@ -1177,6 +1165,8 @@ class Component extends DCLogic {
   pr(x) { const v = x && x.prices && x.prices[this.region().code]; return v > 0 ? v : 0; }
   money(v) { return this.region().show(Math.max(0, v || 0)); }
   cost(x) { return this.money(this.pr(x)); }
+  // The amount and currency apart, to show the number large and the currency small: { num: '17', cur: 'SAR' }.
+  costParts(x) { const t = this.cost(x), i = t.indexOf(' '); return { num: t.slice(i + 1), cur: t.slice(0, i) }; }
   sumPr(list) { return list.reduce((a, x) => a + this.pr(x), 0); }
   // Report time in the visitor's country, e.g. '24 hrs' or '2 days'; tatHrs() turns one into hours to compare.
   tat(x) { return (x && x.tats && x.tats[this.region().code]) || ''; }
@@ -1323,7 +1313,6 @@ class Component extends DCLogic {
     if (f.name.trim().length < 2) e.name = "Enter the patient's full name";
     const RG = this.region();
     if (!RG.phRe.test(f.phone)) e.phone = 'Enter a valid ' + RG.phLen + '-digit mobile number';
-    if (f.nid ? !RG.idRe.test(f.nid) : !RG.idOpt) e.nid = 'Enter a valid ' + RG.idLabel;
     const a = +f.age; if (!a || a < 1 || a > 110) e.age = 'Enter age';
     if (!f.gender) e.gender = 'Select gender';
     if (!f.date) e.date = 'Pick a date';
@@ -1332,7 +1321,6 @@ class Component extends DCLogic {
       const sl = Component.SLOTS.find(x => x[0] === f.slot);
       if (sl && sl[1] <= new Date().getHours()) e.slot = 'That slot has passed — pick another';
     }
-    if (this.state.mode === 'home' && f.address.trim().length < 8) e.address = 'Enter the collection address';
     return e;
   }
 
@@ -1373,8 +1361,6 @@ class Component extends DCLogic {
       '*Date & slot:* ' + day + ' · ' + f.slot,
       '*Patient:* ' + f.name.trim() + ', ' + f.age + ', ' + f.gender,
       '*Mobile:* ' + this.region().dial + ' ' + f.phone];
-    if (f.nid) lines.push('*' + this.region().idLabel + ':* ' + f.nid);
-    if (this.state.mode === 'home') lines.push('*Address:* ' + f.address.trim());
     lines.push('', 'Item total: ' + this.money(b.price));
     lines.push('*To pay: ' + this.money(b.pay) + '*');
     const url = this.wa(lines.join('\n'));
@@ -1492,7 +1478,7 @@ class Component extends DCLogic {
   }
 
   componentDidMount() {
-    this._onResize = () => { const w = window.innerWidth, hh = Math.round((window.visualViewport && window.visualViewport.height) || window.innerHeight); if (w !== this.state.w || Math.abs(hh - this.state.h) > 80) this.setState({ w, h: hh }); };
+    this._onResize = () => { const w = window.innerWidth, hh = Math.round((window.visualViewport && window.visualViewport.height) || window.innerHeight); if (w !== this.state.w || Math.abs(hh - this.state.h) > 80) this.setState({ w, h: hh }); this.syncBars(); };
     window.addEventListener('resize', this._onResize);
     if (window.visualViewport) window.visualViewport.addEventListener('resize', this._onResize);
     this._onResize();
@@ -1512,13 +1498,10 @@ class Component extends DCLogic {
     };
     window.addEventListener('keydown', this._onKey);
     this._onScroll = () => {
-      const y = window.scrollY, scrolled = y > 240;
-      // The WhatsApp button tucks away while scrolling down so it doesn't sit on top of cards, and returns on scroll up.
-      const dy = y - (this._lastY || 0);
-      const fabAway = Math.abs(dy) < 6 ? !!this.state.fabAway : dy > 0 && y > 120;
-      this._lastY = y;
-      if (scrolled !== !!this.state.scrolled || fabAway !== !!this.state.fabAway) this.setState({ scrolled, fabAway });
+      const scrolled = window.scrollY > 240;
+      if (scrolled !== !!this.state.scrolled) this.setState({ scrolled });
       this.fixBars();
+      this.syncBars();
     };
     window.addEventListener('scroll', this._onScroll, { passive: true });
     // Phones: hide the bottom bars while typing (they would cover the form), and put them back
@@ -1601,7 +1584,15 @@ class Component extends DCLogic {
     const drop = this.state.kb ? 0 : Math.max(0, Math.round(v.offsetTop + v.height - window.innerHeight));
     if (drop !== this._drop) { this._drop = drop; document.documentElement.style.setProperty('--vv-drop', drop + 'px'); }
   }
+  // Sticky bars sit right under the header (--hdr-h); the Tests page search/filter bar gets a shadow once it is stuck.
+  syncBars() {
+    const hd = document.querySelector('header'), h = hd ? hd.offsetHeight : 0;
+    if (h && h !== this._hdrH) { this._hdrH = h; document.documentElement.style.setProperty('--hdr-h', h + 'px'); }
+    const bar = document.querySelector('[data-tests-bar]');
+    if (bar) { const stuck = bar.getBoundingClientRect().top <= h + 1 && window.scrollY > 0; if (stuck !== bar.hasAttribute('data-stuck')) bar.toggleAttribute('data-stuck', stuck); }
+  }
   componentDidUpdate() {
+    this.syncBars();
     this.fillSlots();
     const open = !!this.state.reelsOpen;
     if (this._wasOpen !== open) {
@@ -1724,7 +1715,7 @@ class Component extends DCLogic {
       const pc = C.CATS.find(c => c.id === t.cat[0]) || C.CATS[0];
       return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, tatH: this.tat(t).replace('hrs', 'hours'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), cardBg: 'radial-gradient(75% 70% at 100% 0%, #F0EDFE 0%, rgba(240,237,254,0) 65%), radial-gradient(55% 50% at 0% 100%, rgba(255,236,240,0.55) 0%, rgba(255,236,240,0) 70%), #FFFFFF', tat: this.tat(t), fasting: t.fasting,
         open: () => this.openTest(t.id),
-        priceF: cost(t), inCart: inC, notInCart: !inC && !cov, covered: !!cov, coveredBy: cov ? 'In ' + cov.name : '', toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); }, stop: e => e && e.stopPropagation() };
+        priceF: cost(t), priceNum: this.costParts(t).num, priceCur: this.costParts(t).cur, inCart: inC, notInCart: !inC && !cov, covered: !!cov, coveredBy: cov ? 'In ' + cov.name : '', toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); }, stop: e => e && e.stopPropagation() };
     };
     let td = null;
     if (pg === 'test' && s.testId && D.T[s.testId]) {
@@ -1822,7 +1813,8 @@ class Component extends DCLogic {
     const hasTabs = isMobile && !s.reelsOpen && !(pg === 'cart' && hasCart);
     const hasTestsBar = isMobile && !isWide && pg === 'tests' && hasCart && !s.reelsOpen;
     const hasCartBar = isMobile && pg === 'cart' && hasCart && !s.reelsOpen;
-    const hasFab = !s.reelsOpen && pg !== 'cart' && !hasTestsBar && !(isMobile && pg === 'home' && !s.scrolled);
+    // The WhatsApp button always floats (except over the reels), above whichever bar is at the bottom.
+    const hasFab = !s.reelsOpen;
     // s.kb: a text field is focused on a phone, so the keyboard is up; bottom bars step aside.
     const showTabs = hasTabs && !s.kb, showTestsBar = hasTestsBar && !s.kb, showCartBar = hasCartBar && !s.kb, showFab = hasFab && !s.kb;
     // On mobile the WhatsApp button sits above the tab bar, so clear both.
@@ -1836,7 +1828,7 @@ class Component extends DCLogic {
       openReels0: () => this.openReels(0), hasCart, cartEmpty: !hasCart, cartCount, profileCount: n,
       locOpen: s.locOpen, toggleLoc: () => this.setState(st => ({ locOpen: !st.locOpen })),
       locLabel: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name,
-      postPh: RG.postPh, addrPh: 'House / flat no., street, landmark, ' + RG.postLabel.toLowerCase(), regionPlace: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name, regionAddr: (this.props || {})[RG.addrProp] || RG.addrDef, relocate: () => this.locate(),
+      regionPlace: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name, regionAddr: (this.props || {})[RG.addrProp] || RG.addrDef, relocate: () => this.locate(),
       ...(() => {
         const regs = Object.values(C.REGIONS), k = (s.tick || 0) % regs.length;
         const rows = regs.map((r, i) => { const on = i === k; return { dotW: on ? '20px' : '6px', dotBg: on ? '#3B2C9E' : '#D4D1E6', name: r.name, code: r.code === 'SA' ? 'KSA' : r.code, go: () => this.setState({ tick: i }) }; });
@@ -1899,22 +1891,21 @@ class Component extends DCLogic {
       }),
       cartLines, pickHome: () => this.setState({ mode: 'home' }), pickWalk: () => this.setState({ mode: 'walkin' }),
       modeHome: modeStyle(isHomeMode), modeWalk: modeStyle(!isHomeMode), isHomeMode, isWalkMode: !isHomeMode,
-      form: s.form, err: s.errors, dial: RG.dial, phPh: RG.phPh, phPad: (RG.dial.length * 10 + 24) + 'px', idLabel: RG.idLabel + (RG.idOpt ? ' (optional)' : ''), idPh: RG.idPh,
-      on: { name: setF('name'), phone: setF('phone', digits(RG.phLen)), nid: setF('nid', digits(RG.idLen)), age: setF('age', digits(3)), address: setF('address') },
-      bc: { name: bcOf('name'), phone: bcOf('phone'), nid: bcOf('nid'), age: bcOf('age'), gender: bcOf('gender'), address: bcOf('address') },
+      form: s.form, err: s.errors, dial: RG.dial, phPh: RG.phPh, phPad: (RG.dial.length * 10 + 24) + 'px',
+      on: { name: setF('name'), phone: setF('phone', digits(RG.phLen)), age: setF('age', digits(3)) },
+      bc: { name: bcOf('name'), phone: bcOf('phone'), age: bcOf('age'), gender: bcOf('gender') },
       genders: ['Male', 'Female', 'Other'].map(g => { const a = s.form.gender === g; return { label: g, pick: () => this.setState(st => ({ form: { ...st.form, gender: g }, errors: { ...st.errors, gender: undefined } })), bg: a ? '#fff' : 'transparent', fg: a ? '#3B2C9E' : '#5D5A7A', sh: a ? '0 2px 8px -2px rgba(22,19,58,0.2)' : 'none' }; }),
-      slotTitle: isHomeMode ? 'Collection date & time' : 'Visit date & time', placeTitle: isHomeMode ? 'Collection address' : 'Visit our centre',
+      slotTitle: isHomeMode ? 'Collection date & time' : 'Visit date & time',
       days: days.map(d => { const a = s.form.date === d.key; return { top: d.top, num: d.num, mon: d.mon, pick: () => this.setState(st => ({ form: { ...st.form, date: d.key, slot: d.i === 0 ? '' : st.form.slot }, errors: { ...st.errors, date: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : '#fff', fg: a ? '#fff' : '#16133A', sub: a ? 'rgba(255,255,255,0.8)' : '#5D5A7A', sh: a ? '0 12px 24px -12px rgba(59,44,158,0.85)' : 'none', lift: a ? 'translateY(-2px)' : 'none' }; }),
       slots, slotPicked: !!(pickedDay && s.form.slot), slotSummary: pickedDay ? pickedDay.full + ' · ' + s.form.slot : '', asidePos: isWide ? 'sticky' : 'static',
       bill: { priceF: this.money(b.price), hcF: b.hc ? this.money(b.hc) : 'FREE', hcColor: b.hc ? '#16133A' : '#0E7350', payF: this.money(b.pay) },
       confirm: () => this.confirm(),
       isBooked: !!s.booked, bookedUrl: s.booked ? s.booked.url : '#',
       finishBooked: () => { this.setCart(() => []); this.setState({ booked: null }); this.go('home'); },
-      footTests: popularTests.slice(0, 5).map(t => ({ label: t.short + ' test', go: () => this.openTest(t.id) })),
       toTop: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
       footLinks:[['Home', 'home'], ['All tests', 'tests'], ['Health profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p) })),
       spacerH, showTabs, showTestsBar, showCartBar, tab: { home: tabC('home'), tests: tabC('tests'), profiles: tabC('profiles'), cart: tabC('cart') },
-      showFab, fabBottom: isMobile ? 'calc(92px + ' + barPad + ')' : '24px', fabAway: isMobile && s.fabAway ? 'translate(calc(100% + 24px), var(--vv-drop, 0px))' : 'translate(0, var(--vv-drop, 0px))',
+      showFab, fabBottom: !isMobile ? '24px' : 'calc(' + (hasCartBar ? '104px' : hasTestsBar ? (ms.length ? '214px' : '160px') : '92px') + ' + ' + barPad + ')', fabAway: 'translate(0, var(--vv-drop, 0px))',
       hasToast: !!s.toast, toast: s.toast, toastIcon: /^Removed/.test(s.toast) ? 'minus' : 'check', toastDot: /^Removed/.test(s.toast) ? 'rgba(255,255,255,0.18)' : '#22B463', toastTop: 'calc(' + (s.reelsOpen ? '72px' : '14px') + ' + env(safe-area-inset-top))',
       reelsOpen: s.reelsOpen, reels, reelsRef: this.reelsRef, onReelsScroll: e => this.onReelsScroll(e), closeReels: () => this.closeReels(),
       stageW: isDesktop ? Math.round(stH * 9 / 16) + 'px' : '100%', stageH: isDesktop ? stH + 'px' : '100%', stageR: isDesktop ? '28px' : '0px',

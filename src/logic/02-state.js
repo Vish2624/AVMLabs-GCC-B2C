@@ -9,7 +9,7 @@
     cart = Array.isArray(cart) ? cart.filter(ok) : [];
     return { page: 'home', w: window.innerWidth, h: window.innerHeight, cart, sMode: 'tests', q: '', qFocus: false, cat: 'all', tq: '', pf: 'all', hero: 0,
       reelsOpen: false, reelIdx: 0, slides: {}, hint: false, mode: 'home',
-      form: { name: '', phone: '', nid: '', age: '', gender: '', date: '', slot: '', address: '' }, errors: {}, booked: null,
+      form: { name: '', phone: '', age: '', gender: '', date: '', slot: '' }, errors: {}, booked: null,
       locOpen: false, toast: '', pop: null, ...this.fromHash() };
   }
 

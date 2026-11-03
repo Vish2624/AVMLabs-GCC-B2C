@@ -43,7 +43,7 @@
       const pc = C.CATS.find(c => c.id === t.cat[0]) || C.CATS[0];
       return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, tatH: this.tat(t).replace('hrs', 'hours'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), cardBg: 'radial-gradient(75% 70% at 100% 0%, #F0EDFE 0%, rgba(240,237,254,0) 65%), radial-gradient(55% 50% at 0% 100%, rgba(255,236,240,0.55) 0%, rgba(255,236,240,0) 70%), #FFFFFF', tat: this.tat(t), fasting: t.fasting,
         open: () => this.openTest(t.id),
-        priceF: cost(t), inCart: inC, notInCart: !inC && !cov, covered: !!cov, coveredBy: cov ? 'In ' + cov.name : '', toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); }, stop: e => e && e.stopPropagation() };
+        priceF: cost(t), priceNum: this.costParts(t).num, priceCur: this.costParts(t).cur, inCart: inC, notInCart: !inC && !cov, covered: !!cov, coveredBy: cov ? 'In ' + cov.name : '', toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); }, stop: e => e && e.stopPropagation() };
     };
     let td = null;
     if (pg === 'test' && s.testId && D.T[s.testId]) {
@@ -141,7 +141,8 @@
     const hasTabs = isMobile && !s.reelsOpen && !(pg === 'cart' && hasCart);
     const hasTestsBar = isMobile && !isWide && pg === 'tests' && hasCart && !s.reelsOpen;
     const hasCartBar = isMobile && pg === 'cart' && hasCart && !s.reelsOpen;
-    const hasFab = !s.reelsOpen && pg !== 'cart' && !hasTestsBar && !(isMobile && pg === 'home' && !s.scrolled);
+    // The WhatsApp button always floats (except over the reels), above whichever bar is at the bottom.
+    const hasFab = !s.reelsOpen;
     // s.kb: a text field is focused on a phone, so the keyboard is up; bottom bars step aside.
     const showTabs = hasTabs && !s.kb, showTestsBar = hasTestsBar && !s.kb, showCartBar = hasCartBar && !s.kb, showFab = hasFab && !s.kb;
     // On mobile the WhatsApp button sits above the tab bar, so clear both.
@@ -155,7 +156,7 @@
       openReels0: () => this.openReels(0), hasCart, cartEmpty: !hasCart, cartCount, profileCount: n,
       locOpen: s.locOpen, toggleLoc: () => this.setState(st => ({ locOpen: !st.locOpen })),
       locLabel: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name,
-      postPh: RG.postPh, addrPh: 'House / flat no., street, landmark, ' + RG.postLabel.toLowerCase(), regionPlace: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name, regionAddr: (this.props || {})[RG.addrProp] || RG.addrDef, relocate: () => this.locate(),
+      regionPlace: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name, regionAddr: (this.props || {})[RG.addrProp] || RG.addrDef, relocate: () => this.locate(),
       ...(() => {
         const regs = Object.values(C.REGIONS), k = (s.tick || 0) % regs.length;
         const rows = regs.map((r, i) => { const on = i === k; return { dotW: on ? '20px' : '6px', dotBg: on ? '#3B2C9E' : '#D4D1E6', name: r.name, code: r.code === 'SA' ? 'KSA' : r.code, go: () => this.setState({ tick: i }) }; });
@@ -218,22 +219,21 @@
       }),
       cartLines, pickHome: () => this.setState({ mode: 'home' }), pickWalk: () => this.setState({ mode: 'walkin' }),
       modeHome: modeStyle(isHomeMode), modeWalk: modeStyle(!isHomeMode), isHomeMode, isWalkMode: !isHomeMode,
-      form: s.form, err: s.errors, dial: RG.dial, phPh: RG.phPh, phPad: (RG.dial.length * 10 + 24) + 'px', idLabel: RG.idLabel + (RG.idOpt ? ' (optional)' : ''), idPh: RG.idPh,
-      on: { name: setF('name'), phone: setF('phone', digits(RG.phLen)), nid: setF('nid', digits(RG.idLen)), age: setF('age', digits(3)), address: setF('address') },
-      bc: { name: bcOf('name'), phone: bcOf('phone'), nid: bcOf('nid'), age: bcOf('age'), gender: bcOf('gender'), address: bcOf('address') },
+      form: s.form, err: s.errors, dial: RG.dial, phPh: RG.phPh, phPad: (RG.dial.length * 10 + 24) + 'px',
+      on: { name: setF('name'), phone: setF('phone', digits(RG.phLen)), age: setF('age', digits(3)) },
+      bc: { name: bcOf('name'), phone: bcOf('phone'), age: bcOf('age'), gender: bcOf('gender') },
       genders: ['Male', 'Female', 'Other'].map(g => { const a = s.form.gender === g; return { label: g, pick: () => this.setState(st => ({ form: { ...st.form, gender: g }, errors: { ...st.errors, gender: undefined } })), bg: a ? '#fff' : 'transparent', fg: a ? '#3B2C9E' : '#5D5A7A', sh: a ? '0 2px 8px -2px rgba(22,19,58,0.2)' : 'none' }; }),
-      slotTitle: isHomeMode ? 'Collection date & time' : 'Visit date & time', placeTitle: isHomeMode ? 'Collection address' : 'Visit our centre',
+      slotTitle: isHomeMode ? 'Collection date & time' : 'Visit date & time',
       days: days.map(d => { const a = s.form.date === d.key; return { top: d.top, num: d.num, mon: d.mon, pick: () => this.setState(st => ({ form: { ...st.form, date: d.key, slot: d.i === 0 ? '' : st.form.slot }, errors: { ...st.errors, date: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : '#fff', fg: a ? '#fff' : '#16133A', sub: a ? 'rgba(255,255,255,0.8)' : '#5D5A7A', sh: a ? '0 12px 24px -12px rgba(59,44,158,0.85)' : 'none', lift: a ? 'translateY(-2px)' : 'none' }; }),
       slots, slotPicked: !!(pickedDay && s.form.slot), slotSummary: pickedDay ? pickedDay.full + ' · ' + s.form.slot : '', asidePos: isWide ? 'sticky' : 'static',
       bill: { priceF: this.money(b.price), hcF: b.hc ? this.money(b.hc) : 'FREE', hcColor: b.hc ? '#16133A' : '#0E7350', payF: this.money(b.pay) },
       confirm: () => this.confirm(),
       isBooked: !!s.booked, bookedUrl: s.booked ? s.booked.url : '#',
       finishBooked: () => { this.setCart(() => []); this.setState({ booked: null }); this.go('home'); },
-      footTests: popularTests.slice(0, 5).map(t => ({ label: t.short + ' test', go: () => this.openTest(t.id) })),
       toTop: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
       footLinks:[['Home', 'home'], ['All tests', 'tests'], ['Health profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p) })),
       spacerH, showTabs, showTestsBar, showCartBar, tab: { home: tabC('home'), tests: tabC('tests'), profiles: tabC('profiles'), cart: tabC('cart') },
-      showFab, fabBottom: isMobile ? 'calc(92px + ' + barPad + ')' : '24px', fabAway: isMobile && s.fabAway ? 'translate(calc(100% + 24px), var(--vv-drop, 0px))' : 'translate(0, var(--vv-drop, 0px))',
+      showFab, fabBottom: !isMobile ? '24px' : 'calc(' + (hasCartBar ? '104px' : hasTestsBar ? (ms.length ? '214px' : '160px') : '92px') + ' + ' + barPad + ')', fabAway: 'translate(0, var(--vv-drop, 0px))',
       hasToast: !!s.toast, toast: s.toast, toastIcon: /^Removed/.test(s.toast) ? 'minus' : 'check', toastDot: /^Removed/.test(s.toast) ? 'rgba(255,255,255,0.18)' : '#22B463', toastTop: 'calc(' + (s.reelsOpen ? '72px' : '14px') + ' + env(safe-area-inset-top))',
       reelsOpen: s.reelsOpen, reels, reelsRef: this.reelsRef, onReelsScroll: e => this.onReelsScroll(e), closeReels: () => this.closeReels(),
       stageW: isDesktop ? Math.round(stH * 9 / 16) + 'px' : '100%', stageH: isDesktop ? stH + 'px' : '100%', stageR: isDesktop ? '28px' : '0px',
