@@ -64,6 +64,8 @@
   centreLoop() {
     const step = () => {
       this._cRaf = requestAnimationFrame(step);
+      // Paused under the reels: measuring the page every frame would make reel swipes stutter on phones.
+      if (this.state.reelsOpen) return;
       const strip = document.querySelector('[data-centre-strip]'); if (!strip) return;
       const r = strip.getBoundingClientRect(); if (r.bottom < 0 || r.top > window.innerHeight) return;
       const mid = r.left + r.width / 2;
@@ -91,7 +93,7 @@
     const mode = this.state.sMode === 'tests' ? 'tests' : 'profiles';
     const t = this._ty || (this._ty = { mode, i: 0, n: 0, del: false });
     if (t.mode !== mode) Object.assign(t, { mode, i: 0, n: 0, del: false });
-    if (!els.length) { this._tyT = setTimeout(() => this.typeLoop(), 500); return; }
+    if (!els.length || this.state.reelsOpen) { this._tyT = setTimeout(() => this.typeLoop(), 500); return; }
     const terms = Component.TYPE_TERMS[mode], word = terms[t.i % terms.length];
     let wait;
     if (!t.del) { t.n++; if (t.n >= word.length) { t.n = word.length; t.del = true; wait = 1700; } else wait = 75 + Math.random() * 55; }

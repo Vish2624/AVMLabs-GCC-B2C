@@ -31,7 +31,8 @@
   track() { const el = this.scroller(); return el && el.querySelector('[data-reel-track]'); }
   applyTrack(i, anim, px) {
     const t = this.track(); if (!t) return;
-    t.style.transition = anim ? 'transform .45s cubic-bezier(.2,.85,.25,1)' : 'none';
+    // Even ease-out: a sharper curve jumps most of the way in the first frames, then crawls, which reads as stuck.
+    t.style.transition = anim ? 'transform .4s cubic-bezier(.22,.61,.36,1)' : 'none';
     t.style.transform = px == null ? 'translate3d(0,' + (-i * 100) + '%,0)' : 'translate3d(0,' + px + 'px,0)';
   }
   goReel(i) {
@@ -42,7 +43,7 @@
     this.armHint();
     // commit to state only after the slide finishes — re-rendering mid-animation causes stutter
     clearTimeout(this._gT);
-    this._gT = setTimeout(() => { if (this.state.reelIdx !== this._ri) this.setState({ reelIdx: this._ri }); }, 480);
+    this._gT = setTimeout(() => { if (this.state.reelIdx !== this._ri) this.setState({ reelIdx: this._ri }); }, 430);
     return;
   }
   goSlide(i, k) {
