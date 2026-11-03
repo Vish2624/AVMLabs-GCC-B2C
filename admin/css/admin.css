@@ -104,6 +104,10 @@ textarea {
 .appbar .logo {
   display: flex;
   flex: none;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
 }
 .appbar .logo img {
   height: 68px;

@@ -4,7 +4,8 @@
     return { photoSrc: 'https://images.unsplash.com/photo-' + p[0] + '?auto=format&fit=crop&w=800&q=80', photoCredit: 'Photo by ' + p[1] + ' on Unsplash', photoHref: 'https://unsplash.com/@' + p[2] };
   }
   wa(msg) { return 'https://wa.me/' + this.opts().wa + '?text=' + encodeURIComponent(msg); }
-  openWA(msg) { window.open(this.wa(msg), '_blank', 'noopener'); }
+  // Opens WhatsApp with the message filled in. If the browser blocks the new tab (some phones do), go there directly.
+  openWA(msg, isUrl) { const url = isUrl ? msg : this.wa(msg); if (!window.open(url, '_blank', 'noopener')) window.location.href = url; }
   go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); this.setHash(page === 'home' ? '' : page); }
   openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); this.setHash('test/' + id); }
   // The current page lives in the URL hash (#tests, #cart, #test/vitd…) so a refresh reopens it.

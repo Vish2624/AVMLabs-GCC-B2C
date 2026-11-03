@@ -161,8 +161,8 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
       </sc-if>
       <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
         <button onClick="{{ toggleLoc }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:2px 0;border:none;background:none;cursor:pointer;color:#16133A;text-align:left;min-width:0">
-          <span style="font-size:14px;font-weight:800;letter-spacing:-0.01em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:30vw">{{ locCity }}</span>
-          <span style="display:flex;align-items:center;gap:2px;font-size:10.5px;font-weight:500;color:#6F6C8A;white-space:nowrap">Select location<avm-i n="chevron-down" s="11"></avm-i></span>
+          <span style="font-size:12px;font-weight:800;letter-spacing:-0.01em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:24vw">{{ locCity }}</span>
+          <span style="display:flex;align-items:center;gap:2px;font-size:9.5px;font-weight:500;color:#6F6C8A;white-space:nowrap">Select location<avm-i n="chevron-down" s="10"></avm-i></span>
         </button>
       </sc-if>
       <sc-if value="{{ locOpen }}" hint-placeholder-val="{{ false }}">
@@ -293,7 +293,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
     </div>
 
     <div style="flex:1.35 1 520px;min-width:0;display:flex;flex-direction:column;gap:clamp(16px,2.6vw,36px)">
-      <div style="flex:1 1 auto;display:flex;flex-direction:column;position:relative;border-radius:30px;overflow:hidden;background:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.95);box-shadow:0 30px 60px -36px rgba(22,19,58,0.45)">
+      <div onTouchStart="{{ heroTS }}" onTouchEnd="{{ heroTE }}" style="flex:1 1 auto;display:flex;flex-direction:column;position:relative;border-radius:30px;overflow:hidden;touch-action:pan-y;background:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.95);box-shadow:0 30px 60px -36px rgba(22,19,58,0.45)">
         <div style="flex:1 1 auto;display:flex;transition:transform .6s cubic-bezier(.2,.8,.2,1);transform:{{ heroX }}">
           <div style="flex:0 0 100%;min-width:0;display:flex;padding:10px"><div data-hero-card="1" style="flex:1;min-width:0;display:flex;flex-wrap:wrap;border-radius:22px;overflow:hidden;box-shadow:0 18px 40px -24px rgba(22,19,58,0.5)">
             <div data-hero-text="1" style="flex:1 1 250px;min-width:0;min-height:300px;padding:clamp(20px,3vw,30px);background:linear-gradient(150deg,#2A1F7A,#5B46D6);color:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:20px;position:relative;overflow:hidden">
@@ -1038,17 +1038,9 @@ class Component extends DCLogic {
     'profile-bg-men': ['1568602471122-7832951cc4c5', 'Christian Buehner', 'christianbuehner'],
     'profile-bg-diabetes': ['1683727186226-910f31a9da45', 'Sweet Life', 'sweetlifediabetes'],
     'profile-bg-fullbody': ['1512621776951-a57141f2eefd', 'Anna Pelzer', 'annapelzer'],
-    'centre-photo-1': ['1519494026892-80bbd2d6fd0d', 'Martha Dominguez de Gouveia', 'm_dominguez_marketing'],
-    'centre-photo-2': ['1762625570087-6d98fca29531', 'Amy Vosters', 'amyvosters'],
-    'centre-photo-3': ['1614935151651-0bea6508db6b', 'Julia Koblitz', 'jkoblitz'],
-    'centre-photo-4': ['1704455306925-1401c3012117', 'Kari Bjorn Photography', 'karibjorn'],
-    'centre-photo-5': ['1758685848543-5c8ba81bc822', 'Vitaly Gariev', 'silverkblack'],
-    'centre-photo-6': ['1639772823849-6efbd173043c', 'Akram Huseyn', 'akramhuseyn'],
-    'centre-photo-7': ['1758691462863-9e1b8a863140', 'Vitaly Gariev', 'silverkblack'],
-    'centre-photo-8': ['1602052577122-f73b9710adba', 'Trnava University', 'trnavskauni'],
-    'centre-photo-9': ['1777269749032-d8d458ae594d', 'Tasha Kostyuk', 'tashakostyuk'],
-    'centre-photo-10': ['1576091160550-2173dba999ef', 'National Cancer Institute', 'nci'],
   };
+  // Our Bahrain centre: assets/centres/bahrain-<file>.jpg, [file, caption].
+  static CENTRE_PHOTOS = [['reception', 'Reception'], ['blood-collection', 'Blood collection unit'], ['waiting-area', 'Waiting area'], ['entrance', 'Collection centre entrance']];
   static SLOTS = [['6–8 AM', 6], ['8–10 AM', 8], ['10–12 PM', 10], ['12–2 PM', 12], ['4–6 PM', 16], ['6–8 PM', 18]];
   static PF = [['all', 'All'], ['wellness', 'Wellness'], ['vitamins', 'Vitamins'], ['thyroid', 'Thyroid'], ['women', 'Women'], ['men', 'Men'], ['diabetes', 'Diabetes']];
 
@@ -1163,7 +1155,8 @@ class Component extends DCLogic {
     return { photoSrc: 'https://images.unsplash.com/photo-' + p[0] + '?auto=format&fit=crop&w=800&q=80', photoCredit: 'Photo by ' + p[1] + ' on Unsplash', photoHref: 'https://unsplash.com/@' + p[2] };
   }
   wa(msg) { return 'https://wa.me/' + this.opts().wa + '?text=' + encodeURIComponent(msg); }
-  openWA(msg) { window.open(this.wa(msg), '_blank', 'noopener'); }
+  // Opens WhatsApp with the message filled in. If the browser blocks the new tab (some phones do), go there directly.
+  openWA(msg, isUrl) { const url = isUrl ? msg : this.wa(msg); if (!window.open(url, '_blank', 'noopener')) window.location.href = url; }
   go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); this.setHash(page === 'home' ? '' : page); }
   openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); this.setHash('test/' + id); }
   // The current page lives in the URL hash (#tests, #cart, #test/vitd…) so a refresh reopens it.
@@ -1282,6 +1275,34 @@ class Component extends DCLogic {
     return e;
   }
 
+  // Message for a quick "Book now" (cards, reels, test page, footer): what is being booked with price and prep,
+  // where, and any patient details already typed into the cart form.
+  bookWA(items) {
+    const D = this.db(), inr = x => this.inr(x), RG = this.region(), s = this.state, f = s.form;
+    const pct = (mrp, price) => { const a = this.loc(mrp), b = this.loc(price); return a > b ? Math.round((1 - b / a) * 100) : 0; };
+    const list = items.map(c => ({ c, x: c.type === 'profile' ? D.PM[c.id] : D.T[c.id] })).filter(i => i.x);
+    if (!list.length) return;
+    const many = list.length > 1, lines = ['Hi AVM Labs! I would like to book:', ''];
+    let total = 0, fasting = false, tat = '';
+    list.forEach(({ c, x }, i) => {
+      const p = pct(x.mrp, x.price);
+      total += this.loc(x.price); fasting = fasting || !!x.fasting;
+      if (!tat || parseFloat(x.tat) > parseFloat(tat)) tat = x.tat;
+      lines.push((many ? (i + 1) + '. ' : '') + '*' + x.name + '*' + (c.type === 'profile' ? ' (Health profile)' : ' (Lab test)'));
+      if (c.type === 'profile') lines.push('   Includes ' + x.ts.length + ' tests: ' + x.ts.map(t => t.short).join(', '));
+      else lines.push('   ' + x.params + ' parameter' + (x.params > 1 ? 's' : ''));
+      lines.push('   Price: ' + inr(x.price) + (p ? ' (MRP ' + inr(x.mrp) + ', ' + p + '% off)' : ''));
+    });
+    if (many) lines.push('', '*Total:* ' + this.money(total));
+    lines.push('', '*Reports:* within ' + (tat || '24 hrs'), '*Preparation:* ' + (fasting ? '10–12 hrs fasting needed' : 'No fasting needed'),
+      '*Location:* ' + ((s.region && s.region.city ? s.region.city + ', ' : '') + RG.name),
+      '*Collection:* ' + (s.mode === 'walkin' ? 'Walk-in at centre' : 'Home sample collection'));
+    if (f.name.trim()) lines.push('*Patient:* ' + [f.name.trim(), f.age, f.gender].filter(Boolean).join(', '));
+    if (RG.phRe.test(f.phone)) lines.push('*Mobile:* ' + RG.dial + ' ' + f.phone);
+    lines.push('', 'Please share the available slots. Thank you!');
+    this.openWA(lines.join('\n'));
+  }
+
   confirm() {
     const b = this.bill(); if (!b.items.length) return;
     const e = this.validate();
@@ -1299,7 +1320,7 @@ class Component extends DCLogic {
     lines.push('*To pay: ' + this.money(b.pay) + '*');
     const url = this.wa(lines.join('\n'));
     this.setState({ booked: { url } });
-    window.open(url, '_blank', 'noopener');
+    this.openWA(url, true);
   }
 
   openReels(i) {
@@ -1605,10 +1626,10 @@ class Component extends DCLogic {
       const ps = D.inProf[t.id] || [];
       td = { ...vm, aka: dt[0], hasAka: !!dt[0], about: dt[1], params: dt[2].map((n, k) => ({ n: k + 1, name: n })), paramsTitle: t.params + (t.params > 1 ? ' parameters' : ' parameter'),
         sample: dt[3], sampleIcon: dt[3] === 'Urine' ? 'flask-conical' : 'droplet', fastTitle: t.fasting ? 'Fasting required' : 'No fasting required', fastSub: t.fasting ? '10–12 hrs overnight, water is fine' : 'Eat and drink as usual',
-        reportT: 'Report in ' + t.tat, book: () => this.openWA("Hi AVM Labs! I'd like to book the " + t.name + ' test.'),
+        reportT: 'Report in ' + t.tat, book: () => this.bookWA([{ type: 'test', id: t.id }]),
         profs: ps.map(p => ({ name: p.name, meta: p.tests.length + ' tests · ' + inr(p.price), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.i) })), hasProfs: ps.length > 0 };
     }
-    const book = p => () => this.openWA("Hi AVM Labs! I'd like to book the " + p.name + ' profile.');
+    const book = p => () => this.bookWA([{ type: 'profile', id: p.id }]);
 
     const nav = [['Home', 'home'], ['Tests', 'tests'], ['Profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p), bg: pgN === p ? '#EFEDFB' : 'transparent', fg: pgN === p ? '#3B2C9E' : '#16133A' }));
     const segOn = { bg: '#fff', fg: '#16133A', sh: '0 2px 8px -2px rgba(22,19,58,0.2)' }, segOff = { bg: 'transparent', fg: '#5D5A7A', sh: 'none' };
@@ -1693,8 +1714,10 @@ class Component extends DCLogic {
       ...(() => {
         const regs = Object.values(C.REGIONS), k = (s.tick || 0) % regs.length;
         const rows = regs.map((r, i) => { const on = i === k; return { dotW: on ? '20px' : '6px', dotBg: on ? '#3B2C9E' : '#D4D1E6', name: r.name, code: r.code === 'SA' ? 'KSA' : r.code, go: () => this.setState({ tick: i }) }; });
-        // 10 centre photo slots; the list is doubled so the marquee loops seamlessly.
-        const all = Array.from({ length: 10 }, (_, i) => ({ id: 'centre-photo-' + (i + 1), ...this.photo('centre-photo-' + (i + 1)), ph: 'Centre photo ' + (i + 1) }));
+        // Photos of our Bahrain centre (assets/centres/), repeated to at least 6 tiles so half the strip is wider than the
+        // screen; the list is then doubled so the marquee loops seamlessly.
+        const one = C.CENTRE_PHOTOS.map(([file, ph]) => ({ photoSrc: './assets/centres/bahrain-' + file + '.jpg', photoCredit: '', photoHref: '', ph }));
+        const all = Array.from({ length: Math.ceil(6 / one.length) * one.length }, (_, i) => ({ ...one[i % one.length], id: 'centre-' + i }));
         return { centreRows: rows, centreY: 'translateY(' + (-k * 46) + 'px)', centreCount: regs.length, centreShots: all.concat(all) };
       })(),
       // Hero slides feature these profiles by id; they may be unpublished or reordered in the admin.
@@ -1710,11 +1733,15 @@ class Component extends DCLogic {
       tileNext: () => { const el = document.querySelector('[data-tile-row]'); if (!el) return; const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4; el.scrollTo({ left: end ? 0 : el.scrollLeft + Math.max(240, el.clientWidth * 0.75), behavior: 'smooth' }); }, cats, catNext: () => { const el = document.querySelector('[data-cat-row]'); if (!el) return; const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4; el.scrollTo({ left: end ? 0 : el.scrollLeft + Math.max(200, el.clientWidth * 0.7), behavior: 'smooth' }); },
       heroX: 'translateX(-' + (s.hero * 100) + '%)', heroPrev: () => this.setState(st => ({ hero: (st.hero + 2) % 3 })), heroNext: () => this.setState(st => ({ hero: (st.hero + 1) % 3 })),
       heroDots: [0, 1, 2].map(i => ({ w: s.hero === i ? '26px' : '8px', bg: s.hero === i ? '#3B2C9E' : '#D4D1E6', go: () => this.setState({ hero: i }) })),
+      // Swipe the hero card left/right; a mostly vertical drag is left to scroll the page.
+      heroTS: e => { const t = e.touches[0]; this._hx = t.clientX; this._hy = t.clientY; },
+      heroTE: e => { const t = e.changedTouches[0], dx = t.clientX - (this._hx || 0), dy = t.clientY - (this._hy || 0); if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) this.setState(st => ({ hero: (st.hero + (dx < 0 ? 1 : 2)) % 3 })); },
       heroGo1: () => (heroW ? this.openReels(heroW.i) : this.go('profiles')), heroGo2: () => (heroV ? this.openReels(heroV.i) : this.go('profiles')),
       directions: () => window.open('https://www.google.com/maps/search/?api=1&query=AVM+Labs', '_blank', 'noopener'),
-      waGeneral: () => this.openWA("Hi AVM Labs! I'd like to know more about your tests and profiles."),
+      // With items in the cart, the footer/general WhatsApp buttons send the cart as a booking; otherwise a general enquiry.
+      waGeneral: () => (s.cart.length ? this.bookWA(s.cart) : this.openWA("Hi AVM Labs! I'd like to know more about your tests and profiles.")),
       // Mobile header + home: location block, search toggle, and the Tests/Profiles icon row.
-      locCity: (s.region && s.region.city) || RG.name, logoH: isDesktop ? 'clamp(60px,6.8vw,80px)' : '44px', spacerFlex: isDesktop ? '1' : '0',
+      locCity: (s.region && s.region.city) || RG.name, logoH: isDesktop ? 'clamp(60px,6.8vw,80px)' : '54px', spacerFlex: isDesktop ? '1' : '0',
       mSearchOpen: isMobile && !!s.mSearch, mSearchBg: s.mSearch ? '#EFEDFB' : '#fff', mSearchIcon: s.mSearch ? 'x' : 'search', mSearchText: s.mSearch ? 'Close' : 'Search tests',
       toggleMSearch: () => {
         const open = !s.mSearch;

@@ -38,10 +38,10 @@
       const ps = D.inProf[t.id] || [];
       td = { ...vm, aka: dt[0], hasAka: !!dt[0], about: dt[1], params: dt[2].map((n, k) => ({ n: k + 1, name: n })), paramsTitle: t.params + (t.params > 1 ? ' parameters' : ' parameter'),
         sample: dt[3], sampleIcon: dt[3] === 'Urine' ? 'flask-conical' : 'droplet', fastTitle: t.fasting ? 'Fasting required' : 'No fasting required', fastSub: t.fasting ? '10–12 hrs overnight, water is fine' : 'Eat and drink as usual',
-        reportT: 'Report in ' + t.tat, book: () => this.openWA("Hi AVM Labs! I'd like to book the " + t.name + ' test.'),
+        reportT: 'Report in ' + t.tat, book: () => this.bookWA([{ type: 'test', id: t.id }]),
         profs: ps.map(p => ({ name: p.name, meta: p.tests.length + ' tests · ' + inr(p.price), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.i) })), hasProfs: ps.length > 0 };
     }
-    const book = p => () => this.openWA("Hi AVM Labs! I'd like to book the " + p.name + ' profile.');
+    const book = p => () => this.bookWA([{ type: 'profile', id: p.id }]);
 
     const nav = [['Home', 'home'], ['Tests', 'tests'], ['Profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p), bg: pgN === p ? '#EFEDFB' : 'transparent', fg: pgN === p ? '#3B2C9E' : '#16133A' }));
     const segOn = { bg: '#fff', fg: '#16133A', sh: '0 2px 8px -2px rgba(22,19,58,0.2)' }, segOff = { bg: 'transparent', fg: '#5D5A7A', sh: 'none' };
@@ -126,8 +126,10 @@
       ...(() => {
         const regs = Object.values(C.REGIONS), k = (s.tick || 0) % regs.length;
         const rows = regs.map((r, i) => { const on = i === k; return { dotW: on ? '20px' : '6px', dotBg: on ? '#3B2C9E' : '#D4D1E6', name: r.name, code: r.code === 'SA' ? 'KSA' : r.code, go: () => this.setState({ tick: i }) }; });
-        // 10 centre photo slots; the list is doubled so the marquee loops seamlessly.
-        const all = Array.from({ length: 10 }, (_, i) => ({ id: 'centre-photo-' + (i + 1), ...this.photo('centre-photo-' + (i + 1)), ph: 'Centre photo ' + (i + 1) }));
+        // Photos of our Bahrain centre (assets/centres/), repeated to at least 6 tiles so half the strip is wider than the
+        // screen; the list is then doubled so the marquee loops seamlessly.
+        const one = C.CENTRE_PHOTOS.map(([file, ph]) => ({ photoSrc: './assets/centres/bahrain-' + file + '.jpg', photoCredit: '', photoHref: '', ph }));
+        const all = Array.from({ length: Math.ceil(6 / one.length) * one.length }, (_, i) => ({ ...one[i % one.length], id: 'centre-' + i }));
         return { centreRows: rows, centreY: 'translateY(' + (-k * 46) + 'px)', centreCount: regs.length, centreShots: all.concat(all) };
       })(),
       // Hero slides feature these profiles by id; they may be unpublished or reordered in the admin.
@@ -143,11 +145,15 @@
       tileNext: () => { const el = document.querySelector('[data-tile-row]'); if (!el) return; const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4; el.scrollTo({ left: end ? 0 : el.scrollLeft + Math.max(240, el.clientWidth * 0.75), behavior: 'smooth' }); }, cats, catNext: () => { const el = document.querySelector('[data-cat-row]'); if (!el) return; const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4; el.scrollTo({ left: end ? 0 : el.scrollLeft + Math.max(200, el.clientWidth * 0.7), behavior: 'smooth' }); },
       heroX: 'translateX(-' + (s.hero * 100) + '%)', heroPrev: () => this.setState(st => ({ hero: (st.hero + 2) % 3 })), heroNext: () => this.setState(st => ({ hero: (st.hero + 1) % 3 })),
       heroDots: [0, 1, 2].map(i => ({ w: s.hero === i ? '26px' : '8px', bg: s.hero === i ? '#3B2C9E' : '#D4D1E6', go: () => this.setState({ hero: i }) })),
+      // Swipe the hero card left/right; a mostly vertical drag is left to scroll the page.
+      heroTS: e => { const t = e.touches[0]; this._hx = t.clientX; this._hy = t.clientY; },
+      heroTE: e => { const t = e.changedTouches[0], dx = t.clientX - (this._hx || 0), dy = t.clientY - (this._hy || 0); if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) this.setState(st => ({ hero: (st.hero + (dx < 0 ? 1 : 2)) % 3 })); },
       heroGo1: () => (heroW ? this.openReels(heroW.i) : this.go('profiles')), heroGo2: () => (heroV ? this.openReels(heroV.i) : this.go('profiles')),
       directions: () => window.open('https://www.google.com/maps/search/?api=1&query=AVM+Labs', '_blank', 'noopener'),
-      waGeneral: () => this.openWA("Hi AVM Labs! I'd like to know more about your tests and profiles."),
+      // With items in the cart, the footer/general WhatsApp buttons send the cart as a booking; otherwise a general enquiry.
+      waGeneral: () => (s.cart.length ? this.bookWA(s.cart) : this.openWA("Hi AVM Labs! I'd like to know more about your tests and profiles.")),
       // Mobile header + home: location block, search toggle, and the Tests/Profiles icon row.
-      locCity: (s.region && s.region.city) || RG.name, logoH: isDesktop ? 'clamp(60px,6.8vw,80px)' : '44px', spacerFlex: isDesktop ? '1' : '0',
+      locCity: (s.region && s.region.city) || RG.name, logoH: isDesktop ? 'clamp(60px,6.8vw,80px)' : '54px', spacerFlex: isDesktop ? '1' : '0',
       mSearchOpen: isMobile && !!s.mSearch, mSearchBg: s.mSearch ? '#EFEDFB' : '#fff', mSearchIcon: s.mSearch ? 'x' : 'search', mSearchText: s.mSearch ? 'Close' : 'Search tests',
       toggleMSearch: () => {
         const open = !s.mSearch;

@@ -28,7 +28,7 @@ export const cardBg = (hue) => `background:linear-gradient(160deg, oklch(0.94 0.
 export const appBar = (actions) => html`
   <header class="appbar">
     <div class="appbar-in">
-      <a class="logo" href="/" target="_blank" rel="noopener" aria-label="Open website"><img src="/assets/avm-logo.png" alt="AVM Labs"></a>
+      <button class="logo" type="button" data-act="home" aria-label="Back to all profiles"><img src="/assets/avm-logo.png" alt="AVM Labs"></button>
       <span class="appbar-tag">Admin</span>
       <span class="grow"></span>
       ${actions}

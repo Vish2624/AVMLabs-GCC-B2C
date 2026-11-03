@@ -26,6 +26,34 @@
     return e;
   }
 
+  // Message for a quick "Book now" (cards, reels, test page, footer): what is being booked with price and prep,
+  // where, and any patient details already typed into the cart form.
+  bookWA(items) {
+    const D = this.db(), inr = x => this.inr(x), RG = this.region(), s = this.state, f = s.form;
+    const pct = (mrp, price) => { const a = this.loc(mrp), b = this.loc(price); return a > b ? Math.round((1 - b / a) * 100) : 0; };
+    const list = items.map(c => ({ c, x: c.type === 'profile' ? D.PM[c.id] : D.T[c.id] })).filter(i => i.x);
+    if (!list.length) return;
+    const many = list.length > 1, lines = ['Hi AVM Labs! I would like to book:', ''];
+    let total = 0, fasting = false, tat = '';
+    list.forEach(({ c, x }, i) => {
+      const p = pct(x.mrp, x.price);
+      total += this.loc(x.price); fasting = fasting || !!x.fasting;
+      if (!tat || parseFloat(x.tat) > parseFloat(tat)) tat = x.tat;
+      lines.push((many ? (i + 1) + '. ' : '') + '*' + x.name + '*' + (c.type === 'profile' ? ' (Health profile)' : ' (Lab test)'));
+      if (c.type === 'profile') lines.push('   Includes ' + x.ts.length + ' tests: ' + x.ts.map(t => t.short).join(', '));
+      else lines.push('   ' + x.params + ' parameter' + (x.params > 1 ? 's' : ''));
+      lines.push('   Price: ' + inr(x.price) + (p ? ' (MRP ' + inr(x.mrp) + ', ' + p + '% off)' : ''));
+    });
+    if (many) lines.push('', '*Total:* ' + this.money(total));
+    lines.push('', '*Reports:* within ' + (tat || '24 hrs'), '*Preparation:* ' + (fasting ? '10–12 hrs fasting needed' : 'No fasting needed'),
+      '*Location:* ' + ((s.region && s.region.city ? s.region.city + ', ' : '') + RG.name),
+      '*Collection:* ' + (s.mode === 'walkin' ? 'Walk-in at centre' : 'Home sample collection'));
+    if (f.name.trim()) lines.push('*Patient:* ' + [f.name.trim(), f.age, f.gender].filter(Boolean).join(', '));
+    if (RG.phRe.test(f.phone)) lines.push('*Mobile:* ' + RG.dial + ' ' + f.phone);
+    lines.push('', 'Please share the available slots. Thank you!');
+    this.openWA(lines.join('\n'));
+  }
+
   confirm() {
     const b = this.bill(); if (!b.items.length) return;
     const e = this.validate();
@@ -43,6 +71,6 @@
     lines.push('*To pay: ' + this.money(b.pay) + '*');
     const url = this.wa(lines.join('\n'));
     this.setState({ booked: { url } });
-    window.open(url, '_blank', 'noopener');
+    this.openWA(url, true);
   }
 

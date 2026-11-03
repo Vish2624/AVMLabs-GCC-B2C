@@ -322,6 +322,7 @@ export function ProfileEditorView({ profile, catalog, nextSortOrder, onSave, onD
     if (!btn) return;
     const i = Number(btn.dataset.sub);
     switch (btn.dataset.act) {
+      case 'home': // logo: same as Cancel, so unsaved changes still ask first
       case 'close':
         if (dirty) {
           confirmDiscard = true;
