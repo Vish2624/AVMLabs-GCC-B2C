@@ -18,8 +18,33 @@
       else if (e.key === 'Escape') this.closeReels();
     };
     window.addEventListener('keydown', this._onKey);
-    this._onScroll = () => { const scrolled = window.scrollY > 240; if (scrolled !== !!this.state.scrolled) this.setState({ scrolled }); };
+    this._onScroll = () => {
+      const y = window.scrollY, scrolled = y > 240;
+      // The WhatsApp button tucks away while scrolling down so it doesn't sit on top of cards, and returns on scroll up.
+      const dy = y - (this._lastY || 0);
+      const fabAway = Math.abs(dy) < 6 ? !!this.state.fabAway : dy > 0 && y > 120;
+      this._lastY = y;
+      if (scrolled !== !!this.state.scrolled || fabAway !== !!this.state.fabAway) this.setState({ scrolled, fabAway });
+      this.fixBars();
+    };
     window.addEventListener('scroll', this._onScroll, { passive: true });
+    // Phones: hide the bottom bars while typing (they would cover the form), and put them back
+    // at the bottom once the keyboard closes; iOS Safari can leave fixed bars stranded mid-screen.
+    const typing = el => el && (el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || (el.tagName === 'INPUT' && !/^(checkbox|radio|button|submit|range|color|file)$/.test(el.type)));
+    this._onFocusIn = e => { if (typing(e.target) && this.state.w < 1024 && !this.state.kb) this.setState({ kb: true }); };
+    this._onFocusOut = () => {
+      setTimeout(() => {
+        if (typing(document.activeElement)) return;
+        if (this.state.kb) this.setState({ kb: false });
+        window.scrollTo(window.scrollX, window.scrollY);
+        this.fixBars();
+      }, 60);
+      setTimeout(() => this.fixBars(), 400);
+    };
+    document.addEventListener('focusin', this._onFocusIn);
+    document.addEventListener('focusout', this._onFocusOut);
+    this._onVV = () => this.fixBars();
+    if (window.visualViewport) { window.visualViewport.addEventListener('resize', this._onVV); window.visualViewport.addEventListener('scroll', this._onVV); }
     this._onPop = () => {
       const h = this.fromHash();
       this._reelPushed = false;
@@ -73,6 +98,13 @@
     else { t.n--; if (t.n <= 0) { t.n = 0; t.del = false; t.i++; wait = 380; } else wait = 38; }
     els.forEach(el => { const ov = el.nextElementSibling, w = ov && ov.querySelector('[data-type-word]'); if (w) { el.setAttribute('data-typing', '1'); ov.style.display = 'flex'; w.textContent = word.slice(0, t.n); } });
     this._tyT = setTimeout(() => this.typeLoop(), wait);
+  }
+  // If the visible area reaches below the layout viewport (the iOS bug above), shift the bottom bars down by the gap.
+  // Normally the gap is 0, so this does nothing.
+  fixBars() {
+    const v = window.visualViewport; if (!v) return;
+    const drop = this.state.kb ? 0 : Math.max(0, Math.round(v.offsetTop + v.height - window.innerHeight));
+    if (drop !== this._drop) { this._drop = drop; document.documentElement.style.setProperty('--vv-drop', drop + 'px'); }
   }
   componentDidUpdate() {
     this.fillSlots();
@@ -136,7 +168,8 @@
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this._onResize); window.removeEventListener('keydown', this._onKey); window.removeEventListener('scroll', this._onScroll); window.removeEventListener('popstate', this._onPop);
-    if (window.visualViewport) window.visualViewport.removeEventListener('resize', this._onResize);
+    document.removeEventListener('focusin', this._onFocusIn); document.removeEventListener('focusout', this._onFocusOut);
+    if (window.visualViewport) { window.visualViewport.removeEventListener('resize', this._onResize); window.visualViewport.removeEventListener('resize', this._onVV); window.visualViewport.removeEventListener('scroll', this._onVV); }
     clearInterval(this._heroT); clearInterval(this._tickT); cancelAnimationFrame(this._cRaf);
     [this._tt, this._ht, this._ht2, this._gT, this._vT, this._hT, this._tyT].forEach(clearTimeout);
     document.body.style.overflow = ''; document.documentElement.style.overflow = '';

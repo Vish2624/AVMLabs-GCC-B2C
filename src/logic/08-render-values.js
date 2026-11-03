@@ -105,12 +105,15 @@
     const cur = D.P[ri] || D.P[0];
     const heroW = D.PM.women, heroV = D.PM.vitamin;
 
-    const showTabs = isMobile && !s.reelsOpen && !(pg === 'cart' && hasCart);
-    const showTestsBar = isMobile && !isWide && pg === 'tests' && hasCart && !s.reelsOpen;
-    const showCartBar = isMobile && pg === 'cart' && hasCart && !s.reelsOpen;
-    const showFab = !s.reelsOpen && pg !== 'cart' && !showTestsBar && !(isMobile && pg === 'home' && !s.scrolled);
+    const hasTabs = isMobile && !s.reelsOpen && !(pg === 'cart' && hasCart);
+    const hasTestsBar = isMobile && !isWide && pg === 'tests' && hasCart && !s.reelsOpen;
+    const hasCartBar = isMobile && pg === 'cart' && hasCart && !s.reelsOpen;
+    const hasFab = !s.reelsOpen && pg !== 'cart' && !hasTestsBar && !(isMobile && pg === 'home' && !s.scrolled);
+    // s.kb: a text field is focused on a phone, so the keyboard is up; bottom bars step aside.
+    const showTabs = hasTabs && !s.kb, showTestsBar = hasTestsBar && !s.kb, showCartBar = hasCartBar && !s.kb, showFab = hasFab && !s.kb;
     // On mobile the WhatsApp button sits above the tab bar, so clear both.
-    const spacerH = 'calc(' + (showCartBar ? '92px' : showTestsBar ? (ms.length ? '200px' : '150px') : showTabs ? (showFab ? '156px' : '92px') : '0px') + ' + ' + barPad + ')';
+    // Sized from where the bars would be, so it doesn't change (and jump the page) when they hide for the keyboard.
+    const spacerH = 'calc(' + (hasCartBar ? '92px' : hasTestsBar ? (ms.length ? '200px' : '150px') : hasTabs ? (hasFab ? '156px' : '92px') : '0px') + ' + ' + barPad + ')';
     const tabC = p => pgN === p ? '#3B2C9E' : '#5D5A7A';
 
     return {
@@ -191,7 +194,7 @@
       toTop: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
       footLinks:[['Home', 'home'], ['All tests', 'tests'], ['Health profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p) })),
       spacerH, showTabs, showTestsBar, showCartBar, tab: { home: tabC('home'), tests: tabC('tests'), profiles: tabC('profiles'), cart: tabC('cart') },
-      showFab, fabBottom: isMobile ? 'calc(92px + ' + barPad + ')' : '24px',
+      showFab, fabBottom: isMobile ? 'calc(92px + ' + barPad + ')' : '24px', fabAway: isMobile && s.fabAway ? 'translate(calc(100% + 24px), var(--vv-drop, 0px))' : 'translate(0, var(--vv-drop, 0px))',
       hasToast: !!s.toast, toast: s.toast, toastIcon: /^Removed/.test(s.toast) ? 'minus' : 'check', toastDot: /^Removed/.test(s.toast) ? 'rgba(255,255,255,0.18)' : '#22B463', toastTop: 'calc(' + (s.reelsOpen ? '72px' : '14px') + ' + env(safe-area-inset-top))',
       reelsOpen: s.reelsOpen, reels, reelsRef: this.reelsRef, onReelsScroll: e => this.onReelsScroll(e), closeReels: () => this.closeReels(),
       stageW: isDesktop ? Math.round(stH * 9 / 16) + 'px' : '100%', stageH: isDesktop ? stH + 'px' : '100%', stageR: isDesktop ? '28px' : '0px',

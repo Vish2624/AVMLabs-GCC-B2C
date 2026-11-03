@@ -50,6 +50,7 @@
   static TYPE_TERMS = { tests: ['Vitamin D', 'thyroid', 'HbA1c', 'iron studies', 'lipid profile'], profiles: ["women's health", 'PCOS', "men's health", 'vitamin check'] };
   // Unsplash photos for image slots: [photo id, photographer, Unsplash username]. Unsplash requires the credit.
   static PHOTOS = {
+    'profile-bg-vitamin': ['1707129785947-ddc627a8bab9', 'Madara', 'madara_p'],
     'profile-bg-thyroid': ['1544005313-94ddf0286df2', 'Štefan Štefančík', 'cikstefan'],
     'profile-bg-women': ['1562337404-3044c84ac061', 'Kate Kozyrka', 'kozyrka_kate'],
     'profile-bg-pcos': ['1506126613408-eca07ce68773', 'Jared Rice', 'jareddrice'],
