@@ -59,7 +59,7 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
     return html`
       ${draft.price !== '' && html`<span class="now">${formatPrice(price)}</span>`}
       ${draft.mrp !== '' && mrp > price && html`<s>${formatPrice(mrp)}</s>`}${off > 0 && html`<span class="pill off">${off}% off</span>`}
-      <span><b>${plural(draft.parameters.length, 'parameter')}</b>${draft.calculated.length > 0 && html` · ${draft.calculated.length} calculated`}</span>
+      <span><b>${draft.calculated.length ? plural(draft.calculated.length, 'calculated parameter') : 'No calculated parameters'}</b></span>
       ${draft.mrp !== '' && draft.price !== '' && mrp < price && html`<span class="warn">MRP is below the price</span>`}`;
   };
 
@@ -147,17 +147,12 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
     </section>
 
     <section class="panel">
-      <div class="panel-head"><span class="num">3</span><div><h2>Parameters (${draft.parameters.length})</h2><p>What the test measures, e.g. HDL Cholesterol.</p></div></div>
-      <div class="field">${nameList('parameters', draft.parameters, 'Add a parameter, e.g. HDL Cholesterol', 'No parameters yet. Add at least one.')}</div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-head"><span class="num">4</span><div><h2>Calculated parameters (${draft.calculated.length}) <span class="hint">optional</span></h2><p>Worked out from other results rather than measured, e.g. LDL / HDL Ratio. Many tests have none.</p></div></div>
+      <div class="panel-head"><span class="num">3</span><div><h2>Calculated parameters (${draft.calculated.length}) <span class="hint">optional</span></h2><p>Worked out from other results rather than measured, e.g. LDL / HDL Ratio. Many tests have none.</p></div></div>
       <div class="field">${nameList('calculated', draft.calculated, 'Add a calculated parameter, e.g. LDL / HDL Ratio', 'None — that’s fine for most tests.')}</div>
     </section>
 
     <section class="panel">
-      <div class="panel-head"><span class="num">5</span><div><h2>About this test</h2><p>Shown on the test’s page.</p></div></div>
+      <div class="panel-head"><span class="num">4</span><div><h2>About this test</h2><p>Shown on the test’s page.</p></div></div>
       <div class="grid">
         <div class="field full">
           <label for="aka">Also known as <span class="hint">(optional)</span></label>
@@ -236,7 +231,6 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
     if (draft.mrp === '' || !(Number(draft.mrp) >= 0)) return 'Enter the MRP.';
     if (Number(draft.mrp) < Number(draft.price)) return 'MRP can’t be lower than the price.';
     if (!draft.tat.trim()) return 'Enter the report time.';
-    if (!draft.parameters.length) return 'Add at least one parameter.';
     return '';
   }
 
@@ -258,7 +252,8 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
       sample: draft.sample,
       aka: draft.aka.trim(),
       about: draft.about.trim(),
-      parameters: draft.parameters,
+      // Measured parameters aren't edited here: keep the saved list; a new test counts as its own parameter.
+      parameters: draft.parameters.length ? draft.parameters : [draft.name.trim()],
       calculated: draft.calculated,
       sortOrder: Math.max(0, Math.round(Number(draft.sortOrder) || 0)),
       published: draft.published,

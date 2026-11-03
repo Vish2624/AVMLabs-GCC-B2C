@@ -167,10 +167,14 @@ describe('parseTest', () => {
     assert.deepEqual(t.calculated, ['LDL / HDL Ratio']);
   });
 
-  it('requires a name, a category, a parameter and an MRP at least the price', () => {
+  it('counts the test itself as its parameter when none are given', () => {
+    const { parameters, ...noParams } = test();
+    assert.deepEqual(parseTest(noParams).parameters, ['Vitamin D (25-OH)']);
+  });
+
+  it('requires a name, a category and an MRP at least the price', () => {
     rejects(parseTest, { ...test(), name: ' ' }, 'Test name is required');
     rejects(parseTest, { ...test(), categories: [] }, 'Pick at least one category');
-    rejects(parseTest, { ...test(), parameters: [] }, 'Add at least one parameter');
     rejects(parseTest, { ...test(), mrp: 500 }, 'MRP can’t be lower than the price');
     rejects(parseTest, { ...test(), categories: ['pets'] });
     rejects(parseTest, { ...test(), id: 'Vit D' });

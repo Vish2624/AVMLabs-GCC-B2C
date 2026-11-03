@@ -36,7 +36,8 @@ export const testSchema = z
     sample: z.enum(SAMPLES).default('Blood'),
     aka: text(200).default(''),
     about: text(800).default(''),
-    parameters: names(80).refine((list) => list.length > 0, 'Add at least one parameter'),
+    // What it measures; not edited in the admin. Defaults to the test itself.
+    parameters: names(80).default([]),
     calculated: names(40).default([]),
     sortOrder: z.number().int().min(0).max(9999).default(0),
     published: z.boolean().default(true),
@@ -45,6 +46,7 @@ export const testSchema = z
   .transform((t) => ({
     ...t,
     short: t.short || t.name,
+    parameters: t.parameters.length ? t.parameters : [t.name],
     // A name listed in both stays measured.
     calculated: t.calculated.filter((n) => !t.parameters.includes(n)),
   }));

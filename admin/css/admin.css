@@ -998,6 +998,10 @@ textarea::placeholder {
   gap: 12px;
   flex-wrap: wrap;
 }
+.add-row .add-test {
+  flex: 1 1 280px;
+  min-width: 0;
+}
 .add-row select {
   flex: 1 1 280px;
   min-width: 0;
