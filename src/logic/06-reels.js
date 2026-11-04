@@ -9,7 +9,7 @@
     this.armHint();
   }
   closeReels() {
-    clearTimeout(this._ht); clearTimeout(this._ht2); this.setState({ reelsOpen: false, hint: false });
+    clearTimeout(this._ht); clearTimeout(this._ht2); cancelAnimationFrame(this._sprRaf); this._sprRaf = 0; this.setState({ reelsOpen: false, hint: false });
     // Step back over the entry openReels() added, so Back afterwards doesn't land on the same page again.
     if (this._reelPushed) { this._reelPushed = false; history.back(); } else this.replaceHash(this.pageHash());
   }
@@ -54,16 +54,36 @@
   scroller() { return (this.reelsRef && this.reelsRef.current) || document.querySelector('[data-reels-scroller]'); }
   cur() { return this._ri != null ? this._ri : this.state.reelIdx; }
   track() { const el = this.scroller(); return el && el.querySelector('[data-reel-track]'); }
-  applyTrack(i, anim, px) {
+  // Where the track sits right now in px, read from the page so it is right even halfway through a glide.
+  trackY() { const t = this.track(); return t ? new DOMMatrixReadOnly(getComputedStyle(t).transform).m42 : 0; }
+  // Moves the reel track. px: follow the finger exactly. anim: glide to reel i on a spring that starts at the
+  // finger's speed v0 (px/ms), so a flick carries straight on into the glide, as on Instagram. Otherwise jump to reel i.
+  applyTrack(i, anim, px, v0) {
     const t = this.track(); if (!t) return;
-    // Even ease-out: a sharper curve jumps most of the way in the first frames, then crawls, which reads as stuck.
-    t.style.transition = anim ? 'transform .4s cubic-bezier(.22,.61,.36,1)' : 'none';
-    t.style.transform = px == null ? 'translate3d(0,' + (-i * 100) + '%,0)' : 'translate3d(0,' + px + 'px,0)';
+    cancelAnimationFrame(this._sprRaf); this._sprRaf = 0;
+    t.style.transition = 'none';
+    if (px != null) { t.style.transform = 'translate3d(0,' + px + 'px,0)'; return; }
+    // At rest the track is placed in %, so it stays aligned if the screen is resized or rotated.
+    const park = () => { this._sprRaf = 0; t.style.transform = 'translate3d(0,' + (-i * 100) + '%,0)'; };
+    const el = this.scroller(), H = (el && el.clientHeight) || 0;
+    if (!anim || !H || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) { park(); return; }
+    // Critically damped spring: no bounce past the reel, 90% of the way in ~0.2 s and 98% in ~0.3 s. Small fixed
+    // steps keep it stable on a slow frame; positions are written straight to the page, no re-render.
+    const end = -i * H, K = 420, C = 2 * Math.sqrt(K);
+    let x = this.trackY(), v = (v0 || 0) * 1000, last = performance.now();
+    const step = now => {
+      let dt = Math.min(0.05, (now - last) / 1000); last = now;
+      while (dt > 0) { const h = Math.min(dt, 1 / 240); v += (-K * (x - end) - C * v) * h; x += v * h; dt -= h; }
+      if (Math.abs(x - end) < 0.5 && Math.abs(v) < 20) { park(); return; }
+      t.style.transform = 'translate3d(0,' + x.toFixed(2) + 'px,0)';
+      this._sprRaf = requestAnimationFrame(step);
+    };
+    this._sprRaf = requestAnimationFrame(step);
   }
-  goReel(i) {
+  goReel(i, v0) {
     const n = Component.PROFILES.length; i = Math.max(0, Math.min(n - 1, i));
     this._ri = i;
-    this.applyTrack(i, true);
+    this.applyTrack(i, true, null, v0);
     this.replaceHash(this.reelHash(i));
     this.armHint();
     // commit to state only after the slide finishes — re-rendering mid-animation causes stutter
