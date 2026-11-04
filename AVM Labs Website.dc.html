@@ -442,7 +442,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
               <div style="display:flex;flex-direction:column;gap:12px;position:relative">
                 <span style="white-space:nowrap;align-self:flex-start;height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.25);display:inline-flex;align-items:center;font-size:12px;font-weight:700">Women's health</span>
                 <h3 style="margin:0;font-size:clamp(24px,2.6vw,32px);font-weight:800;letter-spacing:-0.03em;line-height:1.08">Women Hormone Profile Plus</h3>
-                <p style="margin:0;font-size:15px;line-height:1.55;color:rgba(255,255,255,0.88)">12 tests including AMH: cycles, fertility and energy in one blood draw.</p>
+                <p style="margin:0;font-size:15px;line-height:1.55;color:rgba(255,255,255,0.88)">Your key hormones, including AMH: cycles, fertility and energy in one blood draw.</p>
               </div>
               <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;flex-wrap:wrap">
                 <div style="display:flex;flex-direction:column;gap:6px"><span style="white-space:nowrap;font-size:clamp(26px,8.4vw,34px);font-weight:800;letter-spacing:-0.03em;line-height:1">{{ hero1Num }}<small data-cur="1">{{ hero1Cur }}</small></span><span data-offer-pill="1">Offer price</span></div>
@@ -686,7 +686,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
           <span style="white-space:nowrap;align-self:flex-start;height:26px;padding:0 11px;border-radius:999px;background:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.95);display:inline-flex;align-items:center;font-size:12px;font-weight:700;color:{{ p.ink }};position:relative;z-index:2">{{ p.tag }}</span>
           <h3 style="margin:0;font-size:21px;font-weight:800;letter-spacing:-0.02em;line-height:1.15;position:relative;z-index:2;max-width:78%">{{ p.name }}</h3>
           <p style="margin:0;font-size:14px;line-height:1.5;color:#4A4766;position:relative;z-index:2;max-width:78%;text-wrap:pretty">{{ p.tagline }}</p>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:12.5px;font-weight:700;position:relative;z-index:2"><span style="padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.85)">{{ p.testsN }} tests</span><span style="padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.85)">{{ p.params }} parameters</span><span style="padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.85)">{{ p.fastLabel }}</span></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:12.5px;font-weight:700;position:relative;z-index:2"><span style="padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.85)">{{ p.params }} parameters</span><span style="padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.85)">{{ p.fastLabel }}</span></div>
         </div>
         <div style="padding:16px 20px 20px;display:flex;flex-direction:column;gap:14px;flex:1">
           <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ p.preview }}" as="x" hint-placeholder-count="3"><span style="white-space:nowrap;font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:999px;background:#F5F5FA;border:1px solid #ECEBF3">{{ x }}</span></sc-for><sc-if value="{{ p.hasMore }}"><button onClick="{{ p.open }}" style="font-size:12.5px;font-weight:700;padding:5px 10px;border-radius:999px;background:#EFEDFB;border:none;color:#3B2C9E;cursor:pointer">{{ p.moreLabel }}</button></sc-if></div>
@@ -1010,7 +1010,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
                 <span style="white-space:nowrap;height:32px;padding:0 14px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700"><avm-i n="clock" s="14"></avm-i>{{ r.fastLabel }}</span>
                 <span style="white-space:nowrap;height:32px;padding:0 14px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700"><avm-i n="file-text" s="14"></avm-i>Reports in {{ r.tat }}</span>
               </div>
-              <div style="display:flex;align-items:flex-end;gap:14px;margin-top:8px"><span style="font-size:clamp(56px,min(10vh,8vw),128px);font-weight:800;line-height:.82;letter-spacing:-0.055em">{{ r.params }}</span><span style="font-size:16px;font-weight:600;color:#5D5A7A;padding-bottom:10px;line-height:1.3">parameters<br>across {{ r.testsN }} tests</span></div>
+              <div style="display:flex;align-items:flex-end;gap:14px;margin-top:8px"><span style="font-size:clamp(56px,min(10vh,8vw),128px);font-weight:800;line-height:.82;letter-spacing:-0.055em">{{ r.params }}</span><span style="font-size:16px;font-weight:600;color:#5D5A7A;padding-bottom:10px;line-height:1.3">parameters</span></div>
               <h2 style="margin:0;font-size:clamp(28px,min(4.6vh,3vw),52px);font-weight:800;letter-spacing:-0.035em;line-height:1.04;text-wrap:balance">{{ r.name }}</h2>
               <p style="margin:0;font-size:clamp(15px,2vh,18px);line-height:1.5;color:#5D5A7A;max-width:520px">{{ r.tagline }}</p>
               <sc-if value="{{ r.hasIdeal }}"><div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5D5A7A">Ideal for</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ r.ideal }}" as="x" hint-placeholder-count="3"><span style="white-space:nowrap;font-size:13.5px;font-weight:600;padding:7px 13px;border-radius:999px;background:#fff;border:1px solid #E7E6F0">{{ x }}</span></sc-for></div></div></sc-if>
@@ -1031,7 +1031,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             </div>
             <div style="flex:1 1 54%;min-width:0;margin:16px 16px 16px 0;border-radius:24px;background:#fff;backdrop-filter:blur(22px);border:1px solid #E7E6F0;display:flex;flex-direction:column;overflow:hidden;position:relative">
               <div style="flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#D4D1E6 transparent;padding:28px 30px 34px;display:flex;flex-direction:column;gap:22px">
-                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap"><span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">What's included</span><span style="font-size:13.5px;font-weight:600;color:#5D5A7A">{{ r.testsN }} tests · {{ r.params }} parameters</span></div>
+                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap"><span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">What's included</span><span style="font-size:13.5px;font-weight:600;color:#5D5A7A">{{ r.params }} parameters</span></div>
                 <div data-inc-wide="1" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;align-items:start">
                   <sc-for list="{{ r.groups }}" as="g" hint-placeholder-count="6"><details data-inc="1"><summary><span data-inc-n="1">{{ g.n }}</span><span data-inc-name="1">{{ g.name }}</span><span data-inc-meta="1">{{ g.meta }}</span><span data-inc-chev="1"><avm-i n="chevron-down" s="16"></avm-i></span></summary><div data-inc-list="1"><sc-for list="{{ g.items }}" as="i" hint-placeholder-count="0"><div data-inc-item="1"><sc-if value="{{ i.showName }}" hint-placeholder-val="{{ false }}"><b>{{ i.name }}</b></sc-if><sc-if value="{{ i.hasParams }}" hint-placeholder-val="{{ false }}"><div data-pchips="1"><sc-for list="{{ i.params }}" as="x" hint-placeholder-count="0"><span data-pchip="1">{{ x }}</span></sc-for></div></sc-if><sc-if value="{{ i.hasCalcs }}" hint-placeholder-val="{{ false }}"><div data-pchips="calc"><span data-calc-label="1">Calculated</span><sc-for list="{{ i.calcs }}" as="x" hint-placeholder-count="0"><span data-pchip="calc">{{ x }}</span></sc-for></div></sc-if></div></sc-for></div></details></sc-for>
                 </div>
@@ -1081,7 +1081,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
           <div data-h="1" onScroll="{{ r.onH }}" style="position:absolute;inset:0;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x">
             <div style="flex:0 0 100%;height:100%;scroll-snap-align:start;padding:calc(84px + env(safe-area-inset-top)) 76px {{ slidePadB }} 20px;display:flex;flex-direction:column;justify-content:flex-end;gap:12px;position:relative">
               <div style="display:flex;gap:8px;flex-wrap:wrap"><span style="white-space:nowrap;height:28px;padding:0 12px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:inline-flex;align-items:center;font-size:12px;font-weight:700">{{ r.tag }}</span><span style="white-space:nowrap;height:28px;padding:0 12px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700"><avm-i n="clock" s="12"></avm-i>{{ r.fastLabel }}</span></div>
-              <div style="display:flex;align-items:flex-end;gap:10px"><span style="font-size:clamp(72px,11vh,104px);font-weight:800;line-height:.85;letter-spacing:-0.05em">{{ r.params }}</span><span style="font-size:14px;font-weight:600;color:#5D5A7A;padding-bottom:8px;line-height:1.25">parameters<br>{{ r.testsN }} tests</span></div>
+              <div style="display:flex;align-items:flex-end;gap:10px"><span style="font-size:clamp(72px,11vh,104px);font-weight:800;line-height:.85;letter-spacing:-0.05em">{{ r.params }}</span><span style="font-size:14px;font-weight:600;color:#5D5A7A;padding-bottom:8px;line-height:1.25">parameters</span></div>
               <h2 style="margin:0;font-size:clamp(28px,4vh,36px);font-weight:800;letter-spacing:-0.03em;line-height:1.05">{{ r.name }}</h2>
               <p style="margin:0;font-size:15px;line-height:1.5;color:#5D5A7A">{{ r.tagline }}</p>
               <sc-if value="{{ r.hasIdeal }}"><div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ r.ideal }}" as="x" hint-placeholder-count="3"><span style="white-space:nowrap;font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:999px;background:#fff;border:1px solid #E7E6F0">{{ x }}</span></sc-for></div></sc-if>
@@ -1089,7 +1089,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             </div>
             <div style="flex:0 0 100%;height:100%;scroll-snap-align:start;padding:calc(84px + env(safe-area-inset-top)) 72px {{ slidePadB }} 20px;display:flex;flex-direction:column;gap:12px">
               <span style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5D5A7A">What's included</span>
-              <span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">{{ r.testsN }} tests · {{ r.params }} parameters</span>
+              <span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">{{ r.params }} parameters</span>
               <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;scrollbar-width:none">
                 <sc-for list="{{ r.groups }}" as="g" hint-placeholder-count="4"><details data-inc="1"><summary><span data-inc-n="1">{{ g.n }}</span><span data-inc-name="1">{{ g.name }}</span><span data-inc-meta="1">{{ g.meta }}</span><span data-inc-chev="1"><avm-i n="chevron-down" s="16"></avm-i></span></summary><div data-inc-list="1"><sc-for list="{{ g.items }}" as="i" hint-placeholder-count="0"><div data-inc-item="1"><sc-if value="{{ i.showName }}" hint-placeholder-val="{{ false }}"><b>{{ i.name }}</b></sc-if><sc-if value="{{ i.hasParams }}" hint-placeholder-val="{{ false }}"><div data-pchips="1"><sc-for list="{{ i.params }}" as="x" hint-placeholder-count="0"><span data-pchip="1">{{ x }}</span></sc-for></div></sc-if><sc-if value="{{ i.hasCalcs }}" hint-placeholder-val="{{ false }}"><div data-pchips="calc"><span data-calc-label="1">Calculated</span><sc-for list="{{ i.calcs }}" as="x" hint-placeholder-count="0"><span data-pchip="calc">{{ x }}</span></sc-for></div></sc-if></div></sc-for></div></details></sc-for>
               </div>
@@ -1462,8 +1462,8 @@ class Component extends DCLogic {
       total += this.pr(x); fasting = fasting || !!x.fasting;
       if (this.tatHrs(this.tat(x)) > this.tatHrs(tat)) tat = this.tat(x);
       lines.push((many ? (i + 1) + '. ' : '') + '*' + x.name + '*' + (c.type === 'profile' ? ' (Health profile)' : ' (Lab test)'));
-      if (c.type === 'profile') lines.push('   Includes ' + x.ts.length + ' tests: ' + x.ts.map(t => t.short).join(', '));
-      else lines.push('   ' + x.params + ' parameter' + (x.params > 1 ? 's' : ''));
+      lines.push('   ' + x.params + ' parameter' + (x.params > 1 ? 's' : ''));
+      if (c.type === 'profile') lines.push('   Includes: ' + x.ts.map(t => t.short).join(', '));
       lines.push('   Price: ' + this.cost(x));
     });
     const pay = this.billed(total), topped = pay - total > 0.0001;
@@ -1789,7 +1789,7 @@ class Component extends DCLogic {
     const where = ' Free home sample collection in Bahrain, Saudi Arabia and the UAE.';
     const name = p ? p.name + ': Health Checkup Tests & Price' : t ? t.name + ' Test: Price & Report Time' : { tests: 'All Lab Tests', profiles: 'Health Checkup Profiles', cart: 'Your Cart', about: 'About Us' }[s.page];
     const title = name ? name + ' | AVM Labs' : 'AVM Labs | Lab Tests & Health Profiles with Free Home Collection';
-    const text = p ? p.name + ': ' + (p.tagline ? p.tagline + ' ' : '') + p.ts.length + ' tests (' + p.params + ' parameters) from one sample' + (this.tat(p) ? ', report in ' + this.tat(p) : '') + '.' + where
+    const text = p ? p.name + ': ' + (p.tagline ? p.tagline + ' ' : '') + p.params + ' parameters from one sample' + (this.tat(p) ? ', report in ' + this.tat(p) : '') + '.' + where
       : t ? t.name + ' test at AVM Labs. ' + (((t.about || '').match(/^.*?\.(?=\s|$)/) || [t.about || ''])[0]) + (this.tat(t) ? ' Report in ' + this.tat(t) + ',' : '') + (t.fasting ? ' fasting needed.' : ' no fasting needed.') + where
       : { tests: 'Browse every lab test at AVM Labs with local prices, report times and fasting needs. Book online.' + where,
         profiles: 'Compare AVM Labs health checkup profiles: packages of tests taken from one sample, at one price.' + where,
@@ -1980,7 +1980,7 @@ class Component extends DCLogic {
         paramsTitle: t.params + (t.params > 1 ? ' parameters' : ' parameter') + (calc.length ? ' · ' + calc.length + ' calculated' : ''),
         sample, sampleIcon: sample === 'Urine' ? 'flask-conical' : 'droplet', fastTitle: t.fasting ? 'Fasting required' : 'No fasting required', fastSub: t.fasting ? '10–12 hrs overnight, water is fine' : 'Eat and drink as usual',
         reportT: 'Report in ' + this.tat(t), book: () => this.bookWA([{ type: 'test', id: t.id }]),
-        profs: ps.map(p => ({ name: p.name, meta: p.tests.length + ' tests · ' + cost(p), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.i) })), toProfs: () => { const el = document.querySelector('[data-td-profs]'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, hasProfs: ps.length > 0 };
+        profs: ps.map(p => ({ name: p.name, meta: p.params + ' parameters · ' + cost(p), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.i) })), toProfs: () => { const el = document.querySelector('[data-td-profs]'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, hasProfs: ps.length > 0 };
     }
     const book = p => () => this.bookWA([{ type: 'profile', id: p.id }]);
 
@@ -1996,7 +1996,7 @@ class Component extends DCLogic {
     } else {
       const list = q ? D.P.filter(p => (p.name + ' ' + p.tag + ' ' + p.tagline).toLowerCase().includes(q)) : D.P;
       resultsLabel = q ? 'Profiles' : 'Popular profiles';
-      results = list.slice(0, 6).map(p => ({ name: p.name, meta: p.tests.length + ' tests · ' + p.params + ' parameters', priceF: cost(p), ...price(p), open: () => this.openReels(p.i), action: () => this.openReels(p.i), alabel: 'View', abg: '#fff', afg: '#3B2C9E' }));
+      results = list.slice(0, 6).map(p => ({ name: p.name, meta: p.params + ' parameters', priceF: cost(p), ...price(p), open: () => this.openReels(p.i), action: () => this.openReels(p.i), alabel: 'View', abg: '#fff', afg: '#3B2C9E' }));
     }
 
     const cats = C.CATS.map(c => ({ ...c, name: c.short || c.label, soft: `oklch(0.95 0.035 ${c.hue})`, ink: `oklch(0.5 0.15 ${c.hue})`, grad: `linear-gradient(150deg, oklch(0.97 0.03 ${c.hue}) 0%, oklch(0.91 0.06 ${c.hue}) 100%)`, ring: `oklch(0.85 0.07 ${c.hue})`, count: C.TESTS.filter(t => t.cat.includes(c.id)).length, go: () => { this.setState({ cat: c.id, tq: '' }); this.go('tests'); } }));
@@ -2011,7 +2011,7 @@ class Component extends DCLogic {
     const ms = this.matches().map(m => this.matchVM(m));
     const cartProfiles = s.cart.filter(c => c.type === 'profile').map(c => D.PM[c.id]).filter(Boolean);
     const cartLines = s.cart.map(c => {
-      if (c.type === 'profile') { const p = D.PM[c.id]; if (!p) return null; return { name: p.name, sub: 'Profile · ' + p.tests.length + ' tests · ' + p.params + ' parameters', icon: 'layers', iconBg: '#EFEDFB', iconFg: '#3B2C9E', priceF: cost(p), ...price(p), hasDup: false, dup: '', remove: () => this.toggle('profile', p.id, p.name) }; }
+      if (c.type === 'profile') { const p = D.PM[c.id]; if (!p) return null; return { name: p.name, sub: 'Profile · ' + p.params + ' parameters', icon: 'layers', iconBg: '#EFEDFB', iconFg: '#3B2C9E', priceF: cost(p), ...price(p), hasDup: false, dup: '', remove: () => this.toggle('profile', p.id, p.name) }; }
       const t = D.T[c.id]; if (!t) return null;
       const dp = cartProfiles.find(p => p.tests.includes(t.id));
       return { name: t.name, sub: 'Test · ' + t.params + ' parameter' + (t.params > 1 ? 's' : '') + ' · Reports in ' + this.tat(t), icon: 'test-tube', iconBg: '#F5F5FA', iconFg: '#16133A', priceF: cost(t), ...price(t), hasDup: !!dp, dup: dp ? 'Already included in ' + dp.name : '', remove: () => this.toggle('test', t.id, t.short) };
@@ -2047,12 +2047,12 @@ class Component extends DCLogic {
     const incGroups = p => {
       const subs = (p.subs || []).map(x => ({ name: x.name, ts: x.tests.map(id => D.T[id]).filter(Boolean) })).filter(x => x.ts.length);
       return subs.length > 1
-        ? subs.map((x, k) => ({ n: k + 1, name: x.name, meta: plural(x.ts.length, 'test') + ' · ' + plural(x.ts.reduce((a, t) => a + t.params, 0), 'param'), items: x.ts.map(t => incTest(t, true)) }))
+        ? subs.map((x, k) => ({ n: k + 1, name: x.name, meta: plural(x.ts.reduce((a, t) => a + t.params, 0), 'param'), items: x.ts.map(t => incTest(t, true)) }))
         : p.ts.map((t, k) => ({ n: k + 1, name: t.name, meta: plural(t.params, 'param'), items: [incTest(t, false)] }));
     };
     const reels = s.reelsOpen ? D.P.map(p => {
       const sl = s.slides[p.i] || 0, inC = has('profile', p.id), worth = this.sumPr(p.ts);
-      return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, testsN: p.tests.length, ideal: p.ideal, hasIdeal: p.ideal.length > 0, benefits: p.benefits, hasBenefits: p.benefits.length > 0, tat: this.tat(p),
+      return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, ideal: p.ideal, hasIdeal: p.ideal.length > 0, benefits: p.benefits, hasBenefits: p.benefits.length > 0, tat: this.tat(p),
         fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })), groups: incGroups(p),
         // What its tests cost one by one, shown only when the profile is cheaper.
         priceF: cost(p), ...price(p), worthF: this.money(worth), hasWorth: worth > this.pr(p) + 0.0001,
@@ -2138,7 +2138,7 @@ class Component extends DCLogic {
       profFilters: C.PF.map(([id, label]) => { const a = s.pf === id; return { label, go: () => this.setState({ pf: id }), bg: a ? '#16133A' : '#fff', fg: a ? '#fff' : '#16133A', bd: a ? '#16133A' : '#E7E6F0' }; }),
       profilesView: D.P.filter(p => s.pf === 'all' || p.tags.includes(s.pf)).map(p => {
         const inC = has('profile', p.id);
-        return { name: p.name, tag: p.tag, sym: p.sym, tagline: p.tagline, testsN: p.tests.length, params: p.params, fastLabel: p.fasting ? 'Fasting needed' : 'No fasting',
+        return { name: p.name, tag: p.tag, sym: p.sym, tagline: p.tagline, params: p.params, fastLabel: p.fasting ? 'Fasting needed' : 'No fasting',
           soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.97) 0%, oklch(0.95 0.035 ${p.hue} / 0.94) 58%, oklch(0.95 0.035 ${p.hue} / 0.6) 78%, oklch(0.95 0.035 ${p.hue} / 0) 96%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
           preview: p.ts.slice(0, 4).map(t => t.short), hasMore: p.ts.length > 4, moreLabel: '+' + (p.ts.length - 4) + ' more',
           priceF: cost(p), ...price(p), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i, 1), book: book(p) };
@@ -2172,7 +2172,7 @@ class Component extends DCLogic {
       reels, reelsRef: this.reelsRef, closeReels: () => this.closeReels(),
       stageW: isDesktop ? Math.round(stH * 9 / 16) + 'px' : '100%', stageH: isDesktop ? stH + 'px' : '100%', stageR: isDesktop ? '28px' : '0px',
       reelAmbient: `radial-gradient(60% 60% at 50% 30%, oklch(0.93 0.04 275 / 0.7), transparent 70%)`,
-      reelList: D.P.map(p => ({ sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, name: p.name, meta: p.tests.length + ' tests · ' + cost(p), go: () => this.goReel(p.i), bg: p.i === ri ? '#EEECF8' : 'transparent', bd: p.i === ri ? '#D9D5F0' : 'transparent' })),
+      reelList: D.P.map(p => ({ sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, name: p.name, meta: p.params + ' parameters · ' + cost(p), go: () => this.goReel(p.i), bg: p.i === ri ? '#EEECF8' : 'transparent', bd: p.i === ri ? '#D9D5F0' : 'transparent' })),
       mobileReels: s.reelsOpen && isMobile, desktopReels: s.reelsOpen && isDesktop, reelDots: D.P.map(p => ({ h: p.i === ri ? '26px' : '8px', bg: p.i === ri ? '#3B2C9E' : '#D4D1E6', go: () => this.goReel(p.i) })), reelUp: () => this.goReel(this.cur() - 1), reelDown: () => this.goReel(this.cur() + 1), reelPos: (ri + 1) + ' / ' + n,
       prevSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) - 1); }, nextSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) + 1); },
       reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')', hintBottom: 'calc(82px + ' + reelPadB + ')'

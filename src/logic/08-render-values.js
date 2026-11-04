@@ -58,7 +58,7 @@
         paramsTitle: t.params + (t.params > 1 ? ' parameters' : ' parameter') + (calc.length ? ' · ' + calc.length + ' calculated' : ''),
         sample, sampleIcon: sample === 'Urine' ? 'flask-conical' : 'droplet', fastTitle: t.fasting ? 'Fasting required' : 'No fasting required', fastSub: t.fasting ? '10–12 hrs overnight, water is fine' : 'Eat and drink as usual',
         reportT: 'Report in ' + this.tat(t), book: () => this.bookWA([{ type: 'test', id: t.id }]),
-        profs: ps.map(p => ({ name: p.name, meta: p.tests.length + ' tests · ' + cost(p), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.i) })), toProfs: () => { const el = document.querySelector('[data-td-profs]'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, hasProfs: ps.length > 0 };
+        profs: ps.map(p => ({ name: p.name, meta: p.params + ' parameters · ' + cost(p), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.i) })), toProfs: () => { const el = document.querySelector('[data-td-profs]'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, hasProfs: ps.length > 0 };
     }
     const book = p => () => this.bookWA([{ type: 'profile', id: p.id }]);
 
@@ -74,7 +74,7 @@
     } else {
       const list = q ? D.P.filter(p => (p.name + ' ' + p.tag + ' ' + p.tagline).toLowerCase().includes(q)) : D.P;
       resultsLabel = q ? 'Profiles' : 'Popular profiles';
-      results = list.slice(0, 6).map(p => ({ name: p.name, meta: p.tests.length + ' tests · ' + p.params + ' parameters', priceF: cost(p), ...price(p), open: () => this.openReels(p.i), action: () => this.openReels(p.i), alabel: 'View', abg: '#fff', afg: '#3B2C9E' }));
+      results = list.slice(0, 6).map(p => ({ name: p.name, meta: p.params + ' parameters', priceF: cost(p), ...price(p), open: () => this.openReels(p.i), action: () => this.openReels(p.i), alabel: 'View', abg: '#fff', afg: '#3B2C9E' }));
     }
 
     const cats = C.CATS.map(c => ({ ...c, name: c.short || c.label, soft: `oklch(0.95 0.035 ${c.hue})`, ink: `oklch(0.5 0.15 ${c.hue})`, grad: `linear-gradient(150deg, oklch(0.97 0.03 ${c.hue}) 0%, oklch(0.91 0.06 ${c.hue}) 100%)`, ring: `oklch(0.85 0.07 ${c.hue})`, count: C.TESTS.filter(t => t.cat.includes(c.id)).length, go: () => { this.setState({ cat: c.id, tq: '' }); this.go('tests'); } }));
@@ -89,7 +89,7 @@
     const ms = this.matches().map(m => this.matchVM(m));
     const cartProfiles = s.cart.filter(c => c.type === 'profile').map(c => D.PM[c.id]).filter(Boolean);
     const cartLines = s.cart.map(c => {
-      if (c.type === 'profile') { const p = D.PM[c.id]; if (!p) return null; return { name: p.name, sub: 'Profile · ' + p.tests.length + ' tests · ' + p.params + ' parameters', icon: 'layers', iconBg: '#EFEDFB', iconFg: '#3B2C9E', priceF: cost(p), ...price(p), hasDup: false, dup: '', remove: () => this.toggle('profile', p.id, p.name) }; }
+      if (c.type === 'profile') { const p = D.PM[c.id]; if (!p) return null; return { name: p.name, sub: 'Profile · ' + p.params + ' parameters', icon: 'layers', iconBg: '#EFEDFB', iconFg: '#3B2C9E', priceF: cost(p), ...price(p), hasDup: false, dup: '', remove: () => this.toggle('profile', p.id, p.name) }; }
       const t = D.T[c.id]; if (!t) return null;
       const dp = cartProfiles.find(p => p.tests.includes(t.id));
       return { name: t.name, sub: 'Test · ' + t.params + ' parameter' + (t.params > 1 ? 's' : '') + ' · Reports in ' + this.tat(t), icon: 'test-tube', iconBg: '#F5F5FA', iconFg: '#16133A', priceF: cost(t), ...price(t), hasDup: !!dp, dup: dp ? 'Already included in ' + dp.name : '', remove: () => this.toggle('test', t.id, t.short) };
@@ -125,12 +125,12 @@
     const incGroups = p => {
       const subs = (p.subs || []).map(x => ({ name: x.name, ts: x.tests.map(id => D.T[id]).filter(Boolean) })).filter(x => x.ts.length);
       return subs.length > 1
-        ? subs.map((x, k) => ({ n: k + 1, name: x.name, meta: plural(x.ts.length, 'test') + ' · ' + plural(x.ts.reduce((a, t) => a + t.params, 0), 'param'), items: x.ts.map(t => incTest(t, true)) }))
+        ? subs.map((x, k) => ({ n: k + 1, name: x.name, meta: plural(x.ts.reduce((a, t) => a + t.params, 0), 'param'), items: x.ts.map(t => incTest(t, true)) }))
         : p.ts.map((t, k) => ({ n: k + 1, name: t.name, meta: plural(t.params, 'param'), items: [incTest(t, false)] }));
     };
     const reels = s.reelsOpen ? D.P.map(p => {
       const sl = s.slides[p.i] || 0, inC = has('profile', p.id), worth = this.sumPr(p.ts);
-      return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, testsN: p.tests.length, ideal: p.ideal, hasIdeal: p.ideal.length > 0, benefits: p.benefits, hasBenefits: p.benefits.length > 0, tat: this.tat(p),
+      return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, ideal: p.ideal, hasIdeal: p.ideal.length > 0, benefits: p.benefits, hasBenefits: p.benefits.length > 0, tat: this.tat(p),
         fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })), groups: incGroups(p),
         // What its tests cost one by one, shown only when the profile is cheaper.
         priceF: cost(p), ...price(p), worthF: this.money(worth), hasWorth: worth > this.pr(p) + 0.0001,
@@ -216,7 +216,7 @@
       profFilters: C.PF.map(([id, label]) => { const a = s.pf === id; return { label, go: () => this.setState({ pf: id }), bg: a ? '#16133A' : '#fff', fg: a ? '#fff' : '#16133A', bd: a ? '#16133A' : '#E7E6F0' }; }),
       profilesView: D.P.filter(p => s.pf === 'all' || p.tags.includes(s.pf)).map(p => {
         const inC = has('profile', p.id);
-        return { name: p.name, tag: p.tag, sym: p.sym, tagline: p.tagline, testsN: p.tests.length, params: p.params, fastLabel: p.fasting ? 'Fasting needed' : 'No fasting',
+        return { name: p.name, tag: p.tag, sym: p.sym, tagline: p.tagline, params: p.params, fastLabel: p.fasting ? 'Fasting needed' : 'No fasting',
           soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.97) 0%, oklch(0.95 0.035 ${p.hue} / 0.94) 58%, oklch(0.95 0.035 ${p.hue} / 0.6) 78%, oklch(0.95 0.035 ${p.hue} / 0) 96%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
           preview: p.ts.slice(0, 4).map(t => t.short), hasMore: p.ts.length > 4, moreLabel: '+' + (p.ts.length - 4) + ' more',
           priceF: cost(p), ...price(p), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i, 1), book: book(p) };
@@ -250,7 +250,7 @@
       reels, reelsRef: this.reelsRef, closeReels: () => this.closeReels(),
       stageW: isDesktop ? Math.round(stH * 9 / 16) + 'px' : '100%', stageH: isDesktop ? stH + 'px' : '100%', stageR: isDesktop ? '28px' : '0px',
       reelAmbient: `radial-gradient(60% 60% at 50% 30%, oklch(0.93 0.04 275 / 0.7), transparent 70%)`,
-      reelList: D.P.map(p => ({ sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, name: p.name, meta: p.tests.length + ' tests · ' + cost(p), go: () => this.goReel(p.i), bg: p.i === ri ? '#EEECF8' : 'transparent', bd: p.i === ri ? '#D9D5F0' : 'transparent' })),
+      reelList: D.P.map(p => ({ sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, name: p.name, meta: p.params + ' parameters · ' + cost(p), go: () => this.goReel(p.i), bg: p.i === ri ? '#EEECF8' : 'transparent', bd: p.i === ri ? '#D9D5F0' : 'transparent' })),
       mobileReels: s.reelsOpen && isMobile, desktopReels: s.reelsOpen && isDesktop, reelDots: D.P.map(p => ({ h: p.i === ri ? '26px' : '8px', bg: p.i === ri ? '#3B2C9E' : '#D4D1E6', go: () => this.goReel(p.i) })), reelUp: () => this.goReel(this.cur() - 1), reelDown: () => this.goReel(this.cur() + 1), reelPos: (ri + 1) + ' / ' + n,
       prevSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) - 1); }, nextSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) + 1); },
       reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')', hintBottom: 'calc(82px + ' + reelPadB + ')'

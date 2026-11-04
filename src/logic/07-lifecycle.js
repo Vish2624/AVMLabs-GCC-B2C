@@ -132,7 +132,7 @@
     const where = ' Free home sample collection in Bahrain, Saudi Arabia and the UAE.';
     const name = p ? p.name + ': Health Checkup Tests & Price' : t ? t.name + ' Test: Price & Report Time' : { tests: 'All Lab Tests', profiles: 'Health Checkup Profiles', cart: 'Your Cart', about: 'About Us' }[s.page];
     const title = name ? name + ' | AVM Labs' : 'AVM Labs | Lab Tests & Health Profiles with Free Home Collection';
-    const text = p ? p.name + ': ' + (p.tagline ? p.tagline + ' ' : '') + p.ts.length + ' tests (' + p.params + ' parameters) from one sample' + (this.tat(p) ? ', report in ' + this.tat(p) : '') + '.' + where
+    const text = p ? p.name + ': ' + (p.tagline ? p.tagline + ' ' : '') + p.params + ' parameters from one sample' + (this.tat(p) ? ', report in ' + this.tat(p) : '') + '.' + where
       : t ? t.name + ' test at AVM Labs. ' + (((t.about || '').match(/^.*?\.(?=\s|$)/) || [t.about || ''])[0]) + (this.tat(t) ? ' Report in ' + this.tat(t) + ',' : '') + (t.fasting ? ' fasting needed.' : ' no fasting needed.') + where
       : { tests: 'Browse every lab test at AVM Labs with local prices, report times and fasting needs. Book online.' + where,
         profiles: 'Compare AVM Labs health checkup profiles: packages of tests taken from one sample, at one price.' + where,

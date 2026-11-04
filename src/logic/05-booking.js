@@ -37,8 +37,8 @@
       total += this.pr(x); fasting = fasting || !!x.fasting;
       if (this.tatHrs(this.tat(x)) > this.tatHrs(tat)) tat = this.tat(x);
       lines.push((many ? (i + 1) + '. ' : '') + '*' + x.name + '*' + (c.type === 'profile' ? ' (Health profile)' : ' (Lab test)'));
-      if (c.type === 'profile') lines.push('   Includes ' + x.ts.length + ' tests: ' + x.ts.map(t => t.short).join(', '));
-      else lines.push('   ' + x.params + ' parameter' + (x.params > 1 ? 's' : ''));
+      lines.push('   ' + x.params + ' parameter' + (x.params > 1 ? 's' : ''));
+      if (c.type === 'profile') lines.push('   Includes: ' + x.ts.map(t => t.short).join(', '));
       lines.push('   Price: ' + this.cost(x));
     });
     const pay = this.billed(total), topped = pay - total > 0.0001;
