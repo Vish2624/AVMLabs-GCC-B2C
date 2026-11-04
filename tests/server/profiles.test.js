@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { remapTests, STATIC_PROFILES, STATIC_TESTS } from '../../server/catalog.js';
 import { HttpError } from '../../server/http.js';
-import { expandSubs, parseProfile, sumPrices } from '../../server/profiles.js';
+import { expandSubs, parseProfile, staticProfiles, sumPrices } from '../../server/profiles.js';
 import { parseSubProfile, parseSubProfileId } from '../../server/subprofiles.js';
 import { assertKnownTests, parseTest } from '../../server/tests.js';
 
@@ -184,6 +184,25 @@ describe('built-in B2C profiles', () => {
   it('give every test a lab code and short name', () => {
     assert.ok(STATIC_TESTS.every((t) => t.code && t.shortName));
     assert.equal(STATIC_TESTS.find((t) => t.id === 'cbc').shortName, 'H6');
+  });
+});
+
+// Served by the API until migration 0006 puts the same profiles in the database.
+describe('staticProfiles', () => {
+  it('gives the built-in profiles in the API shape, panels then extra tests', () => {
+    const profiles = staticProfiles();
+    assert.equal(profiles.length, 27);
+    assert.ok(profiles.every((p) => p.published && p.subs.length && p.prices.BH > 0));
+    assert.deepEqual(
+      profiles[0].subs.map((s) => [s.name, s.tests.length]),
+      [
+        ['Liver Profile', 8],
+        ['Lipid Profile', 4],
+        ['Kidney Profile', 4],
+        ['Free Thyroid Profile', 3],
+        ['Additional tests', 2],
+      ],
+    );
   });
 });
 

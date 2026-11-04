@@ -86,8 +86,9 @@ changes within a minute (the public API is cached at Vercel's edge for 60 second
    with a message asking for it. Then run `0006_b2c_profiles.sql`: it replaces every profile with
    the 27 from the B2C rates sheet (`src/data/profiles.json`) and adds each test's and profile's
    lab code and short name. These are kept for the lab and shown only in the admin: the public
-   API and the website leave them out. Until `0006` runs, the live site keeps the old profiles and
-   the admin refuses to save profiles.
+   API and the website leave them out. Until `0006` runs, the API serves those 27 built-in profiles
+   instead of the database's old ones, and the admin shows them but refuses to save profiles or
+   sub-profiles, with a message asking for it.
 2. In Vercel → Project Settings → Environment Variables, add the values listed in
    `.env.example` (SESSION_SECRET is optional), then redeploy. Connecting Supabase
    through Vercel → Storage adds the two Supabase values automatically.

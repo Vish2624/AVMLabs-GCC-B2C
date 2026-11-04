@@ -87,8 +87,8 @@ export async function requireBenefits() {
 }
 
 // Lab codes and short names on tests and profiles, and the B2C profiles (migration 0006): true once profiles
-// have a `code` column. Until then codes aren't read or written, and saving a profile is refused because the
-// old save_profile would drop them.
+// have a `code` column. Until then the built-in B2C profiles are served instead of the database's old ones,
+// codes aren't read or written, and saving profiles or sub-profiles is refused (0006 would replace them).
 const CODES_MIGRATION = '0006_b2c_profiles.sql';
 export async function codesReady() {
   const k = known.get('codes');

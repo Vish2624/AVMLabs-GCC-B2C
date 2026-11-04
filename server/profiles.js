@@ -1,7 +1,7 @@
 // Profile validation and database access. A profile is built from reusable
 // sub-profiles (server/subprofiles.js) plus any tests added on their own.
 import { z } from 'zod';
-import { CATEGORIES, COUNTRIES, ICONS, remapTests } from './catalog.js';
+import { CATEGORIES, COUNTRIES, ICONS, remapTests, STATIC_PROFILES } from './catalog.js';
 import {
   benefitsReady,
   codesReady,
@@ -144,17 +144,27 @@ function legacyToApi(row) {
   return { ...toApi({ ...rest, test_ids: [], profile_sub_profiles: [] }), subs };
 }
 
+// The built-in B2C profiles (src/data/profiles.json) in the API shape, all published.
+export function staticProfiles() {
+  const library = new Map(
+    STATIC_PROFILES.library.map((s) => [s.id, { id: s.id, name: s.name, description: '', tests: s.tests }]),
+  );
+  return STATIC_PROFILES.profiles.map(({ subProfiles, tests, ...p }) => {
+    const subs = subProfiles.map((id) => library.get(id)).filter(Boolean);
+    return { ...p, published: true, updatedAt: null, subProfiles, tests, subs: expandSubs(subs, tests) };
+  });
+}
+
 export async function listProfiles({ publishedOnly = false } = {}) {
   if (devStore()) return devStore().list({ publishedOnly });
-  const [ready, priced, listed, coded] = await Promise.all([
-    libraryReady(),
-    pricesReady(),
-    benefitsReady(),
-    codesReady(),
-  ]);
+  // Until migration 0006 puts the B2C profiles in the database, the website gets them from the built-in
+  // list rather than the database's old ones (the same profiles 0006 inserts). The admin shows them too,
+  // and refuses to save until 0006 runs.
+  if (!(await codesReady())) return staticProfiles();
+  const [ready, priced, listed] = await Promise.all([libraryReady(), pricesReady(), benefitsReady()]);
   let query = db()
     .from('profiles')
-    .select(ready ? select(priced, listed, coded) : LEGACY_SELECT)
+    .select(ready ? select(priced, listed, true) : LEGACY_SELECT)
     .order('sort_order')
     .order('name');
   if (publishedOnly) query = query.eq('published', true);
@@ -228,6 +238,7 @@ async function save(p) {
 
 export async function deleteProfile(id) {
   if (devStore()) return devStore().remove(id);
+  await requireCodes();
   const rows = unwrap(await db().from('profiles').delete().eq('id', id).select('id'));
   if (!rows.length) throw new HttpError(404, 'Profile not found');
 }
