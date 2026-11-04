@@ -24,8 +24,12 @@
     });
     const PM = {}; P.forEach(p => { PM[p.id] = p; });
     const inProf = {}; P.forEach(p => p.tests.forEach(id => { (inProf[id] = inProf[id] || []).push(p); }));
-    // R: the profiles in the reels and the home reel row (all of P are on the Profiles page).
-    return (Component._db = { T, P, PM, inProf, R: P.filter(p => p.reel) });
+    // R: the profiles in the reels and the home reel row (all of P are on the Profiles page), kept together by
+    // category in the order the categories first appear, so swiping follows the grouped desktop reel list.
+    const R = P.filter(p => p.reel), first = {};
+    R.forEach(p => { if (!(p.tags[0] in first)) first[p.tags[0]] = Object.keys(first).length; });
+    R.sort((a, b) => first[a.tags[0]] - first[b.tags[0]]);
+    return (Component._db = { T, P, PM, inProf, R });
   }
 
   // Swaps the built-in tests and profiles for the ones managed in the admin (/api/tests, /api/profiles), fetched

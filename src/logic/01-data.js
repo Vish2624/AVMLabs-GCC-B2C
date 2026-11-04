@@ -51,3 +51,5 @@
   static SLOTS = [['6–8 AM', 6], ['8–10 AM', 8], ['10–12 PM', 10], ['12–2 PM', 12], ['4–6 PM', 16], ['6–8 PM', 18]];
   // Profile filters: must match CATEGORIES in server/catalog.js.
   static PF = [['all', 'All'], ['wellness', 'Wellness'], ['women', 'Women'], ['men', 'Men'], ['heart', 'Heart'], ['diabetes', 'Diabetes'], ['thyroid', 'Thyroid'], ['vitamins', 'Vitamins'], ['hair', 'Hair fall'], ['organs', 'Kidney & Liver'], ['kids', 'Kids'], ['screening', 'Screening']];
+  // Each profile category's icon and hue, for the category headers in the desktop reel list.
+  static PF_LOOK = { wellness: ['shield-plus', 275], women: ['flower-2', 345], men: ['biceps-flexed', 245], heart: ['heart-pulse', 25], diabetes: ['syringe', 150], thyroid: ['zap', 195], vitamins: ['pill', 75], hair: ['sparkles', 320], organs: ['flask-conical', 150], kids: ['baby', 75], screening: ['stethoscope', 245] };

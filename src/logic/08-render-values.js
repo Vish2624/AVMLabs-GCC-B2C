@@ -251,6 +251,16 @@
       reels, reelsRef: this.reelsRef, closeReels: () => this.closeReels(),
       stageW: isDesktop ? Math.round(stH * 9 / 16) + 'px' : '100%', stageH: isDesktop ? stH + 'px' : '100%', stageR: isDesktop ? '28px' : '0px',
       reelAmbient: `radial-gradient(60% 60% at 50% 30%, oklch(0.93 0.04 275 / 0.7), transparent 70%)`,
+      // Desktop reel side list: the reel profiles grouped by category (one icon per group), groups in the order the
+      // reels first reach them.
+      reelGroups: RL.reduce((gs, p, k) => {
+        const c = p.tags[0], look = C.PF_LOOK[c] || ['layers', p.hue];
+        let g = gs.find(x => x.id === c);
+        if (!g) gs.push(g = { id: c, label: (C.PF.find(f => f[0] === c) || [c, c])[1], icon: look[0], soft: `oklch(0.94 0.045 ${look[1]})`, ink: `oklch(0.48 0.16 ${look[1]})`, items: [] });
+        g.items.push({ name: p.name, meta: p.params + ' parameters · ' + cost(p), go: () => this.goReel(k), bg: k === ri ? '#EEECF8' : 'transparent', bd: k === ri ? '#D9D5F0' : 'transparent', fw: k === ri ? '800' : '700' });
+        g.count = g.items.length;
+        return gs;
+      }, []),
       reelList: RL.map((p, k) => ({ sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, name: p.name, meta: p.params + ' parameters · ' + cost(p), go: () => this.goReel(k), bg: k === ri ? '#EEECF8' : 'transparent', bd: k === ri ? '#D9D5F0' : 'transparent' })),
       mobileReels: s.reelsOpen && isMobile, desktopReels: s.reelsOpen && isDesktop, reelDots: RL.map((p, k) => ({ h: k === ri ? '26px' : '8px', bg: k === ri ? '#3B2C9E' : '#D4D1E6', go: () => this.goReel(k) })), reelUp: () => this.goReel(this.cur() - 1), reelDown: () => this.goReel(this.cur() + 1), reelPos: (ri + 1) + ' / ' + n,
       prevSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) - 1); }, nextSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) + 1); },
