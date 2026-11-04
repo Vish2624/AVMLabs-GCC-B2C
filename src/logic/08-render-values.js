@@ -16,6 +16,9 @@
       gateMain: !s.pickCountry, gatePick: !!s.pickCountry, openPick: () => this.setState({ pickCountry: true }), closePick: () => this.setState({ pickCountry: false }),
       countryOpts: ['BH', 'SA', 'AE'].map(c => ({ name: C.REGIONS[c].name, code: c === 'SA' ? 'KSA' : c, go: () => this.pickRegion(c) })) };
     const cost = x => this.cost(x);
+    // Every price on the page shows its number large and the currency small after it: price(x) gives priceNum and
+    // priceCur for a test or profile, parts('pay', amount) gives payNum and payCur.
+    const parts = (k, v) => { const { num, cur } = this.priceParts(v); return { [k + 'Num']: num, [k + 'Cur']: cur }; }, price = x => parts('price', this.pr(x));
     // Search matches the test name, short name, any alias ("also known as") or its category, ignoring case,
     // and also ignoring spaces and punctuation, so "b12" finds Vitamin B-12 and "hba1c" finds HbA1c.
     const flat = v => v.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -43,7 +46,7 @@
       const pc = C.CATS.find(c => c.id === t.cat[0]) || C.CATS[0];
       return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, tatH: this.tat(t).replace('hrs', 'hours'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), cardBg: 'radial-gradient(75% 70% at 100% 0%, #F0EDFE 0%, rgba(240,237,254,0) 65%), radial-gradient(55% 50% at 0% 100%, rgba(255,236,240,0.55) 0%, rgba(255,236,240,0) 70%), #FFFFFF', tat: this.tat(t), fasting: t.fasting,
         open: () => this.openTest(t.id),
-        priceF: cost(t), priceNum: this.costParts(t).num, priceCur: this.costParts(t).cur, underMin: this.pr(t) > 0 && this.pr(t) < RG.minBill, minNote: this.minBillNote(), inCart: inC, notInCart: !inC && !cov, covered: !!cov, coveredBy: cov ? 'In ' + cov.name : '', toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); }, stop: e => e && e.stopPropagation() };
+        priceF: cost(t), ...price(t), underMin: this.pr(t) > 0 && this.pr(t) < RG.minBill, minNote: this.minBillNote(), inCart: inC, notInCart: !inC && !cov, covered: !!cov, coveredBy: cov ? 'In ' + cov.name : '', toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); }, stop: e => e && e.stopPropagation() };
     };
     let td = null;
     if (pg === 'test' && s.testId && D.T[s.testId]) {
@@ -67,11 +70,11 @@
     if (s.sMode === 'tests') {
       const list = q ? searchTests(byRank, q) : popularTests;
       resultsLabel = q ? 'Tests' : 'Most booked';
-      results = list.slice(0, 6).map(t => { const inC = has('test', t.id), cov = !inC && coveredBy(t.id); return { name: t.name, meta: t.params + ' parameter' + (t.params > 1 ? 's' : '') + ' · Reports in ' + this.tat(t), priceF: cost(t), open: () => this.openTest(t.id), action: () => !cov && this.toggle('test', t.id, t.short), alabel: inC ? 'Added' : cov ? 'Included' : 'Add', abg: inC ? '#3B2C9E' : cov ? '#EAF7EF' : '#fff', afg: inC ? '#fff' : cov ? '#0E7350' : '#3B2C9E' }; });
+      results = list.slice(0, 6).map(t => { const inC = has('test', t.id), cov = !inC && coveredBy(t.id); return { name: t.name, meta: t.params + ' parameter' + (t.params > 1 ? 's' : '') + ' · Reports in ' + this.tat(t), priceF: cost(t), ...price(t), open: () => this.openTest(t.id), action: () => !cov && this.toggle('test', t.id, t.short), alabel: inC ? 'Added' : cov ? 'Included' : 'Add', abg: inC ? '#3B2C9E' : cov ? '#EAF7EF' : '#fff', afg: inC ? '#fff' : cov ? '#0E7350' : '#3B2C9E' }; });
     } else {
       const list = q ? D.P.filter(p => (p.name + ' ' + p.tag + ' ' + p.tagline).toLowerCase().includes(q)) : D.P;
       resultsLabel = q ? 'Profiles' : 'Popular profiles';
-      results = list.slice(0, 6).map(p => ({ name: p.name, meta: p.tests.length + ' tests · ' + p.params + ' parameters', priceF: cost(p), open: () => this.openReels(p.i), action: () => this.openReels(p.i), alabel: 'View', abg: '#fff', afg: '#3B2C9E' }));
+      results = list.slice(0, 6).map(p => ({ name: p.name, meta: p.tests.length + ' tests · ' + p.params + ' parameters', priceF: cost(p), ...price(p), open: () => this.openReels(p.i), action: () => this.openReels(p.i), alabel: 'View', abg: '#fff', afg: '#3B2C9E' }));
     }
 
     const cats = C.CATS.map(c => ({ ...c, name: c.short || c.label, soft: `oklch(0.95 0.035 ${c.hue})`, ink: `oklch(0.5 0.15 ${c.hue})`, grad: `linear-gradient(150deg, oklch(0.97 0.03 ${c.hue}) 0%, oklch(0.91 0.06 ${c.hue}) 100%)`, ring: `oklch(0.85 0.07 ${c.hue})`, count: C.TESTS.filter(t => t.cat.includes(c.id)).length, go: () => { this.setState({ cat: c.id, tq: '' }); this.go('tests'); } }));
@@ -86,10 +89,10 @@
     const ms = this.matches().map(m => this.matchVM(m));
     const cartProfiles = s.cart.filter(c => c.type === 'profile').map(c => D.PM[c.id]).filter(Boolean);
     const cartLines = s.cart.map(c => {
-      if (c.type === 'profile') { const p = D.PM[c.id]; if (!p) return null; return { name: p.name, sub: 'Profile · ' + p.tests.length + ' tests · ' + p.params + ' parameters', icon: 'layers', iconBg: '#EFEDFB', iconFg: '#3B2C9E', priceF: cost(p), hasDup: false, dup: '', remove: () => this.toggle('profile', p.id, p.name) }; }
+      if (c.type === 'profile') { const p = D.PM[c.id]; if (!p) return null; return { name: p.name, sub: 'Profile · ' + p.tests.length + ' tests · ' + p.params + ' parameters', icon: 'layers', iconBg: '#EFEDFB', iconFg: '#3B2C9E', priceF: cost(p), ...price(p), hasDup: false, dup: '', remove: () => this.toggle('profile', p.id, p.name) }; }
       const t = D.T[c.id]; if (!t) return null;
       const dp = cartProfiles.find(p => p.tests.includes(t.id));
-      return { name: t.name, sub: 'Test · ' + t.params + ' parameter' + (t.params > 1 ? 's' : '') + ' · Reports in ' + this.tat(t), icon: 'test-tube', iconBg: '#F5F5FA', iconFg: '#16133A', priceF: cost(t), hasDup: !!dp, dup: dp ? 'Already included in ' + dp.name : '', remove: () => this.toggle('test', t.id, t.short) };
+      return { name: t.name, sub: 'Test · ' + t.params + ' parameter' + (t.params > 1 ? 's' : '') + ' · Reports in ' + this.tat(t), icon: 'test-tube', iconBg: '#F5F5FA', iconFg: '#16133A', priceF: cost(t), ...price(t), hasDup: !!dp, dup: dp ? 'Already included in ' + dp.name : '', remove: () => this.toggle('test', t.id, t.short) };
     }).filter(Boolean);
 
     const modeStyle = a => ({ bd: a ? '#3B2C9E' : '#ECEBF3', bg: a ? '#F4F2FE' : '#fff', ring: a ? '#3B2C9E' : '#C9C6DA', dot: a ? '#3B2C9E' : 'transparent' });
@@ -130,7 +133,7 @@
       return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, testsN: p.tests.length, ideal: p.ideal, hasIdeal: p.ideal.length > 0, benefits: p.benefits, hasBenefits: p.benefits.length > 0, tat: this.tat(p),
         fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })), groups: incGroups(p),
         // What its tests cost one by one, shown only when the profile is cheaper.
-        priceF: cost(p), worthF: this.money(worth), hasWorth: worth > this.pr(p) + 0.0001,
+        priceF: cost(p), ...price(p), worthF: this.money(worth), hasWorth: worth > this.pr(p) + 0.0001,
         segs: [0, 1, 2].map(k => ({ w: k === sl ? '22px' : '7px', bg: k === sl ? '#3B2C9E' : '#D4D1E6', go: () => this.goSlide(p.i, k) })), onH: e => this.onH(p.i, e), toTests: () => this.goSlide(p.i, 1),
         toggle: () => this.toggle('profile', p.id, p.name), addIcon: inC ? 'check' : 'plus', addLabel: inC ? 'Added' : 'Add', addText: inC ? 'In cart' : 'Add to cart', addBg: inC ? '#3B2C9E' : '#fff', addInk: inC ? '#fff' : '#16133A', popping: inC && s.pop === p.id, addPop: inC && s.pop === p.id ? '1' : '0',
         share: () => this.share(p), book: book(p) };
@@ -167,7 +170,7 @@
         return { centreRows: rows, centreY: 'translateY(' + (-k * 46) + 'px)', centreShots: all.concat(all) };
       })(),
       // Hero slides feature these profiles by id; they may be unpublished or reordered in the admin.
-      hero1Price: heroW ? cost(heroW) : '', hero2Price: heroV ? cost(heroV) : '',
+      ...(heroW ? parts('hero1', this.pr(heroW)) : {}), ...(heroV ? parts('hero2', this.pr(heroV)) : {}),
       ...gateVM,
       smTests: s.sMode === 'tests' ? segOn : segOff, smProfiles: s.sMode === 'profiles' ? segOn : segOff,
       setModeTests: () => this.setState({ sMode: 'tests' }), setModeProfiles: () => this.setState({ sMode: 'profiles' }),
@@ -200,7 +203,7 @@
       // Lift the hero "Explore profiles" bar so it centres on the category circles beside it (labels sit below them).
       exploreMb: isDesktop ? '43px' : '0px',
       rowDisplay: isDesktop ? 'grid' : 'flex', rowOverflow: isDesktop ? 'visible' : 'auto',
-      reelTiles: D.P.map(p => ({ slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: cost(p), bg: reelBg(p.hue), open: () => this.openReels(p.i) })),
+      reelTiles: D.P.map(p => ({ slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: cost(p), ...price(p), bg: reelBg(p.hue), open: () => this.openReels(p.i) })),
       // Desktop: two rows of three. Mobile keeps all of them in one swipeable row.
       popular: (isDesktop ? popularTests.slice(0, 6) : popularTests).map(testVM),
       catTitle: s.cat === 'all' ? 'All lab tests' : (C.CATS.find(c => c.id === s.cat) || {}).label + ' tests',
@@ -208,7 +211,7 @@
       tq: s.tq, onTq: e => this.setState({ tq: e.target.value }), hasTq: !!s.tq, clearTq: () => this.setState({ tq: '' }),
       testCats, testsView: tList.map(testVM), testsEmpty: !tList.length,
       barCountLabel: cartCount + (cartCount === 1 ? ' item' : ' items'), noBarNote: !(b.top > 0),
-      cartPreview: cartLines.slice(0, 5).map(l => ({ name: l.name, priceF: l.priceF })),
+      cartPreview: cartLines.slice(0, 5).map(l => ({ name: l.name, priceF: l.priceF, priceNum: l.priceNum, priceCur: l.priceCur })),
       topMatch: ms.slice(0, 1), cartMatches: ms.slice(0, 2),
       profFilters: C.PF.map(([id, label]) => { const a = s.pf === id; return { label, go: () => this.setState({ pf: id }), bg: a ? '#16133A' : '#fff', fg: a ? '#fff' : '#16133A', bd: a ? '#16133A' : '#E7E6F0' }; }),
       profilesView: D.P.filter(p => s.pf === 'all' || p.tags.includes(s.pf)).map(p => {
@@ -216,7 +219,7 @@
         return { name: p.name, tag: p.tag, sym: p.sym, tagline: p.tagline, testsN: p.tests.length, params: p.params, fastLabel: p.fasting ? 'Fasting needed' : 'No fasting',
           soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.97) 0%, oklch(0.95 0.035 ${p.hue} / 0.94) 58%, oklch(0.95 0.035 ${p.hue} / 0.6) 78%, oklch(0.95 0.035 ${p.hue} / 0) 96%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
           preview: p.ts.slice(0, 4).map(t => t.short), hasMore: p.ts.length > 4, moreLabel: '+' + (p.ts.length - 4) + ' more',
-          priceF: cost(p), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i, 1), book: book(p) };
+          priceF: cost(p), ...price(p), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i, 1), book: book(p) };
       }),
       cartLines, pickHome: () => this.setState({ mode: 'home' }), pickWalk: () => this.setState({ mode: 'walkin' }),
       modeHome: modeStyle(isHomeMode), modeWalk: modeStyle(!isHomeMode), isHomeMode,
@@ -227,12 +230,12 @@
       slotTitle: isHomeMode ? 'Collection date & time' : 'Visit date & time',
       days: days.map(d => { const a = s.form.date === d.key; return { top: d.top, num: d.num, mon: d.mon, pick: () => this.setState(st => ({ form: { ...st.form, date: d.key, slot: d.i === 0 ? '' : st.form.slot }, errors: { ...st.errors, date: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : '#fff', fg: a ? '#fff' : '#16133A', sub: a ? 'rgba(255,255,255,0.8)' : '#5D5A7A', sh: a ? '0 12px 24px -12px rgba(59,44,158,0.85)' : 'none', lift: a ? 'translateY(-2px)' : 'none' }; }),
       slots, slotPicked: !!(pickedDay && s.form.slot), slotSummary: pickedDay ? pickedDay.full + ' · ' + s.form.slot : '', asidePos: isWide ? 'sticky' : 'static',
-      bill: { priceF: this.money(b.price), hcF: b.hc ? this.money(b.hc) : 'FREE', hcColor: b.hc ? '#16133A' : '#0E7350', payF: this.money(b.pay), hasTop: b.top > 0, topF: this.money(b.top), minShort: 'Add ' + this.money(b.top) + ' more to avoid minimum billing',
+      bill: { priceF: this.money(b.price), ...parts('price', b.price), ...parts('pay', b.pay), ...parts('top', b.top), hcF: b.hc ? this.money(b.hc) : 'FREE', hcColor: b.hc ? '#16133A' : '#0E7350', payF: this.money(b.pay), hasTop: b.top > 0, topF: this.money(b.top), minShort: 'Add ' + this.money(b.top) + ' more to avoid minimum billing',
         minTitle: 'Add ' + this.money(b.top) + ' more to avoid the minimum billing charge',
         minSub: 'The minimum bill is ' + this.money(RG.minBill) + ' per patient. Add tests worth ' + this.money(b.top) + ' or more and you pay only for your tests.',
         minPct: Math.round(b.price / (b.pay || 1) * 100) + '%',
         // Popular tests that clear the charge on their own, to add in one tap.
-        minAdds: b.top > 0 ? byRank.filter(t => !has('test', t.id) && !coveredBy(t.id) && this.pr(t) >= b.top).slice(0, 3).map(t => ({ name: t.short, priceF: cost(t), add: () => this.toggle('test', t.id, t.short) })) : [] },
+        minAdds: b.top > 0 ? byRank.filter(t => !has('test', t.id) && !coveredBy(t.id) && this.pr(t) >= b.top).slice(0, 3).map(t => ({ name: t.short, priceF: cost(t), ...price(t), add: () => this.toggle('test', t.id, t.short) })) : [] },
       confirm: () => this.confirm(),
       isBooked: !!s.booked, bookedUrl: s.booked ? s.booked.url : '#',
       finishBooked: () => { this.setCart(() => []); this.setState({ booked: null }); this.go('home'); },

@@ -64,6 +64,8 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-gold-ghost]:hover{background:#fff}
 @media (prefers-reduced-motion:reduce){[data-gold-card]::after{animation:none;display:none}}
 /* Offer price: big dark price with a slim green pill below, on a soft lavender strip. */
+/* Every price: the number large, the currency small after it ("7 SAR"), sized from the number. */
+[data-cur]{font-size:max(.42em,10.5px);font-weight:700;letter-spacing:.02em;margin-left:.22em;white-space:nowrap}
 [data-offer-pill]{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;padding:2px 9px 2px 3px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.01em;line-height:1.3;white-space:nowrap;color:#fff;background:linear-gradient(135deg,#0F9159 0%,#0A7148 100%);box-shadow:0 4px 10px -5px rgba(14,115,80,.75),inset 0 1px 0 rgba(255,255,255,.28)}
 [data-offer-pill]::before{content:'%';flex:none;display:grid;place-items:center;width:13px;height:13px;border-radius:999px;background:#fff;color:#0A7148;font-size:9px;font-weight:800;line-height:1;letter-spacing:0}
 [data-price-strip]{background:linear-gradient(135deg,#FBFAFF 0%,#EFECFD 100%);box-shadow:inset 0 0 0 1px rgba(59,44,158,.09),inset 0 1px 0 #fff,0 10px 20px -18px rgba(42,31,122,.6)}

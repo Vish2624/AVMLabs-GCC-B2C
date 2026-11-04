@@ -42,10 +42,10 @@
         <div style="background:rgba(255,255,255,0.88);backdrop-filter:blur(18px);border:1px solid #ECEBF3;border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 50px -34px rgba(22,19,58,0.45)">
           <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:16px;font-weight:800">Your cart</span><span style="font-size:13px;color:#5D5A7A;font-weight:600">{{ barCountLabel }}</span></div>
           <sc-if value="{{ cartEmpty }}"><div style="font-size:13.5px;line-height:1.55;color:#5D5A7A">Add tests and we'll check if a health profile covers them for less.</div></sc-if>
-          <sc-for list="{{ cartPreview }}" as="l" hint-placeholder-count="0"><div style="display:flex;justify-content:space-between;gap:10px;font-size:13.5px"><span style="font-weight:600;line-height:1.35">{{ l.name }}</span><span style="font-weight:700;white-space:nowrap">{{ l.priceF }}</span></div></sc-for>
+          <sc-for list="{{ cartPreview }}" as="l" hint-placeholder-count="0"><div style="display:flex;justify-content:space-between;gap:10px;font-size:13.5px"><span style="font-weight:600;line-height:1.35">{{ l.name }}</span><span style="font-weight:700;white-space:nowrap">{{ l.priceNum }}<small data-cur="1">{{ l.priceCur }}</small></span></div></sc-for>
           <sc-if value="{{ hasCart }}">
             <div style="height:1px;background:#ECEBF3"></div>
-            <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800"><span>Subtotal</span><span>{{ bill.priceF }}</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800"><span>Subtotal</span><span style="white-space:nowrap">{{ bill.priceNum }}<small data-cur="1">{{ bill.priceCur }}</small></span></div>
             <sc-if value="{{ bill.hasTop }}"><span data-min-note="1"><avm-i n="info" s="13"></avm-i>{{ bill.minShort }} · you pay {{ bill.payF }}</span></sc-if>
             <button onClick="{{ goCart }}" style="white-space:nowrap;height:48px;border-radius:999px;border:none;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 10px 24px -12px rgba(59,44,158,0.7),inset 0 1px 0 rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center;gap:8px">Go to cart<avm-i n="arrow-right" s="16"></avm-i></button>
           </sc-if>

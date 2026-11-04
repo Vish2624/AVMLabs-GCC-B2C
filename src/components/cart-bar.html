@@ -1,4 +1,4 @@
   <div style="position:fixed;left:0;right:0;bottom:0;transform:translateY(var(--vv-drop, 0px));z-index:58;padding:12px 14px {{ cartPadB }};background:rgba(255,255,255,0.9);backdrop-filter:blur(22px);border-top:1px solid #ECEBF3;display:flex;align-items:center;gap:12px">
-    <div style="display:flex;flex-direction:column"><span style="font-size:12px;color:#5D5A7A;font-weight:600">To pay</span><span style="font-size:20px;font-weight:800">{{ bill.payF }}</span></div>
+    <div style="display:flex;flex-direction:column"><span style="font-size:12px;color:#5D5A7A;font-weight:600">To pay</span><span style="font-size:20px;font-weight:800;white-space:nowrap">{{ bill.payNum }}<small data-cur="1">{{ bill.payCur }}</small></span></div>
     <button onClick="{{ confirm }}" style="flex:1;height:52px;border-radius:999px;border:none;background:linear-gradient(180deg,#1FAD5E,#138A47);color:#fff;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 12px 26px -12px rgba(19,138,71,0.9)"><avm-i n="whatsapp" s="18"></avm-i>Confirm on WhatsApp</button>
   </div>

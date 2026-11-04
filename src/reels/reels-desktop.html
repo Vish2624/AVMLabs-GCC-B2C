@@ -32,7 +32,7 @@
               <div style="display:flex;flex-direction:column;gap:14px;padding:18px;border-radius:24px;background:rgba(255,255,255,0.72);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(255,255,255,0.85);box-shadow:0 18px 40px -24px rgba(22,19,58,0.35);backdrop-filter:blur(16px);flex:none">
                 <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
                   <div style="display:flex;flex-direction:column;gap:6px">
-                    <span style="font-size:clamp(36px,5.2vh,48px);font-weight:800;letter-spacing:-0.03em;line-height:1">{{ r.priceF }}</span>
+                    <span style="font-size:clamp(36px,5.2vh,48px);font-weight:800;letter-spacing:-0.03em;line-height:1;white-space:nowrap">{{ r.priceNum }}<small data-cur="1">{{ r.priceCur }}</small></span>
                     <span data-offer-pill="1">Offer price</span>
                   </div>
                   <button onClick="{{ r.share }}" aria-label="Share" style="width:46px;height:46px;border-radius:999px;flex:none;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="share-2" s="19"></avm-i></button>
