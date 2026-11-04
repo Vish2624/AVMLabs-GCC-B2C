@@ -250,8 +250,6 @@
       reelList: D.P.map(p => ({ sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, name: p.name, meta: p.tests.length + ' tests · ' + cost(p), go: () => this.goReel(p.i), bg: p.i === ri ? '#EEECF8' : 'transparent', bd: p.i === ri ? '#D9D5F0' : 'transparent' })),
       mobileReels: s.reelsOpen && isMobile, desktopReels: s.reelsOpen && isDesktop, reelDots: D.P.map(p => ({ h: p.i === ri ? '26px' : '8px', bg: p.i === ri ? '#3B2C9E' : '#D4D1E6', go: () => this.goReel(p.i) })), reelUp: () => this.goReel(this.cur() - 1), reelDown: () => this.goReel(this.cur() + 1), reelPos: (ri + 1) + ' / ' + n,
       prevSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) - 1); }, nextSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) + 1); },
-      reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')', hintBottom: 'calc(82px + ' + reelPadB + ')',
-      reelHint: !!s.hint && isMobile, hintDir: s.hint || 'up', hintIcon: 'chevron-' + (s.hint || 'up'),
-      hintLabel: s.hint === 'left' ? 'details' : s.hint === 'down' ? 'back' : 'next'
+      reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')', hintBottom: 'calc(82px + ' + reelPadB + ')'
     };
   }

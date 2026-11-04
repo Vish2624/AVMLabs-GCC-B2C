@@ -138,6 +138,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 /* Reels swipe hint (mobile): two cascading chevrons + label in the gap above "Book now", shown for 5s after 4s idle */
 @keyframes avmSwipeLife{0%{opacity:0;transform:translateY(8px) scale(.9)}7%{opacity:1;transform:none}93%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-4px) scale(.95)}}
 @keyframes avmChev{0%{opacity:.2;transform:translate(0,0)}45%{opacity:1}100%{opacity:.2;transform:translate(var(--sx),var(--sy))}}
+[data-swipe-wrap]:not([data-on]){display:none!important}
 [data-swipe]{--sx:0px;--sy:-4px;display:flex;align-items:center;gap:7px;pointer-events:none;color:#2A1F7A;animation:avmSwipeLife 5s cubic-bezier(.2,.8,.2,1) both}
 [data-swipe="down"]{--sy:4px}
 [data-swipe="left"]{--sx:-4px;--sy:0px}

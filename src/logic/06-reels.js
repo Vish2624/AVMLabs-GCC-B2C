@@ -17,16 +17,29 @@
   // Alternates between "swipe left" (test details) and "swipe up/down" (other profiles).
   armHint() {
     clearTimeout(this._ht); clearTimeout(this._ht2);
-    if (this.state.hint) this.setState({ hint: false });
+    this.showHint(null);
     this._ht = setTimeout(() => {
       if (!this.state.reelsOpen || this.state.w >= 1024) return;
       const i = this.cur(), k = this.state.slides[i] || 0, n = Component.PROFILES.length, opts = [];
       if (k < 2) opts.push('left');
       if (n > 1) opts.push(i < n - 1 ? 'up' : 'down');
       if (!opts.length) return;
-      this.setState({ hint: opts[(this._hc = (this._hc || 0) + 1) % opts.length] });
-      this._ht2 = setTimeout(() => { this.setState({ hint: false }); this.armHint(); }, 5000);
+      this.showHint(opts[(this._hc = (this._hc || 0) + 1) % opts.length]);
+      this._ht2 = setTimeout(() => { this.showHint(null); this.armHint(); }, 5000);
     }, 4000);
+  }
+  // Shows the hint on the current reel ('up', 'down', 'left'), or hides it (null). Written straight to the page:
+  // a re-render here redraws every reel and stalled any swipe that started just as the hint came or went.
+  showHint(dir) {
+    const el = this.scroller(); if (!el) return;
+    const cur = this.cur();
+    el.querySelectorAll('[data-swipe-wrap]').forEach((w, k) => {
+      if (!dir || k !== cur) { if (w.hasAttribute('data-on')) w.removeAttribute('data-on'); return; }
+      w.querySelector('[data-swipe]').setAttribute('data-swipe', dir);
+      w.querySelectorAll('avm-i').forEach(ic => ic.setAttribute('n', 'chevron-' + dir));
+      w.querySelector('[data-swipe-label]').textContent = dir === 'left' ? 'details' : dir === 'down' ? 'back' : 'next';
+      w.setAttribute('data-on', '');
+    });
   }
   // Instagram-style double tap on a phone: a heart pops where the finger is, then floats up and fades.
   // Just for show: it doesn't like, add or change anything. Drawn straight into the page, no re-render.
@@ -56,6 +69,15 @@
   track() { const el = this.scroller(); return el && el.querySelector('[data-reel-track]'); }
   // Where the track sits right now in px, read from the page so it is right even halfway through a glide.
   trackY() { const t = this.track(); return t ? new DOMMatrixReadOnly(getComputedStyle(t).transform).m42 : 0; }
+  // One reel's height in px, with its fraction: many Android screens are e.g. 812.4px tall, and the rounded
+  // clientHeight left the reel a few px off where it parks, so it jumped at the end of every glide.
+  reelH() { const el = this.scroller(); return el ? el.getBoundingClientRect().height : 0; }
+  // Paints only reels lo..hi (the one on screen and its neighbours). The others stay laid out but hidden, so the
+  // phone isn't rasterising 8 full-screen photos while the track moves.
+  cull(lo, hi) {
+    const el = this.scroller(); if (!el) return;
+    el.querySelectorAll('[data-reel]').forEach((r, k) => { const v = k >= lo && k <= hi ? '' : 'hidden'; if (r.style.visibility !== v) r.style.visibility = v; });
+  }
   // Moves the reel track. px: follow the finger exactly. anim: glide to reel i on a spring that starts at the
   // finger's speed v0 (px/ms), so a flick carries straight on into the glide, as on Instagram. Otherwise jump to reel i.
   applyTrack(i, anim, px, v0) {
@@ -64,17 +86,20 @@
     t.style.transition = 'none';
     if (px != null) { t.style.transform = 'translate3d(0,' + px + 'px,0)'; return; }
     // At rest the track is placed in %, so it stays aligned if the screen is resized or rotated.
-    const park = () => { this._sprRaf = 0; t.style.transform = 'translate3d(0,' + (-i * 100) + '%,0)'; };
-    const el = this.scroller(), H = (el && el.clientHeight) || 0;
+    const park = () => { this._sprRaf = 0; t.style.transform = 'translate3d(0,' + (-i * 100) + '%,0)'; this.cull(i - 1, i + 1); };
+    const H = this.reelH();
     if (!anim || !H || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) { park(); return; }
-    // Critically damped spring: no bounce past the reel, 90% of the way in ~0.2 s and 98% in ~0.3 s. Small fixed
+    // Critically damped spring: no bounce past the reel, 90% of the way in ~0.16 s and 98% in ~0.25 s. Small fixed
     // steps keep it stable on a slow frame; positions are written straight to the page, no re-render.
-    const end = -i * H, K = 420, C = 2 * Math.sqrt(K);
+    const end = -i * H, K = 600, C = 2 * Math.sqrt(K);
     let x = this.trackY(), v = (v0 || 0) * 1000, last = performance.now();
+    const side = Math.sign(x - end), from = Math.round(-x / H);
+    this.cull(Math.min(from, i) - 1, Math.max(from, i) + 1);
     const step = now => {
       let dt = Math.min(0.05, (now - last) / 1000); last = now;
       while (dt > 0) { const h = Math.min(dt, 1 / 240); v += (-K * (x - end) - C * v) * h; x += v * h; dt -= h; }
-      if (Math.abs(x - end) < 0.5 && Math.abs(v) < 20) { park(); return; }
+      // Done when it is within a pixel, or if a very hard flick would carry it past the reel: stop there, no bounce.
+      if ((Math.abs(x - end) < 1 && Math.abs(v) < 40) || Math.sign(x - end) !== side) { park(); return; }
       t.style.transform = 'translate3d(0,' + x.toFixed(2) + 'px,0)';
       this._sprRaf = requestAnimationFrame(step);
     };

@@ -136,7 +136,7 @@
       this._wasOpen = open;
       document.body.style.overflow = open ? 'hidden' : '';
       document.documentElement.style.overflow = open ? 'hidden' : '';
-      if (!open && this._wheelEl) { const w = this._wheelEl; w.removeEventListener('wheel', this._onWheel); w.removeEventListener('touchstart', this._ts); w.removeEventListener('touchmove', this._tm); w.removeEventListener('touchend', this._te); w.removeEventListener('touchcancel', this._te); this._wheelEl = null; }
+      if (!open && this._wheelEl) { const w = this._wheelEl; w.removeEventListener('wheel', this._onWheel); w.removeEventListener('touchstart', this._ts); w.removeEventListener('touchmove', this._tm); w.removeEventListener('touchend', this._te); w.removeEventListener('touchcancel', this._tc); this._wheelEl = null; }
       if (open) {
         const idx = this.state.reelIdx;
         let tries = 0;
@@ -150,7 +150,7 @@
               this._openSlide = 0;
             }
             if (this._wheelEl !== el) {
-              if (this._wheelEl) { const w = this._wheelEl; w.removeEventListener('wheel', this._onWheel); w.removeEventListener('touchstart', this._ts); w.removeEventListener('touchmove', this._tm); w.removeEventListener('touchend', this._te); w.removeEventListener('touchcancel', this._te); }
+              if (this._wheelEl) { const w = this._wheelEl; w.removeEventListener('wheel', this._onWheel); w.removeEventListener('touchstart', this._ts); w.removeEventListener('touchmove', this._tm); w.removeEventListener('touchend', this._te); w.removeEventListener('touchcancel', this._tc); }
               this._onWheel = ev => {
                 if (Math.abs(ev.deltaY) < Math.abs(ev.deltaX)) return;
                 let t = ev.target; while (t && t !== el) { if (t.scrollHeight > t.clientHeight + 2 && /(auto|scroll)/.test(getComputedStyle(t).overflowY)) return; t = t.parentElement; }
@@ -169,7 +169,9 @@
                 // A touch during a glide catches the reel where it is, as on Instagram, instead of jumping.
                 const p = ev.touches[0], caught = !!this._sprRaf, y0 = this.trackY();
                 if (caught) this.applyTrack(0, false, y0);
-                this._drag = { x: p.clientX, y: p.clientY, t: Date.now(), y0, caught, axis: null, list: listOf(ev.target), moved: caught, target: ev.target, pts: [[performance.now(), p.clientY]] };
+                // Times come from the events (when the finger moved), not from when the handler ran, so a busy moment
+                // on the phone doesn't distort the flick speed.
+                this._drag = { x: p.clientX, y: p.clientY, t: Date.now(), y0, caught, axis: null, list: listOf(ev.target), moved: caught, target: ev.target, pts: [[ev.timeStamp, p.clientY]] };
               };
               this._tm = ev => {
                 const d = this._drag; if (!d) return;
@@ -177,22 +179,24 @@
                 if (Math.abs(dx) > 6 || Math.abs(dy) > 6) d.moved = true; // not a tap (also inside scrolling lists)
                 if (!d.axis) {
                   if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
-                  d.axis = Math.abs(dy) > Math.abs(dx) ? 'y' : 'x';
+                  // A thumb swiping up curves sideways: anything steeper than ~40° counts as up/down, so the swipe
+                  // isn't taken for a sideways one and lost to the slides.
+                  d.axis = Math.abs(dy) >= Math.abs(dx) * 0.8 ? 'y' : 'x';
                   // In a list that can still scroll this way, the list scrolls; at its top or bottom the swipe moves the reels.
                   const L = d.list;
                   if (d.axis === 'y' && L && (dy < 0 ? L.scrollTop + L.clientHeight < L.scrollHeight - 1 : L.scrollTop > 0)) d.axis = 'list';
                 }
                 if (d.axis !== 'y') return;
                 ev.preventDefault();
-                const H = el.clientHeight, min = -(Component.PROFILES.length - 1) * H;
+                const H = this.reelH(), min = -(Component.PROFILES.length - 1) * H;
                 // Past the first or last profile the track gives less and less, like a rubber band.
                 const band = o => (1 - 1 / (o * 0.55 / H + 1)) * H;
                 let y = d.y0 + dy;
                 if (y > 0) y = band(y); else if (y < min) y = min - band(min - y);
-                d.pts.push([performance.now(), p.clientY]); if (d.pts.length > 8) d.pts.shift();
+                d.pts.push([ev.timeStamp, p.clientY]); if (d.pts.length > 8) d.pts.shift();
                 this.applyTrack(0, false, y);
               };
-              this._te = () => {
+              this._te = ev => {
                 const d = this._drag; this._drag = null; if (!d) return;
                 if (!d.moved && Date.now() - d.t < 300) { this.reelTap(d, el); return; }
                 if (d.axis !== 'y') { if (d.caught) this.goReel(this.cur()); return; }
@@ -200,17 +204,24 @@
                 // at the end counts. A finger that stopped before letting go has no speed.
                 const pts = d.pts, b = pts[pts.length - 1];
                 let k = pts.findIndex(q => b[0] - q[0] <= 100); if (k === pts.length - 1) k--;
-                const a = pts[k], v = a && b[0] > a[0] && performance.now() - b[0] < 120 ? (b[1] - a[1]) / (b[0] - a[0]) : 0;
+                const a = pts[k], v = a && b[0] > a[0] && ev.timeStamp - b[0] < 100 ? (b[1] - a[1]) / (b[0] - a[0]) : 0;
                 // pos: which reel the screen shows now, as a fraction (2.3 = 30% of the way from reel 2 to 3).
-                const i = this.cur(), pos = -this.trackY() / el.clientHeight;
-                let to = v < -0.3 ? Math.floor(pos) + 1 : v > 0.3 ? Math.ceil(pos) - 1 : pos - i > 0.2 ? i + 1 : pos - i < -0.2 ? i - 1 : i;
+                // A flick needs some speed and some distance (a quick nudge under ~24px stays put); a slow drag switches past 15%.
+                const i = this.cur(), pos = -this.trackY() / this.reelH(), far = Math.abs(b[1] - pts[0][1]) > 24;
+                let to = far && v < -0.25 ? Math.floor(pos) + 1 : far && v > 0.25 ? Math.ceil(pos) - 1 : pos - i > 0.15 ? i + 1 : pos - i < -0.15 ? i - 1 : i;
                 to = Math.max(i - 1, Math.min(i + 1, to));
                 this.goReel(to, v);
+              };
+              // The browser took the touch over (a system gesture, a call): settle on the nearest reel, never a flick.
+              this._tc = () => {
+                const d = this._drag; this._drag = null; if (!d || (d.axis !== 'y' && !d.caught)) return;
+                const i = this.cur(), to = Math.max(i - 1, Math.min(i + 1, Math.round(-this.trackY() / this.reelH())));
+                this.goReel(to);
               };
               el.addEventListener('touchstart', this._ts, { passive: true });
               el.addEventListener('touchmove', this._tm, { passive: false });
               el.addEventListener('touchend', this._te);
-              el.addEventListener('touchcancel', this._te);
+              el.addEventListener('touchcancel', this._tc);
               this._wheelEl = el;
             }
             return;
