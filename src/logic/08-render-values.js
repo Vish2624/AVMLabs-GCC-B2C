@@ -203,8 +203,9 @@
       mRow: s.sMode === 'profiles'
         ? D.P.map(p => ({ label: p.name, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, go: () => this.openReels(p.id) }))
         : cats.map(c => ({ label: c.short || c.label, icon: c.icon, soft: c.soft, ink: c.ink, go: c.go })),
-      // Lift the hero "Explore profiles" bar so it centres on the category circles beside it (labels sit below them).
-      exploreMb: isDesktop ? '43px' : '0px',
+      // The "Explore profiles" bar sits at the bottom of its column; on desktop the free home collection badge under it
+      // (32px + 10px) lifts it to centre on the category circles beside it.
+      exploreMb: '0px',
       rowDisplay: isDesktop ? 'grid' : 'flex', rowOverflow: isDesktop ? 'visible' : 'auto',
       reelTiles: D.R.map(p => ({ hcFree: this.hcOn(p), slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: cost(p), ...price(p), bg: reelBg(p.hue), open: () => this.openReels(p.id) })),
       // Desktop: two rows of three. Mobile keeps all of them in one swipeable row.
