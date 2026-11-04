@@ -5,7 +5,8 @@
   }
   wa(msg) { return 'https://wa.me/' + this.opts().wa + '?text=' + encodeURIComponent(msg); }
   // Opens WhatsApp with the message filled in. If the browser blocks the new tab (some phones do), go there directly.
-  openWA(msg, isUrl) { const url = isUrl ? msg : this.wa(msg); if (!window.open(url, '_blank', 'noopener')) window.location.href = url; }
+  // No 'noopener' feature: with it window.open() always returns null, which looked like a block and also sent this tab away.
+  openWA(msg, isUrl) { const url = isUrl ? msg : this.wa(msg), w = window.open(url, '_blank'); if (w) { try { w.opener = null; } catch (e) {} } else window.location.href = url; }
   go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); this.setHash(page === 'home' ? '' : page); }
   openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); this.setHash('test/' + id); }
   // The current page lives in the URL hash (#tests, #cart, #test/vitd…) so a refresh reopens it.

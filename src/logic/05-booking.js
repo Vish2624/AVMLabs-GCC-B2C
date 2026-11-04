@@ -15,7 +15,8 @@
     if (!RG.phRe.test(f.phone)) e.phone = 'Enter a valid ' + RG.phLen + '-digit mobile number';
     const a = +f.age; if (!a || a < 1 || a > 110) e.age = 'Enter age';
     if (!f.gender) e.gender = 'Select gender';
-    if (!f.date) e.date = 'Pick a date';
+    // A date picked before midnight drops off the list of days once the page is left open overnight.
+    if (!f.date || !this.days().some(d => d.key === f.date)) e.date = 'Pick a date';
     if (!f.slot) e.slot = 'Pick a time slot';
     else if (f.date === (this.days()[0] || {}).key) {
       const sl = Component.SLOTS.find(x => x[0] === f.slot);
@@ -56,7 +57,12 @@
   confirm() {
     const b = this.bill(); if (!b.items.length) return;
     const e = this.validate();
-    if (Object.keys(e).length) { this.setState({ errors: e }); this.flash('Please complete the highlighted details'); return; }
+    if (Object.keys(e).length) {
+      this.setState({ errors: e }); this.flash('Please complete the highlighted details');
+      // On phones the form is below the fold: bring the first message into view.
+      setTimeout(() => { const el = document.querySelector('[data-err]'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
+      return;
+    }
     const f = this.state.form;
     const day = (this.days().find(d => d.key === f.date) || {}).full || '';
     const lines = ['Hi AVM Labs! I would like to book:', '', ...b.items.map((it, i) => (i + 1) + '. ' + it.name + ' – ' + this.money(it.price)), '',

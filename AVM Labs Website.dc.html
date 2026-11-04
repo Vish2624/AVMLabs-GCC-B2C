@@ -3,10 +3,46 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AVM Labs | Lab Tests &amp; Health Profiles with Free Home Collection</title>
+<meta name="description" content="Book accredited lab tests and health checkup profiles online with AVM Labs. Free home sample collection, reports in 24 hours and clear local prices in Bahrain, Saudi Arabia and the UAE.">
+<link rel="canonical" href="https://avmlabs-gcc-b2c.vercel.app/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#3B2C9E">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AVM Labs">
+<meta property="og:title" content="AVM Labs | Lab Tests &amp; Health Profiles with Free Home Collection">
+<meta property="og:description" content="Accredited lab tests and curated health profiles. Free sample collection at home, reports in 24 hours. Bahrain, Saudi Arabia and the UAE.">
+<meta property="og:url" content="https://avmlabs-gcc-b2c.vercel.app/">
+<meta property="og:image" content="https://avmlabs-gcc-b2c.vercel.app/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AVM Labs: Know it early. Exactly.">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AVM Labs | Lab Tests &amp; Health Profiles with Free Home Collection">
+<meta name="twitter:description" content="Accredited lab tests and curated health profiles. Free sample collection at home, reports in 24 hours.">
+<meta name="twitter:image" content="https://avmlabs-gcc-b2c.vercel.app/assets/og-image.png">
 <link rel="icon" type="image/png" href="./assets/favicon.png">
+<link rel="apple-touch-icon" href="./assets/favicon.png">
+<link rel="manifest" href="./site.webmanifest">
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MedicalBusiness","additionalType":"https://schema.org/DiagnosticLab","name":"AVM Labs","alternateName":"AVM Labs Wellness Laboratory","url":"https://avmlabs-gcc-b2c.vercel.app/","logo":"https://avmlabs-gcc-b2c.vercel.app/assets/avm-logo.png","image":"https://avmlabs-gcc-b2c.vercel.app/assets/og-image.png","description":"Accredited lab tests and curated health profiles with free home sample collection and reports in 24 hours.","medicalSpecialty":"https://schema.org/LaboratoryScience","areaServed":[{"@type":"Country","name":"Bahrain"},{"@type":"Country","name":"Saudi Arabia"},{"@type":"Country","name":"United Arab Emirates"}]}</script>
 <script src="./support.js"></script>
 </head>
 <body>
+<noscript>
+<main style="font-family:system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 16px;color:#16133A">
+<h1>AVM Labs: lab tests and health profiles</h1>
+<p>Accredited lab tests and curated health profiles, with free sample collection at home and reports in 24 hours. Serving Bahrain, Saudi Arabia and the UAE.</p>
+<p>Please turn on JavaScript to see prices and book a test.</p>
+</main>
+</noscript>
 <x-dc>
 <helmet>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -224,11 +260,11 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 <div style="min-height:100dvh;background:#F6F6FA;color:#16133A;overflow-x:clip">
 <sc-if value="{{ showGate }}" hint-placeholder-val="{{ false }}">
 <div style="position:fixed;inset:0;z-index:400;background:rgba(22,19,58,0.22);backdrop-filter:blur(12px) saturate(130%);-webkit-backdrop-filter:blur(12px) saturate(130%);display:flex;align-items:center;justify-content:center;padding:20px">
-  <div role="dialog" aria-modal="true" style="width:100%;max-width:320px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:22px 20px 18px;border-radius:26px;background:rgba(255,255,255,0.62);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,0.75);box-shadow:0 30px 70px -28px rgba(22,19,58,0.55),inset 0 1px 0 rgba(255,255,255,0.9)">
+  <div role="dialog" aria-modal="true" aria-label="Choose your location" style="width:100%;max-width:320px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:22px 20px 18px;border-radius:26px;background:rgba(255,255,255,0.62);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,0.75);box-shadow:0 30px 70px -28px rgba(22,19,58,0.55),inset 0 1px 0 rgba(255,255,255,0.9)">
     <sc-if value="{{ gateMain }}" hint-placeholder-val="{{ true }}">
     <span style="width:52px;height:52px;border-radius:999px;background:rgba(224,34,42,0.12);color:#E0222A;display:grid;place-items:center"><avm-i n="{{ gateIcon }}" s="24"></avm-i></span>
     <div style="display:flex;flex-direction:column;gap:4px">
-      <h1 style="margin:0;font-size:19px;font-weight:800;letter-spacing:-0.02em;line-height:1.25;color:#16133A;text-wrap:balance">{{ gateTitle }}</h1>
+      <h2 style="margin:0;font-size:19px;font-weight:800;letter-spacing:-0.02em;line-height:1.25;color:#16133A;text-wrap:balance">{{ gateTitle }}</h2>
       <p style="margin:0;font-size:13.5px;line-height:1.5;color:#4A4766;text-wrap:pretty">{{ gateText }}</p>
     </div>
     <sc-if value="{{ gateCanRetry }}"><button onClick="{{ relocate }}" style="white-space:nowrap;width:100%;height:46px;border-radius:999px;border:none;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:0 12px 26px -12px rgba(59,44,158,0.7)"><avm-i n="locate-fixed" s="17"></avm-i>{{ gateBtn }}</button></sc-if>
@@ -238,7 +274,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
     <sc-if value="{{ gatePick }}" hint-placeholder-val="{{ false }}">
     <div style="width:100%;display:flex;align-items:center;gap:8px">
       <button onClick="{{ closePick }}" aria-label="Back" style="width:34px;height:34px;border-radius:999px;border:1px solid rgba(22,19,58,0.08);background:rgba(255,255,255,0.7);color:#16133A;display:grid;place-items:center;cursor:pointer;flex:none"><avm-i n="arrow-left" s="16"></avm-i></button>
-      <h1 style="margin:0;flex:1;font-size:18px;font-weight:800;letter-spacing:-0.02em;color:#16133A;text-align:left">Select your country</h1>
+      <h2 style="margin:0;flex:1;font-size:18px;font-weight:800;letter-spacing:-0.02em;color:#16133A;text-align:left">Select your country</h2>
     </div>
     <div style="width:100%;display:flex;flex-direction:column;gap:8px">
       <sc-for list="{{ countryOpts }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.go }}" style="width:100%;height:50px;padding:0 14px;border-radius:16px;border:1px solid rgba(255,255,255,0.85);background:rgba(255,255,255,0.72);color:#16133A;display:flex;align-items:center;gap:12px;cursor:pointer;text-align:left;box-shadow:0 4px 14px -8px rgba(22,19,58,0.25)" style-hover="background:#fff;border-color:#DAD5F7"><span style="width:34px;height:26px;border-radius:8px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center;font-size:11px;font-weight:800;flex:none">{{ c.code }}</span><span style="flex:1;font-size:15px;font-weight:700">{{ c.name }}</span><avm-i n="chevron-right" s="17"></avm-i></button></sc-for>
@@ -299,6 +335,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
   <div style="position:relative;max-width:1280px;margin:0 auto;padding:clamp(18px,3vw,40px) clamp(14px,3vw,28px) clamp(20px,3vw,36px);display:flex;flex-direction:row-reverse;flex-wrap:wrap;gap:clamp(22px,3vw,40px);align-items:stretch">
     <div style="flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:clamp(16px,2.4vw,24px);justify-content:center">
       <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <h1 style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">Know it Early! Exactly!! Lab tests and health profiles with free home collection</h1>
         <sc-if value="{{ mSearchOpen }}" hint-placeholder-val="{{ false }}">
           <div style="position:relative;z-index:30">
             <div style="display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:rgba(255,255,255,0.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,0.95);box-shadow:0 14px 40px -18px rgba(42,31,122,0.4),0 1px 2px rgba(22,19,58,0.06)">
@@ -517,9 +554,9 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             <span style="white-space:nowrap;display:flex;align-items:baseline;gap:4px;color:#16133A;line-height:1"><b style="font-size:33px;font-weight:800;letter-spacing:-0.03em">{{ t.priceNum }}</b><small style="font-size:14px;font-weight:700;letter-spacing:.02em">{{ t.priceCur }}</small></span>
             <span data-offer-pill="1">Offer price</span>
           </div>
-          <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 14px -10px rgba(59,44,158,0.7);transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
+          <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" aria-label="Add {{ t.name }} to cart" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 14px -10px rgba(59,44,158,0.7);transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
           <sc-if value="{{ t.covered }}"><span onClick="{{ t.stop }}" title="{{ t.coveredBy }}" style="max-width:170px;min-height:46px;padding:5px 16px 5px 12px;border-radius:999px;border:1.5px solid #BFE8D2;background:#EAF7EF;color:#0E7350;display:flex;align-items:center;gap:8px;cursor:default"><avm-i n="circle-check" s="18"></avm-i><span style="display:flex;flex-direction:column;min-width:0;line-height:1.15"><b style="font-size:14px;font-weight:800">Included</b><small style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.coveredBy }}</small></span></span></sc-if>
-          <sc-if value="{{ t.inCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 22px;border-radius:999px;border:1.5px solid #3B2C9E;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 18px -10px rgba(59,44,158,0.85)"><avm-i n="check" s="17"></avm-i>Added</button></sc-if>
+          <sc-if value="{{ t.inCart }}"><button onClick="{{ t.toggle }}" aria-label="Remove {{ t.name }} from cart" style="white-space:nowrap;height:46px;padding:0 22px;border-radius:999px;border:1.5px solid #3B2C9E;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 18px -10px rgba(59,44,158,0.85)"><avm-i n="check" s="17"></avm-i>Added</button></sc-if>
         </div>
         <div style="min-height:16px;margin-top:-12px"><sc-if value="{{ t.underMin }}"><span data-min-note="1"><avm-i n="info" s="13"></avm-i>{{ t.minNote }}</span></sc-if></div>
       </div>
@@ -588,9 +625,9 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             <span style="white-space:nowrap;display:flex;align-items:baseline;gap:4px;color:#16133A;line-height:1"><b style="font-size:33px;font-weight:800;letter-spacing:-0.03em">{{ t.priceNum }}</b><small style="font-size:14px;font-weight:700;letter-spacing:.02em">{{ t.priceCur }}</small></span>
             <span data-offer-pill="1">Offer price</span>
           </div>
-          <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 14px -10px rgba(59,44,158,0.7);transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
+          <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" aria-label="Add {{ t.name }} to cart" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 14px -10px rgba(59,44,158,0.7);transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
           <sc-if value="{{ t.covered }}"><span onClick="{{ t.stop }}" title="{{ t.coveredBy }}" style="max-width:170px;min-height:46px;padding:5px 16px 5px 12px;border-radius:999px;border:1.5px solid #BFE8D2;background:#EAF7EF;color:#0E7350;display:flex;align-items:center;gap:8px;cursor:default"><avm-i n="circle-check" s="18"></avm-i><span style="display:flex;flex-direction:column;min-width:0;line-height:1.15"><b style="font-size:14px;font-weight:800">Included</b><small style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.coveredBy }}</small></span></span></sc-if>
-          <sc-if value="{{ t.inCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 22px;border-radius:999px;border:1.5px solid #3B2C9E;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 18px -10px rgba(59,44,158,0.85)"><avm-i n="check" s="17"></avm-i>Added</button></sc-if>
+          <sc-if value="{{ t.inCart }}"><button onClick="{{ t.toggle }}" aria-label="Remove {{ t.name }} from cart" style="white-space:nowrap;height:46px;padding:0 22px;border-radius:999px;border:1.5px solid #3B2C9E;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 18px -10px rgba(59,44,158,0.85)"><avm-i n="check" s="17"></avm-i>Added</button></sc-if>
         </div>
         <div style="min-height:16px;margin-top:-12px"><sc-if value="{{ t.underMin }}"><span data-min-note="1"><avm-i n="info" s="13"></avm-i>{{ t.minNote }}</span></sc-if></div>
       </div>
@@ -654,7 +691,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
           </div>
           <div style="display:flex;gap:8px">
             <sc-if value="{{ p.inCart }}"><button onClick="{{ p.toggle }}" style="flex:1;height:46px;border-radius:999px;border:none;background:#3B2C9E;color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer"><avm-i n="check" s="16"></avm-i>Added</button></sc-if>
-            <sc-if value="{{ p.notInCart }}"><button onClick="{{ p.toggle }}" style="flex:1;height:46px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer" style-hover="background:#EFEDFB"><avm-i n="plus" s="16"></avm-i>Add to cart</button></sc-if>
+            <sc-if value="{{ p.notInCart }}"><button onClick="{{ p.toggle }}" aria-label="Add {{ p.name }} to cart" style="flex:1;height:46px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer" style-hover="background:#EFEDFB"><avm-i n="plus" s="16"></avm-i>Add to cart</button></sc-if>
             <button onClick="{{ p.book }}" style="flex:1;height:46px;border-radius:999px;border:none;background:linear-gradient(180deg,#1FAD5E,#138A47);color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.25)"><avm-i n="whatsapp" s="16"></avm-i>Book now</button>
           </div>
         </div>
@@ -723,20 +760,20 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
       <div style="background:#fff;border:1px solid #ECEBF3;border-radius:24px;padding:clamp(16px,2.5vw,24px);display:flex;flex-direction:column;gap:14px">
         <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;background:#16133A;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800">3</span><span style="font-size:17px;font-weight:800">Patient details</span></div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
-          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Full name</span><input value="{{ form.name }}" onChange="{{ on.name }}" placeholder="Patient's full name" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.name }};background:#FBFBFD;padding:0 14px;font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"><sc-if value="{{ err.name }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.name }}</span></sc-if></label>
-          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">WhatsApp number</span><span style="position:relative;display:block"><span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:600;color:#5D5A7A">{{ dial }}</span><input value="{{ form.phone }}" onChange="{{ on.phone }}" type="tel" placeholder="{{ phPh }}" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.phone }};background:#FBFBFD;padding:0 14px 0 {{ phPad }};font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"></span><sc-if value="{{ err.phone }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.phone }}</span></sc-if></label>
-          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Age</span><input value="{{ form.age }}" onChange="{{ on.age }}" type="tel" placeholder="Years" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.age }};background:#FBFBFD;padding:0 14px;font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"><sc-if value="{{ err.age }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.age }}</span></sc-if></label>
-          <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Gender</span><div style="display:flex;gap:6px;height:50px;padding:4px;border-radius:14px;background:#F2F1F7;border:1.5px solid {{ bc.gender }}"><sc-for list="{{ genders }}" as="g" hint-placeholder-count="3"><button onClick="{{ g.pick }}" style="flex:1;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;background:{{ g.bg }};color:{{ g.fg }};box-shadow:{{ g.sh }}">{{ g.label }}</button></sc-for></div><sc-if value="{{ err.gender }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.gender }}</span></sc-if></div>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Full name</span><input value="{{ form.name }}" onChange="{{ on.name }}" autocomplete="name" placeholder="Patient's full name" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.name }};background:#FBFBFD;padding:0 14px;font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"><sc-if value="{{ err.name }}"><span data-err="1" style="font-size:12px;color:#C81E25;font-weight:600">{{ err.name }}</span></sc-if></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">WhatsApp number</span><span style="position:relative;display:block"><span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:600;color:#5D5A7A">{{ dial }}</span><input value="{{ form.phone }}" onChange="{{ on.phone }}" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="{{ phPh }}" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.phone }};background:#FBFBFD;padding:0 14px 0 {{ phPad }};font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"></span><sc-if value="{{ err.phone }}"><span data-err="1" style="font-size:12px;color:#C81E25;font-weight:600">{{ err.phone }}</span></sc-if></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Age</span><input value="{{ form.age }}" onChange="{{ on.age }}" type="tel" inputmode="numeric" placeholder="Years" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.age }};background:#FBFBFD;padding:0 14px;font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"><sc-if value="{{ err.age }}"><span data-err="1" style="font-size:12px;color:#C81E25;font-weight:600">{{ err.age }}</span></sc-if></label>
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Gender</span><div style="display:flex;gap:6px;height:50px;padding:4px;border-radius:14px;background:#F2F1F7;border:1.5px solid {{ bc.gender }}"><sc-for list="{{ genders }}" as="g" hint-placeholder-count="3"><button onClick="{{ g.pick }}" style="flex:1;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;background:{{ g.bg }};color:{{ g.fg }};box-shadow:{{ g.sh }}">{{ g.label }}</button></sc-for></div><sc-if value="{{ err.gender }}"><span data-err="1" style="font-size:12px;color:#C81E25;font-weight:600">{{ err.gender }}</span></sc-if></div>
         </div>
       </div>
       <div style="background:#fff;border:1px solid #ECEBF3;border-radius:24px;padding:clamp(16px,2.5vw,24px);display:flex;flex-direction:column;gap:14px">
         <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;background:#16133A;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800">4</span><span style="font-size:17px;font-weight:800">{{ slotTitle }}</span></div>
         <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8A8698;margin-top:2px">Pick a date</span>
         <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 6px;margin:-2px -2px -6px"><sc-for list="{{ days }}" as="d" hint-placeholder-count="6"><button onClick="{{ d.pick }}" style="flex:none;width:72px;padding:10px 0 9px;border-radius:16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;border:1.5px solid {{ d.bd }};background:{{ d.bg }};color:{{ d.fg }};box-shadow:{{ d.sh }};transform:{{ d.lift }};transition:background .2s,color .2s,border-color .2s,box-shadow .2s,transform .2s"><span style="font-size:11.5px;font-weight:700;color:{{ d.sub }}">{{ d.top }}</span><span style="font-size:24px;font-weight:800;line-height:1.15;letter-spacing:-0.02em">{{ d.num }}</span><span style="font-size:11.5px;font-weight:600;color:{{ d.sub }}">{{ d.mon }}</span></button></sc-for></div>
-        <sc-if value="{{ err.date }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.date }}</span></sc-if>
+        <sc-if value="{{ err.date }}"><span data-err="1" style="font-size:12px;color:#C81E25;font-weight:600">{{ err.date }}</span></sc-if>
         <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8A8698;margin-top:4px">Pick a time</span>
         <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"><sc-for list="{{ slots }}" as="s" hint-placeholder-count="6"><button onClick="{{ s.pick }}" disabled="{{ s.disabled }}" style="min-width:0;padding:10px 6px;border-radius:14px;cursor:{{ s.cursor }};border:1.5px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};box-shadow:{{ s.sh }};display:flex;flex-direction:column;align-items:center;gap:3px;transition:background .2s,color .2s,border-color .2s,box-shadow .2s"><span style="color:{{ s.ico }};display:flex"><avm-i n="{{ s.icon }}" s="17"></avm-i></span><span style="white-space:nowrap;font-size:14px;font-weight:800;text-decoration:{{ s.td }}">{{ s.label }}</span><span style="font-size:11px;font-weight:600;color:{{ s.sub }}">{{ s.part }}</span></button></sc-for></div>
-        <sc-if value="{{ err.slot }}"><span style="font-size:12px;color:#C81E25;font-weight:600">{{ err.slot }}</span></sc-if>
+        <sc-if value="{{ err.slot }}"><span data-err="1" style="font-size:12px;color:#C81E25;font-weight:600">{{ err.slot }}</span></sc-if>
         <sc-if value="{{ slotPicked }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;background:#EAF7EF;color:#0E7350;font-size:14px;font-weight:700"><avm-i n="calendar-check" s="18"></avm-i><span>{{ slotSummary }}</span></div></sc-if>
       </div>
     </div>
@@ -1266,7 +1303,8 @@ class Component extends DCLogic {
   }
   wa(msg) { return 'https://wa.me/' + this.opts().wa + '?text=' + encodeURIComponent(msg); }
   // Opens WhatsApp with the message filled in. If the browser blocks the new tab (some phones do), go there directly.
-  openWA(msg, isUrl) { const url = isUrl ? msg : this.wa(msg); if (!window.open(url, '_blank', 'noopener')) window.location.href = url; }
+  // No 'noopener' feature: with it window.open() always returns null, which looked like a block and also sent this tab away.
+  openWA(msg, isUrl) { const url = isUrl ? msg : this.wa(msg), w = window.open(url, '_blank'); if (w) { try { w.opener = null; } catch (e) {} } else window.location.href = url; }
   go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); this.setHash(page === 'home' ? '' : page); }
   openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); this.setHash('test/' + id); }
   // The current page lives in the URL hash (#tests, #cart, #test/vitd…) so a refresh reopens it.
@@ -1378,7 +1416,8 @@ class Component extends DCLogic {
     if (!RG.phRe.test(f.phone)) e.phone = 'Enter a valid ' + RG.phLen + '-digit mobile number';
     const a = +f.age; if (!a || a < 1 || a > 110) e.age = 'Enter age';
     if (!f.gender) e.gender = 'Select gender';
-    if (!f.date) e.date = 'Pick a date';
+    // A date picked before midnight drops off the list of days once the page is left open overnight.
+    if (!f.date || !this.days().some(d => d.key === f.date)) e.date = 'Pick a date';
     if (!f.slot) e.slot = 'Pick a time slot';
     else if (f.date === (this.days()[0] || {}).key) {
       const sl = Component.SLOTS.find(x => x[0] === f.slot);
@@ -1419,7 +1458,12 @@ class Component extends DCLogic {
   confirm() {
     const b = this.bill(); if (!b.items.length) return;
     const e = this.validate();
-    if (Object.keys(e).length) { this.setState({ errors: e }); this.flash('Please complete the highlighted details'); return; }
+    if (Object.keys(e).length) {
+      this.setState({ errors: e }); this.flash('Please complete the highlighted details');
+      // On phones the form is below the fold: bring the first message into view.
+      setTimeout(() => { const el = document.querySelector('[data-err]'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
+      return;
+    }
     const f = this.state.form;
     const day = (this.days().find(d => d.key === f.date) || {}).full || '';
     const lines = ['Hi AVM Labs! I would like to book:', '', ...b.items.map((it, i) => (i + 1) + '. ' + it.name + ' – ' + this.money(it.price)), '',
@@ -1558,7 +1602,12 @@ class Component extends DCLogic {
     let saved = null; try { saved = JSON.parse(localStorage.getItem('avmlabs_region_v1') || 'null'); } catch (e) {}
     this.loadCatalog();
     if (saved && Component.REGIONS[saved.code]) this.setState({ region: saved, geo: 'ok' });
-    else if (this.gateOn()) this.locate();
+    // Only look the visitor up straight away if they already allowed it; otherwise the gate's Allow button asks,
+    // so the browser prompt follows a tap instead of appearing unasked on page load.
+    else if (this.gateOn()) {
+      const q = navigator.permissions && navigator.permissions.query ? navigator.permissions.query({ name: 'geolocation' }) : Promise.reject();
+      q.then(p => { if (p.state === 'granted') this.locate(); }, () => {});
+    }
     this._onKey = e => {
       if (!this.state.reelsOpen) return;
       this.armHint();
@@ -1601,10 +1650,13 @@ class Component extends DCLogic {
       if (h.reelsOpen) { this._ri = h.reelIdx; this.armHint(); } else { clearTimeout(this._ht); clearTimeout(this._ht2); window.scrollTo(0, 0); }
     };
     window.addEventListener('popstate', this._onPop);
-    this._tickT = setInterval(() => { if (!this.state.reelsOpen && this.state.page === 'home') this.setState(s => ({ tick: (s.tick || 0) + 1 })); }, 2200);
-    this._heroT = setInterval(() => { if (this.state.page === 'home' && !this.state.reelsOpen) this.setState(s => ({ hero: (s.hero + 1) % 4 })); }, 6000);
+    // Both timers re-render the page, so they skip a hidden tab. The hero doesn't auto-advance for reduced motion.
+    const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this._tickT = setInterval(() => { if (!document.hidden && !this.state.reelsOpen && this.state.page === 'home') this.setState(s => ({ tick: (s.tick || 0) + 1 })); }, 2200);
+    this._heroT = setInterval(() => { if (!still && !document.hidden && this.state.page === 'home' && !this.state.reelsOpen) this.setState(s => ({ hero: (s.hero + 1) % 4 })); }, 6000);
     if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) this.typeLoop();
     requestAnimationFrame(() => this.fillSlots());
+    this.syncTitle();
     this.centreLoop();
     // Opened straight onto a reel (refresh or shared link).
     if (this.state.reelsOpen) { this._ri = this.state.reelIdx; this.armHint(); this.componentDidUpdate(); }
@@ -1664,7 +1716,15 @@ class Component extends DCLogic {
     const bar = document.querySelector('[data-tests-bar]');
     if (bar) { const stuck = bar.getBoundingClientRect().top <= h + 1 && window.scrollY > 0; if (stuck !== bar.hasAttribute('data-stuck')) bar.toggleAttribute('data-stuck', stuck); }
   }
+  // Browser tab title for the open page, so tabs, history and shared links read well.
+  syncTitle() {
+    const s = this.state, t = s.page === 'test' && this.db().T[s.testId];
+    const name = t ? t.name + ' Test: Price & Report Time' : { tests: 'All Lab Tests', profiles: 'Health Checkup Profiles', cart: 'Your Cart', about: 'About Us' }[s.page];
+    const title = name ? name + ' | AVM Labs' : 'AVM Labs | Lab Tests & Health Profiles with Free Home Collection';
+    if (document.title !== title) document.title = title;
+  }
   componentDidUpdate() {
+    this.syncTitle();
     this.syncBars();
     this.fillSlots();
     const open = !!this.state.reelsOpen;
@@ -1985,7 +2045,10 @@ class Component extends DCLogic {
       footLinks:[['Home', 'home'], ['All tests', 'tests'], ['Health profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p) })),
       spacerH, showTabs, showTestsBar, showCartBar, tab: { home: tabC('home'), tests: tabC('tests'), profiles: tabC('profiles'), cart: tabC('cart') },
       showFab, fabBottom: !isMobile ? '24px' : 'calc(' + (hasCartBar ? '104px' : hasTestsBar ? (ms.length ? '214px' : '160px') : '92px') + ' + ' + barPad + ')', fabAway: 'translate(0, var(--vv-drop, 0px))',
-      hasToast: !!s.toast, toast: s.toast, toastIcon: /^Removed/.test(s.toast) ? 'minus' : 'check', toastDot: /^Removed/.test(s.toast) ? 'rgba(255,255,255,0.18)' : '#22B463', toastTop: 'calc(' + (s.reelsOpen ? '72px' : '14px') + ' + env(safe-area-inset-top))',
+      // Removals show a minus, problems ("Please complete…", "Couldn't copy…") an alert, everything else a tick.
+      ...(() => { const kind = /^Removed/.test(s.toast) ? 'off' : /^(Please|Couldn't)/.test(s.toast) ? 'bad' : 'ok';
+        return { toastIcon: { off: 'minus', bad: 'circle-alert', ok: 'check' }[kind], toastDot: { off: 'rgba(255,255,255,0.18)', bad: '#E5484D', ok: '#22B463' }[kind] }; })(),
+      hasToast: !!s.toast, toast: s.toast, toastTop: 'calc(' + (s.reelsOpen ? '72px' : '14px') + ' + env(safe-area-inset-top))',
       reelsOpen: s.reelsOpen, reels, reelsRef: this.reelsRef, onReelsScroll: e => this.onReelsScroll(e), closeReels: () => this.closeReels(),
       stageW: isDesktop ? Math.round(stH * 9 / 16) + 'px' : '100%', stageH: isDesktop ? stH + 'px' : '100%', stageR: isDesktop ? '28px' : '0px',
       reelAmbient: `radial-gradient(60% 60% at 50% 30%, oklch(0.93 0.04 275 / 0.7), transparent 70%)`,

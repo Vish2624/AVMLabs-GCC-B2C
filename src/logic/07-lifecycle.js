@@ -6,7 +6,12 @@
     let saved = null; try { saved = JSON.parse(localStorage.getItem('avmlabs_region_v1') || 'null'); } catch (e) {}
     this.loadCatalog();
     if (saved && Component.REGIONS[saved.code]) this.setState({ region: saved, geo: 'ok' });
-    else if (this.gateOn()) this.locate();
+    // Only look the visitor up straight away if they already allowed it; otherwise the gate's Allow button asks,
+    // so the browser prompt follows a tap instead of appearing unasked on page load.
+    else if (this.gateOn()) {
+      const q = navigator.permissions && navigator.permissions.query ? navigator.permissions.query({ name: 'geolocation' }) : Promise.reject();
+      q.then(p => { if (p.state === 'granted') this.locate(); }, () => {});
+    }
     this._onKey = e => {
       if (!this.state.reelsOpen) return;
       this.armHint();
@@ -49,10 +54,13 @@
       if (h.reelsOpen) { this._ri = h.reelIdx; this.armHint(); } else { clearTimeout(this._ht); clearTimeout(this._ht2); window.scrollTo(0, 0); }
     };
     window.addEventListener('popstate', this._onPop);
-    this._tickT = setInterval(() => { if (!this.state.reelsOpen && this.state.page === 'home') this.setState(s => ({ tick: (s.tick || 0) + 1 })); }, 2200);
-    this._heroT = setInterval(() => { if (this.state.page === 'home' && !this.state.reelsOpen) this.setState(s => ({ hero: (s.hero + 1) % 4 })); }, 6000);
+    // Both timers re-render the page, so they skip a hidden tab. The hero doesn't auto-advance for reduced motion.
+    const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this._tickT = setInterval(() => { if (!document.hidden && !this.state.reelsOpen && this.state.page === 'home') this.setState(s => ({ tick: (s.tick || 0) + 1 })); }, 2200);
+    this._heroT = setInterval(() => { if (!still && !document.hidden && this.state.page === 'home' && !this.state.reelsOpen) this.setState(s => ({ hero: (s.hero + 1) % 4 })); }, 6000);
     if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) this.typeLoop();
     requestAnimationFrame(() => this.fillSlots());
+    this.syncTitle();
     this.centreLoop();
     // Opened straight onto a reel (refresh or shared link).
     if (this.state.reelsOpen) { this._ri = this.state.reelIdx; this.armHint(); this.componentDidUpdate(); }
@@ -112,7 +120,15 @@
     const bar = document.querySelector('[data-tests-bar]');
     if (bar) { const stuck = bar.getBoundingClientRect().top <= h + 1 && window.scrollY > 0; if (stuck !== bar.hasAttribute('data-stuck')) bar.toggleAttribute('data-stuck', stuck); }
   }
+  // Browser tab title for the open page, so tabs, history and shared links read well.
+  syncTitle() {
+    const s = this.state, t = s.page === 'test' && this.db().T[s.testId];
+    const name = t ? t.name + ' Test: Price & Report Time' : { tests: 'All Lab Tests', profiles: 'Health Checkup Profiles', cart: 'Your Cart', about: 'About Us' }[s.page];
+    const title = name ? name + ' | AVM Labs' : 'AVM Labs | Lab Tests & Health Profiles with Free Home Collection';
+    if (document.title !== title) document.title = title;
+  }
   componentDidUpdate() {
+    this.syncTitle();
     this.syncBars();
     this.fillSlots();
     const open = !!this.state.reelsOpen;

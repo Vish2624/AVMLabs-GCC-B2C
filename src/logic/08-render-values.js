@@ -240,7 +240,10 @@
       footLinks:[['Home', 'home'], ['All tests', 'tests'], ['Health profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p) })),
       spacerH, showTabs, showTestsBar, showCartBar, tab: { home: tabC('home'), tests: tabC('tests'), profiles: tabC('profiles'), cart: tabC('cart') },
       showFab, fabBottom: !isMobile ? '24px' : 'calc(' + (hasCartBar ? '104px' : hasTestsBar ? (ms.length ? '214px' : '160px') : '92px') + ' + ' + barPad + ')', fabAway: 'translate(0, var(--vv-drop, 0px))',
-      hasToast: !!s.toast, toast: s.toast, toastIcon: /^Removed/.test(s.toast) ? 'minus' : 'check', toastDot: /^Removed/.test(s.toast) ? 'rgba(255,255,255,0.18)' : '#22B463', toastTop: 'calc(' + (s.reelsOpen ? '72px' : '14px') + ' + env(safe-area-inset-top))',
+      // Removals show a minus, problems ("Please complete…", "Couldn't copy…") an alert, everything else a tick.
+      ...(() => { const kind = /^Removed/.test(s.toast) ? 'off' : /^(Please|Couldn't)/.test(s.toast) ? 'bad' : 'ok';
+        return { toastIcon: { off: 'minus', bad: 'circle-alert', ok: 'check' }[kind], toastDot: { off: 'rgba(255,255,255,0.18)', bad: '#E5484D', ok: '#22B463' }[kind] }; })(),
+      hasToast: !!s.toast, toast: s.toast, toastTop: 'calc(' + (s.reelsOpen ? '72px' : '14px') + ' + env(safe-area-inset-top))',
       reelsOpen: s.reelsOpen, reels, reelsRef: this.reelsRef, onReelsScroll: e => this.onReelsScroll(e), closeReels: () => this.closeReels(),
       stageW: isDesktop ? Math.round(stH * 9 / 16) + 'px' : '100%', stageH: isDesktop ? stH + 'px' : '100%', stageR: isDesktop ? '28px' : '0px',
       reelAmbient: `radial-gradient(60% 60% at 50% 30%, oklch(0.93 0.04 275 / 0.7), transparent 70%)`,
