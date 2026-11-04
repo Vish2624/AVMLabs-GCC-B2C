@@ -1,8 +1,5 @@
 <section style="max-width:1280px;margin:0 auto;padding:clamp(28px,4vw,52px) clamp(14px,3vw,28px) 0">
-  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px">
-    <h2 style="margin:0;font-size:clamp(24px,3vw,34px);font-weight:800;letter-spacing:-0.03em;line-height:1.15;min-width:0;flex:1 1 auto;text-wrap:balance">Most booked tests</h2>
-    <button onClick="{{ goTests }}" style="border:none;background:none;color:#3B2C9E;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;padding:6px 0;white-space:nowrap">View all<avm-i n="arrow-right" s="15"></avm-i></button>
-  </div>
+  <h2 style="margin:0 0 18px;font-size:clamp(24px,3vw,34px);font-weight:800;letter-spacing:-0.03em;line-height:1.15;text-wrap:balance">Most booked tests</h2>
   <div style="display:{{ rowDisplay }};grid-template-columns:repeat(auto-fill,minmax(min(100%,max(300px,calc((100% - 32px) / 3))),1fr));gap:16px;overflow-x:{{ rowOverflow }};scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 2px 10px">
     <sc-for list="{{ popular }}" as="t" hint-placeholder-count="4">
       <div onClick="{{ t.open }}" style="cursor:pointer;flex:0 0 min(82%,320px);scroll-snap-align:start;background:{{ t.cardBg }};border:1px solid rgba(59,44,158,0.16);border-radius:22px;padding:20px 20px 10px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 3px rgba(22,19,58,0.07),0 12px 28px -16px rgba(42,31,122,0.32);transition:box-shadow .25s,transform .25s,border-color .25s" style-hover="box-shadow:0 2px 4px rgba(22,19,58,0.04),0 24px 46px -24px rgba(59,44,158,0.5);transform:translateY(-3px);border-color:rgba(59,44,158,0.22)">
@@ -23,5 +20,8 @@
         <div style="min-height:16px;margin-top:-12px"><sc-if value="{{ t.underMin }}"><span data-min-note="1"><avm-i n="info" s="13"></avm-i>{{ t.minNote }}</span></sc-if></div>
       </div>
     </sc-for>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:12px">
+    <button onClick="{{ goTests }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;transition:background .2s" style-hover="background:#EFEDFB">View more<avm-i n="arrow-right" s="17"></avm-i></button>
   </div>
 </section>

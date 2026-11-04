@@ -54,6 +54,11 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
 [data-hero-text] button{height:36px!important;padding:0 13px!important;font-size:12.5px!important;gap:5px!important}
 [data-hero-text]>div:last-child{gap:8px!important}
 [data-hero-text]>span[style*="font-size:220px"]{font-size:150px!important;bottom:-40px!important}
+[data-hero-creds]{padding:10px!important;gap:8px!important}
+[data-hero-cred]{flex:1 1 0;flex-direction:column;align-items:flex-start!important;justify-content:center;gap:7px!important;padding:10px!important;border-radius:14px!important}
+[data-hero-cred]>span:first-child{width:32px!important;height:32px!important;border-radius:10px!important}
+[data-hero-cred] b{font-size:13px!important}
+[data-hero-cred] small{display:none}
 }
 image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-hero-img]:has(> image-slot:not([data-filled]):not([data-editable])){display:none!important}
@@ -75,10 +80,10 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-gold-ghost]{white-space:nowrap;height:44px;padding:0 16px;border-radius:999px;border:1px solid #EBDAB0;background:rgba(255,255,255,.8);color:#8A6414;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
 [data-gold-ghost]:hover{background:#fff}
 @media (prefers-reduced-motion:reduce){[data-gold-card]::after{animation:none;display:none}}
-/* Offer price: big dark price with a slim green pill below, on a strip with a soft green glow. */
-[data-offer-pill]{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;padding:2px 9px 2px 6px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.01em;line-height:1.3;white-space:nowrap;color:#fff;background:linear-gradient(135deg,#0F9159 0%,#0A7148 100%);box-shadow:0 4px 10px -5px rgba(14,115,80,.75),inset 0 1px 0 rgba(255,255,255,.28)}
-[data-offer-pill]::before{content:'';flex:none;width:11px;height:11px;background:#C9F7DC;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.8 8.8a2 2 0 0 0 2.8 0l7.2-7.2a2 2 0 0 0 0-2.8ZM7.5 9A1.5 1.5 0 1 1 7.5 6a1.5 1.5 0 0 1 0 3Z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.8 8.8a2 2 0 0 0 2.8 0l7.2-7.2a2 2 0 0 0 0-2.8ZM7.5 9A1.5 1.5 0 1 1 7.5 6a1.5 1.5 0 0 1 0 3Z'/%3E%3C/svg%3E") center/contain no-repeat}
-[data-price-strip]{background:radial-gradient(70% 130% at 0% 0%,rgba(34,180,99,.16) 0%,rgba(34,180,99,0) 70%),linear-gradient(135deg,#FBFAFF 0%,#EFECFD 100%);box-shadow:inset 0 0 0 1px rgba(59,44,158,.09),inset 0 1px 0 #fff,0 10px 20px -18px rgba(42,31,122,.6)}
+/* Offer price: big dark price with a slim green pill below, on a warm yellow gradient strip. */
+[data-offer-pill]{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;padding:2px 9px 2px 3px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.01em;line-height:1.3;white-space:nowrap;color:#fff;background:linear-gradient(135deg,#0F9159 0%,#0A7148 100%);box-shadow:0 4px 10px -5px rgba(14,115,80,.75),inset 0 1px 0 rgba(255,255,255,.28)}
+[data-offer-pill]::before{content:'%';flex:none;display:grid;place-items:center;width:13px;height:13px;border-radius:999px;background:#fff;color:#0A7148;font-size:9px;font-weight:800;line-height:1;letter-spacing:0}
+[data-price-strip]{background:radial-gradient(70% 130% at 0% 0%,rgba(255,196,46,.3) 0%,rgba(255,196,46,0) 70%),linear-gradient(135deg,#FFFDF4 0%,#FFF3CC 100%);box-shadow:inset 0 0 0 1px rgba(201,154,46,.24),inset 0 1px 0 #fff,0 10px 20px -18px rgba(154,107,18,.55)}
 [data-min-note]{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;line-height:1.35;color:#6E6A8A}
 /* Cart prompt to add tests and clear the minimum billing charge. */
 [data-min-card]{display:flex;flex-direction:column;gap:10px;margin-top:6px;padding:14px;border-radius:16px;background:radial-gradient(70% 130% at 100% 0%,rgba(34,180,99,.13) 0%,rgba(34,180,99,0) 70%),#F7F5FF;box-shadow:inset 0 0 0 1px rgba(59,44,158,.1)}
@@ -140,10 +145,11 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 31%{transform:translateY(0) rotate(var(--tilt)) scale(1.03);animation-timing-function:ease-in-out}
 39%{transform:translateY(0) rotate(var(--tilt)) scale(1)}
 64%{opacity:1;transform:translateY(0) rotate(var(--tilt)) scale(1);animation-timing-function:cubic-bezier(.5,0,.8,.5)}
-100%{opacity:0;transform:translateY(-190px) rotate(var(--tilt)) scale(1.08)}
+90%{opacity:1}
+100%{opacity:0;transform:translateY(-160px) rotate(var(--tilt)) scale(1.08)}
 }
-[data-dtap]{--dtap:clamp(136px,40vw,176px);position:absolute;z-index:7;width:var(--dtap);height:var(--dtap);margin:calc(var(--dtap) / -2) 0 0 calc(var(--dtap) / -2);pointer-events:none;will-change:transform,opacity;filter:drop-shadow(0 8px 18px rgba(120,10,40,.28));animation:avmDtap 1.05s linear forwards}
-[data-dtap] svg{display:block;width:100%;height:100%;fill:#FF3040}
+[data-dtap]{--dtap:clamp(74px,21vw,96px);position:absolute;z-index:7;width:var(--dtap);height:var(--dtap);margin:calc(var(--dtap) / -2) 0 0 calc(var(--dtap) / -2);pointer-events:none;will-change:transform,opacity;filter:drop-shadow(0 6px 14px var(--glow));animation:avmDtap 1.05s linear forwards}
+[data-dtap] svg{display:block;width:100%;height:100%}
 @media (prefers-reduced-motion:reduce){[data-dtap]{animation-duration:.6s}}
 
 /* Reels swipe hint (mobile): two cascading chevrons + label in the gap above "Book now", shown for 5s after 4s idle */
@@ -434,10 +440,33 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             </div>
             <div data-hero-img="1" style="flex:1 1 220px;min-height:220px;position:relative;overflow:hidden;background:#ECEAF6"><image-slot id="hero-centre" src="https://images.unsplash.com/photo-1615461066159-fea0960485d5?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" credit="Photo by Nguyễn Hiệp on Unsplash" credit-href="https://unsplash.com/@hieptltb97" shape="rect" placeholder="Home collection photo"></image-slot></div></div>
           </div>
+          <div style="flex:0 0 100%;min-width:0;display:flex;padding:10px"><div data-hero-card="1" style="flex:1;min-width:0;display:flex;flex-wrap:wrap;border-radius:22px;overflow:hidden;box-shadow:0 18px 40px -24px rgba(22,19,58,0.5)">
+            <div data-hero-text="1" style="flex:1 1 250px;min-width:0;min-height:300px;padding:clamp(20px,3vw,30px);background:linear-gradient(150deg,#07463B,#0F7F66);color:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:20px;position:relative;overflow:hidden">
+              <span style="position:absolute;right:-10px;bottom:-60px;font-size:220px;font-weight:800;letter-spacing:-0.06em;color:rgba(255,255,255,0.09);line-height:1;pointer-events:none"><avm-i n="shield-check" s="200"></avm-i></span>
+              <div style="display:flex;flex-direction:column;gap:12px;position:relative">
+                <span style="white-space:nowrap;align-self:flex-start;height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.28);display:inline-flex;align-items:center;font-size:12px;font-weight:700">Why AVM Labs</span>
+                <h3 style="margin:0;font-size:clamp(24px,2.6vw,32px);font-weight:800;letter-spacing:-0.03em;line-height:1.08">Care you can trust.</h3>
+                <p style="margin:0;font-size:15px;line-height:1.55;color:rgba(255,255,255,0.92)">Accredited labs, and licensed nurses at your home.</p>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;position:relative;flex-wrap:wrap">
+                <button onClick="{{ goTests }}" style="white-space:nowrap;height:46px;padding:0 20px;border-radius:999px;border:none;background:#fff;color:#07463B;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px">Browse tests<avm-i n="arrow-right" s="16"></avm-i></button>
+              </div>
+            </div>
+            <div data-hero-img="1" data-hero-creds="1" style="flex:1 1 220px;min-height:220px;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:clamp(14px,2vw,22px);background:linear-gradient(160deg,#F2FBF7,#DDF3EA)">
+              <div data-hero-cred="1" style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:18px;background:#fff;box-shadow:0 12px 26px -18px rgba(7,70,59,0.55),inset 0 0 0 1px rgba(15,127,102,0.1)">
+                <span style="width:48px;height:48px;border-radius:14px;flex:none;display:grid;place-items:center;color:#fff;background:linear-gradient(145deg,#0F7F66,#07463B)"><avm-i n="shield-check" s="24"></avm-i></span>
+                <span style="display:flex;flex-direction:column;gap:3px;min-width:0"><b style="font-size:16px;font-weight:800;letter-spacing:-0.01em;line-height:1.2;color:#07332B">CAP-accredited labs</b><small style="font-size:13px;line-height:1.35;color:#47645C">Where your tests are run</small></span>
+              </div>
+              <div data-hero-cred="1" style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:18px;background:#fff;box-shadow:0 12px 26px -18px rgba(7,70,59,0.55),inset 0 0 0 1px rgba(15,127,102,0.1)">
+                <span style="width:48px;height:48px;border-radius:14px;flex:none;display:grid;place-items:center;color:#fff;background:linear-gradient(145deg,#0F7F66,#07463B)"><avm-i n="stethoscope" s="24"></avm-i></span>
+                <span style="display:flex;flex-direction:column;gap:3px;min-width:0"><b style="font-size:16px;font-weight:800;letter-spacing:-0.01em;line-height:1.2;color:#07332B">Licensed nurses</b><small style="font-size:13px;line-height:1.35;color:#47645C">For your home collection</small></span>
+              </div>
+            </div></div>
+          </div>
         </div>
         <div data-hero-nav="1" style="display:flex;justify-content:center;align-items:center;gap:12px;padding:4px 0 12px">
           <button onClick="{{ heroPrev }}" aria-label="Previous slide" style="width:34px;height:34px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="chevron-left" s="16"></avm-i></button>
-          <div style="display:flex;gap:6px;align-items:center"><sc-for list="{{ heroDots }}" as="d" hint-placeholder-count="3"><button onClick="{{ d.go }}" aria-label="Go to slide" style="width:{{ d.w }};height:8px;border-radius:999px;border:none;padding:0;cursor:pointer;background:{{ d.bg }};transition:width .3s,background .3s"></button></sc-for></div>
+          <div style="display:flex;gap:6px;align-items:center"><sc-for list="{{ heroDots }}" as="d" hint-placeholder-count="4"><button onClick="{{ d.go }}" aria-label="Go to slide" style="width:{{ d.w }};height:8px;border-radius:999px;border:none;padding:0;cursor:pointer;background:{{ d.bg }};transition:width .3s,background .3s"></button></sc-for></div>
           <button onClick="{{ heroNext }}" aria-label="Next slide" style="width:34px;height:34px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="chevron-right" s="16"></avm-i></button>
         </div>
       </div>
@@ -477,10 +506,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 </section>
 
 <section style="max-width:1280px;margin:0 auto;padding:clamp(28px,4vw,52px) clamp(14px,3vw,28px) 0">
-  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px">
-    <h2 style="margin:0;font-size:clamp(24px,3vw,34px);font-weight:800;letter-spacing:-0.03em;line-height:1.15;min-width:0;flex:1 1 auto;text-wrap:balance">Most booked tests</h2>
-    <button onClick="{{ goTests }}" style="border:none;background:none;color:#3B2C9E;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;padding:6px 0;white-space:nowrap">View all<avm-i n="arrow-right" s="15"></avm-i></button>
-  </div>
+  <h2 style="margin:0 0 18px;font-size:clamp(24px,3vw,34px);font-weight:800;letter-spacing:-0.03em;line-height:1.15;text-wrap:balance">Most booked tests</h2>
   <div style="display:{{ rowDisplay }};grid-template-columns:repeat(auto-fill,minmax(min(100%,max(300px,calc((100% - 32px) / 3))),1fr));gap:16px;overflow-x:{{ rowOverflow }};scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 2px 10px">
     <sc-for list="{{ popular }}" as="t" hint-placeholder-count="4">
       <div onClick="{{ t.open }}" style="cursor:pointer;flex:0 0 min(82%,320px);scroll-snap-align:start;background:{{ t.cardBg }};border:1px solid rgba(59,44,158,0.16);border-radius:22px;padding:20px 20px 10px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 3px rgba(22,19,58,0.07),0 12px 28px -16px rgba(42,31,122,0.32);transition:box-shadow .25s,transform .25s,border-color .25s" style-hover="box-shadow:0 2px 4px rgba(22,19,58,0.04),0 24px 46px -24px rgba(59,44,158,0.5);transform:translateY(-3px);border-color:rgba(59,44,158,0.22)">
@@ -501,6 +527,9 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
         <div style="min-height:16px;margin-top:-12px"><sc-if value="{{ t.underMin }}"><span data-min-note="1"><avm-i n="info" s="13"></avm-i>{{ t.minNote }}</span></sc-if></div>
       </div>
     </sc-for>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:12px">
+    <button onClick="{{ goTests }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;transition:background .2s" style-hover="background:#EFEDFB">View more<avm-i n="arrow-right" s="17"></avm-i></button>
   </div>
 </section>
 
@@ -1455,7 +1484,13 @@ class Component extends DCLogic {
     h.style.left = Math.round(d.x - r.left) + 'px';
     h.style.top = Math.round(d.y - r.top) + 'px';
     h.style.setProperty('--tilt', (Math.random() * 40 - 20).toFixed(1) + 'deg');
-    h.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+    // A random gradient per heart, as on Instagram: red to amber, pink to purple or purple to pink.
+    // [start colour, end colour, gradient end x, gradient end y, glow]
+    const looks = [['#FF2400', '#FFA200', 0, 1, 'rgba(255,90,0,.4)'], ['#FF0A8C', '#A01EE0', 0, 1, 'rgba(225,20,170,.4)'], ['#A01EE0', '#FF0A8C', 1, 0.35, 'rgba(225,20,170,.4)']];
+    const [c1, c2, gx, gy, glow] = looks[Math.floor(Math.random() * looks.length)], id = 'dtapG' + (this._dtapN = (this._dtapN || 0) + 1);
+    h.style.setProperty('--glow', glow);
+    // The stroke in the same gradient, with round joins, gives the plump shape and soft tip.
+    h.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="' + id + '" x1="0" y1="0" x2="' + gx + '" y2="' + gy + '"><stop offset="0" stop-color="' + c1 + '"/><stop offset="1" stop-color="' + c2 + '"/></linearGradient></defs><path fill="url(#' + id + ')" stroke="url(#' + id + ')" stroke-width="2" stroke-linejoin="round" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>';
     h.addEventListener('animationend', () => h.remove());
     host.appendChild(h);
   }
@@ -1573,7 +1608,7 @@ class Component extends DCLogic {
     };
     window.addEventListener('popstate', this._onPop);
     this._tickT = setInterval(() => { if (!this.state.reelsOpen && this.state.page === 'home') this.setState(s => ({ tick: (s.tick || 0) + 1 })); }, 2200);
-    this._heroT = setInterval(() => { if (this.state.page === 'home' && !this.state.reelsOpen) this.setState(s => ({ hero: (s.hero + 1) % 3 })); }, 6000);
+    this._heroT = setInterval(() => { if (this.state.page === 'home' && !this.state.reelsOpen) this.setState(s => ({ hero: (s.hero + 1) % 4 })); }, 6000);
     if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) this.typeLoop();
     requestAnimationFrame(() => this.fillSlots());
     this.centreLoop();
@@ -1893,11 +1928,11 @@ class Component extends DCLogic {
       qPlaceholder: s.sMode === 'tests' ? 'Search CBC, TSH, Vitamin D…' : "Search women's health, PCOS…",
       showResults: s.qFocus, keepFocus: e => e.preventDefault(), resultsLabel, results, noResults: !!q && !results.length,
       tileNext: () => { const el = document.querySelector('[data-tile-row]'); if (!el) return; const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4; el.scrollTo({ left: end ? 0 : el.scrollLeft + Math.max(240, el.clientWidth * 0.75), behavior: 'smooth' }); }, cats, catNext: () => { const el = document.querySelector('[data-cat-row]'); if (!el) return; const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4; el.scrollTo({ left: end ? 0 : el.scrollLeft + Math.max(200, el.clientWidth * 0.7), behavior: 'smooth' }); },
-      heroX: 'translateX(-' + (s.hero * 100) + '%)', heroPrev: () => this.setState(st => ({ hero: (st.hero + 2) % 3 })), heroNext: () => this.setState(st => ({ hero: (st.hero + 1) % 3 })),
-      heroDots: [0, 1, 2].map(i => ({ w: s.hero === i ? '26px' : '8px', bg: s.hero === i ? '#3B2C9E' : '#D4D1E6', go: () => this.setState({ hero: i }) })),
+      heroX: 'translateX(-' + (s.hero * 100) + '%)', heroPrev: () => this.setState(st => ({ hero: (st.hero + 3) % 4 })), heroNext: () => this.setState(st => ({ hero: (st.hero + 1) % 4 })),
+      heroDots: [0, 1, 2, 3].map(i => ({ w: s.hero === i ? '26px' : '8px', bg: s.hero === i ? '#3B2C9E' : '#D4D1E6', go: () => this.setState({ hero: i }) })),
       // Swipe the hero card left/right; a mostly vertical drag is left to scroll the page.
       heroTS: e => { const t = e.touches[0]; this._hx = t.clientX; this._hy = t.clientY; },
-      heroTE: e => { const t = e.changedTouches[0], dx = t.clientX - (this._hx || 0), dy = t.clientY - (this._hy || 0); if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) this.setState(st => ({ hero: (st.hero + (dx < 0 ? 1 : 2)) % 3 })); },
+      heroTE: e => { const t = e.changedTouches[0], dx = t.clientX - (this._hx || 0), dy = t.clientY - (this._hy || 0); if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) this.setState(st => ({ hero: (st.hero + (dx < 0 ? 1 : 3)) % 4 })); },
       heroGo1: () => (heroW ? this.openReels(heroW.i) : this.go('profiles')), heroGo2: () => (heroV ? this.openReels(heroV.i) : this.go('profiles')),
       directions: () => window.open('https://www.google.com/maps/search/?api=1&query=AVM+Labs', '_blank', 'noopener'),
       // With items in the cart, the footer/general WhatsApp buttons send the cart as a booking; otherwise a general enquiry.
@@ -1917,7 +1952,8 @@ class Component extends DCLogic {
       exploreMb: isDesktop ? '43px' : '0px',
       rowDisplay: isDesktop ? 'grid' : 'flex', rowOverflow: isDesktop ? 'visible' : 'auto',
       reelTiles: D.P.map(p => ({ slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: cost(p), bg: reelBg(p.hue), open: () => this.openReels(p.i) })),
-      popular: popularTests.map(testVM),
+      // Desktop: two rows of three. Mobile keeps all of them in one swipeable row.
+      popular: (isDesktop ? popularTests.slice(0, 6) : popularTests).map(testVM),
       catTitle: s.cat === 'all' ? 'All lab tests' : (C.CATS.find(c => c.id === s.cat) || {}).label + ' tests',
       testsCountLabel: tList.length + (tList.length === 1 ? ' test' : ' tests'),
       tq: s.tq, onTq: e => this.setState({ tq: e.target.value }), hasTq: !!s.tq, clearTq: () => this.setState({ tq: '' }),

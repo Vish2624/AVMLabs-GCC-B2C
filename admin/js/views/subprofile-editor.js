@@ -1,6 +1,6 @@
 // Create or edit a reusable sub-profile: a name and the tests it contains.
 import { html } from '../html.js';
-import { appBar, formatPrices, icon, plural, sumPrices, testOptions, testPicker, toast, view } from '../ui.js';
+import { appBar, attachTestSearch, formatPrices, icon, plural, sumPrices, testPicker, toast, view } from '../ui.js';
 
 export function SubProfileEditorView({ sub, profiles, catalog, onSave, onDelete, onClose }) {
   const isNew = !sub;
@@ -80,8 +80,6 @@ export function SubProfileEditorView({ sub, profiles, catalog, onSave, onDelete,
       </section>`
     }
     </main>
-
-    ${testOptions(catalog)}
 
     <div class="savebar"><div class="savebar-in">
       <p class="summary" data-summary>${summary()}</p>
@@ -191,20 +189,14 @@ export function SubProfileEditorView({ sub, profiles, catalog, onSave, onDelete,
     const t = e.target;
     const field = t.dataset.field;
     if (!field) return;
-    if (field === 'test-add') {
-      // Picking from the suggestion list fills in an exact test name.
-      if (byName.has(t.value.trim().toLowerCase())) addTest(t);
-      return;
-    }
+    if (field === 'test-add') return; // handled by attachTestSearch
     dirty = true;
     draft[field] = t.value;
   });
 
-  el.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && e.target.dataset.field === 'test-add') {
-      e.preventDefault();
-      addTest(e.target);
-    }
+  attachTestSearch(el, catalog.tests, {
+    onPick: addTest,
+    statusOf: (test) => (draft.tests.includes(test.id) ? 'Added' : ''),
   });
 
   window.addEventListener('beforeunload', (e) => {

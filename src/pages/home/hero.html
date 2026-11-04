@@ -145,10 +145,33 @@
             </div>
             <div data-hero-img="1" style="flex:1 1 220px;min-height:220px;position:relative;overflow:hidden;background:#ECEAF6"><image-slot id="hero-centre" src="https://images.unsplash.com/photo-1615461066159-fea0960485d5?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" credit="Photo by Nguyễn Hiệp on Unsplash" credit-href="https://unsplash.com/@hieptltb97" shape="rect" placeholder="Home collection photo"></image-slot></div></div>
           </div>
+          <div style="flex:0 0 100%;min-width:0;display:flex;padding:10px"><div data-hero-card="1" style="flex:1;min-width:0;display:flex;flex-wrap:wrap;border-radius:22px;overflow:hidden;box-shadow:0 18px 40px -24px rgba(22,19,58,0.5)">
+            <div data-hero-text="1" style="flex:1 1 250px;min-width:0;min-height:300px;padding:clamp(20px,3vw,30px);background:linear-gradient(150deg,#07463B,#0F7F66);color:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:20px;position:relative;overflow:hidden">
+              <span style="position:absolute;right:-10px;bottom:-60px;font-size:220px;font-weight:800;letter-spacing:-0.06em;color:rgba(255,255,255,0.09);line-height:1;pointer-events:none"><avm-i n="shield-check" s="200"></avm-i></span>
+              <div style="display:flex;flex-direction:column;gap:12px;position:relative">
+                <span style="white-space:nowrap;align-self:flex-start;height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.28);display:inline-flex;align-items:center;font-size:12px;font-weight:700">Why AVM Labs</span>
+                <h3 style="margin:0;font-size:clamp(24px,2.6vw,32px);font-weight:800;letter-spacing:-0.03em;line-height:1.08">Care you can trust.</h3>
+                <p style="margin:0;font-size:15px;line-height:1.55;color:rgba(255,255,255,0.92)">Accredited labs, and licensed nurses at your home.</p>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;position:relative;flex-wrap:wrap">
+                <button onClick="{{ goTests }}" style="white-space:nowrap;height:46px;padding:0 20px;border-radius:999px;border:none;background:#fff;color:#07463B;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px">Browse tests<avm-i n="arrow-right" s="16"></avm-i></button>
+              </div>
+            </div>
+            <div data-hero-img="1" data-hero-creds="1" style="flex:1 1 220px;min-height:220px;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:clamp(14px,2vw,22px);background:linear-gradient(160deg,#F2FBF7,#DDF3EA)">
+              <div data-hero-cred="1" style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:18px;background:#fff;box-shadow:0 12px 26px -18px rgba(7,70,59,0.55),inset 0 0 0 1px rgba(15,127,102,0.1)">
+                <span style="width:48px;height:48px;border-radius:14px;flex:none;display:grid;place-items:center;color:#fff;background:linear-gradient(145deg,#0F7F66,#07463B)"><avm-i n="shield-check" s="24"></avm-i></span>
+                <span style="display:flex;flex-direction:column;gap:3px;min-width:0"><b style="font-size:16px;font-weight:800;letter-spacing:-0.01em;line-height:1.2;color:#07332B">CAP-accredited labs</b><small style="font-size:13px;line-height:1.35;color:#47645C">Where your tests are run</small></span>
+              </div>
+              <div data-hero-cred="1" style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:18px;background:#fff;box-shadow:0 12px 26px -18px rgba(7,70,59,0.55),inset 0 0 0 1px rgba(15,127,102,0.1)">
+                <span style="width:48px;height:48px;border-radius:14px;flex:none;display:grid;place-items:center;color:#fff;background:linear-gradient(145deg,#0F7F66,#07463B)"><avm-i n="stethoscope" s="24"></avm-i></span>
+                <span style="display:flex;flex-direction:column;gap:3px;min-width:0"><b style="font-size:16px;font-weight:800;letter-spacing:-0.01em;line-height:1.2;color:#07332B">Licensed nurses</b><small style="font-size:13px;line-height:1.35;color:#47645C">For your home collection</small></span>
+              </div>
+            </div></div>
+          </div>
         </div>
         <div data-hero-nav="1" style="display:flex;justify-content:center;align-items:center;gap:12px;padding:4px 0 12px">
           <button onClick="{{ heroPrev }}" aria-label="Previous slide" style="width:34px;height:34px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="chevron-left" s="16"></avm-i></button>
-          <div style="display:flex;gap:6px;align-items:center"><sc-for list="{{ heroDots }}" as="d" hint-placeholder-count="3"><button onClick="{{ d.go }}" aria-label="Go to slide" style="width:{{ d.w }};height:8px;border-radius:999px;border:none;padding:0;cursor:pointer;background:{{ d.bg }};transition:width .3s,background .3s"></button></sc-for></div>
+          <div style="display:flex;gap:6px;align-items:center"><sc-for list="{{ heroDots }}" as="d" hint-placeholder-count="4"><button onClick="{{ d.go }}" aria-label="Go to slide" style="width:{{ d.w }};height:8px;border-radius:999px;border:none;padding:0;cursor:pointer;background:{{ d.bg }};transition:width .3s,background .3s"></button></sc-for></div>
           <button onClick="{{ heroNext }}" aria-label="Next slide" style="width:34px;height:34px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="chevron-right" s="16"></avm-i></button>
         </div>
       </div>

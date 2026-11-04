@@ -119,10 +119,142 @@ export const testPicker = (key, ids, testsById, emptyText = 'No tests yet.') => 
         )}</div>`
       : html`<p class="empty-note">${emptyText}</p>`
   }
-  <label class="add-test">${icon('plus')}<input id="test-add-${key}" data-field="test-add" data-picker="${key}" list="test-options" placeholder="Type to add a test, e.g. Vitamin D" autocomplete="off" aria-label="Add a test"></label>`;
+  <div class="test-combo"><label class="add-test">${icon('plus')}<input id="test-add-${key}" data-field="test-add" data-picker="${key}" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="test-menu" placeholder="Type to add a test, e.g. Vitamin D" autocomplete="off" aria-label="Add a test"></label></div>`;
 
-export const testOptions = (catalog) =>
-  html`<datalist id="test-options">${catalog.tests.map((t) => html`<option value="${t.name}"></option>`)}</datalist>`;
+// Best matches first: name starts with the search, then a word in it does, then anywhere in the
+// name or its "also known as" names.
+function searchTests(tests, query) {
+  const q = query.trim().toLowerCase();
+  if (!q) return tests;
+  const rank = (t) => {
+    const name = t.name.toLowerCase();
+    if (name.startsWith(q)) return 0;
+    if (name.split(/[\s(/-]+/).some((word) => word.startsWith(q))) return 1;
+    if (name.includes(q)) return 2;
+    return (t.aka || '').toLowerCase().includes(q) ? 3 : 4;
+  };
+  return tests
+    .map((test) => ({ test, r: rank(test) }))
+    .filter((m) => m.r < 4)
+    .sort((a, b) => a.r - b.r)
+    .map((m) => m.test);
+}
+
+const highlight = (name, query) => {
+  const q = query.trim().toLowerCase();
+  const at = q ? name.toLowerCase().indexOf(q) : -1;
+  if (at < 0) return name;
+  return html`${name.slice(0, at)}<mark>${name.slice(at, at + q.length)}</mark>${name.slice(at + q.length)}`;
+};
+
+// The dropdown for testPicker's search box. Browsers don't let a <datalist> be styled, so this draws
+// its own. Listens on the view's root element, so it keeps working when the view re-renders.
+// onPick(input) adds the test named in input.value; statusOf(test) gives a note like "Added" for a
+// test that can't be picked, or nothing.
+export function attachTestSearch(root, tests, { onPick, statusOf }) {
+  let input = null;
+  let menu = null;
+  let shown = [];
+  let active = -1;
+
+  const pickable = (test) => !statusOf(test);
+
+  function close() {
+    menu?.remove();
+    menu = null;
+    active = -1;
+    input?.setAttribute('aria-expanded', 'false');
+    input?.removeAttribute('aria-activedescendant');
+    input = null;
+  }
+
+  function setActive(i) {
+    active = i;
+    menu.querySelector('.active')?.classList.remove('active');
+    const row = i >= 0 ? menu.querySelector(`#test-option-${i}`) : null;
+    row?.classList.add('active');
+    row?.scrollIntoView({ block: 'nearest' });
+    if (row) input.setAttribute('aria-activedescendant', row.id);
+    else input.removeAttribute('aria-activedescendant');
+  }
+
+  function open(box) {
+    if (input !== box) close();
+    input = box;
+    const query = box.value;
+    shown = searchTests(tests, query);
+    if (!menu) {
+      menu = document.createElement('ul');
+      menu.id = 'test-menu';
+      menu.className = 'test-menu';
+      menu.setAttribute('role', 'listbox');
+      menu.setAttribute('aria-label', 'Tests');
+      box.closest('.test-combo').append(menu);
+      // Open upward when there isn't room below.
+      const rect = box.getBoundingClientRect();
+      menu.classList.toggle('up', window.innerHeight - rect.bottom < 240 && rect.top > 240);
+      box.setAttribute('aria-expanded', 'true');
+    }
+    menu.innerHTML = shown.length
+      ? shown
+          .map((test, i) => {
+            const status = statusOf(test);
+            return html`<li id="test-option-${i}" role="option" data-i="${i}" aria-selected="false" aria-disabled="${status ? 'true' : 'false'}">
+              <span>${highlight(test.name, query)}</span>
+              ${status ? html`<small class="status">${status}</small>` : html`<small class="price">${formatPrices(test.prices)}</small>`}
+            </li>`;
+          })
+          .join('')
+      : html`<li class="none">No test matches "${query.trim()}"</li>`.toString();
+    menu.scrollTop = 0;
+    // While searching, the best match is ready for Enter.
+    setActive(query.trim() ? shown.findIndex(pickable) : -1);
+  }
+
+  function move(step) {
+    for (let i = active + step; i >= 0 && i < shown.length; i += step) {
+      if (pickable(shown[i])) return setActive(i);
+    }
+  }
+
+  function pick(box, test) {
+    if (test) box.value = test.name;
+    close();
+    onPick(box);
+  }
+
+  const isSearchBox = (t) => t.dataset?.field === 'test-add';
+
+  root.addEventListener('click', (e) => {
+    if (isSearchBox(e.target)) return open(e.target);
+    const row = e.target.closest?.('.test-menu li[data-i]');
+    if (row && row.getAttribute('aria-disabled') !== 'true') pick(input, shown[Number(row.dataset.i)]);
+  });
+  // Keep focus in the box while clicking the list, including its scrollbar.
+  root.addEventListener('mousedown', (e) => {
+    if (e.target.closest?.('.test-menu')) e.preventDefault();
+  });
+  root.addEventListener('input', (e) => {
+    if (isSearchBox(e.target)) open(e.target);
+  });
+  root.addEventListener('focusout', (e) => {
+    if (isSearchBox(e.target)) close();
+  });
+  root.addEventListener('keydown', (e) => {
+    if (!isSearchBox(e.target)) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!menu) open(e.target);
+      move(e.key === 'ArrowDown' ? 1 : -1);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      pick(e.target, menu && active >= 0 ? shown[active] : null);
+    } else if (e.key === 'Escape' && menu) {
+      e.stopPropagation();
+      close();
+    }
+  });
+}
 
 // Element with the given HTML that re-renders itself; event handlers are
 // attached once to the element and survive re-renders.

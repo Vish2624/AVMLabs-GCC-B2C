@@ -12,7 +12,7 @@ import {
   priceInputs,
   readPrices,
   sumPrices,
-  testOptions,
+  attachTestSearch,
   testPicker,
   toast,
   view,
@@ -264,8 +264,6 @@ export function ProfileEditorView({
     }
     </main>
 
-    ${testOptions(catalog)}
-
     <div class="savebar"><div class="savebar-in">
       <p class="summary" data-summary>${summary()}</p>
       <div class="row">
@@ -440,11 +438,7 @@ export function ProfileEditorView({
     const t = e.target;
     const field = t.dataset.field;
     if (!field) return;
-    if (field === 'test-add') {
-      // Picking from the suggestion list fills in an exact test name.
-      if (byName.has(t.value.trim().toLowerCase())) addTest(t);
-      return;
-    }
+    if (field === 'test-add') return; // handled by attachTestSearch
     if (field === 'sub-add') {
       const id = Number(t.value);
       if (library.has(id) && !draft.subProfiles.includes(id)) {
@@ -473,11 +467,13 @@ export function ProfileEditorView({
     if (field === 'price') refreshSummary();
   });
 
-  el.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && e.target.dataset.field === 'test-add') {
-      e.preventDefault();
-      addTest(e.target);
-    }
+  attachTestSearch(el, catalog.tests, {
+    onPick: addTest,
+    statusOf: (test) => {
+      if (draft.tests.includes(test.id)) return 'Added';
+      const inSub = chosen().find((sp) => sp.tests.includes(test.id));
+      return inSub ? `In ${inSub.name}` : '';
+    },
   });
 
   window.addEventListener('beforeunload', (e) => {

@@ -50,7 +50,7 @@
     };
     window.addEventListener('popstate', this._onPop);
     this._tickT = setInterval(() => { if (!this.state.reelsOpen && this.state.page === 'home') this.setState(s => ({ tick: (s.tick || 0) + 1 })); }, 2200);
-    this._heroT = setInterval(() => { if (this.state.page === 'home' && !this.state.reelsOpen) this.setState(s => ({ hero: (s.hero + 1) % 3 })); }, 6000);
+    this._heroT = setInterval(() => { if (this.state.page === 'home' && !this.state.reelsOpen) this.setState(s => ({ hero: (s.hero + 1) % 4 })); }, 6000);
     if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) this.typeLoop();
     requestAnimationFrame(() => this.fillSlots());
     this.centreLoop();

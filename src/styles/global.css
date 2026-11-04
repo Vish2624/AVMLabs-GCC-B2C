@@ -37,6 +37,11 @@ input::placeholder,textarea::placeholder{color:#8F8CA8}
 [data-hero-text] button{height:36px!important;padding:0 13px!important;font-size:12.5px!important;gap:5px!important}
 [data-hero-text]>div:last-child{gap:8px!important}
 [data-hero-text]>span[style*="font-size:220px"]{font-size:150px!important;bottom:-40px!important}
+[data-hero-creds]{padding:10px!important;gap:8px!important}
+[data-hero-cred]{flex:1 1 0;flex-direction:column;align-items:flex-start!important;justify-content:center;gap:7px!important;padding:10px!important;border-radius:14px!important}
+[data-hero-cred]>span:first-child{width:32px!important;height:32px!important;border-radius:10px!important}
+[data-hero-cred] b{font-size:13px!important}
+[data-hero-cred] small{display:none}
 }
 image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-hero-img]:has(> image-slot:not([data-filled]):not([data-editable])){display:none!important}
@@ -58,10 +63,10 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-gold-ghost]{white-space:nowrap;height:44px;padding:0 16px;border-radius:999px;border:1px solid #EBDAB0;background:rgba(255,255,255,.8);color:#8A6414;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
 [data-gold-ghost]:hover{background:#fff}
 @media (prefers-reduced-motion:reduce){[data-gold-card]::after{animation:none;display:none}}
-/* Offer price: big dark price with a slim green pill below, on a strip with a soft green glow. */
-[data-offer-pill]{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;padding:2px 9px 2px 6px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.01em;line-height:1.3;white-space:nowrap;color:#fff;background:linear-gradient(135deg,#0F9159 0%,#0A7148 100%);box-shadow:0 4px 10px -5px rgba(14,115,80,.75),inset 0 1px 0 rgba(255,255,255,.28)}
-[data-offer-pill]::before{content:'';flex:none;width:11px;height:11px;background:#C9F7DC;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.8 8.8a2 2 0 0 0 2.8 0l7.2-7.2a2 2 0 0 0 0-2.8ZM7.5 9A1.5 1.5 0 1 1 7.5 6a1.5 1.5 0 0 1 0 3Z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.8 8.8a2 2 0 0 0 2.8 0l7.2-7.2a2 2 0 0 0 0-2.8ZM7.5 9A1.5 1.5 0 1 1 7.5 6a1.5 1.5 0 0 1 0 3Z'/%3E%3C/svg%3E") center/contain no-repeat}
-[data-price-strip]{background:radial-gradient(70% 130% at 0% 0%,rgba(34,180,99,.16) 0%,rgba(34,180,99,0) 70%),linear-gradient(135deg,#FBFAFF 0%,#EFECFD 100%);box-shadow:inset 0 0 0 1px rgba(59,44,158,.09),inset 0 1px 0 #fff,0 10px 20px -18px rgba(42,31,122,.6)}
+/* Offer price: big dark price with a slim green pill below, on a warm yellow gradient strip. */
+[data-offer-pill]{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;padding:2px 9px 2px 3px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.01em;line-height:1.3;white-space:nowrap;color:#fff;background:linear-gradient(135deg,#0F9159 0%,#0A7148 100%);box-shadow:0 4px 10px -5px rgba(14,115,80,.75),inset 0 1px 0 rgba(255,255,255,.28)}
+[data-offer-pill]::before{content:'%';flex:none;display:grid;place-items:center;width:13px;height:13px;border-radius:999px;background:#fff;color:#0A7148;font-size:9px;font-weight:800;line-height:1;letter-spacing:0}
+[data-price-strip]{background:radial-gradient(70% 130% at 0% 0%,rgba(255,196,46,.3) 0%,rgba(255,196,46,0) 70%),linear-gradient(135deg,#FFFDF4 0%,#FFF3CC 100%);box-shadow:inset 0 0 0 1px rgba(201,154,46,.24),inset 0 1px 0 #fff,0 10px 20px -18px rgba(154,107,18,.55)}
 [data-min-note]{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;line-height:1.35;color:#6E6A8A}
 /* Cart prompt to add tests and clear the minimum billing charge. */
 [data-min-card]{display:flex;flex-direction:column;gap:10px;margin-top:6px;padding:14px;border-radius:16px;background:radial-gradient(70% 130% at 100% 0%,rgba(34,180,99,.13) 0%,rgba(34,180,99,0) 70%),#F7F5FF;box-shadow:inset 0 0 0 1px rgba(59,44,158,.1)}
@@ -123,10 +128,11 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 31%{transform:translateY(0) rotate(var(--tilt)) scale(1.03);animation-timing-function:ease-in-out}
 39%{transform:translateY(0) rotate(var(--tilt)) scale(1)}
 64%{opacity:1;transform:translateY(0) rotate(var(--tilt)) scale(1);animation-timing-function:cubic-bezier(.5,0,.8,.5)}
-100%{opacity:0;transform:translateY(-190px) rotate(var(--tilt)) scale(1.08)}
+90%{opacity:1}
+100%{opacity:0;transform:translateY(-160px) rotate(var(--tilt)) scale(1.08)}
 }
-[data-dtap]{--dtap:clamp(136px,40vw,176px);position:absolute;z-index:7;width:var(--dtap);height:var(--dtap);margin:calc(var(--dtap) / -2) 0 0 calc(var(--dtap) / -2);pointer-events:none;will-change:transform,opacity;filter:drop-shadow(0 8px 18px rgba(120,10,40,.28));animation:avmDtap 1.05s linear forwards}
-[data-dtap] svg{display:block;width:100%;height:100%;fill:#FF3040}
+[data-dtap]{--dtap:clamp(74px,21vw,96px);position:absolute;z-index:7;width:var(--dtap);height:var(--dtap);margin:calc(var(--dtap) / -2) 0 0 calc(var(--dtap) / -2);pointer-events:none;will-change:transform,opacity;filter:drop-shadow(0 6px 14px var(--glow));animation:avmDtap 1.05s linear forwards}
+[data-dtap] svg{display:block;width:100%;height:100%}
 @media (prefers-reduced-motion:reduce){[data-dtap]{animation-duration:.6s}}
 
 /* Reels swipe hint (mobile): two cascading chevrons + label in the gap above "Book now", shown for 5s after 4s idle */

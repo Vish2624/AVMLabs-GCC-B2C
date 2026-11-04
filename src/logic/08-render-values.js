@@ -177,11 +177,11 @@
       qPlaceholder: s.sMode === 'tests' ? 'Search CBC, TSH, Vitamin D…' : "Search women's health, PCOS…",
       showResults: s.qFocus, keepFocus: e => e.preventDefault(), resultsLabel, results, noResults: !!q && !results.length,
       tileNext: () => { const el = document.querySelector('[data-tile-row]'); if (!el) return; const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4; el.scrollTo({ left: end ? 0 : el.scrollLeft + Math.max(240, el.clientWidth * 0.75), behavior: 'smooth' }); }, cats, catNext: () => { const el = document.querySelector('[data-cat-row]'); if (!el) return; const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4; el.scrollTo({ left: end ? 0 : el.scrollLeft + Math.max(200, el.clientWidth * 0.7), behavior: 'smooth' }); },
-      heroX: 'translateX(-' + (s.hero * 100) + '%)', heroPrev: () => this.setState(st => ({ hero: (st.hero + 2) % 3 })), heroNext: () => this.setState(st => ({ hero: (st.hero + 1) % 3 })),
-      heroDots: [0, 1, 2].map(i => ({ w: s.hero === i ? '26px' : '8px', bg: s.hero === i ? '#3B2C9E' : '#D4D1E6', go: () => this.setState({ hero: i }) })),
+      heroX: 'translateX(-' + (s.hero * 100) + '%)', heroPrev: () => this.setState(st => ({ hero: (st.hero + 3) % 4 })), heroNext: () => this.setState(st => ({ hero: (st.hero + 1) % 4 })),
+      heroDots: [0, 1, 2, 3].map(i => ({ w: s.hero === i ? '26px' : '8px', bg: s.hero === i ? '#3B2C9E' : '#D4D1E6', go: () => this.setState({ hero: i }) })),
       // Swipe the hero card left/right; a mostly vertical drag is left to scroll the page.
       heroTS: e => { const t = e.touches[0]; this._hx = t.clientX; this._hy = t.clientY; },
-      heroTE: e => { const t = e.changedTouches[0], dx = t.clientX - (this._hx || 0), dy = t.clientY - (this._hy || 0); if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) this.setState(st => ({ hero: (st.hero + (dx < 0 ? 1 : 2)) % 3 })); },
+      heroTE: e => { const t = e.changedTouches[0], dx = t.clientX - (this._hx || 0), dy = t.clientY - (this._hy || 0); if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) this.setState(st => ({ hero: (st.hero + (dx < 0 ? 1 : 3)) % 4 })); },
       heroGo1: () => (heroW ? this.openReels(heroW.i) : this.go('profiles')), heroGo2: () => (heroV ? this.openReels(heroV.i) : this.go('profiles')),
       directions: () => window.open('https://www.google.com/maps/search/?api=1&query=AVM+Labs', '_blank', 'noopener'),
       // With items in the cart, the footer/general WhatsApp buttons send the cart as a booking; otherwise a general enquiry.
@@ -201,7 +201,8 @@
       exploreMb: isDesktop ? '43px' : '0px',
       rowDisplay: isDesktop ? 'grid' : 'flex', rowOverflow: isDesktop ? 'visible' : 'auto',
       reelTiles: D.P.map(p => ({ slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: cost(p), bg: reelBg(p.hue), open: () => this.openReels(p.i) })),
-      popular: popularTests.map(testVM),
+      // Desktop: two rows of three. Mobile keeps all of them in one swipeable row.
+      popular: (isDesktop ? popularTests.slice(0, 6) : popularTests).map(testVM),
       catTitle: s.cat === 'all' ? 'All lab tests' : (C.CATS.find(c => c.id === s.cat) || {}).label + ' tests',
       testsCountLabel: tList.length + (tList.length === 1 ? ' test' : ' tests'),
       tq: s.tq, onTq: e => this.setState({ tq: e.target.value }), hasTq: !!s.tq, clearTq: () => this.setState({ tq: '' }),
