@@ -44,7 +44,7 @@
     const testVM = t => {
       const inC = has('test', t.id), cov = !inC && coveredBy(t.id);
       const pc = C.CATS.find(c => c.id === t.cat[0]) || C.CATS[0];
-      return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, tatH: this.tat(t).replace('hrs', 'hours'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), cardBg: 'radial-gradient(75% 70% at 100% 0%, #F0EDFE 0%, rgba(240,237,254,0) 65%), radial-gradient(55% 50% at 0% 100%, rgba(255,236,240,0.55) 0%, rgba(255,236,240,0) 70%), #FFFFFF', tat: this.tat(t), fasting: t.fasting,
+      return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, hcFree: this.hcOn(t), tatH: this.tat(t).replace('hrs', 'hours'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), cardBg: 'radial-gradient(75% 70% at 100% 0%, #F0EDFE 0%, rgba(240,237,254,0) 65%), radial-gradient(55% 50% at 0% 100%, rgba(255,236,240,0.55) 0%, rgba(255,236,240,0) 70%), #FFFFFF', tat: this.tat(t), fasting: t.fasting,
         open: () => this.openTest(t.id),
         priceF: cost(t), ...price(t), underMin: this.pr(t) > 0 && this.pr(t) < RG.minBill, minNote: this.minBillNote(), inCart: inC, notInCart: !inC && !cov, covered: !!cov, coveredBy: cov ? 'In ' + cov.name : '', toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); }, stop: e => e && e.stopPropagation() };
     };
@@ -57,7 +57,7 @@
         params: [...measured.map(name => ({ name, calc: false })), ...calc.map(name => ({ name, calc: true }))].map((x, k) => ({ ...x, n: k + 1 })),
         paramsTitle: t.params + (t.params > 1 ? ' parameters' : ' parameter') + (calc.length ? ' · ' + calc.length + ' calculated' : ''),
         sample, sampleIcon: sample === 'Urine' ? 'flask-conical' : 'droplet', fastTitle: t.fasting ? 'Fasting required' : 'No fasting required', fastSub: t.fasting ? '10–12 hrs overnight, water is fine' : 'Eat and drink as usual',
-        reportT: 'Report in ' + this.tat(t), book: () => this.bookWA([{ type: 'test', id: t.id }]),
+        reportT: 'Report in ' + this.tat(t), hcText: this.hcOn(t) ? 'Free home collection' : 'Home collection available', book: () => this.bookWA([{ type: 'test', id: t.id }]),
         profs: ps.map(p => ({ name: p.name, meta: p.params + ' parameters · ' + cost(p), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.id) })), toProfs: () => { const el = document.querySelector('[data-td-profs]'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, hasProfs: ps.length > 0 };
     }
     const book = p => () => this.bookWA([{ type: 'profile', id: p.id }]);
@@ -132,7 +132,7 @@
     const reels = s.reelsOpen ? RL.map((p, k) => {
       const sl = s.slides[k] || 0, inC = has('profile', p.id), worth = this.sumPr(p.ts);
       return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, ideal: p.ideal, hasIdeal: p.ideal.length > 0, benefits: p.benefits, hasBenefits: p.benefits.length > 0, tat: this.tat(p),
-        fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })), groups: incGroups(p),
+        fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', hcFree: this.hcOn(p), hcLabel: this.hcOn(p) ? 'Free' : 'Extra charges', hcInk: this.hcOn(p) ? '#0E7350' : '#B4540A', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })), groups: incGroups(p),
         // What its tests cost one by one, shown only when the profile is cheaper.
         priceF: cost(p), ...price(p), worthF: this.money(worth), hasWorth: worth > this.pr(p) + 0.0001,
         segs: [0, 1, 2].map(j => ({ w: j === sl ? '22px' : '7px', bg: j === sl ? '#3B2C9E' : '#D4D1E6', go: () => this.goSlide(k, j) })), onH: e => this.onH(k, e), toTests: () => this.goSlide(k, 1),
@@ -171,7 +171,9 @@
         return { centreRows: rows, centreY: 'translateY(' + (-k * 46) + 'px)', centreShots: all.concat(all) };
       })(),
       // Hero slides feature these profiles by id; they may be unpublished or reordered in the admin.
-      ...(heroW ? parts('hero1', this.pr(heroW)) : {}), ...(heroV ? parts('hero2', this.pr(heroV)) : {}),
+      ...(heroW ? parts('hero1', this.pr(heroW)) : {}), hero1Hc: !!heroW && this.hcOn(heroW), hero2Hc: !!heroV && this.hcOn(heroV),
+      // Where the site mentions home collection: free from the country's limit.
+      hcBadge: 'Free home collection on ' + this.money(RG.hcFree) + '+', hcModeSub: b.hcFree ? 'Free · we come to you' : 'Free on ' + this.money(RG.hcFree) + '+', ...(heroV ? parts('hero2', this.pr(heroV)) : {}),
       ...gateVM,
       smTests: s.sMode === 'tests' ? segOn : segOff, smProfiles: s.sMode === 'profiles' ? segOn : segOff,
       setModeTests: () => this.setState({ sMode: 'tests' }), setModeProfiles: () => this.setState({ sMode: 'profiles' }),
@@ -204,7 +206,7 @@
       // Lift the hero "Explore profiles" bar so it centres on the category circles beside it (labels sit below them).
       exploreMb: isDesktop ? '43px' : '0px',
       rowDisplay: isDesktop ? 'grid' : 'flex', rowOverflow: isDesktop ? 'visible' : 'auto',
-      reelTiles: D.R.map(p => ({ slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: cost(p), ...price(p), bg: reelBg(p.hue), open: () => this.openReels(p.id) })),
+      reelTiles: D.R.map(p => ({ hcFree: this.hcOn(p), slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: cost(p), ...price(p), bg: reelBg(p.hue), open: () => this.openReels(p.id) })),
       // Desktop: two rows of three. Mobile keeps all of them in one swipeable row.
       popular: (isDesktop ? popularTests.slice(0, 6) : popularTests).map(testVM),
       catTitle: s.cat === 'all' ? 'All lab tests' : (C.CATS.find(c => c.id === s.cat) || {}).label + ' tests',
@@ -218,7 +220,7 @@
       profilesView: D.P.filter(p => s.pf === 'all' || p.tags.includes(s.pf)).map(p => {
         const inC = has('profile', p.id);
         return { name: p.name, tag: p.tag, sym: p.sym, tagline: p.tagline, params: p.params, fastLabel: p.fasting ? 'Fasting needed' : 'No fasting',
-          soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.97) 0%, oklch(0.95 0.035 ${p.hue} / 0.94) 58%, oklch(0.95 0.035 ${p.hue} / 0.6) 78%, oklch(0.95 0.035 ${p.hue} / 0) 96%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
+          soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), hcFree: this.hcOn(p), veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.97) 0%, oklch(0.95 0.035 ${p.hue} / 0.94) 58%, oklch(0.95 0.035 ${p.hue} / 0.6) 78%, oklch(0.95 0.035 ${p.hue} / 0) 96%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
           preview: p.ts.slice(0, 4).map(t => t.short), hasMore: p.ts.length > 4, moreLabel: '+' + (p.ts.length - 4) + ' more',
           priceF: cost(p), ...price(p), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.id, 1), book: book(p) };
       }),
@@ -231,7 +233,9 @@
       slotTitle: isHomeMode ? 'Collection date & time' : 'Visit date & time',
       days: days.map(d => { const a = s.form.date === d.key; return { top: d.top, num: d.num, mon: d.mon, pick: () => this.setState(st => ({ form: { ...st.form, date: d.key, slot: d.i === 0 ? '' : st.form.slot }, errors: { ...st.errors, date: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : '#fff', fg: a ? '#fff' : '#16133A', sub: a ? 'rgba(255,255,255,0.8)' : '#5D5A7A', sh: a ? '0 12px 24px -12px rgba(59,44,158,0.85)' : 'none', lift: a ? 'translateY(-2px)' : 'none' }; }),
       slots, slotPicked: !!(pickedDay && s.form.slot), slotSummary: pickedDay ? pickedDay.full + ' · ' + s.form.slot : '', asidePos: isWide ? 'sticky' : 'static',
-      bill: { priceF: this.money(b.price), ...parts('price', b.price), ...parts('pay', b.pay), ...parts('top', b.top), hcF: b.hc ? this.money(b.hc) : 'FREE', hcColor: b.hc ? '#16133A' : '#0E7350', payF: this.money(b.pay), hasTop: b.top > 0, topF: this.money(b.top), minShort: 'Add ' + this.money(b.top) + ' more to avoid minimum billing',
+      bill: { priceF: this.money(b.price), ...parts('price', b.price), ...parts('pay', b.pay), ...parts('top', b.top), hcF: b.hcFree ? 'FREE' : 'Extra charges', hcColor: b.hcFree ? '#0E7350' : '#B4540A', hcFree: b.hcFree,
+        // Below the free-collection limit: how much more to add, as minimum billing does (only once something is in the cart).
+        showHcLeft: isHomeMode && !b.hcFree && b.items.length > 0, hcShort: 'Add ' + this.money(b.hcLeft) + ' more for free home collection', payF: this.money(b.pay), hasTop: b.top > 0, topF: this.money(b.top), minShort: 'Add ' + this.money(b.top) + ' more to avoid minimum billing',
         minTitle: 'Add ' + this.money(b.top) + ' more to avoid the minimum billing charge',
         minSub: 'The minimum bill is ' + this.money(RG.minBill) + ' per patient. Add tests worth ' + this.money(b.top) + ' or more and you pay only for your tests.',
         minPct: Math.round(b.price / (b.pay || 1) * 100) + '%',

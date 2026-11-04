@@ -47,7 +47,7 @@
     if (topped) lines.push('*To pay:* ' + this.money(pay) + ' (minimum billing)');
     lines.push('', '*Reports:* within ' + (tat || '24 hrs'), '*Preparation:* ' + (fasting ? '10–12 hrs fasting needed' : 'No fasting needed'),
       '*Location:* ' + ((s.region && s.region.city ? s.region.city + ', ' : '') + RG.name),
-      '*Collection:* ' + (s.mode === 'walkin' ? 'Walk-in at centre' : 'Home sample collection'));
+      '*Collection:* ' + (s.mode === 'walkin' ? 'Walk-in at centre' : 'Home sample collection' + (total >= RG.hcFree ? ' (Free)' : ' (extra charges apply)')));
     if (f.name.trim()) lines.push('*Patient:* ' + [f.name.trim(), f.age, f.gender].filter(Boolean).join(', '));
     if (RG.phRe.test(f.phone)) lines.push('*Mobile:* ' + RG.dial + ' ' + f.phone);
     lines.push('', 'Please share the available slots. Thank you!');
@@ -66,7 +66,7 @@
     const f = this.state.form;
     const day = (this.days().find(d => d.key === f.date) || {}).full || '';
     const lines = ['Hi AVM Labs! I would like to book:', '', ...b.items.map((it, i) => (i + 1) + '. ' + it.name + ' – ' + this.money(it.price)), '',
-      this.state.mode === 'home' ? '*Collection:* Home sample collection (Free)' : '*Collection:* Walk-in at centre',
+      this.state.mode === 'home' ? '*Collection:* Home sample collection' + (b.hcFree ? ' (Free)' : ' (extra charges apply)') : '*Collection:* Walk-in at centre',
       '*Date & slot:* ' + day + ' · ' + f.slot,
       '*Patient:* ' + f.name.trim() + ', ' + f.age + ', ' + f.gender,
       '*Mobile:* ' + this.region().dial + ' ' + f.phone];

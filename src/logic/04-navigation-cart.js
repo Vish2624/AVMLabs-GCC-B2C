@@ -101,7 +101,8 @@
     };
   }
 
-  // Offer prices in the visitor's country. Home collection is free. top is what minimum billing adds to reach the minimum.
+  // Offer prices in the visitor's country. top is what minimum billing adds to reach the minimum. Home collection is free
+  // from the country's limit (hcFree); hcLeft is how much more the items need to reach it.
   bill() {
     const D = this.db();
     let price = 0;
@@ -113,6 +114,7 @@
     });
     price = Math.round(price * 1000) / 1000;
     const pay = this.billed(price);
-    return { items, price, hc: 0, top: Math.round((pay - price) * 1000) / 1000, pay };
+    const limit = this.region().hcFree, hcFree = price >= limit;
+    return { items, price, hcFree, hcLeft: hcFree ? 0 : Math.round((limit - price) * 1000) / 1000, top: Math.round((pay - price) * 1000) / 1000, pay };
   }
 

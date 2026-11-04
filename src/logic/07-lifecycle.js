@@ -129,9 +129,9 @@
     const s = this.state, D = this.db(), t = s.page === 'test' && D.T[s.testId], p = s.reelsOpen && this.reelList()[this.cur()];
     const tag = sel => document.querySelector(sel), canon = tag('link[rel="canonical"]'), desc = tag('meta[name="description"]');
     const home = this._seo || (this._seo = { site: canon ? new URL(canon.href).origin : location.origin, desc: desc ? desc.content : '', og: (tag('meta[property="og:description"]') || {}).content || '', robots: (tag('meta[name="robots"]') || {}).content || '' });
-    const where = ' Free home sample collection in Bahrain, Saudi Arabia and the UAE.';
+    const where = ' Home sample collection in Bahrain, Saudi Arabia and the UAE.';
     const name = p ? p.name + ': Health Checkup Tests & Price' : t ? t.name + ' Test: Price & Report Time' : { tests: 'All Lab Tests', profiles: 'Health Checkup Profiles', cart: 'Your Cart', about: 'About Us' }[s.page];
-    const title = name ? name + ' | AVM Labs' : 'AVM Labs | Lab Tests & Health Profiles with Free Home Collection';
+    const title = name ? name + ' | AVM Labs' : 'AVM Labs | Lab Tests & Health Profiles with Home Collection';
     const text = p ? p.name + ': ' + (p.tagline ? p.tagline + ' ' : '') + p.params + ' parameters from one sample' + (this.tat(p) ? ', report in ' + this.tat(p) : '') + '.' + where
       : t ? t.name + ' test at AVM Labs. ' + (((t.about || '').match(/^.*?\.(?=\s|$)/) || [t.about || ''])[0]) + (this.tat(t) ? ' Report in ' + this.tat(t) + ',' : '') + (t.fasting ? ' fasting needed.' : ' no fasting needed.') + where
       : { tests: 'Browse every lab test at AVM Labs with local prices, report times and fasting needs. Book online.' + where,

@@ -33,7 +33,7 @@
                 <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
                   <div style="display:flex;flex-direction:column;gap:6px">
                     <span style="font-size:clamp(36px,5.2vh,48px);font-weight:800;letter-spacing:-0.03em;line-height:1;white-space:nowrap">{{ r.priceNum }}<small data-cur="1">{{ r.priceCur }}</small></span>
-                    <span data-offer-pill="1">Offer price</span>
+                    <span style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span data-offer-pill="1">Offer price</span><sc-if value="{{ r.hcFree }}" hint-placeholder-val="{{ false }}"><span data-hc-pill="1"><avm-i n="house" s="11"></avm-i>Free home collection</span></sc-if></span>
                   </div>
                   <button onClick="{{ r.share }}" aria-label="Share" style="width:46px;height:46px;border-radius:999px;flex:none;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="share-2" s="19"></avm-i></button>
                 </div>
@@ -56,7 +56,7 @@
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
                   <div style="padding:14px;border-radius:16px;background:#F6F6FA;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Preparation</span><span style="font-size:14px;font-weight:700">{{ r.fastLabel }}</span></div>
                   <div style="padding:14px;border-radius:16px;background:#F6F6FA;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Reports</span><span style="font-size:14px;font-weight:700">Within {{ r.tat }}</span></div>
-                  <div style="padding:14px;border-radius:16px;background:#F6F6FA;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Home collection</span><span style="font-size:14px;font-weight:700">Free</span></div>
+                  <div style="padding:14px;border-radius:16px;background:#F6F6FA;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Home collection</span><span style="font-size:14px;font-weight:700;color:{{ r.hcInk }}">{{ r.hcLabel }}</span></div>
                 </div>
               </div>
             </div>

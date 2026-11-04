@@ -40,7 +40,7 @@
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
                 <div style="padding:12px;border-radius:14px;background:#fff;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:3px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Preparation</span><span style="font-size:13.5px;font-weight:700">{{ r.fastLabel }}</span></div>
                 <div style="padding:12px;border-radius:14px;background:#fff;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:3px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Reports</span><span style="font-size:13.5px;font-weight:700">Within {{ r.tat }}</span></div>
-                <div style="padding:12px;border-radius:14px;background:#fff;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:3px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Home collection</span><span style="font-size:13.5px;font-weight:700">Free</span></div>
+                <div style="padding:12px;border-radius:14px;background:#fff;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:3px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Home collection</span><span style="font-size:13.5px;font-weight:700;color:{{ r.hcInk }}">{{ r.hcLabel }}</span></div>
               </div>
             </div>
           </div>
@@ -52,7 +52,7 @@
             <button onClick="{{ r.toTests }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span style="width:48px;height:48px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:grid;place-items:center"><avm-i n="list" s="20"></avm-i></span>Tests</button>
           </div>
           <div style="position:absolute;left:0;right:0;bottom:0;z-index:4;padding:40px 16px {{ reelPadB }};background:linear-gradient(180deg,rgba(246,246,250,0) 0%,rgba(246,246,250,0.97) 45%);display:flex;align-items:center;gap:14px">
-            <div style="display:flex;flex-direction:column;gap:6px;min-width:0"><span style="white-space:nowrap;font-size:32px;font-weight:800;letter-spacing:-0.03em;line-height:1.05">{{ r.priceNum }}<small data-cur="1">{{ r.priceCur }}</small></span><span data-offer-pill="1">Offer price</span></div>
+            <div style="display:flex;flex-direction:column;gap:6px;min-width:0"><span style="white-space:nowrap;font-size:32px;font-weight:800;letter-spacing:-0.03em;line-height:1.05">{{ r.priceNum }}<small data-cur="1">{{ r.priceCur }}</small></span><span style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span data-offer-pill="1">Offer price</span><sc-if value="{{ r.hcFree }}" hint-placeholder-val="{{ false }}"><span data-hc-pill="1"><avm-i n="house" s="11"></avm-i>Free home collection</span></sc-if></span></div>
             <button onClick="{{ r.book }}" style="flex:1;height:54px;border-radius:999px;border:none;cursor:pointer;background:linear-gradient(180deg,#22B463,#138A47);color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 12px 30px -10px rgba(19,138,71,0.8),inset 0 1px 0 rgba(255,255,255,0.25)"><avm-i n="whatsapp" s="20"></avm-i>Book now</button>
           </div>
         </div>

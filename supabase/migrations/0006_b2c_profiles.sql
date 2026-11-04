@@ -3,7 +3,8 @@
 -- never shows them, and the public API leaves them out.
 --
 -- Run after 0005_profile_benefits.sql. In one transaction it:
---   1. adds code and short_name to tests and profiles, and fills them in for the 122 tests;
+--   1. adds code and short_name to tests and profiles, and fills them in for the 122 tests; renames
+--      Hemogram - 6 Part (Diff) to Complete Blood Count;
 --   2. deletes every profile and sub-profile;
 --   3. adds the shared panels (Kidney, Liver, Lipid, Free Thyroid, Total Thyroid, Cardiac Risk
 --      Markers, Pancreatic = Amylase + Lipase) and the 27 profiles with their offer prices.
@@ -150,6 +151,8 @@ from (values
   ('lp-pla2', 'PLA2', 'PLA2')
 ) as v(id, code, short_name)
 where t.id = v.id;
+
+update public.tests set name = 'Complete Blood Count', updated_at = now() where id = 'cbc';
 
 -- 2. Out with the old profiles and sub-profiles.
 delete from public.profile_sub_profiles;
