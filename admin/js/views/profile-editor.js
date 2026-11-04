@@ -20,6 +20,13 @@ import {
 
 const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
+// A box with one item per line, as the list the API takes. Lines, not commas: reasons contain commas.
+const toLines = (s) =>
+  s
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+
 const slugify = (s) =>
   s
     .normalize('NFKD')
@@ -52,6 +59,8 @@ export function ProfileEditorView({
         tag: '',
         category: catalog.categories[0].id,
         tagline: '',
+        ideal: '',
+        benefits: '',
         prices: Object.fromEntries(COUNTRIES.map((c) => [c.code, ''])),
         icon: 'layers',
         hue: catalog.colours[0].hue,
@@ -62,6 +71,8 @@ export function ProfileEditorView({
       }
     : {
         ...profile,
+        ideal: (profile.ideal || []).join('\n'),
+        benefits: (profile.benefits || []).join('\n'),
         prices: Object.fromEntries(COUNTRIES.map((c) => [c.code, String(profile.prices?.[c.code] ?? '')])),
         subProfiles: profile.subProfiles.filter((id) => library.has(id)),
         tests: [...profile.tests],
@@ -217,6 +228,22 @@ export function ProfileEditorView({
       <div class="panel-head"><span class="num">4</span><div><h2>Additional tests (${draft.tests.length})</h2><p>Tests on their own, outside any sub-profile. Shown as one more group.</p></div></div>
       <div class="field">${testPicker('extra', draft.tests, tests, 'None — optional.')}</div>
     </section>
+
+    <section class="panel">
+      <div class="panel-head"><span class="num">5</span><div><h2>Reel text</h2><p>What customers read on this profile’s reel. Leave a box empty to hide that part.</p></div></div>
+      <div class="grid">
+        <div class="field full">
+          <label for="benefits">Why take this profile</label>
+          <textarea id="benefits" data-field="benefits" rows="4" placeholder="One reason per line, e.g.&#10;Full T3, T4 & TSH with antibody check&#10;Helps spot autoimmune thyroid early">${draft.benefits}</textarea>
+          <span class="hint">One reason per line, up to 6. Keep each under 120 characters.</span>
+        </div>
+        <div class="field full">
+          <label for="ideal">Ideal for</label>
+          <textarea id="ideal" data-field="ideal" rows="4" placeholder="One per line, e.g.&#10;Weight changes&#10;Family history">${draft.ideal}</textarea>
+          <span class="hint">One per line, up to 6. Keep each under 40 characters.</span>
+        </div>
+      </div>
+    </section>
     ${
       !isNew &&
       html`
@@ -296,6 +323,8 @@ export function ProfileEditorView({
       tag: draft.tag.trim(),
       category: draft.category,
       tagline: draft.tagline.trim(),
+      ideal: toLines(draft.ideal),
+      benefits: toLines(draft.benefits),
       prices: readPrices(draft.prices).prices,
       icon: draft.icon,
       hue: draft.hue,

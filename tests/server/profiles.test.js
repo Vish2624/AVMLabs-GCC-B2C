@@ -80,6 +80,23 @@ describe('parseProfile', () => {
     });
   });
 
+  it('keeps the reel lists, dropping blanks and repeats', () => {
+    const profile = parseProfile({
+      ...valid(),
+      ideal: [' Age 25–45 ', '', 'Age 25–45'],
+      benefits: ['Full T3, T4 & TSH', '   '],
+    });
+    assert.deepEqual(profile.ideal, ['Age 25–45']);
+    assert.deepEqual(profile.benefits, ['Full T3, T4 & TSH']);
+    assert.deepEqual(parseProfile(valid()).benefits, []);
+  });
+
+  it('limits the reel lists, with a plain message', () => {
+    rejects(parseProfile, { ...valid(), benefits: ['x'.repeat(121)] }, 'Keep each reason to 120 characters');
+    rejects(parseProfile, { ...valid(), benefits: Array(7).fill('x') }, 'Add up to 6 reasons');
+    rejects(parseProfile, { ...valid(), ideal: ['x'.repeat(41)] }, 'Keep each "Ideal for" item to 40 characters');
+  });
+
   it('requires at least one sub-profile or test', () => {
     rejects(parseProfile, { ...valid(), subProfiles: [], tests: [] }, 'Add at least one sub-profile or test');
   });
@@ -132,6 +149,19 @@ describe('expandSubs', () => {
 
   it('adds no extra group without extra tests', () => {
     assert.equal(expandSubs([heart], []).length, 1);
+  });
+});
+
+describe('dev store lists', () => {
+  it('starts profiles with the text from migration 0005', async () => {
+    const { createDevStore } = await import('../../scripts/dev-store.js');
+    const store = createDevStore(new URL('../../supabase/seed.sql', import.meta.url));
+    const profiles = store.list();
+    assert.equal(profiles.length, 8);
+    const thyroid = profiles.find((p) => p.id === 'thyroid');
+    assert.deepEqual(thyroid.ideal, ['Weight changes', 'Hair thinning', 'Family history']);
+    assert.equal(thyroid.benefits[0], 'Full T3, T4 & TSH with antibody check');
+    assert.ok(profiles.every((p) => p.ideal.length && p.benefits.length));
   });
 });
 

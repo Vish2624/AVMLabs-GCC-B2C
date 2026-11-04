@@ -50,7 +50,8 @@ On load the site fetches `/api/profiles`. If that fails it keeps the profiles bu
 ## Admin
 
 `/admin/` signs in with one shared password and manages health profiles: details, look,
-and sub-profiles made of tests picked from `src/data/tests.json`. The website picks up
+sub-profiles made of tests picked from `src/data/tests.json`, and the reel text ("Why take
+this profile" and "Ideal for"). The website picks up
 changes within a minute (the public API is cached at Vercel's edge for 60 seconds).
 
 | Route | |
@@ -75,6 +76,9 @@ changes within a minute (the public API is cached at Vercel's edge for 60 second
    sub-profiles into the shared library. Until it runs, the website keeps working and the
    admin shows a message asking for it. `0003_tests.sql` moves the tests into the database so
    they can be managed in the admin; until it runs, the built-in `src/data/tests.json` is used.
+   After `seed.sql`, run `0004_country_prices.sql` and then `0005_profile_benefits.sql`. Until
+   `0005` runs, the website keeps its built-in reel text and the admin refuses to save profiles,
+   with a message asking for it.
 2. In Vercel → Project Settings → Environment Variables, add the values listed in
    `.env.example` (SESSION_SECRET is optional), then redeploy. Connecting Supabase
    through Vercel → Storage adds the two Supabase values automatically.

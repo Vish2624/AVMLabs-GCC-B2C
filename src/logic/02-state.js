@@ -47,13 +47,13 @@
     fetch('/api/profiles').then(r => (r.ok ? r.json() : null)).then(list => {
       if (!Array.isArray(list) || !list.length) return;
       const known = new Set(Component.TESTS.map(t => t.id));
-      // The admin doesn't store the "ideal for"/benefit lists: reuse the built-in profile's.
+      // Until migration 0005 runs the API has no "ideal for"/benefit lists (null): reuse the built-in profile's.
       // Report times come from the tests (see tats in db()).
       const builtIn = Object.fromEntries(Component.PROFILES.map(p => [p.id, p]));
       const profiles = list.map(p => {
         const tests = [...new Set(p.subs.flatMap(s => s.tests))].filter(id => known.has(id)), b = builtIn[p.id] || {};
         return { id: p.id, name: p.name, tag: p.tag, sym: sym(p.name), hue: p.hue, tags: [p.category], tagline: p.tagline, tests, prices: p.prices || {}, subs: p.subs,
-          ideal: b.ideal || [], benefits: b.benefits || [] };
+          ideal: p.ideal || b.ideal || [], benefits: p.benefits || b.benefits || [] };
       }).filter(p => p.tests.length);
       if (!profiles.length) return;
       Component.PROFILES = profiles;

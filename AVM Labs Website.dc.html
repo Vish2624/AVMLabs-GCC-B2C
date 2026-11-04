@@ -75,13 +75,11 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-gold-ghost]{white-space:nowrap;height:44px;padding:0 16px;border-radius:999px;border:1px solid #EBDAB0;background:rgba(255,255,255,.8);color:#8A6414;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
 [data-gold-ghost]:hover{background:#fff}
 @media (prefers-reduced-motion:reduce){[data-gold-card]::after{animation:none;display:none}}
-/* Offer price: green pill above a dark price, on a strip with a soft green glow. */
-[data-offer-pill]{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;padding:2px 7px 2px 6px;border-radius:999px;font-size:9px;font-weight:800;letter-spacing:.05em;line-height:1.3;text-transform:uppercase;white-space:nowrap;color:#fff;background:linear-gradient(135deg,#128A52 0%,#0B6B48 100%);box-shadow:0 5px 12px -6px rgba(14,115,80,.8),inset 0 1px 0 rgba(255,255,255,.25)}
-[data-offer-pill]::before{content:'';width:4px;height:4px;border-radius:999px;background:#B6F5CF;box-shadow:0 0 0 2px rgba(182,245,207,.3);animation:avmOfferDot 2.4s ease-in-out infinite}
-@keyframes avmOfferDot{50%{box-shadow:0 0 0 4px rgba(182,245,207,.08)}}
+/* Offer price: big dark price with a slim green pill below, on a strip with a soft green glow. */
+[data-offer-pill]{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;padding:2px 9px 2px 6px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.01em;line-height:1.3;white-space:nowrap;color:#fff;background:linear-gradient(135deg,#0F9159 0%,#0A7148 100%);box-shadow:0 4px 10px -5px rgba(14,115,80,.75),inset 0 1px 0 rgba(255,255,255,.28)}
+[data-offer-pill]::before{content:'';flex:none;width:11px;height:11px;background:#C9F7DC;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.8 8.8a2 2 0 0 0 2.8 0l7.2-7.2a2 2 0 0 0 0-2.8ZM7.5 9A1.5 1.5 0 1 1 7.5 6a1.5 1.5 0 0 1 0 3Z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.8 8.8a2 2 0 0 0 2.8 0l7.2-7.2a2 2 0 0 0 0-2.8ZM7.5 9A1.5 1.5 0 1 1 7.5 6a1.5 1.5 0 0 1 0 3Z'/%3E%3C/svg%3E") center/contain no-repeat}
 [data-price-strip]{background:radial-gradient(70% 130% at 0% 0%,rgba(34,180,99,.16) 0%,rgba(34,180,99,0) 70%),linear-gradient(135deg,#FBFAFF 0%,#EFECFD 100%);box-shadow:inset 0 0 0 1px rgba(59,44,158,.09),inset 0 1px 0 #fff,0 10px 20px -18px rgba(42,31,122,.6)}
 [data-min-note]{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;line-height:1.35;color:#6E6A8A}
-@media (prefers-reduced-motion:reduce){[data-offer-pill]::before{animation:none}}
 /* Cart prompt to add tests and clear the minimum billing charge. */
 [data-min-card]{display:flex;flex-direction:column;gap:10px;margin-top:6px;padding:14px;border-radius:16px;background:radial-gradient(70% 130% at 100% 0%,rgba(34,180,99,.13) 0%,rgba(34,180,99,0) 70%),#F7F5FF;box-shadow:inset 0 0 0 1px rgba(59,44,158,.1)}
 [data-min-track]{height:6px;border-radius:999px;background:#E2DEF6;overflow:hidden}
@@ -133,10 +131,19 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-foot-bottom]{padding-top:12px!important;padding-bottom:14px!important;gap:6px 12px!important;font-size:11.5px!important}
 }
 
-/* Reels double-tap heart (mobile, just for show): pops at the finger with a slight tilt, settles, then floats up and fades */
-@keyframes avmDtap{0%{opacity:0;transform:rotate(var(--tilt)) scale(0)}14%{opacity:1;transform:rotate(var(--tilt)) scale(1.25)}26%{transform:rotate(var(--tilt)) scale(.9)}38%{transform:rotate(var(--tilt)) scale(1.06)}48%,68%{opacity:1;transform:rotate(var(--tilt)) scale(1)}100%{opacity:0;transform:rotate(var(--tilt)) translateY(-120px) scale(.7)}}
-[data-dtap]{position:absolute;z-index:7;width:108px;height:108px;margin:-54px 0 0 -54px;pointer-events:none;filter:drop-shadow(0 10px 22px rgba(255,48,64,.45));animation:avmDtap 1s cubic-bezier(.2,.8,.3,1) forwards}
-[data-dtap] i{display:block;width:100%;height:100%;background:linear-gradient(160deg,#FF6A8E 0%,#FF3040 50%,#E3164D 100%);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") center / contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") center / contain no-repeat}
+/* Reels double-tap heart (mobile, just for show): springs in at the finger with a slight tilt, holds, then rises straight up and fades.
+   Each step has its own easing: one curve across all of them jumps ahead and then crawls. Every step lists the same transforms so they blend. */
+@keyframes avmDtap{
+0%{opacity:0;transform:translateY(0) rotate(var(--tilt)) scale(.35);animation-timing-function:cubic-bezier(.2,.9,.3,1)}
+13%{opacity:1;transform:translateY(0) rotate(var(--tilt)) scale(1.2);animation-timing-function:ease-in-out}
+22%{transform:translateY(0) rotate(var(--tilt)) scale(.93);animation-timing-function:ease-in-out}
+31%{transform:translateY(0) rotate(var(--tilt)) scale(1.03);animation-timing-function:ease-in-out}
+39%{transform:translateY(0) rotate(var(--tilt)) scale(1)}
+64%{opacity:1;transform:translateY(0) rotate(var(--tilt)) scale(1);animation-timing-function:cubic-bezier(.5,0,.8,.5)}
+100%{opacity:0;transform:translateY(-190px) rotate(var(--tilt)) scale(1.08)}
+}
+[data-dtap]{--dtap:clamp(136px,40vw,176px);position:absolute;z-index:7;width:var(--dtap);height:var(--dtap);margin:calc(var(--dtap) / -2) 0 0 calc(var(--dtap) / -2);pointer-events:none;will-change:transform,opacity;filter:drop-shadow(0 8px 18px rgba(120,10,40,.28));animation:avmDtap 1.05s linear forwards}
+[data-dtap] svg{display:block;width:100%;height:100%;fill:#FF3040}
 @media (prefers-reduced-motion:reduce){[data-dtap]{animation-duration:.6s}}
 
 /* Reels swipe hint (mobile): two cascading chevrons + label in the gap above "Book now", shown for 5s after 4s idle */
@@ -391,7 +398,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
                 <p style="margin:0;font-size:15px;line-height:1.55;color:rgba(255,255,255,0.88)">6 key hormones including AMH — cycles, fertility and energy in one blood draw.</p>
               </div>
               <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;flex-wrap:wrap">
-                <div><span data-offer-pill="1" style="margin-bottom:6px">Offer price</span><div style="font-size:21px;font-weight:800;letter-spacing:-0.02em">{{ hero1Price }}</div></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><span style="white-space:nowrap;font-size:clamp(26px,8.4vw,34px);font-weight:800;letter-spacing:-0.03em;line-height:1">{{ hero1Price }}</span><span data-offer-pill="1">Offer price</span></div>
                 <button onClick="{{ heroGo1 }}" style="white-space:nowrap;height:46px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.95);color:#2A1F7A;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px">View profile<avm-i n="arrow-right" s="16"></avm-i></button>
               </div>
             </div>
@@ -406,7 +413,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
                 <p style="margin:0;font-size:15px;line-height:1.55;color:rgba(255,255,255,0.88)">Tired, aching or losing hair? 6 tests to find exactly what you're low on.</p>
               </div>
               <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;flex-wrap:wrap">
-                <div><span data-offer-pill="1" style="margin-bottom:6px">Offer price</span><div style="font-size:21px;font-weight:800;letter-spacing:-0.02em">{{ hero2Price }}</div></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><span style="white-space:nowrap;font-size:clamp(26px,8.4vw,34px);font-weight:800;letter-spacing:-0.03em;line-height:1">{{ hero2Price }}</span><span data-offer-pill="1">Offer price</span></div>
                 <button onClick="{{ heroGo2 }}" style="white-space:nowrap;height:46px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.95);color:#2A1F7A;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px">View profile<avm-i n="arrow-right" s="16"></avm-i></button>
               </div>
             </div>
@@ -483,9 +490,9 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
           <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#F3F1FE 0%,#E5E0FA 100%);box-shadow:inset 0 1px 0 #fff,0 4px 10px -6px rgba(59,44,158,0.35);color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="clock-3" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Reports in</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.tatH }}</span></span></div>
         </div>
         <div data-price-strip="1" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 10px 9px 14px;border-radius:18px">
-          <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
+          <div style="display:flex;flex-direction:column;gap:6px;flex:none">
+            <span style="white-space:nowrap;display:flex;align-items:baseline;gap:4px;color:#16133A;line-height:1"><b style="font-size:33px;font-weight:800;letter-spacing:-0.03em">{{ t.priceNum }}</b><small style="font-size:14px;font-weight:700;letter-spacing:.02em">{{ t.priceCur }}</small></span>
             <span data-offer-pill="1">Offer price</span>
-            <span style="white-space:nowrap;display:flex;align-items:baseline;gap:4px;color:#16133A;line-height:1"><b style="font-size:20px;font-weight:800;letter-spacing:-0.02em">{{ t.priceNum }}</b><small style="font-size:11.5px;font-weight:700;letter-spacing:.02em">{{ t.priceCur }}</small></span>
           </div>
           <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 14px -10px rgba(59,44,158,0.7);transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
           <sc-if value="{{ t.covered }}"><span onClick="{{ t.stop }}" title="{{ t.coveredBy }}" style="max-width:170px;min-height:46px;padding:5px 16px 5px 12px;border-radius:999px;border:1.5px solid #BFE8D2;background:#EAF7EF;color:#0E7350;display:flex;align-items:center;gap:8px;cursor:default"><avm-i n="circle-check" s="18"></avm-i><span style="display:flex;flex-direction:column;min-width:0;line-height:1.15"><b style="font-size:14px;font-weight:800">Included</b><small style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.coveredBy }}</small></span></span></sc-if>
@@ -551,9 +558,9 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
           <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#F3F1FE 0%,#E5E0FA 100%);box-shadow:inset 0 1px 0 #fff,0 4px 10px -6px rgba(59,44,158,0.35);color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="clock-3" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Reports in</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.tatH }}</span></span></div>
         </div>
         <div data-price-strip="1" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 10px 9px 14px;border-radius:18px">
-          <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
+          <div style="display:flex;flex-direction:column;gap:6px;flex:none">
+            <span style="white-space:nowrap;display:flex;align-items:baseline;gap:4px;color:#16133A;line-height:1"><b style="font-size:33px;font-weight:800;letter-spacing:-0.03em">{{ t.priceNum }}</b><small style="font-size:14px;font-weight:700;letter-spacing:.02em">{{ t.priceCur }}</small></span>
             <span data-offer-pill="1">Offer price</span>
-            <span style="white-space:nowrap;display:flex;align-items:baseline;gap:4px;color:#16133A;line-height:1"><b style="font-size:20px;font-weight:800;letter-spacing:-0.02em">{{ t.priceNum }}</b><small style="font-size:11.5px;font-weight:700;letter-spacing:.02em">{{ t.priceCur }}</small></span>
           </div>
           <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 14px -10px rgba(59,44,158,0.7);transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
           <sc-if value="{{ t.covered }}"><span onClick="{{ t.stop }}" title="{{ t.coveredBy }}" style="max-width:170px;min-height:46px;padding:5px 16px 5px 12px;border-radius:999px;border:1.5px solid #BFE8D2;background:#EAF7EF;color:#0E7350;display:flex;align-items:center;gap:8px;cursor:default"><avm-i n="circle-check" s="18"></avm-i><span style="display:flex;flex-direction:column;min-width:0;line-height:1.15"><b style="font-size:14px;font-weight:800">Included</b><small style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.coveredBy }}</small></span></span></sc-if>
@@ -617,7 +624,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
         <div style="padding:16px 20px 20px;display:flex;flex-direction:column;gap:14px;flex:1">
           <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ p.preview }}" as="x" hint-placeholder-count="3"><span style="white-space:nowrap;font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:999px;background:#F5F5FA;border:1px solid #ECEBF3">{{ x }}</span></sc-for><sc-if value="{{ p.hasMore }}"><button onClick="{{ p.open }}" style="font-size:12.5px;font-weight:700;padding:5px 10px;border-radius:999px;background:#EFEDFB;border:none;color:#3B2C9E;cursor:pointer">{{ p.moreLabel }}</button></sc-if></div>
           <div style="margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between;gap:10px">
-            <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:6px"><span data-offer-pill="1">Offer price</span></div><span style="font-size:20px;font-weight:800;letter-spacing:-0.02em">{{ p.priceF }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="white-space:nowrap;font-size:32px;font-weight:800;letter-spacing:-0.03em;line-height:1">{{ p.priceF }}</span><span data-offer-pill="1">Offer price</span></div>
             <button onClick="{{ p.open }}" style="border:none;background:none;color:#3B2C9E;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;padding:6px 0"><avm-i n="play" s="13"></avm-i>View details</button>
           </div>
           <div style="display:flex;gap:8px">
@@ -747,8 +754,8 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
     </div>
     <div data-td-panel="1" style="flex:0 1 340px;min-width:0;display:flex;flex-direction:column;gap:14px;padding:clamp(14px,2vw,22px);border-radius:22px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12)">
     <div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">
+      <span style="font-size:clamp(36px,3.8vw,46px);font-weight:800;letter-spacing:-0.03em;line-height:1">{{ td.priceF }}</span>
       <span data-offer-pill="1">Offer price</span>
-      <span style="font-size:clamp(23px,2.6vw,28px);font-weight:800;letter-spacing:-0.025em;line-height:1">{{ td.priceF }}</span>
       <sc-if value="{{ td.underMin }}"><span data-min-note="1" style="color:rgba(255,255,255,0.8)"><avm-i n="info" s="13"></avm-i>{{ td.minNote }}</span></sc-if>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -940,13 +947,13 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
               <div style="display:flex;align-items:flex-end;gap:14px;margin-top:8px"><span style="font-size:clamp(56px,min(10vh,8vw),128px);font-weight:800;line-height:.82;letter-spacing:-0.055em">{{ r.params }}</span><span style="font-size:16px;font-weight:600;color:#5D5A7A;padding-bottom:10px;line-height:1.3">parameters<br>across {{ r.testsN }} tests</span></div>
               <h2 style="margin:0;font-size:clamp(28px,min(4.6vh,3vw),52px);font-weight:800;letter-spacing:-0.035em;line-height:1.04;text-wrap:balance">{{ r.name }}</h2>
               <p style="margin:0;font-size:clamp(15px,2vh,18px);line-height:1.5;color:#5D5A7A;max-width:520px">{{ r.tagline }}</p>
-              <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5D5A7A">Ideal for</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ r.ideal }}" as="x" hint-placeholder-count="3"><span style="white-space:nowrap;font-size:13.5px;font-weight:600;padding:7px 13px;border-radius:999px;background:#fff;border:1px solid #E7E6F0">{{ x }}</span></sc-for></div></div>
+              <sc-if value="{{ r.hasIdeal }}"><div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5D5A7A">Ideal for</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ r.ideal }}" as="x" hint-placeholder-count="3"><span style="white-space:nowrap;font-size:13.5px;font-weight:600;padding:7px 13px;border-radius:999px;background:#fff;border:1px solid #E7E6F0">{{ x }}</span></sc-for></div></div></sc-if>
               </div>
               <div style="display:flex;flex-direction:column;gap:14px;padding:18px;border-radius:24px;background:rgba(255,255,255,0.72);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(255,255,255,0.85);box-shadow:0 18px 40px -24px rgba(22,19,58,0.35);backdrop-filter:blur(16px);flex:none">
                 <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
                   <div style="display:flex;flex-direction:column;gap:6px">
-                    <div style="display:flex;align-items:center;gap:8px"><span data-offer-pill="1">Offer price</span></div>
-                    <span style="font-size:clamp(23px,3.4vh,30px);font-weight:800;letter-spacing:-0.025em;line-height:1">{{ r.priceF }}</span>
+                    <span style="font-size:clamp(36px,5.2vh,48px);font-weight:800;letter-spacing:-0.03em;line-height:1">{{ r.priceF }}</span>
+                    <span data-offer-pill="1">Offer price</span>
                   </div>
                   <button onClick="{{ r.share }}" aria-label="Share" style="width:46px;height:46px;border-radius:999px;flex:none;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="share-2" s="19"></avm-i></button>
                 </div>
@@ -964,8 +971,8 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
                 </div>
                 <sc-if value="{{ r.hasWorth }}"><span style="font-size:13.5px;color:#5D5A7A">These tests cost {{ r.worthF }} if booked separately — you pay {{ r.priceF }}.</span></sc-if>
                 <div style="height:1px;background:#fff"></div>
-                <span style="font-size:20px;font-weight:800;letter-spacing:-0.02em">Why take this profile</span>
-                <div style="display:flex;flex-direction:column;gap:10px"><sc-for list="{{ r.benefits }}" as="b" hint-placeholder-count="3"><div style="display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.5"><span style="color:#1FAD5E;padding-top:2px"><avm-i n="circle-check" s="18"></avm-i></span><span>{{ b }}</span></div></sc-for></div>
+                <sc-if value="{{ r.hasBenefits }}"><div style="display:flex;flex-direction:column;gap:22px"><span style="font-size:20px;font-weight:800;letter-spacing:-0.02em">Why take this profile</span>
+                <div style="display:flex;flex-direction:column;gap:10px"><sc-for list="{{ r.benefits }}" as="b" hint-placeholder-count="3"><div style="display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.5"><span style="color:#1FAD5E;padding-top:2px"><avm-i n="circle-check" s="18"></avm-i></span><span>{{ b }}</span></div></sc-for></div></div></sc-if>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
                   <div style="padding:14px;border-radius:16px;background:#F6F6FA;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Preparation</span><span style="font-size:14px;font-weight:700">{{ r.fastLabel }}</span></div>
                   <div style="padding:14px;border-radius:16px;background:#F6F6FA;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Reports</span><span style="font-size:14px;font-weight:700">Within {{ r.tat }}</span></div>
@@ -1012,7 +1019,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
               <div style="display:flex;align-items:flex-end;gap:10px"><span style="font-size:clamp(72px,11vh,104px);font-weight:800;line-height:.85;letter-spacing:-0.05em">{{ r.params }}</span><span style="font-size:14px;font-weight:600;color:#5D5A7A;padding-bottom:8px;line-height:1.25">parameters<br>{{ r.testsN }} tests</span></div>
               <h2 style="margin:0;font-size:clamp(28px,4vh,36px);font-weight:800;letter-spacing:-0.03em;line-height:1.05">{{ r.name }}</h2>
               <p style="margin:0;font-size:15px;line-height:1.5;color:#5D5A7A">{{ r.tagline }}</p>
-              <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ r.ideal }}" as="x" hint-placeholder-count="3"><span style="white-space:nowrap;font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:999px;background:#fff;border:1px solid #E7E6F0">{{ x }}</span></sc-for></div>
+              <sc-if value="{{ r.hasIdeal }}"><div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ r.ideal }}" as="x" hint-placeholder-count="3"><span style="white-space:nowrap;font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:999px;background:#fff;border:1px solid #E7E6F0">{{ x }}</span></sc-for></div></sc-if>
               
             </div>
             <div style="flex:0 0 100%;height:100%;scroll-snap-align:start;padding:calc(84px + env(safe-area-inset-top)) 72px {{ slidePadB }} 20px;display:flex;flex-direction:column;gap:12px">
@@ -1025,8 +1032,8 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             </div>
             <div style="flex:0 0 100%;height:100%;scroll-snap-align:start;padding:calc(84px + env(safe-area-inset-top)) 72px {{ slidePadB }} 20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;scrollbar-width:none">
               <span style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5D5A7A">Good to know</span>
-              <span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">Why take this profile</span>
-              <sc-for list="{{ r.benefits }}" as="b" hint-placeholder-count="3"><div style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px;line-height:1.5"><span style="color:#1FAD5E;padding-top:2px"><avm-i n="circle-check" s="17"></avm-i></span><span>{{ b }}</span></div></sc-for>
+              <sc-if value="{{ r.hasBenefits }}"><div style="display:flex;flex-direction:column;gap:14px"><span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">Why take this profile</span>
+              <sc-for list="{{ r.benefits }}" as="b" hint-placeholder-count="3"><div style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px;line-height:1.5"><span style="color:#1FAD5E;padding-top:2px"><avm-i n="circle-check" s="17"></avm-i></span><span>{{ b }}</span></div></sc-for></div></sc-if>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
                 <div style="padding:12px;border-radius:14px;background:#fff;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:3px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Preparation</span><span style="font-size:13.5px;font-weight:700">{{ r.fastLabel }}</span></div>
                 <div style="padding:12px;border-radius:14px;background:#fff;border:1px solid #E7E6F0;display:flex;flex-direction:column;gap:3px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D5A7A">Reports</span><span style="font-size:13.5px;font-weight:700">Within {{ r.tat }}</span></div>
@@ -1042,7 +1049,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             <button onClick="{{ r.toTests }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span style="width:48px;height:48px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:grid;place-items:center"><avm-i n="list" s="20"></avm-i></span>Tests</button>
           </div>
           <div style="position:absolute;left:0;right:0;bottom:0;z-index:4;padding:40px 16px {{ reelPadB }};background:linear-gradient(180deg,rgba(246,246,250,0) 0%,rgba(246,246,250,0.97) 45%);display:flex;align-items:center;gap:14px">
-            <div style="display:flex;flex-direction:column;gap:6px;min-width:0"><div style="display:flex;align-items:center;gap:8px"><span data-offer-pill="1">Offer price</span></div><span style="font-size:23px;font-weight:800;letter-spacing:-0.02em;line-height:1.1">{{ r.priceF }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:6px;min-width:0"><span style="white-space:nowrap;font-size:32px;font-weight:800;letter-spacing:-0.03em;line-height:1.05">{{ r.priceF }}</span><span data-offer-pill="1">Offer price</span></div>
             <button onClick="{{ r.book }}" style="flex:1;height:54px;border-radius:999px;border:none;cursor:pointer;background:linear-gradient(180deg,#22B463,#138A47);color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 12px 30px -10px rgba(19,138,71,0.8),inset 0 1px 0 rgba(255,255,255,0.25)"><avm-i n="whatsapp" s="20"></avm-i>Book now</button>
           </div>
         </div>
@@ -1153,13 +1160,13 @@ class Component extends DCLogic {
     fetch('/api/profiles').then(r => (r.ok ? r.json() : null)).then(list => {
       if (!Array.isArray(list) || !list.length) return;
       const known = new Set(Component.TESTS.map(t => t.id));
-      // The admin doesn't store the "ideal for"/benefit lists: reuse the built-in profile's.
+      // Until migration 0005 runs the API has no "ideal for"/benefit lists (null): reuse the built-in profile's.
       // Report times come from the tests (see tats in db()).
       const builtIn = Object.fromEntries(Component.PROFILES.map(p => [p.id, p]));
       const profiles = list.map(p => {
         const tests = [...new Set(p.subs.flatMap(s => s.tests))].filter(id => known.has(id)), b = builtIn[p.id] || {};
         return { id: p.id, name: p.name, tag: p.tag, sym: sym(p.name), hue: p.hue, tags: [p.category], tagline: p.tagline, tests, prices: p.prices || {}, subs: p.subs,
-          ideal: b.ideal || [], benefits: b.benefits || [] };
+          ideal: p.ideal || b.ideal || [], benefits: p.benefits || b.benefits || [] };
       }).filter(p => p.tests.length);
       if (!profiles.length) return;
       Component.PROFILES = profiles;
@@ -1448,7 +1455,7 @@ class Component extends DCLogic {
     h.style.left = Math.round(d.x - r.left) + 'px';
     h.style.top = Math.round(d.y - r.top) + 'px';
     h.style.setProperty('--tilt', (Math.random() * 40 - 20).toFixed(1) + 'deg');
-    h.appendChild(document.createElement('i'));
+    h.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
     h.addEventListener('animationend', () => h.remove());
     host.appendChild(h);
   }
@@ -1836,7 +1843,7 @@ class Component extends DCLogic {
     };
     const reels = s.reelsOpen ? D.P.map(p => {
       const sl = s.slides[p.i] || 0, inC = has('profile', p.id), worth = this.sumPr(p.ts);
-      return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, testsN: p.tests.length, ideal: p.ideal, benefits: p.benefits, tat: this.tat(p),
+      return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, testsN: p.tests.length, ideal: p.ideal, hasIdeal: p.ideal.length > 0, benefits: p.benefits, hasBenefits: p.benefits.length > 0, tat: this.tat(p),
         fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })), groups: incGroups(p),
         // What its tests cost one by one, shown only when the profile is cheaper.
         priceF: cost(p), worthF: this.money(worth), hasWorth: worth > this.pr(p) + 0.0001,

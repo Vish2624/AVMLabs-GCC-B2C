@@ -2,12 +2,29 @@
 // sub-profiles (server/subprofiles.js) plus any tests added on their own.
 import { z } from 'zod';
 import { CATEGORIES, COUNTRIES, ICONS, remapTests } from './catalog.js';
-import { db, libraryReady, pricesReady, requireLibrary, requirePrices, unwrap } from './db.js';
+import {
+  benefitsReady,
+  db,
+  libraryReady,
+  pricesReady,
+  requireBenefits,
+  requireLibrary,
+  requirePrices,
+  unwrap,
+} from './db.js';
 import { HttpError } from './http.js';
 import { testList } from './subprofiles.js';
 import { assertKnownTests, listTests, pricesSchema } from './tests.js';
 
 const text = (max) => z.string().trim().max(max);
+
+// A short list shown on the profile's reel; blank lines and repeats are dropped.
+const lines = (label, maxItems, maxLength) =>
+  z
+    .array(z.string().trim().max(maxLength, `Keep each ${label} to ${maxLength} characters`))
+    .max(maxItems, `Add up to ${maxItems} ${label}s`)
+    .transform((items) => [...new Set(items.filter(Boolean))])
+    .default([]);
 
 export const profileSchema = z
   .object({
@@ -21,6 +38,8 @@ export const profileSchema = z
     tag: text(24).default(''),
     category: z.enum(CATEGORIES.map((c) => c.id)),
     tagline: text(140).default(''),
+    ideal: lines('"Ideal for" item', 6, 40),
+    benefits: lines('reason', 6, 120),
     prices: pricesSchema,
     icon: z.enum(ICONS).default('layers'),
     hue: z.number().int().min(0).max(359).default(275),
@@ -60,8 +79,9 @@ export function expandSubs(subs, tests) {
 }
 
 // `prices` exists from migration 0004; before it, profiles had one rupee price that no longer applies.
-const select = (prices) =>
-  `id, name, tag, category, tagline, ${prices ? 'prices, ' : ''}icon, hue, sort_order, published, test_ids, updated_at, ` +
+// `ideal` and `benefits` exist from migration 0005.
+const select = (prices, benefits) =>
+  `id, name, tag, category, tagline, ${benefits ? 'ideal, benefits, ' : ''}${prices ? 'prices, ' : ''}icon, hue, sort_order, published, test_ids, updated_at, ` +
   'profile_sub_profiles (sort_order, sub_profile_library (id, name, description, test_ids))';
 
 // What the profile's tests cost together in each country, rounded like a price.
@@ -87,6 +107,9 @@ function toApi(row) {
     tag: row.tag,
     category: row.category,
     tagline: row.tagline,
+    // null before migration 0005, so the website keeps its built-in text; an empty list means none.
+    ideal: row.ideal || null,
+    benefits: row.benefits || null,
     prices: row.prices || null,
     icon: row.icon,
     hue: row.hue,
@@ -116,10 +139,10 @@ function legacyToApi(row) {
 
 export async function listProfiles({ publishedOnly = false } = {}) {
   if (devStore()) return devStore().list({ publishedOnly });
-  const [ready, priced] = await Promise.all([libraryReady(), pricesReady()]);
+  const [ready, priced, listed] = await Promise.all([libraryReady(), pricesReady(), benefitsReady()]);
   let query = db()
     .from('profiles')
-    .select(ready ? select(priced) : LEGACY_SELECT)
+    .select(ready ? select(priced, listed) : LEGACY_SELECT)
     .order('sort_order')
     .order('name');
   if (publishedOnly) query = query.eq('published', true);
@@ -146,6 +169,7 @@ export async function createProfile(profile) {
   if (devStore()) return devStore().create(profile);
   await requireLibrary();
   await requirePrices();
+  await requireBenefits();
   if (await exists(profile.id)) throw new HttpError(409, 'A profile with this ID already exists');
   await checkSubProfiles(profile.subProfiles);
   await save(profile);
@@ -156,6 +180,7 @@ export async function updateProfile(id, profile) {
   if (devStore()) return devStore().update(id, profile);
   await requireLibrary();
   await requirePrices();
+  await requireBenefits();
   if (profile.id !== id) throw new HttpError(400, 'Profile ID cannot be changed');
   if (!(await exists(id))) throw new HttpError(404, 'Profile not found');
   await checkSubProfiles(profile.subProfiles);
@@ -171,6 +196,8 @@ async function save(p) {
         tag: p.tag,
         category: p.category,
         tagline: p.tagline,
+        ideal: p.ideal,
+        benefits: p.benefits,
         prices: p.prices,
         icon: p.icon,
         hue: p.hue,

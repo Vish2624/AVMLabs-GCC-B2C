@@ -58,13 +58,11 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-gold-ghost]{white-space:nowrap;height:44px;padding:0 16px;border-radius:999px;border:1px solid #EBDAB0;background:rgba(255,255,255,.8);color:#8A6414;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
 [data-gold-ghost]:hover{background:#fff}
 @media (prefers-reduced-motion:reduce){[data-gold-card]::after{animation:none;display:none}}
-/* Offer price: green pill above a dark price, on a strip with a soft green glow. */
-[data-offer-pill]{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;padding:2px 7px 2px 6px;border-radius:999px;font-size:9px;font-weight:800;letter-spacing:.05em;line-height:1.3;text-transform:uppercase;white-space:nowrap;color:#fff;background:linear-gradient(135deg,#128A52 0%,#0B6B48 100%);box-shadow:0 5px 12px -6px rgba(14,115,80,.8),inset 0 1px 0 rgba(255,255,255,.25)}
-[data-offer-pill]::before{content:'';width:4px;height:4px;border-radius:999px;background:#B6F5CF;box-shadow:0 0 0 2px rgba(182,245,207,.3);animation:avmOfferDot 2.4s ease-in-out infinite}
-@keyframes avmOfferDot{50%{box-shadow:0 0 0 4px rgba(182,245,207,.08)}}
+/* Offer price: big dark price with a slim green pill below, on a strip with a soft green glow. */
+[data-offer-pill]{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;padding:2px 9px 2px 6px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.01em;line-height:1.3;white-space:nowrap;color:#fff;background:linear-gradient(135deg,#0F9159 0%,#0A7148 100%);box-shadow:0 4px 10px -5px rgba(14,115,80,.75),inset 0 1px 0 rgba(255,255,255,.28)}
+[data-offer-pill]::before{content:'';flex:none;width:11px;height:11px;background:#C9F7DC;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.8 8.8a2 2 0 0 0 2.8 0l7.2-7.2a2 2 0 0 0 0-2.8ZM7.5 9A1.5 1.5 0 1 1 7.5 6a1.5 1.5 0 0 1 0 3Z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.8 8.8a2 2 0 0 0 2.8 0l7.2-7.2a2 2 0 0 0 0-2.8ZM7.5 9A1.5 1.5 0 1 1 7.5 6a1.5 1.5 0 0 1 0 3Z'/%3E%3C/svg%3E") center/contain no-repeat}
 [data-price-strip]{background:radial-gradient(70% 130% at 0% 0%,rgba(34,180,99,.16) 0%,rgba(34,180,99,0) 70%),linear-gradient(135deg,#FBFAFF 0%,#EFECFD 100%);box-shadow:inset 0 0 0 1px rgba(59,44,158,.09),inset 0 1px 0 #fff,0 10px 20px -18px rgba(42,31,122,.6)}
 [data-min-note]{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;line-height:1.35;color:#6E6A8A}
-@media (prefers-reduced-motion:reduce){[data-offer-pill]::before{animation:none}}
 /* Cart prompt to add tests and clear the minimum billing charge. */
 [data-min-card]{display:flex;flex-direction:column;gap:10px;margin-top:6px;padding:14px;border-radius:16px;background:radial-gradient(70% 130% at 100% 0%,rgba(34,180,99,.13) 0%,rgba(34,180,99,0) 70%),#F7F5FF;box-shadow:inset 0 0 0 1px rgba(59,44,158,.1)}
 [data-min-track]{height:6px;border-radius:999px;background:#E2DEF6;overflow:hidden}
@@ -116,10 +114,19 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-foot-bottom]{padding-top:12px!important;padding-bottom:14px!important;gap:6px 12px!important;font-size:11.5px!important}
 }
 
-/* Reels double-tap heart (mobile, just for show): pops at the finger with a slight tilt, settles, then floats up and fades */
-@keyframes avmDtap{0%{opacity:0;transform:rotate(var(--tilt)) scale(0)}14%{opacity:1;transform:rotate(var(--tilt)) scale(1.25)}26%{transform:rotate(var(--tilt)) scale(.9)}38%{transform:rotate(var(--tilt)) scale(1.06)}48%,68%{opacity:1;transform:rotate(var(--tilt)) scale(1)}100%{opacity:0;transform:rotate(var(--tilt)) translateY(-120px) scale(.7)}}
-[data-dtap]{position:absolute;z-index:7;width:108px;height:108px;margin:-54px 0 0 -54px;pointer-events:none;filter:drop-shadow(0 10px 22px rgba(255,48,64,.45));animation:avmDtap 1s cubic-bezier(.2,.8,.3,1) forwards}
-[data-dtap] i{display:block;width:100%;height:100%;background:linear-gradient(160deg,#FF6A8E 0%,#FF3040 50%,#E3164D 100%);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") center / contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") center / contain no-repeat}
+/* Reels double-tap heart (mobile, just for show): springs in at the finger with a slight tilt, holds, then rises straight up and fades.
+   Each step has its own easing: one curve across all of them jumps ahead and then crawls. Every step lists the same transforms so they blend. */
+@keyframes avmDtap{
+0%{opacity:0;transform:translateY(0) rotate(var(--tilt)) scale(.35);animation-timing-function:cubic-bezier(.2,.9,.3,1)}
+13%{opacity:1;transform:translateY(0) rotate(var(--tilt)) scale(1.2);animation-timing-function:ease-in-out}
+22%{transform:translateY(0) rotate(var(--tilt)) scale(.93);animation-timing-function:ease-in-out}
+31%{transform:translateY(0) rotate(var(--tilt)) scale(1.03);animation-timing-function:ease-in-out}
+39%{transform:translateY(0) rotate(var(--tilt)) scale(1)}
+64%{opacity:1;transform:translateY(0) rotate(var(--tilt)) scale(1);animation-timing-function:cubic-bezier(.5,0,.8,.5)}
+100%{opacity:0;transform:translateY(-190px) rotate(var(--tilt)) scale(1.08)}
+}
+[data-dtap]{--dtap:clamp(136px,40vw,176px);position:absolute;z-index:7;width:var(--dtap);height:var(--dtap);margin:calc(var(--dtap) / -2) 0 0 calc(var(--dtap) / -2);pointer-events:none;will-change:transform,opacity;filter:drop-shadow(0 8px 18px rgba(120,10,40,.28));animation:avmDtap 1.05s linear forwards}
+[data-dtap] svg{display:block;width:100%;height:100%;fill:#FF3040}
 @media (prefers-reduced-motion:reduce){[data-dtap]{animation-duration:.6s}}
 
 /* Reels swipe hint (mobile): two cascading chevrons + label in the gap above "Book now", shown for 5s after 4s idle */

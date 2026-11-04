@@ -1,7 +1,7 @@
 // In-memory stand-in for the Supabase tables (tests, sub-profiles, profiles), used by scripts/dev.js when
 // SUPABASE_SERVICE_ROLE_KEY is not set. Starts from supabase/seed.sql, brought up to date the way
-// migration 0004 does it (old panels swapped for their tests, profile prices = what their tests cost);
-// changes last until the dev server restarts.
+// migration 0004 does it (old panels swapped for their tests, profile prices = what their tests cost)
+// and with the lists from migration 0005; changes last until the dev server restarts.
 import fs from 'node:fs';
 import { remapTests, STATIC_TESTS } from '../server/catalog.js';
 import { HttpError } from '../server/http.js';
@@ -48,12 +48,23 @@ function parseSeed(sql) {
   return { library, profiles };
 }
 
+// The "Ideal for" and "Why take this profile" lists, keyed by profile id.
+function parseLists(sql) {
+  const list = (s) => [...s.matchAll(/'(?:[^']|'')*'/g)].map((m) => str(m[0]));
+  const re = /\('([a-z0-9-]+)', array\[([^\]]*)\]::text\[\], array\[([^\]]*)\]::text\[\]\)/g;
+  return new Map([...sql.matchAll(re)].map((m) => [m[1], { ideal: list(m[2]), benefits: list(m[3]) }]));
+}
+
 export function createDevStore(seedFile) {
   const { library, profiles } = parseSeed(fs.readFileSync(seedFile, 'utf8'));
+  const lists = parseLists(
+    fs.readFileSync(new URL('../supabase/migrations/0005_profile_benefits.sql', import.meta.url), 'utf8'),
+  );
   const tests = new Map(STATIC_TESTS.map((t) => [t.id, fromStatic(t)]));
   for (const p of profiles.values()) {
     const ids = [...new Set([...p.subProfiles.flatMap((id) => library.get(id)?.tests || []), ...p.tests])];
     p.prices = sumPrices(ids, tests);
+    Object.assign(p, { ideal: [], benefits: [] }, lists.get(p.id));
   }
   let nextSubId = Math.max(0, ...library.keys()) + 1;
   const copy = (x) => structuredClone(x);

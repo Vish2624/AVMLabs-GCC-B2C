@@ -66,6 +66,26 @@ export async function requirePrices() {
   }
 }
 
+// The "Ideal for" and "Why take this profile" lists (migration 0005): true once profiles have those columns.
+// Until then the website keeps its built-in text, and saving is refused because the old save_profile would drop them.
+const BENEFITS_MIGRATION = '0005_profile_benefits.sql';
+export async function benefitsReady() {
+  const k = known.get('benefits');
+  if (k && (k.ready || Date.now() - k.at < 60_000)) return k.ready;
+  const { error } = await db().from('profiles').select('benefits').limit(1);
+  // 42703: undefined column. Any other failure is a real error.
+  if (error && !(error.code === '42703' || /column .* does not exist/i.test(error.message || ''))) unwrap({ error });
+  known.set('benefits', { ready: !error, at: Date.now() });
+  if (error) console.warn(`Profile lists not set up; run supabase/migrations/${BENEFITS_MIGRATION}`);
+  return !error;
+}
+
+export async function requireBenefits() {
+  if (!(await benefitsReady())) {
+    throw new HttpError(503, `The database needs an update: run supabase/migrations/${BENEFITS_MIGRATION} in Supabase`);
+  }
+}
+
 // The sub-profile library (migration 0002). Until it runs, the old save_profile would drop sub-profiles.
 export const libraryReady = () => tableReady('sub_profile_library');
 export const requireLibrary = () => requireTable('sub_profile_library');
