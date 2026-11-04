@@ -1,6 +1,7 @@
 // Copies the files Vercel should serve into public/. Run by `npm run build`
 // after build.js. Only the site and admin go out as static files; api/ is
-// deployed separately as serverless functions.
+// deployed separately as serverless functions. scripts/sitemap.js then writes
+// public/sitemap.xml.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -15,7 +16,6 @@ const FILES = [
   ['image-slot.js'],
   ['.image-slots.state.json'],
   ['robots.txt'],
-  ['sitemap.xml'],
   ['site.webmanifest'],
   ['assets'],
   ['admin'],

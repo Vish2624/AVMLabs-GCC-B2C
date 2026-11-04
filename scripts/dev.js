@@ -39,6 +39,9 @@ const TYPES = {
   '.xml': 'application/xml; charset=utf-8',
   '.webmanifest': 'application/manifest+json',
 };
+// Site pages with their own path (see setPath() in src/logic/04-navigation-cart.js) get the site file,
+// like the rewrites in vercel.json.
+const PAGE = /^\/((tests|profiles)(\/[^/]+)?|about|cart)\/?$/;
 const PRIVATE = /^\/(\.env[^/]*|\.git|node_modules|server|scripts|supabase)(\/|$)/;
 
 // /api/admin/profiles/abc -> api/admin/profiles/[id].js, like Vercel's file routing.
@@ -61,7 +64,9 @@ async function serveApi(req, res, urlPath) {
 }
 
 function serveStatic(res, urlPath) {
-  if (urlPath === '/') urlPath = '/AVM Labs Website.dc.html';
+  if (urlPath === '/' || PAGE.test(urlPath)) urlPath = '/AVM Labs Website.dc.html';
+  // Written by scripts/sitemap.js during `npm run build`.
+  if (urlPath === '/sitemap.xml') urlPath = '/public/sitemap.xml';
   if (urlPath.endsWith('/')) urlPath += 'index.html';
   const file = path.join(ROOT, urlPath);
   if (!file.startsWith(ROOT) || PRIVATE.test(urlPath)) {

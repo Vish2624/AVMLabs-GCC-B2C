@@ -7,22 +7,35 @@
   // Opens WhatsApp with the message filled in. If the browser blocks the new tab (some phones do), go there directly.
   // No 'noopener' feature: with it window.open() always returns null, which looked like a block and also sent this tab away.
   openWA(msg, isUrl) { const url = isUrl ? msg : this.wa(msg), w = window.open(url, '_blank'); if (w) { try { w.opener = null; } catch (e) {} } else window.location.href = url; }
-  go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); this.setHash(page === 'home' ? '' : page); }
-  openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); this.setHash('test/' + id); }
-  // The current page lives in the URL hash (#tests, #cart, #test/vitd…) so a refresh reopens it.
-  // An open reel is added on as reel=<profile id> (#reel=essential, #profiles&reel=thyroid).
-  setHash(h) { const want = h ? '#' + h : ''; if (location.hash !== want) history.pushState(null, '', want || location.pathname + location.search); }
-  replaceHash(h) { history.replaceState(null, '', h ? '#' + h : location.pathname + location.search); }
-  pageHash() { const s = this.state; return s.page === 'home' ? '' : s.page === 'test' ? 'test/' + s.testId : s.page; }
-  reelHash(i) { const p = Component.PROFILES[i], b = this.pageHash(); return p ? (b ? b + '&' : '') + 'reel=' + p.id : b; }
-  fromHash() {
-    const raw = decodeURIComponent(location.hash.slice(1)), reel = (raw.match(/(?:^|&)reel=([^&]*)/) || [])[1];
-    const [p, id] = raw.replace(/&?reel=[^&]*/, '').split('/');
-    const page = p === 'test' && Component.TESTS.some(t => t.id === id) ? { page: 'test', testId: id } : ['tests', 'profiles', 'cart', 'about'].includes(p) ? { page: p } : { page: 'home' };
-    if (!reel) return { ...page, reelsOpen: false };
+  go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); this.setPath(page === 'home' ? '/' : '/' + page); }
+  openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); this.setPath('/tests/' + encodeURIComponent(id)); }
+  // The current page lives in the URL path (/tests, /tests/vitd, /profiles, /cart, /about) so a refresh reopens it
+  // and search engines see each page. An open reel is /profiles/<profile id>; the page under it is kept in history.state.base.
+  // vercel.json and scripts/dev.js serve index.html on these paths.
+  setPath(p, base) { if (location.pathname !== p) history.pushState(base ? { base } : null, '', p); }
+  replacePath(p, base) { history.replaceState(base ? { base } : null, '', p); }
+  pagePath() { const s = this.state; return s.page === 'home' ? '/' : s.page === 'test' ? '/tests/' + encodeURIComponent(s.testId) : '/' + s.page; }
+  reelPath(i) { const p = Component.PROFILES[i]; return p ? '/profiles/' + encodeURIComponent(p.id) : this.pagePath(); }
+  segs(path) { let s = path; try { s = decodeURIComponent(path); } catch (e) {} return s.replace(/^\/+|\/+$/g, '').split('/'); }
+  // A test id that isn't known yet (admin tests load after start-up) shows the tests list; loadCatalog() opens it once they arrive.
+  pageAt(path) {
+    const [p, id] = this.segs(path);
+    return p === 'tests' && id && Component.TESTS.some(t => t.id === id) ? { page: 'test', testId: id } : ['tests', 'profiles', 'cart', 'about'].includes(p) ? { page: p } : { page: 'home' };
+  }
+  fromUrl() {
+    const [p, reel] = this.segs(location.pathname);
+    if (p !== 'profiles' || !reel) return { ...this.pageAt(location.pathname), reelsOpen: false };
     // Admin profiles load after start-up; loadProfiles() re-finds this id once they arrive.
     this._wantReel = reel;
-    return { ...page, reelsOpen: true, reelIdx: Math.max(0, Component.PROFILES.findIndex(x => x.id === reel)), slides: {}, hint: false };
+    return { ...this.pageAt((history.state && history.state.base) || '/profiles'), reelsOpen: true, reelIdx: Math.max(0, Component.PROFILES.findIndex(x => x.id === reel)), slides: {}, hint: false };
+  }
+  // Older links kept the page in the hash (#tests, #test/vitd, #profiles&reel=thyroid): move them to their path.
+  fromOldHash() {
+    let raw = location.hash.slice(1); try { raw = decodeURIComponent(raw); } catch (e) {}
+    if (!raw || !/^(tests|profiles|cart|about|test\/[^&/]+)?(&?reel=[^&]*)?$/.test(raw)) return;
+    const reel = (raw.match(/(?:^|&)reel=([^&]*)/) || [])[1], [p, id] = raw.replace(/&?reel=[^&]*/, '').split('/');
+    const base = p === 'test' ? '/tests/' + encodeURIComponent(id) : p ? '/' + p : '/';
+    history.replaceState(reel ? { base } : null, '', (reel ? '/profiles/' + encodeURIComponent(reel) : base) + location.search);
   }
   flash(msg) { this.setState({ toast: msg }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: '' }), 2200); }
   // Marks an item as just added so its button plays the add animation once.

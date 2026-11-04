@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<!-- Pages have their own paths (/tests/vitd): keep ./support.js, ./assets/… and the image-slot state file resolving from the site root. -->
+<base href="/">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AVM Labs | Lab Tests &amp; Health Profiles with Free Home Collection</title>
 <meta name="description" content="Book accredited lab tests and health checkup profiles online with AVM Labs. Free home sample collection, reports in 24 hours and clear local prices in Bahrain, Saudi Arabia and the UAE.">
@@ -1176,6 +1178,7 @@ class Component extends DCLogic {
   reelsRef = React.createRef();
 
   init() {
+    this.fromOldHash();
     let cart = [];
     try { cart = JSON.parse(localStorage.getItem('avmlabs_cart_v1') || '[]') || []; } catch (e) {}
     // Drop saved items that no longer exist in the catalogue so the cart badge stays accurate.
@@ -1184,7 +1187,7 @@ class Component extends DCLogic {
     return { page: 'home', w: window.innerWidth, h: window.innerHeight, cart, sMode: 'tests', q: '', qFocus: false, cat: 'all', tq: '', pf: 'all', hero: 0,
       reelsOpen: false, reelIdx: 0, slides: {}, hint: false, mode: 'home',
       form: { name: '', phone: '', age: '', gender: '', date: '', slot: '' }, errors: {}, booked: null,
-      locOpen: false, toast: '', pop: null, ...this.fromHash() };
+      locOpen: false, toast: '', pop: null, ...this.fromUrl() };
   }
 
   db() {
@@ -1209,8 +1212,8 @@ class Component extends DCLogic {
       if (Array.isArray(list) && list.length) {
         Component.TESTS = list.map(t => ({ ...t, cat: t.cat && t.cat.length ? t.cat : ['routine'], params: (t.parameters || []).length + (t.calculated || []).length || 1 }));
         Component._db = null;
-        // A link to a test that only exists in the admin (#test/<new id>) couldn't open before the list arrived.
-        const h = this.fromHash();
+        // A link to a test that only exists in the admin (/tests/<new id>) couldn't open before the list arrived.
+        const h = this.fromUrl();
         this.setState(s => ({ catalogVer: (s.catalogVer || 0) + 1, ...(h.page === 'test' && s.page !== 'test' ? { page: 'test', testId: h.testId } : {}) }));
       }
     }).catch(() => {}).then(() => this.loadProfiles());
@@ -1306,22 +1309,35 @@ class Component extends DCLogic {
   // Opens WhatsApp with the message filled in. If the browser blocks the new tab (some phones do), go there directly.
   // No 'noopener' feature: with it window.open() always returns null, which looked like a block and also sent this tab away.
   openWA(msg, isUrl) { const url = isUrl ? msg : this.wa(msg), w = window.open(url, '_blank'); if (w) { try { w.opener = null; } catch (e) {} } else window.location.href = url; }
-  go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); this.setHash(page === 'home' ? '' : page); }
-  openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); this.setHash('test/' + id); }
-  // The current page lives in the URL hash (#tests, #cart, #test/vitd…) so a refresh reopens it.
-  // An open reel is added on as reel=<profile id> (#reel=essential, #profiles&reel=thyroid).
-  setHash(h) { const want = h ? '#' + h : ''; if (location.hash !== want) history.pushState(null, '', want || location.pathname + location.search); }
-  replaceHash(h) { history.replaceState(null, '', h ? '#' + h : location.pathname + location.search); }
-  pageHash() { const s = this.state; return s.page === 'home' ? '' : s.page === 'test' ? 'test/' + s.testId : s.page; }
-  reelHash(i) { const p = Component.PROFILES[i], b = this.pageHash(); return p ? (b ? b + '&' : '') + 'reel=' + p.id : b; }
-  fromHash() {
-    const raw = decodeURIComponent(location.hash.slice(1)), reel = (raw.match(/(?:^|&)reel=([^&]*)/) || [])[1];
-    const [p, id] = raw.replace(/&?reel=[^&]*/, '').split('/');
-    const page = p === 'test' && Component.TESTS.some(t => t.id === id) ? { page: 'test', testId: id } : ['tests', 'profiles', 'cart', 'about'].includes(p) ? { page: p } : { page: 'home' };
-    if (!reel) return { ...page, reelsOpen: false };
+  go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); this.setPath(page === 'home' ? '/' : '/' + page); }
+  openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); this.setPath('/tests/' + encodeURIComponent(id)); }
+  // The current page lives in the URL path (/tests, /tests/vitd, /profiles, /cart, /about) so a refresh reopens it
+  // and search engines see each page. An open reel is /profiles/<profile id>; the page under it is kept in history.state.base.
+  // vercel.json and scripts/dev.js serve index.html on these paths.
+  setPath(p, base) { if (location.pathname !== p) history.pushState(base ? { base } : null, '', p); }
+  replacePath(p, base) { history.replaceState(base ? { base } : null, '', p); }
+  pagePath() { const s = this.state; return s.page === 'home' ? '/' : s.page === 'test' ? '/tests/' + encodeURIComponent(s.testId) : '/' + s.page; }
+  reelPath(i) { const p = Component.PROFILES[i]; return p ? '/profiles/' + encodeURIComponent(p.id) : this.pagePath(); }
+  segs(path) { let s = path; try { s = decodeURIComponent(path); } catch (e) {} return s.replace(/^\/+|\/+$/g, '').split('/'); }
+  // A test id that isn't known yet (admin tests load after start-up) shows the tests list; loadCatalog() opens it once they arrive.
+  pageAt(path) {
+    const [p, id] = this.segs(path);
+    return p === 'tests' && id && Component.TESTS.some(t => t.id === id) ? { page: 'test', testId: id } : ['tests', 'profiles', 'cart', 'about'].includes(p) ? { page: p } : { page: 'home' };
+  }
+  fromUrl() {
+    const [p, reel] = this.segs(location.pathname);
+    if (p !== 'profiles' || !reel) return { ...this.pageAt(location.pathname), reelsOpen: false };
     // Admin profiles load after start-up; loadProfiles() re-finds this id once they arrive.
     this._wantReel = reel;
-    return { ...page, reelsOpen: true, reelIdx: Math.max(0, Component.PROFILES.findIndex(x => x.id === reel)), slides: {}, hint: false };
+    return { ...this.pageAt((history.state && history.state.base) || '/profiles'), reelsOpen: true, reelIdx: Math.max(0, Component.PROFILES.findIndex(x => x.id === reel)), slides: {}, hint: false };
+  }
+  // Older links kept the page in the hash (#tests, #test/vitd, #profiles&reel=thyroid): move them to their path.
+  fromOldHash() {
+    let raw = location.hash.slice(1); try { raw = decodeURIComponent(raw); } catch (e) {}
+    if (!raw || !/^(tests|profiles|cart|about|test\/[^&/]+)?(&?reel=[^&]*)?$/.test(raw)) return;
+    const reel = (raw.match(/(?:^|&)reel=([^&]*)/) || [])[1], [p, id] = raw.replace(/&?reel=[^&]*/, '').split('/');
+    const base = p === 'test' ? '/tests/' + encodeURIComponent(id) : p ? '/' + p : '/';
+    history.replaceState(reel ? { base } : null, '', (reel ? '/profiles/' + encodeURIComponent(reel) : base) + location.search);
   }
   flash(msg) { this.setState({ toast: msg }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: '' }), 2200); }
   // Marks an item as just added so its button plays the add animation once.
@@ -1485,7 +1501,7 @@ class Component extends DCLogic {
     this._ri = i || 0;
     this._openSlide = slide || 0;
     this.setState({ reelsOpen: true, reelIdx: i || 0, slides: {}, hint: false, locOpen: false });
-    this.setHash(this.reelHash(i || 0));
+    this.setPath(this.reelPath(i || 0), this.pagePath());
     this._reelPushed = true;
     this._hc = 0;
     this.armHint();
@@ -1493,7 +1509,7 @@ class Component extends DCLogic {
   closeReels() {
     clearTimeout(this._ht); clearTimeout(this._ht2); cancelAnimationFrame(this._sprRaf); this._sprRaf = 0; this.setState({ reelsOpen: false, hint: false });
     // Step back over the entry openReels() added, so Back afterwards doesn't land on the same page again.
-    if (this._reelPushed) { this._reelPushed = false; history.back(); } else this.replaceHash(this.pageHash());
+    if (this._reelPushed) { this._reelPushed = false; history.back(); } else this.replacePath(this.pagePath());
   }
   // Mobile reels: after 4s without any touch, show a swipe hint above the side buttons for 5s, then start counting again.
   // Alternates between "swipe left" (test details) and "swipe up/down" (other profiles).
@@ -1591,7 +1607,8 @@ class Component extends DCLogic {
     const n = Component.PROFILES.length; i = Math.max(0, Math.min(n - 1, i));
     this._ri = i;
     this.applyTrack(i, true, null, v0);
-    this.replaceHash(this.reelHash(i));
+    this.replacePath(this.reelPath(i), this.pagePath());
+    this.syncTitle();
     this.armHint();
     // commit to state only after the slide finishes — re-rendering mid-animation causes stutter
     clearTimeout(this._gT);
@@ -1613,7 +1630,7 @@ class Component extends DCLogic {
     clearTimeout(this._vT);
     this._vT = setTimeout(() => {
       const i = Math.round(el.scrollTop / el.clientHeight);
-      if (i !== this.state.reelIdx) { this.setState({ reelIdx: i }); this.replaceHash(this.reelHash(i)); }
+      if (i !== this.state.reelIdx) { this.setState({ reelIdx: i }); this.replacePath(this.reelPath(i), this.pagePath()); }
     }, 120);
   }
   onH(i, e) {
@@ -1690,7 +1707,8 @@ class Component extends DCLogic {
     this._onVV = () => this.fixBars();
     if (window.visualViewport) { window.visualViewport.addEventListener('resize', this._onVV); window.visualViewport.addEventListener('scroll', this._onVV); }
     this._onPop = () => {
-      const h = this.fromHash();
+      this.fromOldHash();
+      const h = this.fromUrl();
       this._reelPushed = false;
       this.setState({ locOpen: false, qFocus: false, ...h });
       if (h.reelsOpen) { this._ri = h.reelIdx; this.armHint(); } else { clearTimeout(this._ht); clearTimeout(this._ht2); window.scrollTo(0, 0); }
@@ -1762,12 +1780,31 @@ class Component extends DCLogic {
     const bar = document.querySelector('[data-tests-bar]');
     if (bar) { const stuck = bar.getBoundingClientRect().top <= h + 1 && window.scrollY > 0; if (stuck !== bar.hasAttribute('data-stuck')) bar.toggleAttribute('data-stuck', stuck); }
   }
-  // Browser tab title for the open page, so tabs, history and shared links read well.
+  // Browser tab title, description and canonical link for the open page (or reel), so tabs, history, shared links
+  // and search results read well. The home values and the site address come from the tags in index.html.
   syncTitle() {
-    const s = this.state, t = s.page === 'test' && this.db().T[s.testId];
-    const name = t ? t.name + ' Test: Price & Report Time' : { tests: 'All Lab Tests', profiles: 'Health Checkup Profiles', cart: 'Your Cart', about: 'About Us' }[s.page];
+    const s = this.state, D = this.db(), t = s.page === 'test' && D.T[s.testId], p = s.reelsOpen && D.P[this.cur()];
+    const tag = sel => document.querySelector(sel), canon = tag('link[rel="canonical"]'), desc = tag('meta[name="description"]');
+    const home = this._seo || (this._seo = { site: canon ? new URL(canon.href).origin : location.origin, desc: desc ? desc.content : '', og: (tag('meta[property="og:description"]') || {}).content || '', robots: (tag('meta[name="robots"]') || {}).content || '' });
+    const where = ' Free home sample collection in Bahrain, Saudi Arabia and the UAE.';
+    const name = p ? p.name + ': Health Checkup Tests & Price' : t ? t.name + ' Test: Price & Report Time' : { tests: 'All Lab Tests', profiles: 'Health Checkup Profiles', cart: 'Your Cart', about: 'About Us' }[s.page];
     const title = name ? name + ' | AVM Labs' : 'AVM Labs | Lab Tests & Health Profiles with Free Home Collection';
+    const text = p ? p.name + ': ' + (p.tagline ? p.tagline + ' ' : '') + p.ts.length + ' tests (' + p.params + ' parameters) from one sample' + (this.tat(p) ? ', report in ' + this.tat(p) : '') + '.' + where
+      : t ? t.name + ' test at AVM Labs. ' + (((t.about || '').match(/^.*?\.(?=\s|$)/) || [t.about || ''])[0]) + (this.tat(t) ? ' Report in ' + this.tat(t) + ',' : '') + (t.fasting ? ' fasting needed.' : ' no fasting needed.') + where
+      : { tests: 'Browse every lab test at AVM Labs with local prices, report times and fasting needs. Book online.' + where,
+        profiles: 'Compare AVM Labs health checkup profiles: packages of tests taken from one sample, at one price.' + where,
+        cart: 'Review the lab tests and health profiles in your AVM Labs cart and book a home sample collection.',
+        about: 'About AVM Labs: an accredited laboratory offering lab tests and health profiles with home sample collection and reports in 24 hours.' + where }[s.page] || home.desc;
+    const url = home.site + (p ? this.reelPath(this.cur()) : this.pagePath());
+    const set = (sel, attr, v) => { const el = tag(sel); if (el && el.getAttribute(attr) !== v) el.setAttribute(attr, v); };
     if (document.title !== title) document.title = title;
+    set('meta[name="description"]', 'content', text);
+    set('link[rel="canonical"]', 'href', url);
+    set('meta[property="og:url"]', 'content', url);
+    set('meta[property="og:title"]', 'content', title);
+    set('meta[property="og:description"]', 'content', name ? text : home.og);
+    // The cart is personal: keep it out of search results.
+    set('meta[name="robots"]', 'content', s.page === 'cart' && !p ? 'noindex, follow' : home.robots);
   }
   componentDidUpdate() {
     this.syncTitle();
