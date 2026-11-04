@@ -181,28 +181,51 @@
                 this.goReel(this.cur() + (ev.deltaY > 0 ? 1 : -1));
               };
               el.addEventListener('wheel', this._onWheel, { passive: false });
-              const canScrollY = (t) => { while (t && t !== el) { if (t.scrollHeight > t.clientHeight + 2 && /(auto|scroll)/.test(getComputedStyle(t).overflowY)) return true; t = t.parentElement; } return false; };
-              this._ts = ev => { this.armHint(); if (ev.touches.length !== 1) { this._drag = null; return; } const p = ev.touches[0]; this._drag = { x: p.clientX, y: p.clientY, t: Date.now(), axis: null, skip: canScrollY(ev.target), dy: 0, moved: false, target: ev.target }; };
+              // The nearest list inside the reel that scrolls up and down (e.g. "What's included"), if any.
+              const listOf = (t) => { while (t && t !== el) { if (t.scrollHeight > t.clientHeight + 2 && /(auto|scroll)/.test(getComputedStyle(t).overflowY)) return t; t = t.parentElement; } return null; };
+              this._ts = ev => {
+                this.armHint();
+                if (ev.touches.length !== 1) { this._drag = null; return; }
+                // A touch during a glide catches the reel where it is, as on Instagram, instead of jumping.
+                const p = ev.touches[0], caught = !!this._sprRaf, y0 = this.trackY();
+                if (caught) this.applyTrack(0, false, y0);
+                this._drag = { x: p.clientX, y: p.clientY, t: Date.now(), y0, caught, axis: null, list: listOf(ev.target), moved: caught, target: ev.target, pts: [[performance.now(), p.clientY]] };
+              };
               this._tm = ev => {
                 const d = this._drag; if (!d) return;
                 const p = ev.touches[0], dx = p.clientX - d.x, dy = p.clientY - d.y;
                 if (Math.abs(dx) > 6 || Math.abs(dy) > 6) d.moved = true; // not a tap (also inside scrolling lists)
-                if (d.skip) return;
-                if (!d.axis) { if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return; d.axis = Math.abs(dy) > Math.abs(dx) ? 'y' : 'x'; }
+                if (!d.axis) {
+                  if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+                  d.axis = Math.abs(dy) > Math.abs(dx) ? 'y' : 'x';
+                  // In a list that can still scroll this way, the list scrolls; at its top or bottom the swipe moves the reels.
+                  const L = d.list;
+                  if (d.axis === 'y' && L && (dy < 0 ? L.scrollTop + L.clientHeight < L.scrollHeight - 1 : L.scrollTop > 0)) d.axis = 'list';
+                }
                 if (d.axis !== 'y') return;
                 ev.preventDefault();
-                const i = this.cur(), last = Component.PROFILES.length - 1, H = el.clientHeight;
-                const off = (i === 0 && dy > 0) || (i === last && dy < 0) ? dy * 0.3 : dy;
-                d.dy = dy;
-                this.applyTrack(i, false, -i * H + off);
+                const H = el.clientHeight, min = -(Component.PROFILES.length - 1) * H;
+                // Past the first or last profile the track gives less and less, like a rubber band.
+                const band = o => (1 - 1 / (o * 0.55 / H + 1)) * H;
+                let y = d.y0 + dy;
+                if (y > 0) y = band(y); else if (y < min) y = min - band(min - y);
+                d.pts.push([performance.now(), p.clientY]); if (d.pts.length > 8) d.pts.shift();
+                this.applyTrack(0, false, y);
               };
               this._te = () => {
                 const d = this._drag; this._drag = null; if (!d) return;
                 if (!d.moved && Date.now() - d.t < 300) { this.reelTap(d, el); return; }
-                if (d.axis !== 'y') return;
-                const H = el.clientHeight, v = d.dy / Math.max(1, Date.now() - d.t);
-                const step = (d.dy < -H * 0.16 || v < -0.4) ? 1 : (d.dy > H * 0.16 || v > 0.4) ? -1 : 0;
-                this.goReel(this.cur() + step);
+                if (d.axis !== 'y') { if (d.caught) this.goReel(this.cur()); return; }
+                // Release speed over the last ~100 ms of movement (px/ms), not the average of the whole drag, so a flick
+                // at the end counts. A finger that stopped before letting go has no speed.
+                const pts = d.pts, b = pts[pts.length - 1];
+                let k = pts.findIndex(q => b[0] - q[0] <= 100); if (k === pts.length - 1) k--;
+                const a = pts[k], v = a && b[0] > a[0] && performance.now() - b[0] < 120 ? (b[1] - a[1]) / (b[0] - a[0]) : 0;
+                // pos: which reel the screen shows now, as a fraction (2.3 = 30% of the way from reel 2 to 3).
+                const i = this.cur(), pos = -this.trackY() / el.clientHeight;
+                let to = v < -0.3 ? Math.floor(pos) + 1 : v > 0.3 ? Math.ceil(pos) - 1 : pos - i > 0.2 ? i + 1 : pos - i < -0.2 ? i - 1 : i;
+                to = Math.max(i - 1, Math.min(i + 1, to));
+                this.goReel(to, v);
               };
               el.addEventListener('touchstart', this._ts, { passive: true });
               el.addEventListener('touchmove', this._tm, { passive: false });
@@ -222,7 +245,7 @@
     window.removeEventListener('resize', this._onResize); window.removeEventListener('keydown', this._onKey); window.removeEventListener('scroll', this._onScroll); window.removeEventListener('popstate', this._onPop);
     document.removeEventListener('focusin', this._onFocusIn); document.removeEventListener('focusout', this._onFocusOut);
     if (window.visualViewport) { window.visualViewport.removeEventListener('resize', this._onResize); window.visualViewport.removeEventListener('resize', this._onVV); window.visualViewport.removeEventListener('scroll', this._onVV); }
-    clearInterval(this._heroT); clearInterval(this._tickT); cancelAnimationFrame(this._cRaf);
+    clearInterval(this._heroT); clearInterval(this._tickT); cancelAnimationFrame(this._cRaf); cancelAnimationFrame(this._sprRaf);
     [this._tt, this._ht, this._ht2, this._gT, this._vT, this._hT, this._tyT].forEach(clearTimeout);
     document.body.style.overflow = ''; document.documentElement.style.overflow = '';
   }
