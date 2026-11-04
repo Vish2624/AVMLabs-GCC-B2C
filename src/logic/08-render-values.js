@@ -257,7 +257,8 @@
         const c = p.tags[0], look = C.PF_LOOK[c] || ['layers', p.hue];
         let g = gs.find(x => x.id === c);
         if (!g) gs.push(g = { id: c, label: (C.PF.find(f => f[0] === c) || [c, c])[1], icon: look[0], soft: `oklch(0.94 0.045 ${look[1]})`, ink: `oklch(0.48 0.16 ${look[1]})`, items: [] });
-        g.items.push({ name: p.name, meta: p.params + ' parameters · ' + cost(p), go: () => this.goReel(k), bg: k === ri ? '#EEECF8' : 'transparent', bd: k === ri ? '#D9D5F0' : 'transparent', fw: k === ri ? '800' : '700' });
+        // Each profile gets a dot on the group's line (filled for the open one) and its parameter count in bold.
+        g.items.push({ name: p.name, pnum: p.params, rest: ' parameters · ' + cost(p), go: () => this.goReel(k), bg: k === ri ? '#EEECF8' : 'transparent', bd: k === ri ? '#D9D5F0' : 'transparent', fw: k === ri ? '800' : '700', ink: g.ink, dot: k === ri ? g.ink : '#fff' });
         g.count = g.items.length;
         return gs;
       }, []),
