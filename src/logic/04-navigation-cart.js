@@ -1,6 +1,7 @@
   photo(slot) {
     const p = Component.PHOTOS[slot];
     if (!p) return { photoSrc: '', photoCredit: '', photoHref: '' };
+    if (typeof p === 'string') return { photoSrc: p, photoCredit: '', photoHref: '' };
     return { photoSrc: 'https://images.unsplash.com/photo-' + p[0] + '?auto=format&fit=crop&w=800&q=80', photoCredit: 'Photo by ' + p[1] + ' on Unsplash', photoHref: 'https://unsplash.com/@' + p[2] };
   }
   wa(msg) { return 'https://wa.me/' + this.opts().wa + '?text=' + encodeURIComponent(msg); }

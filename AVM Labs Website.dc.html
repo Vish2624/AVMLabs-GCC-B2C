@@ -1173,14 +1173,17 @@ class Component extends DCLogic {
   static PROFILES = Component.fromCatalog(Component.PROFILE_DATA);
   static PICON = Object.fromEntries(Component.PROFILES.map(p => [p.id, p.icon]));
   static TYPE_TERMS = { tests: ['Vitamin D', 'TSH', 'HbA1c', 'CBC', 'cholesterol'], profiles: ['Essential Wellness', 'hair fall', 'thyroid', 'heart', 'vitamin'] };
-  // Unsplash photos for image slots: [photo id, photographer, Unsplash username]. Unsplash requires the credit.
+  // Profile photos for image slots: our own photos as a path (assets/profiles/, square, subject inside the safe
+  // zone), Unsplash ones as [photo id, photographer, Unsplash username] since Unsplash requires the credit.
   static PHOTOS = {
+    'profile-bg-thyro-5': './assets/profiles/thyroid.jpg',
+    'profile-bg-free-thyroid': './assets/profiles/thyroid.jpg',
+    'profile-bg-total-thyroid': './assets/profiles/thyroid.jpg',
     'profile-bg-essential-wellness': ['1512621776951-a57141f2eefd', 'Anna Pelzer', 'annapelzer'],
     'profile-bg-women-complete-wellness': ['1506126613408-eca07ce68773', 'Jared Rice', 'jareddrice'],
     'profile-bg-men-complete-wellness': ['1568602471122-7832951cc4c5', 'Christian Buehner', 'christianbuehner'],
     'profile-bg-women-hormone-plus': ['1562337404-3044c84ac061', 'Kate Kozyrka', 'kozyrka_kate'],
     'profile-bg-vitamin-profile': ['1707129785947-ddc627a8bab9', 'Madara', 'madara_p'],
-    'profile-bg-thyro-5': ['1544005313-94ddf0286df2', 'Štefan Štefančík', 'cikstefan'],
     'profile-bg-diabetes-monitoring': ['1683727186226-910f31a9da45', 'Sweet Life', 'sweetlifediabetes'],
   };
   // Our Bahrain centre: assets/centres/bahrain-<file>.jpg, [file, caption].
@@ -1303,6 +1306,7 @@ class Component extends DCLogic {
   photo(slot) {
     const p = Component.PHOTOS[slot];
     if (!p) return { photoSrc: '', photoCredit: '', photoHref: '' };
+    if (typeof p === 'string') return { photoSrc: p, photoCredit: '', photoHref: '' };
     return { photoSrc: 'https://images.unsplash.com/photo-' + p[0] + '?auto=format&fit=crop&w=800&q=80', photoCredit: 'Photo by ' + p[1] + ' on Unsplash', photoHref: 'https://unsplash.com/@' + p[2] };
   }
   wa(msg) { return 'https://wa.me/' + this.opts().wa + '?text=' + encodeURIComponent(msg); }
