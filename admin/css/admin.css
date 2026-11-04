@@ -1119,9 +1119,10 @@ textarea::placeholder {
   background: var(--accent-soft);
   color: var(--accent);
 }
-.calc-count {
-  color: #8a6414;
-  font-weight: 600;
+.params-box {
+  min-height: 260px;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
 }
 .panel-head h2 .hint {
   font-weight: 500;
@@ -1365,4 +1366,15 @@ textarea::placeholder {
   .country-row {
     grid-template-columns: 1fr;
   }
+}
+
+/* ── Centres ── */
+.centre .centre-moves {
+  margin-left: auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.centre-add {
+  flex-wrap: wrap;
+  margin: 4px 0 24px;
 }

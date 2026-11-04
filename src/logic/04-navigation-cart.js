@@ -4,10 +4,11 @@
     if (typeof p === 'string') return { photoSrc: p, photoCredit: '', photoHref: '' };
     return { photoSrc: 'https://images.unsplash.com/photo-' + p[0] + '?auto=format&fit=crop&w=800&q=80', photoCredit: 'Photo by ' + p[1] + ' on Unsplash', photoHref: 'https://unsplash.com/@' + p[2] };
   }
-  wa(msg) { return 'https://wa.me/' + this.opts().wa + '?text=' + encodeURIComponent(msg); }
+  // A WhatsApp chat link with the message filled in, to the visitor's centre or the number given.
+  wa(msg, num) { return 'https://wa.me/' + (num || this.opts().wa) + '?text=' + encodeURIComponent(msg); }
   // Opens WhatsApp with the message filled in. If the browser blocks the new tab (some phones do), go there directly.
   // No 'noopener' feature: with it window.open() always returns null, which looked like a block and also sent this tab away.
-  openWA(msg, isUrl) { const url = isUrl ? msg : this.wa(msg), w = window.open(url, '_blank'); if (w) { try { w.opener = null; } catch (e) {} } else window.location.href = url; }
+  openWA(msg, isUrl, num) { const url = isUrl ? msg : this.wa(msg, num), w = window.open(url, '_blank'); if (w) { try { w.opener = null; } catch (e) {} } else window.location.href = url; }
   go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); this.setPath(page === 'home' ? '/' : '/' + page); }
   openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); this.setPath('/tests/' + encodeURIComponent(id)); }
   // The current page lives in the URL path (/tests, /tests/vitd, /profiles, /cart, /about) so a refresh reopens it

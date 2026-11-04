@@ -153,12 +153,13 @@
     this.syncTitle();
     this.syncBars();
     this.fillSlots();
+    this.pageIn();
     const open = !!this.state.reelsOpen;
     if (this._wasOpen !== open) {
       this._wasOpen = open;
       document.body.style.overflow = open ? 'hidden' : '';
       document.documentElement.style.overflow = open ? 'hidden' : '';
-      if (!open && this._wheelEl) { const w = this._wheelEl; w.removeEventListener('wheel', this._onWheel); w.removeEventListener('touchstart', this._ts); w.removeEventListener('touchmove', this._tm); w.removeEventListener('touchend', this._te); w.removeEventListener('touchcancel', this._tc); this._wheelEl = null; }
+      if (!open && this._wheelEl) { const w = this._wheelEl; w.removeEventListener('wheel', this._onWheel); w.removeEventListener('touchstart', this._ts); w.removeEventListener('touchmove', this._tm); w.removeEventListener('touchend', this._te); w.removeEventListener('touchcancel', this._tc); w.removeEventListener('click', this._tap, true); this._wheelEl = null; }
       if (open) {
         const idx = this.state.reelIdx;
         let tries = 0;
@@ -172,7 +173,7 @@
               this._openSlide = 0;
             }
             if (this._wheelEl !== el) {
-              if (this._wheelEl) { const w = this._wheelEl; w.removeEventListener('wheel', this._onWheel); w.removeEventListener('touchstart', this._ts); w.removeEventListener('touchmove', this._tm); w.removeEventListener('touchend', this._te); w.removeEventListener('touchcancel', this._tc); }
+              if (this._wheelEl) { const w = this._wheelEl; w.removeEventListener('wheel', this._onWheel); w.removeEventListener('touchstart', this._ts); w.removeEventListener('touchmove', this._tm); w.removeEventListener('touchend', this._te); w.removeEventListener('touchcancel', this._tc); w.removeEventListener('click', this._tap, true); }
               this._onWheel = ev => {
                 if (Math.abs(ev.deltaY) < Math.abs(ev.deltaX)) return;
                 let t = ev.target; while (t && t !== el) { if (t.scrollHeight > t.clientHeight + 2 && /(auto|scroll)/.test(getComputedStyle(t).overflowY)) return; t = t.parentElement; }
@@ -220,6 +221,7 @@
               };
               this._te = ev => {
                 const d = this._drag; this._drag = null; if (!d) return;
+                if (d.moved) this._noTapTill = Date.now() + 350;
                 if (!d.moved && Date.now() - d.t < 300) { this.reelTap(d, el); return; }
                 if (d.axis !== 'y') { if (d.caught) this.goReel(this.cur()); return; }
                 // Release speed over the last ~100 ms of movement (px/ms), not the average of the whole drag, so a flick
@@ -240,6 +242,8 @@
                 const i = this.cur(), to = Math.max(i - 1, Math.min(i + 1, Math.round(-this.trackY() / this.reelH())));
                 this.goReel(to);
               };
+              this._tap = ev => { if (Date.now() < (this._noTapTill || 0)) { ev.preventDefault(); ev.stopPropagation(); } };
+              el.addEventListener('click', this._tap, true);
               el.addEventListener('touchstart', this._ts, { passive: true });
               el.addEventListener('touchmove', this._tm, { passive: false });
               el.addEventListener('touchend', this._te);
@@ -253,6 +257,16 @@
         requestAnimationFrame(tick);
       }
     }
+  }
+  // A new page (or another test) fades in, as one soft step instead of a hard cut. Opacity only: a transform here
+  // would shift the sticky bars and anything fixed inside the page while it runs. Not on the first paint.
+  pageIn() {
+    const s = this.state, key = s.page + '/' + (s.page === 'test' ? s.testId : '');
+    if (this._pageKey === key) return;
+    const first = this._pageKey == null; this._pageKey = key;
+    if (first || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    const el = document.querySelector('[data-page]');
+    if (el && el.animate) el.animate([{ opacity: 0.001 }, { opacity: 1 }], { duration: 240, easing: 'cubic-bezier(.2,.7,.3,1)' });
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this._onResize); window.removeEventListener('keydown', this._onKey); window.removeEventListener('scroll', this._onScroll); window.removeEventListener('popstate', this._onPop);

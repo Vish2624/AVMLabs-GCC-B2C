@@ -26,8 +26,8 @@
   }
 
   // Message for a quick "Book now" (cards, reels, test page, footer): what is being booked with price and prep,
-  // where, and any patient details already typed into the cart form.
-  bookWA(items) {
+  // where, and any patient details already typed into the cart form. num: a centre's WhatsApp (default: the visitor's).
+  bookWA(items, num) {
     const D = this.db(), RG = this.region(), s = this.state, f = s.form;
     const list = items.map(c => ({ c, x: c.type === 'profile' ? D.PM[c.id] : D.T[c.id] })).filter(i => i.x);
     if (!list.length) return;
@@ -51,7 +51,7 @@
     if (f.name.trim()) lines.push('*Patient:* ' + [f.name.trim(), f.age, f.gender].filter(Boolean).join(', '));
     if (RG.phRe.test(f.phone)) lines.push('*Mobile:* ' + RG.dial + ' ' + f.phone);
     lines.push('', 'Please share the available slots. Thank you!');
-    this.openWA(lines.join('\n'));
+    this.openWA(lines.join('\n'), false, num);
   }
 
   confirm() {

@@ -96,17 +96,18 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-inc-item]{display:flex;flex-direction:column;gap:8px}
 [data-inc-item]+[data-inc-item]{padding-top:12px;border-top:1px solid #F1F0F6}
 [data-inc-item] b{font-size:13.5px;font-weight:700;color:#16133A;line-height:1.35}
-/* Parameters as tags; calculated ones in a gold group under a small label */
+/* Parameters as tags, under a small heading when the test groups them (e.g. Chemical Examination) */
 [data-pchips]{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 [data-pchip]{display:inline-flex;align-items:center;min-height:26px;padding:3px 10px;border-radius:8px;background:#fff;border:1px solid #E7E6F0;color:#3D3A5C;font-size:12px;font-weight:600;line-height:1.3}
 [data-inc-wide] [data-pchip]{background:#fff}
-[data-pchip="calc"]{background:#FFF8E8;border-color:#F0DFB2;color:#7A560F}
-[data-calc-label]{width:100%;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#A07A1E;margin-top:2px}
+[data-pgroup]{width:100%;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6B5FC7;margin-top:2px}
+[data-pchips]+[data-pchips]{margin-top:4px}
 /* Desktop: an open row spans the full width so it doesn't leave a gap beside it */
 [data-inc-wide] [data-inc][open]{grid-column:1/-1}
 
-/* "Calculated" tag: parameters worked out from other results (e.g. LDL / HDL Ratio) */
-[data-calc]{display:inline-flex;align-items:center;height:20px;padding:0 7px;margin-left:6px;border-radius:999px;background:#FFF4DA;border:1px solid #F0DFB2;color:#8A6414;font-size:10.5px;font-weight:700;letter-spacing:.02em;white-space:nowrap;vertical-align:middle;flex:none}
+/* Test page: a group of parameters under its heading */
+[data-td-group-name]{margin:6px 0 0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font-size:clamp(15px,1.6vw,17px);font-weight:800;letter-spacing:-0.01em;color:#16133A}
+[data-td-group-name] small{font-size:12.5px;font-weight:600;color:#5D5A7A}
 
 /* Footer columns: centre/contact first, then brand and links; on phones contact and brand take the full width */
 [data-foot-grid]{display:grid;grid-template-columns:1.3fr 1.3fr 1fr;gap:36px 40px}
@@ -198,7 +199,41 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-spark="1"]{top:4px;left:18%}
 [data-spark="2"]{bottom:4px;left:58%;width:9px;height:9px;animation-delay:.6s}
 [data-spark="3"]{top:4px;right:9%;width:10px;height:10px;animation-delay:1.2s}
-@media (prefers-reduced-motion:reduce){[data-td-save]::after,[data-spark]{animation:none;display:none}}
+/* Reels: the parameter count under the profile name, fact chips, and "Ideal for" on one line (slides sideways if it must) */
+[data-reel-params]{display:flex;align-items:baseline;gap:7px;margin-top:-4px;font-size:15px;font-weight:600;color:#5D5A7A;line-height:1.2}
+[data-reel-params] b{font-size:clamp(20px,2.8vh,26px);font-weight:800;letter-spacing:-0.03em;color:#3B2C9E}
+[data-reel-tag]{align-self:center;margin-left:6px;height:24px;padding:0 10px;border-radius:999px;display:inline-flex;align-items:center;white-space:nowrap;background:#EFEDFB;color:#3B2C9E;font-size:12px;font-weight:700}
+[data-reel-chip]{white-space:nowrap;height:30px;padding:0 12px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700}
+[data-ideal-row]{display:flex;flex-wrap:nowrap;gap:6px;max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain}
+[data-ideal-row]::-webkit-scrollbar{display:none}
+[data-ideal]{flex:none;white-space:nowrap;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:#fff;border:1px solid #E7E6F0}
+@media (max-width:767px){[data-reel-chip]{height:28px;padding:0 10px;gap:5px;font-size:12px}[data-reel-params]{font-size:14px}[data-ideal]{font-size:11.5px;padding:4px 8px}}
+
+/* Reels: the Home collection tile when it's free — tinted green, with a popping house badge */
+[data-hc-tile]{position:relative;overflow:hidden;background:linear-gradient(150deg,#E3F6EC 0%,#F2FBF6 55%,#FFFFFF 100%);border:1px solid #BCE5CF;box-shadow:0 10px 22px -16px rgba(19,138,71,.55)}
+[data-hc-tile]::after{content:'';position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent);pointer-events:none;animation:avmSaveSweep 3.6s ease-in-out infinite}
+[data-hc-free]{display:inline-flex;align-items:center;gap:8px;margin-top:2px;font-size:17px;font-weight:800;letter-spacing:-0.01em;color:#0E7350;line-height:1.15}
+[data-hc-pop]{position:relative;width:26px;height:26px;border-radius:999px;display:grid;place-items:center;flex:none;color:#fff;background:linear-gradient(180deg,#2BC46F 0%,#138A47 100%);box-shadow:0 6px 12px -5px rgba(19,138,71,.75),inset 0 1px 0 rgba(255,255,255,.35);animation:avmHcPop 2.6s cubic-bezier(.34,1.56,.64,1) infinite;will-change:transform}
+[data-hc-pop]::before,[data-hc-pop]::after{content:'';position:absolute;inset:0;border-radius:inherit;border:2px solid rgba(34,180,99,.6);animation:avmHcRing 2.6s ease-out infinite;pointer-events:none}
+[data-hc-pop]::after{animation-delay:.45s}
+@keyframes avmHcPop{0%,62%,100%{transform:scale(1)}70%{transform:scale(1.2)}80%{transform:scale(.94)}90%{transform:scale(1.05)}}
+@keyframes avmHcRing{0%,58%{transform:scale(1);opacity:0}64%{opacity:.85}100%{transform:scale(1.9);opacity:0}}
+@media (prefers-reduced-motion:reduce){[data-hc-pop],[data-hc-pop]::before,[data-hc-pop]::after{animation:none}[data-hc-tile]::after{display:none}}
+
+/* The reel viewer rises in softly when it opens (opacity and a few px only, so nothing it measures changes) */
+@keyframes avmReelsIn{from{opacity:0;transform:translate3d(0,14px,0)}to{opacity:1;transform:none}}
+[data-reels-root]{animation:avmReelsIn .26s cubic-bezier(.2,.8,.2,1) both}
+@media (prefers-reduced-motion:reduce){[data-reels-root]{animation:none}}
+
+/* Hero: free home collection banner under the search bar, in the gold of "Save more with profiles" */
+[data-hc-banner]{position:relative;z-index:0;overflow:hidden;align-self:flex-start;display:inline-flex;align-items:center;gap:9px;height:42px;padding:0 20px 0 6px;margin-top:calc(-1 * clamp(4px,1vw,10px));border-radius:999px;color:#2A1A00;font-size:clamp(13.5px,1.25vw,15px);font-weight:800;letter-spacing:-.005em;white-space:nowrap;background:linear-gradient(180deg,#FFE58F 0%,#F7C948 45%,#E3A92A 100%);border:1px solid #D39A22;box-shadow:0 14px 26px -12px rgba(201,138,20,.75),inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(120,70,0,.18);text-shadow:0 1px 0 rgba(255,240,190,.6)}
+[data-hc-banner]::after{content:'';position:absolute;top:0;bottom:0;left:0;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);pointer-events:none;animation:avmSaveSweep 3.2s ease-in-out infinite}
+[data-hc-banner-ico]{width:30px;height:30px;border-radius:999px;display:grid;place-items:center;flex:none;color:#5A3A00;background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 1px rgba(160,100,0,.25),0 2px 6px -3px rgba(120,70,0,.5)}
+[data-hc-banner] [data-spark="1"]{top:5px;left:46%}
+[data-hc-banner] [data-spark="2"]{bottom:5px;left:72%}
+[data-hc-banner] [data-spark="3"]{top:6px;right:5%}
+@media (max-width:767px){[data-hc-banner]{align-self:stretch;justify-content:center;height:40px;margin-top:0;font-size:13.5px}}
+@media (prefers-reduced-motion:reduce){[data-td-save]::after,[data-hc-banner]::after,[data-spark]{animation:none;display:none}}
 /* Profile rows inside a gold card (test page "Save more with a profile") */
 [data-gold-item]{background:rgba(255,255,255,.88);border:1px solid #F0E2BE;box-shadow:0 10px 24px -20px rgba(160,112,20,.5);transition:transform .2s,box-shadow .2s,border-color .2s}
 [data-gold-item]:hover{transform:translateY(-2px);border-color:#E3C57A;box-shadow:0 16px 30px -18px rgba(160,112,20,.6)}

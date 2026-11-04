@@ -1,0 +1,6 @@
+[
+  {"country": "AE", "city": "Dubai", "address": "Al Garhoud, Dubai", "maps": "https://maps.app.goo.gl/QFPzMoWUSovCEbJy5", "whatsapp": "971501304708"},
+  {"country": "BH", "city": "Manama", "address": "Salmaniya, Manama, Bahrain", "maps": "https://maps.app.goo.gl/WzeusdraTUDPomw47", "whatsapp": "97333627273"},
+  {"country": "SA", "city": "Al Khobar", "address": "Madinat Al Umal, Al Khobar, KSA", "maps": "https://maps.app.goo.gl/LW5Sbz2UvaPDzmd98", "whatsapp": "966506399959"},
+  {"country": "SA", "city": "Riyadh", "address": "Al Malaz, Riyadh, KSA", "maps": "https://maps.app.goo.gl/jCmJoWFSvaDEvwAd8", "whatsapp": "966506399959"}
+]

@@ -34,7 +34,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://images.unsplash.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MedicalBusiness","additionalType":"https://schema.org/DiagnosticLab","name":"AVM Labs","alternateName":"AVM Labs Wellness Laboratory","url":"https://avmlabs-gcc-b2c.vercel.app/","logo":"https://avmlabs-gcc-b2c.vercel.app/assets/avm-logo.png","image":"https://avmlabs-gcc-b2c.vercel.app/assets/og-image.png","description":"Accredited lab tests and curated health profiles with home sample collection and reports in 24 hours.","medicalSpecialty":"https://schema.org/LaboratoryScience","areaServed":[{"@type":"Country","name":"Bahrain"},{"@type":"Country","name":"Saudi Arabia"},{"@type":"Country","name":"United Arab Emirates"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MedicalBusiness","additionalType":"https://schema.org/DiagnosticLab","name":"AVM Labs","alternateName":"AVM Labs Wellness Laboratory","url":"https://avmlabs-gcc-b2c.vercel.app/","logo":"https://avmlabs-gcc-b2c.vercel.app/assets/avm-logo.png","image":"https://avmlabs-gcc-b2c.vercel.app/assets/og-image.png","description":"Accredited lab tests and curated health profiles with home sample collection and reports in 24 hours.","medicalSpecialty":"https://schema.org/LaboratoryScience","areaServed":[{"@type":"Country","name":"Bahrain"},{"@type":"Country","name":"Saudi Arabia"},{"@type":"Country","name":"United Arab Emirates"}],"location":[{"@type":"Place","name":"AVM Labs Dubai","address":{"@type":"PostalAddress","streetAddress":"Al Garhoud, Dubai","addressLocality":"Dubai","addressCountry":"AE"},"hasMap":"https://maps.app.goo.gl/QFPzMoWUSovCEbJy5"},{"@type":"Place","name":"AVM Labs Manama","address":{"@type":"PostalAddress","streetAddress":"Salmaniya, Manama, Bahrain","addressLocality":"Manama","addressCountry":"BH"},"hasMap":"https://maps.app.goo.gl/WzeusdraTUDPomw47"},{"@type":"Place","name":"AVM Labs Al Khobar","address":{"@type":"PostalAddress","streetAddress":"Madinat Al Umal, Al Khobar, KSA","addressLocality":"Al Khobar","addressCountry":"SA"},"hasMap":"https://maps.app.goo.gl/LW5Sbz2UvaPDzmd98"},{"@type":"Place","name":"AVM Labs Riyadh","address":{"@type":"PostalAddress","streetAddress":"Al Malaz, Riyadh, KSA","addressLocality":"Riyadh","addressCountry":"SA"},"hasMap":"https://maps.app.goo.gl/jCmJoWFSvaDEvwAd8"}]}</script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -64,6 +64,7 @@
 @include components/header.html
 
 <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div data-page="1">
 @include pages/home/hero.html
 
 @include pages/home/health-profiles.html
@@ -72,27 +73,37 @@
 
 
 @include pages/home/centres.html
-
+</div>
 </sc-if>
 
 <sc-if value="{{ isTests }}" hint-placeholder-val="{{ false }}">
+<div data-page="1">
 @include pages/tests.html
+</div>
 </sc-if>
 
 <sc-if value="{{ isProfiles }}" hint-placeholder-val="{{ false }}">
+<div data-page="1">
 @include pages/profiles.html
+</div>
 </sc-if>
 
 <sc-if value="{{ isCart }}" hint-placeholder-val="{{ false }}">
+<div data-page="1">
 @include pages/cart.html
+</div>
 </sc-if>
 
 <sc-if value="{{ isTest }}" hint-placeholder-val="{{ false }}">
+<div data-page="1">
 @include pages/test-detail.html
+</div>
 </sc-if>
 
 <sc-if value="{{ isAbout }}" hint-placeholder-val="{{ false }}">
+<div data-page="1">
 @include pages/about.html
+</div>
 </sc-if>
 
 @include components/footer.html

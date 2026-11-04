@@ -29,7 +29,7 @@ export function TestListView({ catalog, subProfiles, profiles, onNew, onEdit, on
         </div>
         <div class="card-body">
           <p class="meta">
-            ${plural(t.parameters.length, 'parameter')}${t.calculated.length > 0 && html` · <b class="calc-count">${t.calculated.length} calculated</b>`}
+            ${plural(t.parameters.length, 'parameter')}${t.groups?.length > 0 && html` · ${plural(t.groups.length, 'group')}`}
             · Report: ${COUNTRIES.map((c) => `${c.name} ${t.tats?.[c.code] || '—'}`).join(' · ')}
           </p>
           <div class="pricebox">
@@ -47,11 +47,7 @@ export function TestListView({ catalog, subProfiles, profiles, onNew, onEdit, on
     const q = query.trim().toLowerCase();
     const tests = catalog.tests;
     const shown = tests.filter(
-      (t) =>
-        !q ||
-        `${t.name} ${t.short} ${t.id} ${t.aka} ${t.parameters.join(' ')} ${t.calculated.join(' ')}`
-          .toLowerCase()
-          .includes(q),
+      (t) => !q || `${t.name} ${t.short} ${t.id} ${t.aka} ${t.parameters.join(' ')}`.toLowerCase().includes(q),
     );
     return html`
       ${appBar(html`

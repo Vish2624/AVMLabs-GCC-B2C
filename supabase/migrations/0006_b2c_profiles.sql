@@ -11,7 +11,12 @@
 --      A profile's report time is the longest of its tests', worked out by the website;
 --   4. adds in_reels: whether a profile is in the reels and the home reel row (all are on the
 --      Profiles page). The single panels (Lipid, Liver, Kidney, Iron, Free and Total Thyroid) are not;
---   5. updates save_profile to store code, short_name and in_reels.
+--   5. updates save_profile to store code, short_name and in_reels;
+--   6. adds parameter groups to tests (shown as headings on the test page) and fills them in for
+--      Complete Blood Count, Complete Urine Analysis and Urinogram; "calculated" parameters join the
+--      ordinary parameter list (the website no longer labels any parameter as calculated);
+--   7. adds the centres table (address, Google Maps link and WhatsApp number per city), managed in the
+--      admin, with the Dubai, Manama, Al Khobar and Riyadh centres, and save_centres to replace the list.
 -- Generated from src/data/profiles.json; the two must stay the same.
 
 begin;
@@ -153,6 +158,69 @@ from (values
 where t.id = v.id;
 
 update public.tests set name = 'Complete Blood Count', updated_at = now() where id = 'cbc';
+
+-- 6. Parameter groups; calculated parameters are listed with the rest.
+alter table public.tests
+  add column param_groups jsonb not null default '[]'::jsonb;
+
+update public.tests
+set parameters = parameters || array(select x from unnest(calculated) as x where not (x = any(parameters))),
+    calculated = '{}', updated_at = now()
+where cardinality(calculated) > 0;
+
+update public.tests set parameters = array['Lymphocyte', 'Mean Corpuscular Hemoglobin (MCH)', 'Mean Corpuscular Hemoglobin Concentration (MCHC)', 'Mean Corpuscular Volume (MCV)', 'Total Leucocytes Count', 'Mean Platelet Volume (MPV)', 'Neutrophils', 'Hematocrit (PCV)', 'Platelet Count', 'Total RBC', 'Red Cell Distribution Width (RDW-CV)', 'Red Cell Distribution Width - SD (RDW-SD)', 'Hemoglobin', 'Lymphocytes - Absolute Count', 'Neutrophils - Absolute Count', 'Monocytes - Absolute Count', 'Basophils - Absolute Count', 'Eosinophils - Absolute Count', 'Basophils', 'Eosinophils', 'Monocytes']::text[],
+  param_groups = '[{"name":"Red Blood Cell (RBC) Parameters","items":["Lymphocyte","Mean Corpuscular Hemoglobin (MCH)","Mean Corpuscular Hemoglobin Concentration (MCHC)","Mean Corpuscular Volume (MCV)","Total Leucocytes Count","Mean Platelet Volume (MPV)","Neutrophils","Hematocrit (PCV)","Platelet Count","Total RBC","Red Cell Distribution Width (RDW-CV)","Red Cell Distribution Width - SD (RDW-SD)","Hemoglobin"]},{"name":"Absolute Differential Counts","items":["Lymphocytes - Absolute Count","Neutrophils - Absolute Count","Monocytes - Absolute Count","Basophils - Absolute Count","Eosinophils - Absolute Count"]},{"name":"Differential White Blood Cell Parameters","items":["Basophils","Eosinophils","Monocytes"]}]'::jsonb,
+  about = 'Counts red cells, white cells (6-part differential) and platelets, and measures haemoglobin. Used to check for anaemia, infection and blood disorders.', updated_at = now()
+where id = 'cbc';
+update public.tests set parameters = array['Appearance', 'Colour', 'Specific Gravity', 'Urine Ketone', 'Urinary Leucocytes', 'Urinary Bilirubin', 'Urine Blood', 'Urobilinogen', 'Urinary Protein', 'Urinary Glucose', 'Nitrite', 'Urine pH', 'Mucus', 'Red Blood Cells', 'Yeast', 'WBC (Pus Cells)', 'White Blood Cells Clumps', 'Uric Acid Crystals', 'Pathological Cylinders (Cast)', 'Squamous Epithelia', 'Triple Phosphate Crystals', 'Non Squamous Epithelia', 'Hyaline Cast', 'Calcium Oxalate', 'Bacteria Coca', 'Bacteria Rods']::text[],
+  param_groups = '[{"name":"Physical Examination","items":["Appearance","Colour"]},{"name":"Chemical Examination","items":["Specific Gravity","Urine Ketone","Urinary Leucocytes","Urinary Bilirubin","Urine Blood","Urobilinogen","Urinary Protein","Urinary Glucose","Nitrite","Urine pH"]},{"name":"Microscopic Examination","items":["Mucus","Red Blood Cells","Yeast","WBC (Pus Cells)","White Blood Cells Clumps","Uric Acid Crystals","Pathological Cylinders (Cast)","Squamous Epithelia","Triple Phosphate Crystals","Non Squamous Epithelia","Hyaline Cast","Calcium Oxalate","Bacteria Coca","Bacteria Rods"]}]'::jsonb,
+  about = 'Checks the physical, chemical and microscopic features of urine. Used to detect urinary infection and kidney problems.', updated_at = now()
+where id = 'urine';
+update public.tests set parameters = array['Specific Gravity', 'Urine Ketone', 'Urinary Leucocytes', 'Urinary Bilirubin', 'Urine Blood', 'Urobilinogen', 'Urinary Protein', 'Urinary Glucose', 'Nitrite', 'Urine pH']::text[],
+  param_groups = '[{"name":"Chemical Examination","items":["Specific Gravity","Urine Ketone","Urinary Leucocytes","Urinary Bilirubin","Urine Blood","Urobilinogen","Urinary Protein","Urinary Glucose","Nitrite","Urine pH"]}]'::jsonb,
+  about = 'A quick chemical urine test. Used to screen for urinary infection, kidney problems and diabetes.', updated_at = now()
+where id = 'urinogram';
+update public.tests set parameters = array['HbA1c', 'Average Blood Glucose (ABG)']::text[],
+  param_groups = '[]'::jsonb,
+  about = 'Measures average blood sugar over the past 2-3 months, with the matching Average Blood Glucose (ABG). Used to diagnose and monitor diabetes.', updated_at = now()
+where id = 'hba1c';
+
+-- 7. Centres, by country. The website shows the visitor's country's centres and sends WhatsApp
+-- messages to their number; saved from the admin through save_centres.
+create table public.centres (
+  id         bigint generated always as identity primary key,
+  country    text not null check (country in ('AE', 'SA', 'BH')),
+  city       text not null,
+  address    text not null,
+  maps_url   text not null,
+  whatsapp   text not null,
+  sort_order integer not null default 0,
+  updated_at timestamptz not null default now()
+);
+alter table public.centres enable row level security;
+
+insert into public.centres (country, city, address, maps_url, whatsapp, sort_order) values
+  ('AE', 'Dubai', 'Al Garhoud, Dubai', 'https://maps.app.goo.gl/QFPzMoWUSovCEbJy5', '971501304708', 0),
+  ('BH', 'Manama', 'Salmaniya, Manama, Bahrain', 'https://maps.app.goo.gl/WzeusdraTUDPomw47', '97333627273', 1),
+  ('SA', 'Al Khobar', 'Madinat Al Umal, Al Khobar, KSA', 'https://maps.app.goo.gl/LW5Sbz2UvaPDzmd98', '966506399959', 2),
+  ('SA', 'Riyadh', 'Al Malaz, Riyadh, KSA', 'https://maps.app.goo.gl/jCmJoWFSvaDEvwAd8', '966506399959', 3);
+
+-- Replaces every centre in one transaction.
+-- payload: [{ country, city, address, maps_url, whatsapp, sort_order }]
+create or replace function public.save_centres(payload jsonb)
+returns void
+language plpgsql
+set search_path = public
+as $$
+begin
+  delete from centres where true;
+  insert into centres (country, city, address, maps_url, whatsapp, sort_order)
+  select v->>'country', v->>'city', v->>'address', v->>'maps_url', v->>'whatsapp', (v->>'sort_order')::integer
+  from jsonb_array_elements(payload) as t(v);
+end;
+$$;
+
+revoke execute on function public.save_centres(jsonb) from public, anon, authenticated;
 
 -- 2. Out with the old profiles and sub-profiles.
 delete from public.profile_sub_profiles;

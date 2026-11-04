@@ -39,11 +39,13 @@
     const get = url => fetch(url).then(r => (r.ok ? r.json() : null)).catch(() => null);
     // Key order differs between the built-in JSON and the database, so compare with sorted keys.
     const canon = v => JSON.stringify(v, (k, x) => (x && typeof x === 'object' && !Array.isArray(x) ? Object.fromEntries(Object.keys(x).sort().map(n => [n, x[n]])) : x));
-    Promise.all([get('/api/tests'), get('/api/profiles')]).then(([tests, profiles]) => {
+    Promise.all([get('/api/tests'), get('/api/profiles'), get('/api/centres')]).then(([tests, profiles, centres]) => {
+      const C = Array.isArray(centres) && centres.length ? centres : Component.CENTRES, newC = canon(C) !== canon(Component.CENTRES);
+      if (newC) Component.CENTRES = C;
       const T = Array.isArray(tests) && tests.length ? Component.prepTests(tests) : Component.TESTS, known = new Set(T.map(t => t.id));
       const P = (Array.isArray(profiles) ? profiles : []).map(p => Component.siteProfile(p, known)).filter(p => p.tests.length);
       const newT = canon(T) !== canon(Component.TESTS), newP = P.length > 0 && canon(P) !== canon(Component.PROFILES);
-      if (!newT && !newP) return;
+      if (!newT && !newP) { if (newC) this.setState(s => ({ catalogVer: (s.catalogVer || 0) + 1 })); return; }
       if (newT) Component.TESTS = T;
       if (newP) { Component.PROFILES = P; Component.PICON = Object.fromEntries(P.map(p => [p.id, p.icon])); }
       Component._db = null;
@@ -55,8 +57,9 @@
     });
   }
 
+  // WhatsApp number bookings go to: the visitor's centre (see centre()).
   opts() {
-    const p = this.props || {}, rg = this.region();
-    return { wa: String(p[rg.waProp] || rg.waDef).replace(/\D/g, '') };
+    const c = this.centre();
+    return { wa: String((c && c.whatsapp) || '').replace(/\D/g, '') };
   }
 

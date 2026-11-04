@@ -1,12 +1,19 @@
   static REGIONS = {
-    BH: { code: 'BH', name: 'Bahrain', dial: '+973', phLen: 8, phRe: /^[36]\d{7}$/, phPh: '8-digit mobile', minBill: 1.5, hcFree: 18, show: v => Number(v.toFixed(3)) + ' BD', waProp: 'whatsappNumberBahrain', waDef: '97300000000', addrProp: 'addressBahrain', addrDef: '[Bahrain centre address]' },
-    SA: { code: 'SA', name: 'Saudi Arabia', dial: '+966', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, hcFree: 180, show: v => Number(v.toFixed(2)).toLocaleString('en-US') + ' SAR', waProp: 'whatsappNumberKSA', waDef: '966500000000', addrProp: 'addressKSA', addrDef: '[KSA centre address]' },
-    AE: { code: 'AE', name: 'UAE', dial: '+971', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, hcFree: 180, show: v => Number(v.toFixed(2)).toLocaleString('en-US') + ' AED', waProp: 'whatsappNumberUAE', waDef: '971500000000', addrProp: 'addressUAE', addrDef: '[UAE centre address]' }
+    BH: { code: 'BH', name: 'Bahrain', dial: '+973', phLen: 8, phRe: /^[36]\d{7}$/, phPh: '8-digit mobile', minBill: 1.5, hcFree: 18, show: v => Number(v.toFixed(3)) + ' BD' },
+    SA: { code: 'SA', name: 'Saudi Arabia', dial: '+966', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, hcFree: 180, show: v => Number(v.toFixed(2)).toLocaleString('en-US') + ' SAR' },
+    AE: { code: 'AE', name: 'UAE', dial: '+971', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, hcFree: 180, show: v => Number(v.toFixed(2)).toLocaleString('en-US') + ' AED' }
   };
   region() {
     const p = this.props || {}, R = Component.REGIONS;
     if (p.previewRegion && R[p.previewRegion]) return R[p.previewRegion];
     const r = this.state.region; return (r && R[r.code]) || R.BH;
+  }
+  // The visitor's country's centres (CENTRES), and the one they're sent to: the centre in their city, else the first listed.
+  centres() { const code = this.region().code; return Component.CENTRES.filter(c => c.country === code); }
+  centre() {
+    const list = this.centres(), r = this.state.region, norm = v => String(v || '').toLowerCase().replace(/\bal[\s-]+/g, '').replace(/[^a-z]/g, '');
+    const city = norm(r && r.city);
+    return (city && list.find(c => { const n = norm(c.city); return n && (city.includes(n) || n.includes(city)); })) || list[0] || null;
   }
   // Tests and profiles carry a price and report time per country (prices: { AE, SA, BH }, tats: { … }).
   // pr() is the price in the visitor's country, money() formats a local amount (number first: '17 SAR'), cost() does both.

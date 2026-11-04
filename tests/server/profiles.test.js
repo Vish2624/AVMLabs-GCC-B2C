@@ -281,18 +281,48 @@ describe('parseTest', () => {
     parameters: ['25-OH Vitamin D'],
   });
 
-  it('fills defaults: short name, sample, no calculated parameters, last in popularity', () => {
+  it('fills defaults: short name, sample, no parameter groups, last in popularity', () => {
     const t = parseTest(test());
     assert.equal(t.short, '25-OH Vitamin D (Total)');
     assert.equal(t.sample, 'Blood');
     assert.equal(t.sortOrder, 9999);
-    assert.deepEqual(t.calculated, []);
+    assert.deepEqual(t.groups, []);
+    assert.equal('calculated' in t, false);
   });
 
-  it('keeps calculated parameters optional and separate from measured ones', () => {
+  it('lists calculated parameters from an older admin with the rest, once each', () => {
     const t = parseTest({ ...test(), parameters: ['HDL', 'LDL', 'HDL'], calculated: ['LDL / HDL Ratio', 'HDL'] });
-    assert.deepEqual(t.parameters, ['HDL', 'LDL']);
-    assert.deepEqual(t.calculated, ['LDL / HDL Ratio']);
+    assert.deepEqual(t.parameters, ['HDL', 'LDL', 'LDL / HDL Ratio']);
+  });
+
+  it('takes the parameters from the groups, in order, when the test has groups', () => {
+    const groups = [
+      { name: 'Physical Examination', items: ['Appearance', 'Colour'] },
+      { name: 'Chemical Examination', items: ['Urine pH'] },
+    ];
+    const t = parseTest({ ...test(), parameters: ['ignored'], groups });
+    assert.deepEqual(t.groups, groups);
+    assert.deepEqual(t.parameters, ['Appearance', 'Colour', 'Urine pH']);
+  });
+
+  it('refuses an empty or unnamed group and a parameter in two groups', () => {
+    rejects(
+      parseTest,
+      { ...test(), groups: [{ name: 'A', items: [] }] },
+      'A parameter group needs at least one parameter',
+    );
+    rejects(parseTest, { ...test(), groups: [{ name: ' ', items: ['x'] }] }, 'Name every parameter group');
+    rejects(
+      parseTest,
+      {
+        ...test(),
+        groups: [
+          { name: 'A', items: ['x'] },
+          { name: 'B', items: ['x'] },
+        ],
+      },
+      'A parameter is listed in two groups',
+    );
   });
 
   it('counts the test itself as its parameter when none are given', () => {

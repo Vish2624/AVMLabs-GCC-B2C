@@ -6,10 +6,16 @@
     { id: 'heart', label: 'Heart & Lipids', short: 'Heart', sym: 'Ht', icon: 'heart-pulse', hue: 25 }, { id: 'hormones', label: 'Hormones', sym: 'Ho', icon: 'atom', hue: 300 },
     { id: 'infections', label: 'Infections & Immunity', short: 'Infections', sym: 'In', icon: 'shield-check', hue: 160 }, { id: 'tumour', label: 'Tumour Markers', short: 'Tumour', sym: 'Tm', icon: 'ribbon', hue: 330 }
   ];
-  // Tests as the site uses them, from the built-in list or /api/tests: each with its parameter count (measured +
-  // calculated, at least 1) and a category ('routine' if none). The built-in list gets the same, so the first paint
-  // already has every count instead of NaN until the API answers.
-  static prepTests(list) { return list.map(t => ({ ...t, cat: t.cat && t.cat.length ? t.cat : ['routine'], params: (t.parameters || []).length + (t.calculated || []).length || 1 })); }
+  // Tests as the site uses them, from the built-in list or /api/tests: each with its parameters (an older calculated
+  // list just joins them), the groups the test page lists them under (optional, e.g. Physical / Chemical Examination),
+  // the parameter count (at least 1) and a category ('routine' if none). The built-in list gets the same, so the first
+  // paint already has every count instead of NaN until the API answers.
+  static prepTests(list) {
+    return list.map(({ calculated, ...t }) => {
+      const parameters = [...new Set([...(t.parameters || []), ...(calculated || [])])];
+      return { ...t, parameters, groups: (t.groups || []).filter(g => g && g.name && g.items && g.items.length), cat: t.cat && t.cat.length ? t.cat : ['routine'], params: parameters.length || 1 };
+    });
+  }
   static TEST_DATA = @json data/tests.json;
   static TESTS = Component.prepTests(Component.TEST_DATA);
   // Two letters for a profile's badge, from its first two words ("Essential Wellness" -> "Ew").
@@ -47,6 +53,9 @@
     'profile-bg-diabetes-monitoring': ['1683727186226-910f31a9da45', 'Sweet Life', 'sweetlifediabetes'],
   };
   // Our Bahrain centre: assets/centres/bahrain-<file>.jpg, [file, caption].
+  // Our centres, by country: city, address, Google Maps link and WhatsApp number. Managed in the admin (/api/centres);
+  // this built-in list is what the database starts with and what shows until the API answers.
+  static CENTRES = @json data/centres.json;
   static CENTRE_PHOTOS = [['reception', 'Reception'], ['blood-collection', 'Blood collection unit'], ['waiting-area', 'Waiting area'], ['entrance', 'Collection centre entrance']];
   static SLOTS = [['6–8 AM', 6], ['8–10 AM', 8], ['10–12 PM', 10], ['12–2 PM', 12], ['4–6 PM', 16], ['6–8 PM', 18]];
   // Profile filters: must match CATEGORIES in server/catalog.js.

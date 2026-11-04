@@ -1,7 +1,7 @@
-// Create or edit a lab test: details, price and report time per country, the parameters
-// it measures and (optionally) calculated parameters worked out from other results.
+// Create or edit a lab test: details, price and report time per country, and the parameters
+// it measures, optionally under group headings (shown that way on the test's page).
 import { html } from '../html.js';
-import { appBar, COUNTRIES, formatMoney, icon, nameList, plural, readPrices, toast, view } from '../ui.js';
+import { appBar, COUNTRIES, formatMoney, icon, plural, readPrices, view } from '../ui.js';
 import { testUsage } from './test-list.js';
 
 const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -14,6 +14,30 @@ const slugify = (s) =>
     .replace(/^-+|-+$/g, '')
     .slice(0, 40)
     .replace(/-+$/, '');
+
+// The parameters box: one parameter per line; a line starting with # begins a group, e.g. "# Chemical Examination".
+const paramsText = (t) =>
+  t.groups?.length
+    ? t.groups.map((g) => ['# ' + g.name, ...g.items].join('\n')).join('\n\n')
+    : (t.parameters || []).join('\n');
+export function readParams(text) {
+  const groups = [];
+  const loose = [];
+  for (const raw of text.split('\n')) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (line.startsWith('#')) groups.push({ name: line.replace(/^#+\s*/, ''), items: [] });
+    else (groups.length ? groups[groups.length - 1].items : loose).push(line);
+  }
+  const all = [...loose, ...groups.flatMap((g) => g.items)];
+  let error = '';
+  if (groups.length && loose.length) error = 'Put every parameter under a # heading, or use no headings at all.';
+  else if (groups.some((g) => !g.name)) error = 'Give every # heading a name.';
+  else if (groups.some((g) => !g.items.length))
+    error = `Add parameters under “# ${groups.find((g) => !g.items.length).name}”.`;
+  else if (new Set(all).size !== all.length) error = `“${all.find((n, i) => all.indexOf(n) !== i)}” is listed twice.`;
+  return { parameters: all, groups, error };
+}
 
 export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, onDelete, onClose }) {
   const isNew = !test;
@@ -32,8 +56,7 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
         sample: 'Blood',
         aka: '',
         about: '',
-        parameters: [],
-        calculated: [],
+        params: '',
         sortOrder: catalog.tests.reduce((max, t) => Math.max(max, t.sortOrder + 1), 1),
         published: true,
       }
@@ -44,8 +67,7 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
         categories: [...test.cat],
         prices: Object.fromEntries(COUNTRIES.map((c) => [c.code, String(test.prices?.[c.code] ?? '')])),
         tats: Object.fromEntries(COUNTRIES.map((c) => [c.code, test.tats?.[c.code] || ''])),
-        parameters: [...test.parameters],
-        calculated: [...test.calculated],
+        params: paramsText(test),
       };
   let idTouched = !isNew;
   let dirty = false;
@@ -57,7 +79,12 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
 
   const summary = () => html`
       ${COUNTRIES.filter((c) => draft.prices[c.code] !== '').map((c) => html`<span class="now">${formatMoney(c.code, draft.prices[c.code])}</span>`)}
-      <span><b>${draft.calculated.length ? plural(draft.calculated.length, 'calculated parameter') : 'No calculated parameters'}</b></span>`;
+      <span><b>${paramSummary()}</b></span>`;
+  function paramSummary() {
+    const { parameters, groups } = readParams(draft.params);
+    if (!parameters.length) return 'No parameters yet: the test counts as one';
+    return plural(parameters.length, 'parameter') + (groups.length ? ' in ' + plural(groups.length, 'group') : '');
+  }
 
   const { el, update } = view(
     () => html`
@@ -152,8 +179,12 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
     </section>
 
     <section class="panel">
-      <div class="panel-head"><span class="num">3</span><div><h2>Calculated parameters (${draft.calculated.length}) <span class="hint">optional</span></h2><p>Worked out from other results rather than measured, e.g. LDL / HDL Ratio. Many tests have none.</p></div></div>
-      <div class="field">${nameList('calculated', draft.calculated, 'Add a calculated parameter, e.g. LDL / HDL Ratio', 'None — that’s fine for most tests.')}</div>
+      <div class="panel-head"><span class="num">3</span><div><h2>Parameters</h2><p>What the test measures, shown on its page and in every profile that includes it. The count is the number of parameters.</p></div></div>
+      <div class="field">
+        <label for="params">One parameter per line</label>
+        <textarea id="params" data-field="params" class="params-box" rows="12" spellcheck="false" placeholder="# Physical Examination&#10;Appearance&#10;Colour&#10;&#10;# Chemical Examination&#10;Urine pH&#10;Specific Gravity">${draft.params}</textarea>
+        <span class="hint">To group them, start a line with # and the group name, e.g. <b># Chemical Examination</b>, then list that group’s parameters under it. Leave empty for a test that is its own single parameter.</span>
+      </div>
     </section>
 
     <section class="panel">
@@ -209,25 +240,6 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
     el.querySelector('[data-summary]').innerHTML = summary().toString();
   };
 
-  // Adds one or more names (comma or new-line separated) to the parameters or calculated list.
-  function addNames(key) {
-    const input = el.querySelector(`#name-add-${key}`);
-    const names = input.value
-      .split(/[\n,]/)
-      .map((n) => n.trim())
-      .filter(Boolean);
-    if (!names.length) return;
-    const other = key === 'parameters' ? draft.calculated : draft.parameters;
-    let skipped = 0;
-    for (const n of names) {
-      if (draft[key].includes(n) || other.includes(n)) skipped++;
-      else draft[key].push(n);
-    }
-    if (skipped) toast(skipped === names.length ? 'Already added' : `${skipped} already added, skipped`);
-    dirty = true;
-    update(`#name-add-${key}`);
-  }
-
   function validate() {
     if (!draft.name.trim()) return 'Enter a test name.';
     if (!ID_PATTERN.test(draft.id)) return 'Test ID can only use lowercase letters, numbers and dashes.';
@@ -237,7 +249,7 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
     const noTat = COUNTRIES.find((c) => !draft.tats[c.code].trim());
     if (noTat) return `Enter the report time for ${noTat.name}.`;
     if (!(Number(draft.sortOrder) >= 1)) return 'Popularity rank starts at 1.';
-    return '';
+    return readParams(draft.params).error;
   }
 
   async function save() {
@@ -246,6 +258,7 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
       update();
       return el.querySelector('.alert')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
+    const { parameters, groups } = readParams(draft.params);
     const payload = {
       id: draft.id,
       code: draft.code.trim(),
@@ -259,9 +272,9 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
       sample: draft.sample,
       aka: draft.aka.trim(),
       about: draft.about.trim(),
-      // Measured parameters aren't edited here: keep the saved list; a new test counts as its own parameter.
-      parameters: draft.parameters.length ? draft.parameters : [draft.name.trim()],
-      calculated: draft.calculated,
+      // No parameters: the test counts as its own single parameter.
+      parameters: parameters.length ? parameters : [draft.name.trim()],
+      groups,
       sortOrder: Math.max(1, Math.round(Number(draft.sortOrder) || 1)),
       published: draft.published,
     };
@@ -332,21 +345,13 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
         update();
         break;
       }
-      case 'add-name':
-        addNames(btn.dataset.list);
-        break;
-      case 'remove-name':
-        draft[btn.dataset.list].splice(Number(btn.dataset.i), 1);
-        dirty = true;
-        update(`#name-add-${btn.dataset.list}`);
-        break;
     }
   });
 
   el.addEventListener('input', (e) => {
     const t = e.target;
     const field = t.dataset.field;
-    if (!field || field === 'name-add') return;
+    if (!field) return;
     dirty = true;
     if (field === 'fasting' || field === 'published') draft[field] = t.checked;
     else if (field === 'price') draft.prices[t.dataset.country] = t.value;
@@ -359,25 +364,7 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
       draft.id = slugify(t.value);
       el.querySelector('#id').value = draft.id;
     }
-    if (field === 'price') refreshSummary();
-  });
-
-  el.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && e.target.dataset.field === 'name-add') {
-      e.preventDefault();
-      addNames(e.target.dataset.list);
-    }
-  });
-
-  // Pasting a list adds every line at once.
-  el.addEventListener('paste', (e) => {
-    const t = e.target;
-    if (t.dataset.field !== 'name-add') return;
-    const text = e.clipboardData?.getData('text') || '';
-    if (!/[\n,]/.test(text)) return;
-    e.preventDefault();
-    t.value = text;
-    addNames(t.dataset.list);
+    if (field === 'price' || field === 'params') refreshSummary();
   });
 
   window.addEventListener('beforeunload', (e) => {

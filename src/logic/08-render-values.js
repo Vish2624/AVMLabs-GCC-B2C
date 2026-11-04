@@ -51,11 +51,13 @@
     let td = null;
     if (pg === 'test' && s.testId && D.T[s.testId]) {
       const t = D.T[s.testId], vm = testVM(t), sample = t.sample || 'Blood';
-      const measured = t.parameters && t.parameters.length ? t.parameters : [t.name], calc = t.calculated || [];
+      // Parameters under their group headings when the test has groups; numbered 1… across the whole list.
+      const groups = t.groups.length ? t.groups : [{ name: '', items: t.parameters.length ? t.parameters : [t.name] }];
+      let num = 0;
       const ps = D.inProf[t.id] || [];
       td = { ...vm, aka: t.aka || '', hasAka: !!t.aka, about: t.about || '',
-        params: [...measured.map(name => ({ name, calc: false })), ...calc.map(name => ({ name, calc: true }))].map((x, k) => ({ ...x, n: k + 1 })),
-        paramsTitle: t.params + (t.params > 1 ? ' parameters' : ' parameter') + (calc.length ? ' · ' + calc.length + ' calculated' : ''),
+        paramGroups: groups.map(g => ({ name: g.name, hasName: !!g.name, meta: g.items.length + (g.items.length > 1 ? ' parameters' : ' parameter'), items: g.items.map(name => ({ name, n: ++num })) })),
+        paramsTitle: t.params + (t.params > 1 ? ' parameters' : ' parameter'),
         sample, sampleIcon: sample === 'Urine' ? 'flask-conical' : 'droplet', fastTitle: t.fasting ? 'Fasting required' : 'No fasting required', fastSub: t.fasting ? '10–12 hrs overnight, water is fine' : 'Eat and drink as usual',
         reportT: 'Report in ' + this.tat(t), hcText: this.hcOn(t) ? 'Free home collection' : 'Home collection available', book: () => this.bookWA([{ type: 'test', id: t.id }]),
         profs: ps.map(p => ({ name: p.name, meta: p.params + ' parameters · ' + cost(p), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.id) })), toProfs: () => { const el = document.querySelector('[data-td-profs]'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, hasProfs: ps.length > 0 };
@@ -116,12 +118,12 @@
     // "What's included" rows. Profiles with several sub-profiles list those (tap: their tests and parameters);
     // otherwise each test is a row (tap: its parameters).
     const plural = (k, w) => k + ' ' + w + (k === 1 ? '' : 's');
-    // A test inside an open row: its name (unless the row is that test) and its parameters as tags,
-    // calculated ones in their own group. A lone parameter that just repeats the test's name isn't shown.
+    // A test inside an open row: its name (unless the row is that test) and its parameters as tags, under small
+    // group headings when the test has groups. A lone parameter that just repeats the test's name isn't shown.
     const incTest = (t, showName) => {
-      const params = (t.parameters || []).filter(x => !(t.parameters.length === 1 && !(t.calculated || []).length && x.toLowerCase() === t.name.toLowerCase()));
-      const calcs = t.calculated || [];
-      return { name: t.name, showName, params, calcs, hasParams: params.length > 0, hasCalcs: calcs.length > 0 };
+      const lone = t.parameters.length === 1 && t.parameters[0].toLowerCase() === t.name.toLowerCase();
+      const pg = t.groups.length ? t.groups.map(g => ({ name: g.name, hasName: true, items: g.items })) : lone ? [] : [{ name: '', hasName: false, items: t.parameters }];
+      return { name: t.name, showName, pg, hasParams: pg.length > 0 };
     };
     const incGroups = p => {
       const subs = (p.subs || []).map(x => ({ name: x.name, ts: x.tests.map(id => D.T[id]).filter(Boolean) })).filter(x => x.ts.length);
@@ -132,7 +134,7 @@
     const reels = s.reelsOpen ? RL.map((p, k) => {
       const sl = s.slides[k] || 0, inC = has('profile', p.id), worth = this.sumPr(p.ts);
       return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, ideal: p.ideal, hasIdeal: p.ideal.length > 0, benefits: p.benefits, hasBenefits: p.benefits.length > 0, tat: this.tat(p),
-        fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', hcFree: this.hcOn(p), hcLabel: this.hcOn(p) ? 'Free' : 'Extra charges', hcInk: this.hcOn(p) ? '#0E7350' : '#B4540A', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })), groups: incGroups(p),
+        fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', hcFree: this.hcOn(p), hcPaid: !this.hcOn(p), hcLabel: this.hcOn(p) ? 'Free' : 'Extra charges', hcInk: this.hcOn(p) ? '#0E7350' : '#B4540A', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })), groups: incGroups(p),
         // What its tests cost one by one, shown only when the profile is cheaper.
         priceF: cost(p), ...price(p), worthF: this.money(worth), hasWorth: worth > this.pr(p) + 0.0001,
         segs: [0, 1, 2].map(j => ({ w: j === sl ? '22px' : '7px', bg: j === sl ? '#3B2C9E' : '#D4D1E6', go: () => this.goSlide(k, j) })), onH: e => this.onH(k, e), toTests: () => this.goSlide(k, 1),
@@ -160,20 +162,23 @@
       openReels0: () => this.openReels(), hasCart, cartEmpty: !hasCart, cartCount, profileCount: D.R.length,
       locOpen: s.locOpen, toggleLoc: () => this.setState(st => ({ locOpen: !st.locOpen })),
       locLabel: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name,
-      regionPlace: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name, regionAddr: (this.props || {})[RG.addrProp] || RG.addrDef, relocate: () => this.locate(),
+      regionPlace: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name, centresHere: this.centres().map(c => ({ city: c.city, address: c.address, dir: () => window.open(c.maps, '_blank', 'noopener'),
+        wa: () => (s.cart.length ? this.bookWA(s.cart, c.whatsapp) : this.openWA("Hi AVM Labs! I'd like to know more about your tests and profiles.", false, c.whatsapp)) })),
+      centresLabel: this.centres().length > 1 ? 'Our centres in ' + RG.name : 'Our centre in ' + RG.name, relocate: () => this.locate(),
       ...(() => {
-        const regs = Object.values(C.REGIONS), k = (s.tick || 0) % regs.length;
-        const rows = regs.map((r, i) => { const on = i === k; return { dotW: on ? '20px' : '6px', dotBg: on ? '#3B2C9E' : '#D4D1E6', name: r.name, code: r.code === 'SA' ? 'KSA' : r.code, go: () => this.setState({ tick: i }) }; });
+        // Every centre, the visitor's country first, one at a time: city and address; the pin opens Google Maps.
+        const all0 = C.CENTRES.filter(c => c.country === RG.code).concat(C.CENTRES.filter(c => c.country !== RG.code)), k = (s.tick || 0) % Math.max(1, all0.length);
+        const rows = all0.map((c, i) => { const on = i === k; return { dotW: on ? '20px' : '6px', dotBg: on ? '#3B2C9E' : '#D4D1E6', name: c.city, address: c.address, code: c.country === 'SA' ? 'KSA' : c.country === 'AE' ? 'UAE' : c.country, go: () => this.setState({ tick: i }), map: () => window.open(c.maps, '_blank', 'noopener') }; });
         // Photos of our Bahrain centre (assets/centres/), repeated to at least 6 tiles so half the strip is wider than the
         // screen; the list is then doubled so the marquee loops seamlessly.
         const one = C.CENTRE_PHOTOS.map(([file, ph]) => ({ photoSrc: './assets/centres/bahrain-' + file + '.jpg', photoCredit: '', photoHref: '', ph }));
         const all = Array.from({ length: Math.ceil(6 / one.length) * one.length }, (_, i) => ({ ...one[i % one.length], id: 'centre-' + i }));
-        return { centreRows: rows, centreY: 'translateY(' + (-k * 46) + 'px)', centreShots: all.concat(all) };
+        return { centreRows: rows, centreY: 'translateY(' + (-k * 54) + 'px)', centreShots: all.concat(all) };
       })(),
       // Hero slides feature these profiles by id; they may be unpublished or reordered in the admin.
       ...(heroW ? parts('hero1', this.pr(heroW)) : {}), hero1Hc: !!heroW && this.hcOn(heroW), hero2Hc: !!heroV && this.hcOn(heroV),
       // Where the site mentions home collection: free from the country's limit.
-      hcBadge: 'Free home collection on ' + this.money(RG.hcFree) + '+', hcModeSub: b.hcFree ? 'Free · we come to you' : 'Free on ' + this.money(RG.hcFree) + '+', ...(heroV ? parts('hero2', this.pr(heroV)) : {}),
+      hcFreeAt: this.money(RG.hcFree), hcModeSub: b.hcFree ? 'Free · we come to you' : 'Free on ' + this.money(RG.hcFree) + '+', ...(heroV ? parts('hero2', this.pr(heroV)) : {}),
       ...gateVM,
       smTests: s.sMode === 'tests' ? segOn : segOff, smProfiles: s.sMode === 'profiles' ? segOn : segOff,
       setModeTests: () => this.setState({ sMode: 'tests' }), setModeProfiles: () => this.setState({ sMode: 'profiles' }),
@@ -189,7 +194,6 @@
       heroTS: e => { const t = e.touches[0]; this._hx = t.clientX; this._hy = t.clientY; },
       heroTE: e => { const t = e.changedTouches[0], dx = t.clientX - (this._hx || 0), dy = t.clientY - (this._hy || 0); if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) this.setState(st => ({ hero: (st.hero + (dx < 0 ? 1 : 3)) % 4 })); },
       heroGo1: () => (heroW ? this.openReels(heroW.id) : this.go('profiles')), heroGo2: () => (heroV ? this.openReels(heroV.id) : this.go('profiles')),
-      directions: () => window.open('https://www.google.com/maps/search/?api=1&query=AVM+Labs', '_blank', 'noopener'),
       // With items in the cart, the footer/general WhatsApp buttons send the cart as a booking; otherwise a general enquiry.
       waGeneral: () => (s.cart.length ? this.bookWA(s.cart) : this.openWA("Hi AVM Labs! I'd like to know more about your tests and profiles.")),
       // Mobile header + home: location block, search toggle, and the Tests/Profiles icon row.
@@ -203,9 +207,8 @@
       mRow: s.sMode === 'profiles'
         ? D.P.map(p => ({ label: p.name, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, go: () => this.openReels(p.id) }))
         : cats.map(c => ({ label: c.short || c.label, icon: c.icon, soft: c.soft, ink: c.ink, go: c.go })),
-      // The "Explore profiles" bar sits at the bottom of its column; on desktop the free home collection badge under it
-      // (32px + 10px) lifts it to centre on the category circles beside it.
-      exploreMb: '0px',
+      // Lift the hero "Explore profiles" bar so it centres on the category circles beside it (labels sit below them).
+      exploreMb: isDesktop ? '43px' : '0px',
       rowDisplay: isDesktop ? 'grid' : 'flex', rowOverflow: isDesktop ? 'visible' : 'auto',
       reelTiles: D.R.map(p => ({ hcFree: this.hcOn(p), slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: cost(p), ...price(p), bg: reelBg(p.hue), open: () => this.openReels(p.id) })),
       // Desktop: two rows of three. Mobile keeps all of them in one swipeable row.

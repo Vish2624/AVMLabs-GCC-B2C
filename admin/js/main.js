@@ -1,6 +1,7 @@
 // Admin app: decides which screen to show and talks to the API.
 import { api } from './api.js';
 import { toast } from './ui.js';
+import { CentresView } from './views/centres.js';
 import { LoginView } from './views/login.js';
 import { ProfileEditorView } from './views/profile-editor.js';
 import { ProfileListView } from './views/profile-list.js';
@@ -19,7 +20,7 @@ const show = (el) => {
   window.scrollTo(0, 0);
 };
 
-// The open screen lives in the URL hash (#new, #edit/<id>, #subs…, #tests, #tests/new, #tests/edit/<id>)
+// The open screen lives in the URL hash (#new, #edit/<id>, #subs…, #tests, #tests/new, #tests/edit/<id>, #centres)
 // so a refresh reopens it.
 const setHash = (h) => {
   if (location.hash.slice(1) !== h) history.replaceState(null, '', h ? '#' + h : location.pathname + location.search);
@@ -75,7 +76,8 @@ const logout = async () => {
   await api.logout().catch(() => {});
   showLogin();
 };
-const onTab = (tab) => (tab === 'subs' ? showSubList() : tab === 'tests' ? showTestList() : showList());
+const onTab = (tab) =>
+  tab === 'subs' ? showSubList() : tab === 'tests' ? showTestList() : tab === 'centres' ? showCentres() : showList();
 
 // Runs a delete; true once it's gone and the list is showing again.
 async function remove(fn, done, back) {
@@ -196,12 +198,33 @@ function showTestEditor(test) {
   setHash(test ? 'tests/edit/' + encodeURIComponent(test.id) : 'tests/new');
 }
 
+async function showCentres() {
+  if (!(await load())) return;
+  show(
+    CentresView({
+      catalog,
+      onTab,
+      onLogout: logout,
+      // Resolves to the saved list, or undefined if the session ended.
+      onSave: async (centres) => {
+        const saved = await guard(() => api.saveCentres(centres));
+        if (!saved) return undefined;
+        catalog.centres = saved;
+        toast('Centres saved. The website shows them within about 5 minutes.');
+        return saved;
+      },
+    }),
+  );
+  setHash('centres');
+}
+
 // Reopens the screen named in the hash once the lists have loaded.
 function openRoute(route) {
   if (!catalog) return; // the lists failed to load
   if (route === 'new') return showEditor(null);
   if (route === 'subs') return showSubList();
   if (route === 'tests') return showTestList();
+  if (route === 'centres') return showCentres();
   if (route === 'tests/new') return catalog.testsReadOnly ? showTestList() : showTestEditor(null);
   if (route.startsWith('tests/edit/')) {
     const test = catalog.tests.find((t) => t.id === decodeURIComponent(route.slice(11)));

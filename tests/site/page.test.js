@@ -17,4 +17,27 @@ describe('site file', () => {
   it('leaves out lab codes and short names', () => {
     assert.ok(!/"shortName"|EW_PRO|HEMOGRAM - 6 PART/.test(page));
   });
+
+  it('never labels a parameter as calculated', () => {
+    assert.ok(!/Calculated|"calculated"|data-calc/.test(page));
+  });
+
+  it("sends WhatsApp messages to the centre in the visitor's city, else their country's first centre", () => {
+    const start = page.indexOf('class Component extends DCLogic');
+    const Component = new Function(
+      'DCLogic',
+      'React',
+      page.slice(start, page.lastIndexOf('</script>')) + '\nreturn Component;',
+    )(class {}, {});
+    const at = (code, city) => {
+      const c = Object.create(Component.prototype);
+      Object.assign(c, { props: {}, state: { region: { code, city } } });
+      return [c.centre().city, c.opts().wa];
+    };
+    assert.deepEqual(at('SA', 'Riyadh'), ['Riyadh', '966506399959']);
+    assert.deepEqual(at('SA', 'Khobar'), ['Al Khobar', '966506399959']);
+    assert.deepEqual(at('SA', 'Jeddah'), ['Al Khobar', '966506399959']);
+    assert.deepEqual(at('AE', ''), ['Dubai', '971501304708']);
+    assert.deepEqual(at('BH', 'Manama'), ['Manama', '97333627273']);
+  });
 });

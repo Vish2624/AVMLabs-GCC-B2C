@@ -4,6 +4,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const tests = require('../src/data/tests.json');
 const profiles = require('../src/data/profiles.json');
+const centres = require('../src/data/centres.json');
 
 // Built-in tests: the starting data for the tests table (migration 0003), and what is
 // served until that migration runs. After that, tests are managed in the admin.
@@ -12,6 +13,10 @@ export const STATIC_TESTS = tests;
 // Built-in profiles and their shared panels (the B2C rates sheet): what migration 0006 puts in the
 // database, and the starting data of the local dev server.
 export const STATIC_PROFILES = profiles;
+
+// Built-in centres (address, Google Maps link and WhatsApp number per city): what migration 0006 puts in the
+// database, and what is served until it runs. After that, centres are managed in the admin.
+export const STATIC_CENTRES = centres;
 
 // Test categories: must match the test filters on the site (CATS in src/logic/01-data.js).
 export const TEST_CATEGORIES = [

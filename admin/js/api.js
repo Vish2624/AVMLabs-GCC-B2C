@@ -40,4 +40,5 @@ export const api = {
   createTest: (test) => request('POST', '/api/admin/tests', test),
   updateTest: (test) => request('PUT', testUrl(test.id), test),
   deleteTest: (id) => request('DELETE', testUrl(id)),
+  saveCentres: (centres) => request('PUT', '/api/centres', centres),
 };

@@ -41,7 +41,7 @@ markup and logic from inside the single `.dc.html` file, so the build combines e
 
 `src/index.html` is the page skeleton; it shows which page or overlay appears when.
 Parts live in `src/components/`, `src/pages/` and `src/reels/`; styles in `src/styles/`;
-editor settings (WhatsApp numbers, addresses, fees) in `src/config/settings.json`.
+editor settings (location gate, preview country) in `src/config/settings.json`.
 `src/logic/*.js` are pieces of one `Component` class, in order, not standalone modules.
 
 Each page has its own path (`/tests`, `/tests/<id>`, `/profiles`, `/profiles/<id>` for a profile's
@@ -49,8 +49,10 @@ reel, `/about`, `/cart`); `vercel.json` and `scripts/dev.js` serve the site file
 `#tests`-style links are moved to their path on load. `npm run build` writes `public/sitemap.xml`
 from `src/data/tests.json` and the built-in profiles.
 
-On load the site fetches `/api/profiles`. If that fails it keeps the profiles built into
-`src/logic/01-data.js`, so it never shows an empty page.
+On load the site fetches `/api/tests`, `/api/profiles` and `/api/centres`. If that fails it keeps the
+lists built in from `src/data/`, so it never shows an empty page. Centres (address, Google Maps link and
+WhatsApp number per city) are edited in the admin under Centres; the site shows the visitor's country's
+centres and sends WhatsApp messages to the centre in their city, else the country's first one.
 
 ## Admin
 
@@ -73,6 +75,7 @@ and profiles straight away and only re-renders if the API's differ.
 | `GET/POST /api/admin/tests` | list all tests (including hidden), create |
 | `PUT/DELETE /api/admin/tests/:id` | update, delete (refused while a sub-profile or profile uses it) |
 | `GET /api/tests` | published tests for the website |
+| `GET/PUT /api/centres` | centres for the website; replace the list (admin only) |
 
 ## Setup
 
@@ -81,7 +84,9 @@ and profiles straight away and only re-renders if the API's differ.
    `0004_country_prices.sql`, `0005_profile_benefits.sql` and `0006_b2c_profiles.sql`. An existing
    project runs the ones it hasn't yet. `0006` replaces every profile with the 27 from the B2C rates
    sheet (`src/data/profiles.json`) and adds each test's and profile's lab code and short name, kept
-   for the lab and shown only in the admin (the public API and the website leave them out).
+   for the lab and shown only in the admin (the public API and the website leave them out). It also
+   adds parameter groups to tests (CBC, Complete Urine Analysis and Urinogram are filled in), folds
+   the old calculated parameters into the ordinary list, and adds the `centres` table.
    Until `0006` has run, the API serves the built-in tests and profiles (`src/data/`) and the admin
    shows them but refuses to save, with a message asking for it.
 2. In Vercel → Project Settings → Environment Variables, add the values listed in

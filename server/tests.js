@@ -1,6 +1,6 @@
 // Lab tests: validation and database access. Each test lists the parameters it
-// measures and, optionally, calculated parameters (worked out from other
-// results, e.g. LDL / HDL Ratio). Prices and report times are set per country.
+// measures, optionally under group headings (e.g. Physical / Chemical / Microscopic
+// Examination). Prices and report times are set per country.
 // Until the database is up to date (server/db.js), the built-in tests
 // (src/data/tests.json) are served and editing is refused.
 import { z } from 'zod';
@@ -51,8 +51,18 @@ export const testSchema = z
     sample: z.enum(SAMPLES).default('Blood'),
     aka: text(200).default(''),
     about: text(800).default(''),
-    // What it measures; not edited in the admin. Defaults to the test itself.
+    // What it measures. Defaults to the test itself. With groups, the list is the groups' parameters in order.
     parameters: names(80).default([]),
+    groups: z
+      .array(
+        z.object({
+          name: text(80).min(1, 'Name every parameter group'),
+          items: names(80).pipe(z.array(z.string()).min(1, 'A parameter group needs at least one parameter')),
+        }),
+      )
+      .max(12)
+      .default([]),
+    // Older admins sent "calculated" parameters separately; they're ordinary parameters now.
     calculated: names(40).default([]),
     // Popularity rank: 1 is the most booked. The first 20 are shown as popular tests.
     sortOrder: z
@@ -63,13 +73,19 @@ export const testSchema = z
       .default(9999),
     published: z.boolean().default(true),
   })
-  .transform((t) => ({
-    ...t,
-    short: t.short || t.name,
-    parameters: t.parameters.length ? t.parameters : [t.name],
-    // A name listed in both stays measured.
-    calculated: t.calculated.filter((n) => !t.parameters.includes(n)),
-  }));
+  .superRefine((t, ctx) => {
+    const all = t.groups.flatMap((g) => g.items);
+    if (new Set(all).size !== all.length)
+      ctx.addIssue({ code: 'custom', path: ['groups'], message: 'A parameter is listed in two groups' });
+    if (all.length > 80)
+      ctx.addIssue({ code: 'custom', path: ['groups'], message: 'Too many parameters (80 at most)' });
+  })
+  .transform(({ calculated, ...t }) => {
+    const parameters = t.groups.length
+      ? t.groups.flatMap((g) => g.items)
+      : [...new Set([...t.parameters, ...calculated])];
+    return { ...t, short: t.short || t.name, parameters: parameters.length ? parameters : [t.name] };
+  });
 
 export function parseTest(body) {
   const result = testSchema.safeParse(body);
@@ -90,7 +106,7 @@ export function toApi(t) {
     short: t.short || t.name,
     cat: t.categories,
     rank: t.sortOrder,
-    params: t.parameters.length + t.calculated.length,
+    params: t.parameters.length,
     prices: t.prices,
     tats: t.tats,
     fasting: t.fasting,
@@ -98,7 +114,7 @@ export function toApi(t) {
     about: t.about,
     sample: t.sample,
     parameters: t.parameters,
-    calculated: t.calculated,
+    groups: t.groups,
     sortOrder: t.sortOrder,
     published: t.published,
     updatedAt: t.updatedAt,
@@ -120,7 +136,7 @@ export const fromStatic = (t) => ({
   aka: t.aka || '',
   about: t.about || '',
   parameters: t.parameters || [t.name],
-  calculated: t.calculated || [],
+  groups: t.groups || [],
   sortOrder: t.rank,
   published: true,
   updatedAt: null,
@@ -139,8 +155,9 @@ const fromRow = (r) => ({
   sample: r.sample,
   aka: r.aka,
   about: r.about,
-  parameters: r.parameters,
-  calculated: r.calculated,
+  // A row saved by an older admin may still have "calculated" parameters: they're listed with the rest.
+  parameters: [...new Set([...r.parameters, ...(r.calculated || [])])],
+  groups: r.param_groups || [],
   sortOrder: r.sort_order,
   published: r.published,
   updatedAt: r.updated_at,
@@ -160,7 +177,8 @@ const toRow = (t) => ({
   aka: t.aka,
   about: t.about,
   parameters: t.parameters,
-  calculated: t.calculated,
+  param_groups: t.groups,
+  calculated: [],
   sort_order: t.sortOrder,
   published: t.published,
 });

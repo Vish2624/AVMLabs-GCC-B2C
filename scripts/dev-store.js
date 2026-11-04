@@ -1,7 +1,7 @@
-// In-memory stand-in for the Supabase tables (tests, sub-profiles, profiles), used by scripts/dev.js when
+// In-memory stand-in for the Supabase tables (tests, sub-profiles, profiles, centres), used by scripts/dev.js when
 // SUPABASE_SERVICE_ROLE_KEY is not set. Starts from the built-in tests and profiles (src/data/), which is
 // what the database holds after migration 0006; changes last until the dev server restarts.
-import { STATIC_PROFILES, STATIC_TESTS } from '../server/catalog.js';
+import { STATIC_CENTRES, STATIC_PROFILES, STATIC_TESTS } from '../server/catalog.js';
 import { HttpError } from '../server/http.js';
 import { expandSubs } from '../server/profiles.js';
 import { inUse } from '../server/subprofiles.js';
@@ -20,6 +20,7 @@ export function createDevStore() {
     STATIC_PROFILES.profiles.map((p) => [p.id, { ...structuredClone(p), published: true, updatedAt: now() }]),
   );
   const tests = new Map(STATIC_TESTS.map((t) => [t.id, fromStatic(t)]));
+  let centres = structuredClone(STATIC_CENTRES);
   let nextSubId = Math.max(0, ...library.keys()) + 1;
   const copy = (x) => structuredClone(x);
   const withSubs = (p) => {
@@ -51,6 +52,13 @@ export function createDevStore() {
     },
     remove(id) {
       if (!profiles.delete(id)) throw new HttpError(404, 'Profile not found');
+    },
+
+    listCentres() {
+      return copy(centres);
+    },
+    saveCentres(list) {
+      centres = copy(list);
     },
 
     listTests() {
