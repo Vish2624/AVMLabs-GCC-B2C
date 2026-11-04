@@ -75,6 +75,20 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-gold-ghost]{white-space:nowrap;height:44px;padding:0 16px;border-radius:999px;border:1px solid #EBDAB0;background:rgba(255,255,255,.8);color:#8A6414;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
 [data-gold-ghost]:hover{background:#fff}
 @media (prefers-reduced-motion:reduce){[data-gold-card]::after{animation:none;display:none}}
+/* Offer price: green pill above a dark price, on a strip with a soft green glow. */
+[data-offer-pill]{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;padding:2px 7px 2px 6px;border-radius:999px;font-size:9px;font-weight:800;letter-spacing:.05em;line-height:1.3;text-transform:uppercase;white-space:nowrap;color:#fff;background:linear-gradient(135deg,#128A52 0%,#0B6B48 100%);box-shadow:0 5px 12px -6px rgba(14,115,80,.8),inset 0 1px 0 rgba(255,255,255,.25)}
+[data-offer-pill]::before{content:'';width:4px;height:4px;border-radius:999px;background:#B6F5CF;box-shadow:0 0 0 2px rgba(182,245,207,.3);animation:avmOfferDot 2.4s ease-in-out infinite}
+@keyframes avmOfferDot{50%{box-shadow:0 0 0 4px rgba(182,245,207,.08)}}
+[data-price-strip]{background:radial-gradient(70% 130% at 0% 0%,rgba(34,180,99,.16) 0%,rgba(34,180,99,0) 70%),linear-gradient(135deg,#FBFAFF 0%,#EFECFD 100%);box-shadow:inset 0 0 0 1px rgba(59,44,158,.09),inset 0 1px 0 #fff,0 10px 20px -18px rgba(42,31,122,.6)}
+[data-min-note]{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;line-height:1.35;color:#6E6A8A}
+@media (prefers-reduced-motion:reduce){[data-offer-pill]::before{animation:none}}
+/* Cart prompt to add tests and clear the minimum billing charge. */
+[data-min-card]{display:flex;flex-direction:column;gap:10px;margin-top:6px;padding:14px;border-radius:16px;background:radial-gradient(70% 130% at 100% 0%,rgba(34,180,99,.13) 0%,rgba(34,180,99,0) 70%),#F7F5FF;box-shadow:inset 0 0 0 1px rgba(59,44,158,.1)}
+[data-min-track]{height:6px;border-radius:999px;background:#E2DEF6;overflow:hidden}
+[data-min-track]>span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#22B463,#128A52);transition:width .3s}
+[data-min-add]{display:inline-flex;align-items:center;gap:5px;min-height:36px;padding:0 12px 0 9px;border-radius:999px;border:1px solid rgba(59,44,158,.28);background:#fff;color:#16133A;font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;transition:background .2s,border-color .2s}
+[data-min-add]:hover{background:#EFEDFB;border-color:#3B2C9E}
+[data-min-add] b{color:#5D5A7A;font-weight:600}
 
 /* Reels "What's included": tap a row to show its tests / parameters */
 [data-inc]{flex:none;border-radius:14px;background:#fff;border:1px solid #E7E6F0;overflow:hidden;transition:border-color .2s,box-shadow .2s}
@@ -377,7 +391,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
                 <p style="margin:0;font-size:15px;line-height:1.55;color:rgba(255,255,255,0.88)">6 key hormones including AMH — cycles, fertility and energy in one blood draw.</p>
               </div>
               <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;flex-wrap:wrap">
-                <div><div style="font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,0.75)">Offer price</div><div style="font-size:26px;font-weight:800;letter-spacing:-0.02em">{{ hero1Price }}</div></div>
+                <div><span data-offer-pill="1" style="margin-bottom:6px">Offer price</span><div style="font-size:21px;font-weight:800;letter-spacing:-0.02em">{{ hero1Price }}</div></div>
                 <button onClick="{{ heroGo1 }}" style="white-space:nowrap;height:46px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.95);color:#2A1F7A;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px">View profile<avm-i n="arrow-right" s="16"></avm-i></button>
               </div>
             </div>
@@ -392,7 +406,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
                 <p style="margin:0;font-size:15px;line-height:1.55;color:rgba(255,255,255,0.88)">Tired, aching or losing hair? 6 tests to find exactly what you're low on.</p>
               </div>
               <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;flex-wrap:wrap">
-                <div><div style="font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,0.75)">Offer price</div><div style="font-size:26px;font-weight:800;letter-spacing:-0.02em">{{ hero2Price }}</div></div>
+                <div><span data-offer-pill="1" style="margin-bottom:6px">Offer price</span><div style="font-size:21px;font-weight:800;letter-spacing:-0.02em">{{ hero2Price }}</div></div>
                 <button onClick="{{ heroGo2 }}" style="white-space:nowrap;height:46px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.95);color:#2A1F7A;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px">View profile<avm-i n="arrow-right" s="16"></avm-i></button>
               </div>
             </div>
@@ -462,21 +476,22 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
   </div>
   <div style="display:{{ rowDisplay }};grid-template-columns:repeat(auto-fill,minmax(min(100%,max(300px,calc((100% - 32px) / 3))),1fr));gap:16px;overflow-x:{{ rowOverflow }};scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 2px 10px">
     <sc-for list="{{ popular }}" as="t" hint-placeholder-count="4">
-      <div onClick="{{ t.open }}" style="cursor:pointer;flex:0 0 min(82%,320px);scroll-snap-align:start;background:{{ t.cardBg }};border:1px solid rgba(59,44,158,0.16);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 3px rgba(22,19,58,0.07),0 12px 28px -16px rgba(42,31,122,0.32);transition:box-shadow .25s,transform .25s,border-color .25s" style-hover="box-shadow:0 2px 4px rgba(22,19,58,0.04),0 24px 46px -24px rgba(59,44,158,0.5);transform:translateY(-3px);border-color:rgba(59,44,158,0.22)">
+      <div onClick="{{ t.open }}" style="cursor:pointer;flex:0 0 min(82%,320px);scroll-snap-align:start;background:{{ t.cardBg }};border:1px solid rgba(59,44,158,0.16);border-radius:22px;padding:20px 20px 10px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 3px rgba(22,19,58,0.07),0 12px 28px -16px rgba(42,31,122,0.32);transition:box-shadow .25s,transform .25s,border-color .25s" style-hover="box-shadow:0 2px 4px rgba(22,19,58,0.04),0 24px 46px -24px rgba(59,44,158,0.5);transform:translateY(-3px);border-color:rgba(59,44,158,0.22)">
         <h3 style="margin:0;font-size:18px;font-weight:700;line-height:1.3;letter-spacing:-0.015em;color:#16133A;text-wrap:pretty;min-height:2.6em;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ t.name }}</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:auto">
           <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#F3F1FE 0%,#E5E0FA 100%);box-shadow:inset 0 1px 0 #fff,0 4px 10px -6px rgba(59,44,158,0.35);color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="test-tubes" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Includes</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.paramsCap }}</span></span></div>
           <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#F3F1FE 0%,#E5E0FA 100%);box-shadow:inset 0 1px 0 #fff,0 4px 10px -6px rgba(59,44,158,0.35);color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="clock-3" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Reports in</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.tatH }}</span></span></div>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 18px;border-radius:20px;background:linear-gradient(135deg,#F7F5FF 0%,#EEEBFC 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9)">
-          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-            <span style="display:flex;align-items:center;gap:8px;white-space:nowrap"><span style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#6E6A8A">Offer price</span></span>
-            <span style="white-space:nowrap;display:flex;align-items:baseline;gap:4px;color:#0E7350;line-height:1"><b style="font-size:24px;font-weight:800;letter-spacing:-0.02em">{{ t.priceNum }}</b><small style="font-size:12.5px;font-weight:700;letter-spacing:.02em">{{ t.priceCur }}</small></span>
+        <div data-price-strip="1" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 10px 9px 14px;border-radius:18px">
+          <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
+            <span data-offer-pill="1">Offer price</span>
+            <span style="white-space:nowrap;display:flex;align-items:baseline;gap:4px;color:#16133A;line-height:1"><b style="font-size:20px;font-weight:800;letter-spacing:-0.02em">{{ t.priceNum }}</b><small style="font-size:11.5px;font-weight:700;letter-spacing:.02em">{{ t.priceCur }}</small></span>
           </div>
           <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 14px -10px rgba(59,44,158,0.7);transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
           <sc-if value="{{ t.covered }}"><span onClick="{{ t.stop }}" title="{{ t.coveredBy }}" style="max-width:170px;min-height:46px;padding:5px 16px 5px 12px;border-radius:999px;border:1.5px solid #BFE8D2;background:#EAF7EF;color:#0E7350;display:flex;align-items:center;gap:8px;cursor:default"><avm-i n="circle-check" s="18"></avm-i><span style="display:flex;flex-direction:column;min-width:0;line-height:1.15"><b style="font-size:14px;font-weight:800">Included</b><small style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.coveredBy }}</small></span></span></sc-if>
           <sc-if value="{{ t.inCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 22px;border-radius:999px;border:1.5px solid #3B2C9E;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 18px -10px rgba(59,44,158,0.85)"><avm-i n="check" s="17"></avm-i>Added</button></sc-if>
         </div>
+        <div style="min-height:16px;margin-top:-12px"><sc-if value="{{ t.underMin }}"><span data-min-note="1"><avm-i n="info" s="13"></avm-i>{{ t.minNote }}</span></sc-if></div>
       </div>
     </sc-for>
   </div>
@@ -529,21 +544,22 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
     <div style="flex:1 1 520px;min-width:0">
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,max(300px,calc((100% - 32px) / 3))),1fr));gap:16px">
         <sc-for list="{{ testsView }}" as="t" hint-placeholder-count="6">
-      <div onClick="{{ t.open }}" style="cursor:pointer;background:{{ t.cardBg }};border:1px solid rgba(59,44,158,0.16);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 3px rgba(22,19,58,0.07),0 12px 28px -16px rgba(42,31,122,0.32);transition:box-shadow .25s,transform .25s,border-color .25s" style-hover="box-shadow:0 2px 4px rgba(22,19,58,0.04),0 24px 46px -24px rgba(59,44,158,0.5);transform:translateY(-3px);border-color:rgba(59,44,158,0.22)">
+      <div onClick="{{ t.open }}" style="cursor:pointer;background:{{ t.cardBg }};border:1px solid rgba(59,44,158,0.16);border-radius:22px;padding:20px 20px 10px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 3px rgba(22,19,58,0.07),0 12px 28px -16px rgba(42,31,122,0.32);transition:box-shadow .25s,transform .25s,border-color .25s" style-hover="box-shadow:0 2px 4px rgba(22,19,58,0.04),0 24px 46px -24px rgba(59,44,158,0.5);transform:translateY(-3px);border-color:rgba(59,44,158,0.22)">
         <h3 style="margin:0;font-size:18px;font-weight:700;line-height:1.3;letter-spacing:-0.015em;color:#16133A;text-wrap:pretty;min-height:2.6em;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ t.name }}</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:auto">
           <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#F3F1FE 0%,#E5E0FA 100%);box-shadow:inset 0 1px 0 #fff,0 4px 10px -6px rgba(59,44,158,0.35);color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="test-tubes" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Includes</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.paramsCap }}</span></span></div>
           <div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#F3F1FE 0%,#E5E0FA 100%);box-shadow:inset 0 1px 0 #fff,0 4px 10px -6px rgba(59,44,158,0.35);color:#3B2C9E;display:grid;place-items:center;flex:none"><avm-i n="clock-3" s="19"></avm-i></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8698">Reports in</span><span style="white-space:nowrap;font-size:15px;font-weight:700;color:#16133A;line-height:1.2">{{ t.tatH }}</span></span></div>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 18px;border-radius:20px;background:linear-gradient(135deg,#F7F5FF 0%,#EEEBFC 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9)">
-          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-            <span style="display:flex;align-items:center;gap:8px;white-space:nowrap"><span style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#6E6A8A">Offer price</span></span>
-            <span style="white-space:nowrap;display:flex;align-items:baseline;gap:4px;color:#0E7350;line-height:1"><b style="font-size:24px;font-weight:800;letter-spacing:-0.02em">{{ t.priceNum }}</b><small style="font-size:12.5px;font-weight:700;letter-spacing:.02em">{{ t.priceCur }}</small></span>
+        <div data-price-strip="1" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 10px 9px 14px;border-radius:18px">
+          <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
+            <span data-offer-pill="1">Offer price</span>
+            <span style="white-space:nowrap;display:flex;align-items:baseline;gap:4px;color:#16133A;line-height:1"><b style="font-size:20px;font-weight:800;letter-spacing:-0.02em">{{ t.priceNum }}</b><small style="font-size:11.5px;font-weight:700;letter-spacing:.02em">{{ t.priceCur }}</small></span>
           </div>
           <sc-if value="{{ t.notInCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 26px;border-radius:999px;border:1.5px solid #3B2C9E;background:#fff;color:#3B2C9E;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 14px -10px rgba(59,44,158,0.7);transition:background .2s" style-hover="background:#EFEDFB"><avm-i n="plus" s="17"></avm-i>Add</button></sc-if>
           <sc-if value="{{ t.covered }}"><span onClick="{{ t.stop }}" title="{{ t.coveredBy }}" style="max-width:170px;min-height:46px;padding:5px 16px 5px 12px;border-radius:999px;border:1.5px solid #BFE8D2;background:#EAF7EF;color:#0E7350;display:flex;align-items:center;gap:8px;cursor:default"><avm-i n="circle-check" s="18"></avm-i><span style="display:flex;flex-direction:column;min-width:0;line-height:1.15"><b style="font-size:14px;font-weight:800">Included</b><small style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.coveredBy }}</small></span></span></sc-if>
           <sc-if value="{{ t.inCart }}"><button onClick="{{ t.toggle }}" style="white-space:nowrap;height:46px;padding:0 22px;border-radius:999px;border:1.5px solid #3B2C9E;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 18px -10px rgba(59,44,158,0.85)"><avm-i n="check" s="17"></avm-i>Added</button></sc-if>
         </div>
+        <div style="min-height:16px;margin-top:-12px"><sc-if value="{{ t.underMin }}"><span data-min-note="1"><avm-i n="info" s="13"></avm-i>{{ t.minNote }}</span></sc-if></div>
       </div>
     </sc-for>
       </div>
@@ -558,6 +574,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
           <sc-if value="{{ hasCart }}">
             <div style="height:1px;background:#ECEBF3"></div>
             <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800"><span>Subtotal</span><span>{{ bill.priceF }}</span></div>
+            <sc-if value="{{ bill.hasTop }}"><span data-min-note="1"><avm-i n="info" s="13"></avm-i>{{ bill.minShort }} · you pay {{ bill.payF }}</span></sc-if>
             <button onClick="{{ goCart }}" style="white-space:nowrap;height:48px;border-radius:999px;border:none;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 10px 24px -12px rgba(59,44,158,0.7),inset 0 1px 0 rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center;gap:8px">Go to cart<avm-i n="arrow-right" s="16"></avm-i></button>
           </sc-if>
         </div>
@@ -600,7 +617,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
         <div style="padding:16px 20px 20px;display:flex;flex-direction:column;gap:14px;flex:1">
           <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ p.preview }}" as="x" hint-placeholder-count="3"><span style="white-space:nowrap;font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:999px;background:#F5F5FA;border:1px solid #ECEBF3">{{ x }}</span></sc-for><sc-if value="{{ p.hasMore }}"><button onClick="{{ p.open }}" style="font-size:12.5px;font-weight:700;padding:5px 10px;border-radius:999px;background:#EFEDFB;border:none;color:#3B2C9E;cursor:pointer">{{ p.moreLabel }}</button></sc-if></div>
           <div style="margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between;gap:10px">
-            <div style="display:flex;flex-direction:column;gap:2px"><div style="display:flex;align-items:center;gap:6px"><span style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#5D5A7A">Offer price</span></div><span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">{{ p.priceF }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:6px"><span data-offer-pill="1">Offer price</span></div><span style="font-size:20px;font-weight:800;letter-spacing:-0.02em">{{ p.priceF }}</span></div>
             <button onClick="{{ p.open }}" style="border:none;background:none;color:#3B2C9E;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;padding:6px 0"><avm-i n="play" s="13"></avm-i>View details</button>
           </div>
           <div style="display:flex;gap:8px">
@@ -639,6 +656,13 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             <button onClick="{{ l.remove }}" aria-label="Remove" style="width:36px;height:36px;border-radius:999px;border:1px solid #ECEBF3;background:#fff;color:#5D5A7A;display:grid;place-items:center;cursor:pointer;flex:none" style-hover="color:#C81E25;border-color:#F3C9CB"><avm-i n="trash-2" s="15"></avm-i></button>
           </div>
         </sc-for>
+        <sc-if value="{{ bill.hasTop }}">
+          <div data-min-card="1">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:14.5px;font-weight:800;line-height:1.3">{{ bill.minTitle }}</span><span style="font-size:12.5px;line-height:1.45;color:#5D5A7A">{{ bill.minSub }}</span></div>
+            <div data-min-track="1"><span style="width:{{ bill.minPct }}"></span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ bill.minAdds }}" as="a" hint-placeholder-count="0"><button onClick="{{ a.add }}" data-min-add="1"><avm-i n="plus" s="13"></avm-i>{{ a.name }} <b>{{ a.priceF }}</b></button></sc-for><button onClick="{{ goTests }}" style="min-height:36px;padding:0 6px;border:none;background:none;color:#3B2C9E;font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:4px">All tests<avm-i n="arrow-right" s="13"></avm-i></button></div>
+          </div>
+        </sc-if>
       </div>
       <sc-for list="{{ cartMatches }}" as="m" hint-placeholder-count="0">
         <div data-gold-card="1" style="padding:18px 20px;display:flex;flex-wrap:wrap;gap:14px;align-items:center">
@@ -688,9 +712,11 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
       <div style="background:rgba(255,255,255,0.9);backdrop-filter:blur(18px);border:1px solid #ECEBF3;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 60px -36px rgba(22,19,58,0.5)">
         <span style="font-size:17px;font-weight:800">Bill summary</span>
         <div style="display:flex;justify-content:space-between;font-size:14px;color:#4A4766"><span>Item total</span><span>{{ bill.priceF }}</span></div>
+        <sc-if value="{{ bill.hasTop }}"><div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;color:#4A4766"><span>Minimum billing adjustment</span><span style="white-space:nowrap">{{ bill.topF }}</span></div></sc-if>
         <sc-if value="{{ isHomeMode }}"><div style="display:flex;justify-content:space-between;font-size:14px;color:#4A4766"><span>Home collection</span><span style="font-weight:700;color:{{ bill.hcColor }}">{{ bill.hcF }}</span></div></sc-if>
         <div style="height:1px;background:#ECEBF3;margin:2px 0"></div>
         <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:15px;font-weight:800">To pay</span><span style="font-size:26px;font-weight:800;letter-spacing:-0.02em">{{ bill.payF }}</span></div>
+        <sc-if value="{{ bill.hasTop }}"><span data-min-note="1"><avm-i n="info" s="13"></avm-i>{{ bill.minShort }}</span></sc-if>
         <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}"><button onClick="{{ confirm }}" style="white-space:nowrap;height:54px;border-radius:999px;border:none;background:linear-gradient(180deg,#1FAD5E,#138A47);color:#fff;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 14px 30px -14px rgba(19,138,71,0.9),inset 0 1px 0 rgba(255,255,255,0.25)"><avm-i n="whatsapp" s="20"></avm-i>Confirm booking on WhatsApp</button></sc-if>
         <span style="font-size:12.5px;color:#5D5A7A;line-height:1.5;text-align:center">You'll be redirected to WhatsApp with your booking details. Pay at the time of collection.</span>
       </div>
@@ -720,9 +746,10 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
     </div>
     </div>
     <div data-td-panel="1" style="flex:0 1 340px;min-width:0;display:flex;flex-direction:column;gap:14px;padding:clamp(14px,2vw,22px);border-radius:22px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12)">
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:clamp(28px,3.4vw,36px);font-weight:800;letter-spacing:-0.03em;line-height:1">{{ td.priceF }}</span>
-      
+    <div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">
+      <span data-offer-pill="1">Offer price</span>
+      <span style="font-size:clamp(23px,2.6vw,28px);font-weight:800;letter-spacing:-0.025em;line-height:1">{{ td.priceF }}</span>
+      <sc-if value="{{ td.underMin }}"><span data-min-note="1" style="color:rgba(255,255,255,0.8)"><avm-i n="info" s="13"></avm-i>{{ td.minNote }}</span></sc-if>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <sc-if value="{{ td.notInCart }}"><button onClick="{{ td.toggle }}" data-td-btn="1" style="white-space:nowrap;flex:1 1 140px;height:48px;border-radius:999px;border:none;background:#fff;color:#2A1F7A;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:0 12px 26px -12px rgba(0,0,0,0.5)"><avm-i n="plus" s="18"></avm-i>Add to cart</button></sc-if>
@@ -849,7 +876,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
   <div style="position:fixed;left:10px;right:10px;bottom:{{ testsBarBottom }};transform:translateY(var(--vv-drop, 0px));z-index:58;display:flex;flex-direction:column;gap:6px">
     <sc-for list="{{ topMatch }}" as="m" hint-placeholder-count="0"><button onClick="{{ m.switchIt }}" data-gold-card="1" style="display:flex;align-items:center;gap:10px;padding:10px 10px 10px 12px;border-radius:18px;text-align:left;color:#2B2110;cursor:pointer;font:inherit"><span data-gold-badge="1" style="width:28px;height:28px"><avm-i n="crown" s="14"></avm-i></span><span style="flex:1;font-size:13px;font-weight:700;line-height:1.35">{{ m.headline }}</span><span data-gold-btn="1" style="height:32px;padding:0 14px;font-size:12.5px;display:flex;align-items:center;flex:none">Switch</span></button></sc-for>
     <div style="display:flex;align-items:center;gap:12px;padding:8px 8px 8px 16px;border-radius:22px;background:rgba(22,19,58,0.94);backdrop-filter:blur(18px);color:#fff;box-shadow:0 18px 40px -16px rgba(22,19,58,0.6)">
-      <div style="flex:1;display:flex;flex-direction:column"><span style="font-size:12px;color:rgba(255,255,255,0.75)">{{ barCountLabel }}</span><span style="font-size:17px;font-weight:800">{{ bill.priceF }}</span></div>
+      <div style="flex:1;display:flex;flex-direction:column"><sc-if value="{{ bill.hasTop }}"><span style="font-size:11.5px;color:rgba(255,255,255,0.85)">Add {{ bill.topF }} to avoid min. billing</span></sc-if><sc-if value="{{ noBarNote }}"><span style="font-size:12px;color:rgba(255,255,255,0.75)">{{ barCountLabel }}</span></sc-if><span style="font-size:17px;font-weight:800">{{ bill.payF }}</span></div>
       <button onClick="{{ goCart }}" style="white-space:nowrap;height:46px;padding:0 18px;border-radius:999px;border:none;background:#fff;color:#16133A;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px">View cart<avm-i n="arrow-right" s="15"></avm-i></button>
     </div>
   </div>
@@ -918,8 +945,8 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
               <div style="display:flex;flex-direction:column;gap:14px;padding:18px;border-radius:24px;background:rgba(255,255,255,0.72);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(255,255,255,0.85);box-shadow:0 18px 40px -24px rgba(22,19,58,0.35);backdrop-filter:blur(16px);flex:none">
                 <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
                   <div style="display:flex;flex-direction:column;gap:6px">
-                    <div style="display:flex;align-items:center;gap:8px"><span style="font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#5D5A7A">Offer price</span></div>
-                    <span style="font-size:clamp(30px,4.4vh,40px);font-weight:800;letter-spacing:-0.03em;line-height:1">{{ r.priceF }}</span>
+                    <div style="display:flex;align-items:center;gap:8px"><span data-offer-pill="1">Offer price</span></div>
+                    <span style="font-size:clamp(23px,3.4vh,30px);font-weight:800;letter-spacing:-0.025em;line-height:1">{{ r.priceF }}</span>
                   </div>
                   <button onClick="{{ r.share }}" aria-label="Share" style="width:46px;height:46px;border-radius:999px;flex:none;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="share-2" s="19"></avm-i></button>
                 </div>
@@ -1015,7 +1042,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             <button onClick="{{ r.toTests }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span style="width:48px;height:48px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:grid;place-items:center"><avm-i n="list" s="20"></avm-i></span>Tests</button>
           </div>
           <div style="position:absolute;left:0;right:0;bottom:0;z-index:4;padding:40px 16px {{ reelPadB }};background:linear-gradient(180deg,rgba(246,246,250,0) 0%,rgba(246,246,250,0.97) 45%);display:flex;align-items:center;gap:14px">
-            <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#5D5A7A">Offer price</span></div><span style="font-size:30px;font-weight:800;letter-spacing:-0.025em;line-height:1.1">{{ r.priceF }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:6px;min-width:0"><div style="display:flex;align-items:center;gap:8px"><span data-offer-pill="1">Offer price</span></div><span style="font-size:23px;font-weight:800;letter-spacing:-0.02em;line-height:1.1">{{ r.priceF }}</span></div>
             <button onClick="{{ r.book }}" style="flex:1;height:54px;border-radius:999px;border:none;cursor:pointer;background:linear-gradient(180deg,#22B463,#138A47);color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 12px 30px -10px rgba(19,138,71,0.8),inset 0 1px 0 rgba(255,255,255,0.25)"><avm-i n="whatsapp" s="20"></avm-i>Book now</button>
           </div>
         </div>
@@ -1151,9 +1178,9 @@ class Component extends DCLogic {
   }
 
   static REGIONS = {
-    BH: { code: 'BH', name: 'Bahrain', dial: '+973', phLen: 8, phRe: /^[36]\d{7}$/, phPh: '8-digit mobile', show: v => 'BD ' + Number(v.toFixed(3)), waProp: 'whatsappNumberBahrain', waDef: '97300000000', addrProp: 'addressBahrain', addrDef: '[Bahrain centre address]' },
-    SA: { code: 'SA', name: 'Saudi Arabia', dial: '+966', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', show: v => 'SAR ' + Number(v.toFixed(2)).toLocaleString('en-US'), waProp: 'whatsappNumberKSA', waDef: '966500000000', addrProp: 'addressKSA', addrDef: '[KSA centre address]' },
-    AE: { code: 'AE', name: 'UAE', dial: '+971', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', show: v => 'AED ' + Number(v.toFixed(2)).toLocaleString('en-US'), waProp: 'whatsappNumberUAE', waDef: '971500000000', addrProp: 'addressUAE', addrDef: '[UAE centre address]' }
+    BH: { code: 'BH', name: 'Bahrain', dial: '+973', phLen: 8, phRe: /^[36]\d{7}$/, phPh: '8-digit mobile', minBill: 1.5, show: v => 'BD ' + Number(v.toFixed(3)), waProp: 'whatsappNumberBahrain', waDef: '97300000000', addrProp: 'addressBahrain', addrDef: '[Bahrain centre address]' },
+    SA: { code: 'SA', name: 'Saudi Arabia', dial: '+966', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, show: v => 'SAR '+ Number(v.toFixed(2)).toLocaleString('en-US'), waProp: 'whatsappNumberKSA', waDef: '966500000000', addrProp: 'addressKSA', addrDef: '[KSA centre address]' },
+    AE: { code: 'AE', name: 'UAE', dial: '+971', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, show: v => 'AED '+ Number(v.toFixed(2)).toLocaleString('en-US'), waProp: 'whatsappNumberUAE', waDef: '971500000000', addrProp: 'addressUAE', addrDef: '[UAE centre address]' }
   };
   region() {
     const p = this.props || {}, R = Component.REGIONS;
@@ -1168,6 +1195,10 @@ class Component extends DCLogic {
   // The amount and currency apart, to show the number large and the currency small: { num: '17', cur: 'SAR' }.
   costParts(x) { const t = this.cost(x), i = t.indexOf(' '); return { num: t.slice(i + 1), cur: t.slice(0, i) }; }
   sumPr(list) { return list.reduce((a, x) => a + this.pr(x), 0); }
+  // Minimum patient billing: a patient's whole bill is never less than the country's minimum (REGIONS minBill).
+  // billed() is what a patient pays for a given item total, rounded so BD decimals compare exactly.
+  billed(total) { const t = Math.round(total * 1000) / 1000; return t > 0 ? Math.max(t, this.region().minBill) : 0; }
+  minBillNote() { return 'Min. billing ' + this.money(this.region().minBill) + ' · add tests to avoid it'; }
   // Report time in the visitor's country, e.g. '24 hrs' or '2 days'; tatHrs() turns one into hours to compare.
   tat(x) { return (x && x.tats && x.tats[this.region().code]) || ''; }
   tatHrs(t) { const m = /(\d+(?:\.\d+)?)\s*(h|d)/i.exec(t || ''); return m ? +m[1] * (m[2].toLowerCase() === 'd' ? 24 : 1) : 0; }
@@ -1254,15 +1285,16 @@ class Component extends DCLogic {
     const tIds = cart.filter(c => c.type === 'test').map(c => c.id);
     const pIds = cart.filter(c => c.type === 'profile').map(c => c.id);
     if (!tIds.length) return [];
-    const out = [];
+    const out = [], total = this.bill().price;
     D.P.forEach(p => {
       if (pIds.includes(p.id)) return;
       const ov = p.tests.filter(id => tIds.includes(id));
       if (!ov.length) return;
       const others = p.tests.filter(id => !tIds.includes(id));
-      // Local prices; rounded so BD decimals compare exactly.
+      // Local prices; rounded so BD decimals compare exactly. The difference is in what the patient actually pays,
+      // so minimum billing is counted on both sides.
       const r3 = v => Math.round(v * 1000) / 1000;
-      const extra = r3(this.pr(p) - this.sumPr(ov.map(id => D.T[id])));
+      const extra = r3(this.billed(total - this.sumPr(ov.map(id => D.T[id])) + this.pr(p)) - this.billed(total));
       if (!others.length && extra >= 0) return;
       out.push({ p, ov, others, extra, worth: r3(this.sumPr(others.map(id => D.T[id]))) });
     });
@@ -1284,7 +1316,7 @@ class Component extends DCLogic {
     };
   }
 
-  // Offer prices in the visitor's country. Home collection is free.
+  // Offer prices in the visitor's country. Home collection is free. top is what minimum billing adds to reach the minimum.
   bill() {
     const D = this.db();
     let price = 0;
@@ -1295,7 +1327,8 @@ class Component extends DCLogic {
       items.push({ name: x.name + (c.type === 'profile' ? ' (Profile)' : ''), price: lp });
     });
     price = Math.round(price * 1000) / 1000;
-    return { items, price, hc: 0, pay: price };
+    const pay = this.billed(price);
+    return { items, price, hc: 0, top: Math.round((pay - price) * 1000) / 1000, pay };
   }
 
   days() {
@@ -1340,7 +1373,10 @@ class Component extends DCLogic {
       else lines.push('   ' + x.params + ' parameter' + (x.params > 1 ? 's' : ''));
       lines.push('   Price: ' + this.cost(x));
     });
-    if (many) lines.push('', '*Total:* ' + this.money(total));
+    const pay = this.billed(total), topped = pay - total > 0.0001;
+    if (many || topped) lines.push('');
+    if (many) lines.push('*Total:* ' + this.money(total));
+    if (topped) lines.push('*To pay:* ' + this.money(pay) + ' (minimum billing)');
     lines.push('', '*Reports:* within ' + (tat || '24 hrs'), '*Preparation:* ' + (fasting ? '10–12 hrs fasting needed' : 'No fasting needed'),
       '*Location:* ' + ((s.region && s.region.city ? s.region.city + ', ' : '') + RG.name),
       '*Collection:* ' + (s.mode === 'walkin' ? 'Walk-in at centre' : 'Home sample collection'));
@@ -1362,6 +1398,7 @@ class Component extends DCLogic {
       '*Patient:* ' + f.name.trim() + ', ' + f.age + ', ' + f.gender,
       '*Mobile:* ' + this.region().dial + ' ' + f.phone];
     lines.push('', 'Item total: ' + this.money(b.price));
+    if (b.top > 0) lines.push('Minimum billing adjustment: ' + this.money(b.top));
     lines.push('*To pay: ' + this.money(b.pay) + '*');
     const url = this.wa(lines.join('\n'));
     this.setState({ booked: { url } });
@@ -1715,7 +1752,7 @@ class Component extends DCLogic {
       const pc = C.CATS.find(c => c.id === t.cat[0]) || C.CATS[0];
       return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, tatH: this.tat(t).replace('hrs', 'hours'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), cardBg: 'radial-gradient(75% 70% at 100% 0%, #F0EDFE 0%, rgba(240,237,254,0) 65%), radial-gradient(55% 50% at 0% 100%, rgba(255,236,240,0.55) 0%, rgba(255,236,240,0) 70%), #FFFFFF', tat: this.tat(t), fasting: t.fasting,
         open: () => this.openTest(t.id),
-        priceF: cost(t), priceNum: this.costParts(t).num, priceCur: this.costParts(t).cur, inCart: inC, notInCart: !inC && !cov, covered: !!cov, coveredBy: cov ? 'In ' + cov.name : '', toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); }, stop: e => e && e.stopPropagation() };
+        priceF: cost(t), priceNum: this.costParts(t).num, priceCur: this.costParts(t).cur, underMin: this.pr(t) > 0 && this.pr(t) < RG.minBill, minNote: this.minBillNote(), inCart: inC, notInCart: !inC && !cov, covered: !!cov, coveredBy: cov ? 'In ' + cov.name : '', toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); }, stop: e => e && e.stopPropagation() };
     };
     let td = null;
     if (pg === 'test' && s.testId && D.T[s.testId]) {
@@ -1878,7 +1915,7 @@ class Component extends DCLogic {
       testsCountLabel: tList.length + (tList.length === 1 ? ' test' : ' tests'),
       tq: s.tq, onTq: e => this.setState({ tq: e.target.value }), hasTq: !!s.tq, clearTq: () => this.setState({ tq: '' }),
       testCats, testsView: tList.map(testVM), testsEmpty: !tList.length,
-      barCountLabel: cartCount + (cartCount === 1 ? ' item' : ' items'),
+      barCountLabel: cartCount + (cartCount === 1 ? ' item' : ' items'), noBarNote: !(b.top > 0),
       cartPreview: cartLines.slice(0, 5).map(l => ({ name: l.name, priceF: l.priceF })),
       topMatch: ms.slice(0, 1), cartMatches: ms.slice(0, 2),
       profFilters: C.PF.map(([id, label]) => { const a = s.pf === id; return { label, go: () => this.setState({ pf: id }), bg: a ? '#16133A' : '#fff', fg: a ? '#fff' : '#16133A', bd: a ? '#16133A' : '#E7E6F0' }; }),
@@ -1898,7 +1935,12 @@ class Component extends DCLogic {
       slotTitle: isHomeMode ? 'Collection date & time' : 'Visit date & time',
       days: days.map(d => { const a = s.form.date === d.key; return { top: d.top, num: d.num, mon: d.mon, pick: () => this.setState(st => ({ form: { ...st.form, date: d.key, slot: d.i === 0 ? '' : st.form.slot }, errors: { ...st.errors, date: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : '#fff', fg: a ? '#fff' : '#16133A', sub: a ? 'rgba(255,255,255,0.8)' : '#5D5A7A', sh: a ? '0 12px 24px -12px rgba(59,44,158,0.85)' : 'none', lift: a ? 'translateY(-2px)' : 'none' }; }),
       slots, slotPicked: !!(pickedDay && s.form.slot), slotSummary: pickedDay ? pickedDay.full + ' · ' + s.form.slot : '', asidePos: isWide ? 'sticky' : 'static',
-      bill: { priceF: this.money(b.price), hcF: b.hc ? this.money(b.hc) : 'FREE', hcColor: b.hc ? '#16133A' : '#0E7350', payF: this.money(b.pay) },
+      bill: { priceF: this.money(b.price), hcF: b.hc ? this.money(b.hc) : 'FREE', hcColor: b.hc ? '#16133A' : '#0E7350', payF: this.money(b.pay), hasTop: b.top > 0, topF: this.money(b.top), minShort: 'Add ' + this.money(b.top) + ' more to avoid minimum billing',
+        minTitle: 'Add ' + this.money(b.top) + ' more to avoid the minimum billing charge',
+        minSub: 'The minimum bill is ' + this.money(RG.minBill) + ' per patient. Add tests worth ' + this.money(b.top) + ' or more and you pay only for your tests.',
+        minPct: Math.round(b.price / (b.pay || 1) * 100) + '%',
+        // Popular tests that clear the charge on their own, to add in one tap.
+        minAdds: b.top > 0 ? byRank.filter(t => !has('test', t.id) && !coveredBy(t.id) && this.pr(t) >= b.top).slice(0, 3).map(t => ({ name: t.short, priceF: cost(t), add: () => this.toggle('test', t.id, t.short) })) : [] },
       confirm: () => this.confirm(),
       isBooked: !!s.booked, bookedUrl: s.booked ? s.booked.url : '#',
       finishBooked: () => { this.setCart(() => []); this.setState({ booked: null }); this.go('home'); },

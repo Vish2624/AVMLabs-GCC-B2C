@@ -1,7 +1,7 @@
   static REGIONS = {
-    BH: { code: 'BH', name: 'Bahrain', dial: '+973', phLen: 8, phRe: /^[36]\d{7}$/, phPh: '8-digit mobile', show: v => 'BD ' + Number(v.toFixed(3)), waProp: 'whatsappNumberBahrain', waDef: '97300000000', addrProp: 'addressBahrain', addrDef: '[Bahrain centre address]' },
-    SA: { code: 'SA', name: 'Saudi Arabia', dial: '+966', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', show: v => 'SAR ' + Number(v.toFixed(2)).toLocaleString('en-US'), waProp: 'whatsappNumberKSA', waDef: '966500000000', addrProp: 'addressKSA', addrDef: '[KSA centre address]' },
-    AE: { code: 'AE', name: 'UAE', dial: '+971', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', show: v => 'AED ' + Number(v.toFixed(2)).toLocaleString('en-US'), waProp: 'whatsappNumberUAE', waDef: '971500000000', addrProp: 'addressUAE', addrDef: '[UAE centre address]' }
+    BH: { code: 'BH', name: 'Bahrain', dial: '+973', phLen: 8, phRe: /^[36]\d{7}$/, phPh: '8-digit mobile', minBill: 1.5, show: v => 'BD ' + Number(v.toFixed(3)), waProp: 'whatsappNumberBahrain', waDef: '97300000000', addrProp: 'addressBahrain', addrDef: '[Bahrain centre address]' },
+    SA: { code: 'SA', name: 'Saudi Arabia', dial: '+966', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, show: v => 'SAR '+ Number(v.toFixed(2)).toLocaleString('en-US'), waProp: 'whatsappNumberKSA', waDef: '966500000000', addrProp: 'addressKSA', addrDef: '[KSA centre address]' },
+    AE: { code: 'AE', name: 'UAE', dial: '+971', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, show: v => 'AED '+ Number(v.toFixed(2)).toLocaleString('en-US'), waProp: 'whatsappNumberUAE', waDef: '971500000000', addrProp: 'addressUAE', addrDef: '[UAE centre address]' }
   };
   region() {
     const p = this.props || {}, R = Component.REGIONS;
@@ -16,6 +16,10 @@
   // The amount and currency apart, to show the number large and the currency small: { num: '17', cur: 'SAR' }.
   costParts(x) { const t = this.cost(x), i = t.indexOf(' '); return { num: t.slice(i + 1), cur: t.slice(0, i) }; }
   sumPr(list) { return list.reduce((a, x) => a + this.pr(x), 0); }
+  // Minimum patient billing: a patient's whole bill is never less than the country's minimum (REGIONS minBill).
+  // billed() is what a patient pays for a given item total, rounded so BD decimals compare exactly.
+  billed(total) { const t = Math.round(total * 1000) / 1000; return t > 0 ? Math.max(t, this.region().minBill) : 0; }
+  minBillNote() { return 'Min. billing ' + this.money(this.region().minBill) + ' · add tests to avoid it'; }
   // Report time in the visitor's country, e.g. '24 hrs' or '2 days'; tatHrs() turns one into hours to compare.
   tat(x) { return (x && x.tats && x.tats[this.region().code]) || ''; }
   tatHrs(t) { const m = /(\d+(?:\.\d+)?)\s*(h|d)/i.exec(t || ''); return m ? +m[1] * (m[2].toLowerCase() === 'd' ? 24 : 1) : 0; }

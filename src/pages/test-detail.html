@@ -17,9 +17,10 @@
     </div>
     </div>
     <div data-td-panel="1" style="flex:0 1 340px;min-width:0;display:flex;flex-direction:column;gap:14px;padding:clamp(14px,2vw,22px);border-radius:22px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12)">
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:clamp(28px,3.4vw,36px);font-weight:800;letter-spacing:-0.03em;line-height:1">{{ td.priceF }}</span>
-      
+    <div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">
+      <span data-offer-pill="1">Offer price</span>
+      <span style="font-size:clamp(23px,2.6vw,28px);font-weight:800;letter-spacing:-0.025em;line-height:1">{{ td.priceF }}</span>
+      <sc-if value="{{ td.underMin }}"><span data-min-note="1" style="color:rgba(255,255,255,0.8)"><avm-i n="info" s="13"></avm-i>{{ td.minNote }}</span></sc-if>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <sc-if value="{{ td.notInCart }}"><button onClick="{{ td.toggle }}" data-td-btn="1" style="white-space:nowrap;flex:1 1 140px;height:48px;border-radius:999px;border:none;background:#fff;color:#2A1F7A;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:0 12px 26px -12px rgba(0,0,0,0.5)"><avm-i n="plus" s="18"></avm-i>Add to cart</button></sc-if>

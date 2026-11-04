@@ -54,15 +54,16 @@
     const tIds = cart.filter(c => c.type === 'test').map(c => c.id);
     const pIds = cart.filter(c => c.type === 'profile').map(c => c.id);
     if (!tIds.length) return [];
-    const out = [];
+    const out = [], total = this.bill().price;
     D.P.forEach(p => {
       if (pIds.includes(p.id)) return;
       const ov = p.tests.filter(id => tIds.includes(id));
       if (!ov.length) return;
       const others = p.tests.filter(id => !tIds.includes(id));
-      // Local prices; rounded so BD decimals compare exactly.
+      // Local prices; rounded so BD decimals compare exactly. The difference is in what the patient actually pays,
+      // so minimum billing is counted on both sides.
       const r3 = v => Math.round(v * 1000) / 1000;
-      const extra = r3(this.pr(p) - this.sumPr(ov.map(id => D.T[id])));
+      const extra = r3(this.billed(total - this.sumPr(ov.map(id => D.T[id])) + this.pr(p)) - this.billed(total));
       if (!others.length && extra >= 0) return;
       out.push({ p, ov, others, extra, worth: r3(this.sumPr(others.map(id => D.T[id]))) });
     });
@@ -84,7 +85,7 @@
     };
   }
 
-  // Offer prices in the visitor's country. Home collection is free.
+  // Offer prices in the visitor's country. Home collection is free. top is what minimum billing adds to reach the minimum.
   bill() {
     const D = this.db();
     let price = 0;
@@ -95,6 +96,7 @@
       items.push({ name: x.name + (c.type === 'profile' ? ' (Profile)' : ''), price: lp });
     });
     price = Math.round(price * 1000) / 1000;
-    return { items, price, hc: 0, pay: price };
+    const pay = this.billed(price);
+    return { items, price, hc: 0, top: Math.round((pay - price) * 1000) / 1000, pay };
   }
 

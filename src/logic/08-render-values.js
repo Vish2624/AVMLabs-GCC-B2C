@@ -43,7 +43,7 @@
       const pc = C.CATS.find(c => c.id === t.cat[0]) || C.CATS[0];
       return { name: t.name, catLabel: pc.label, icon: pc.icon, soft: `oklch(0.95 0.035 ${pc.hue})`, ring: `oklch(0.88 0.06 ${pc.hue})`, ink: `oklch(0.5 0.15 ${pc.hue})`, tatH: this.tat(t).replace('hrs', 'hours'), paramsCap: t.params + (t.params > 1 ? ' Parameters' : ' Parameter'), cardBg: 'radial-gradient(75% 70% at 100% 0%, #F0EDFE 0%, rgba(240,237,254,0) 65%), radial-gradient(55% 50% at 0% 100%, rgba(255,236,240,0.55) 0%, rgba(255,236,240,0) 70%), #FFFFFF', tat: this.tat(t), fasting: t.fasting,
         open: () => this.openTest(t.id),
-        priceF: cost(t), priceNum: this.costParts(t).num, priceCur: this.costParts(t).cur, inCart: inC, notInCart: !inC && !cov, covered: !!cov, coveredBy: cov ? 'In ' + cov.name : '', toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); }, stop: e => e && e.stopPropagation() };
+        priceF: cost(t), priceNum: this.costParts(t).num, priceCur: this.costParts(t).cur, underMin: this.pr(t) > 0 && this.pr(t) < RG.minBill, minNote: this.minBillNote(), inCart: inC, notInCart: !inC && !cov, covered: !!cov, coveredBy: cov ? 'In ' + cov.name : '', toggle: e => { e && e.stopPropagation(); this.toggle('test', t.id, t.short); }, stop: e => e && e.stopPropagation() };
     };
     let td = null;
     if (pg === 'test' && s.testId && D.T[s.testId]) {
@@ -206,7 +206,7 @@
       testsCountLabel: tList.length + (tList.length === 1 ? ' test' : ' tests'),
       tq: s.tq, onTq: e => this.setState({ tq: e.target.value }), hasTq: !!s.tq, clearTq: () => this.setState({ tq: '' }),
       testCats, testsView: tList.map(testVM), testsEmpty: !tList.length,
-      barCountLabel: cartCount + (cartCount === 1 ? ' item' : ' items'),
+      barCountLabel: cartCount + (cartCount === 1 ? ' item' : ' items'), noBarNote: !(b.top > 0),
       cartPreview: cartLines.slice(0, 5).map(l => ({ name: l.name, priceF: l.priceF })),
       topMatch: ms.slice(0, 1), cartMatches: ms.slice(0, 2),
       profFilters: C.PF.map(([id, label]) => { const a = s.pf === id; return { label, go: () => this.setState({ pf: id }), bg: a ? '#16133A' : '#fff', fg: a ? '#fff' : '#16133A', bd: a ? '#16133A' : '#E7E6F0' }; }),
@@ -226,7 +226,12 @@
       slotTitle: isHomeMode ? 'Collection date & time' : 'Visit date & time',
       days: days.map(d => { const a = s.form.date === d.key; return { top: d.top, num: d.num, mon: d.mon, pick: () => this.setState(st => ({ form: { ...st.form, date: d.key, slot: d.i === 0 ? '' : st.form.slot }, errors: { ...st.errors, date: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : '#fff', fg: a ? '#fff' : '#16133A', sub: a ? 'rgba(255,255,255,0.8)' : '#5D5A7A', sh: a ? '0 12px 24px -12px rgba(59,44,158,0.85)' : 'none', lift: a ? 'translateY(-2px)' : 'none' }; }),
       slots, slotPicked: !!(pickedDay && s.form.slot), slotSummary: pickedDay ? pickedDay.full + ' · ' + s.form.slot : '', asidePos: isWide ? 'sticky' : 'static',
-      bill: { priceF: this.money(b.price), hcF: b.hc ? this.money(b.hc) : 'FREE', hcColor: b.hc ? '#16133A' : '#0E7350', payF: this.money(b.pay) },
+      bill: { priceF: this.money(b.price), hcF: b.hc ? this.money(b.hc) : 'FREE', hcColor: b.hc ? '#16133A' : '#0E7350', payF: this.money(b.pay), hasTop: b.top > 0, topF: this.money(b.top), minShort: 'Add ' + this.money(b.top) + ' more to avoid minimum billing',
+        minTitle: 'Add ' + this.money(b.top) + ' more to avoid the minimum billing charge',
+        minSub: 'The minimum bill is ' + this.money(RG.minBill) + ' per patient. Add tests worth ' + this.money(b.top) + ' or more and you pay only for your tests.',
+        minPct: Math.round(b.price / (b.pay || 1) * 100) + '%',
+        // Popular tests that clear the charge on their own, to add in one tap.
+        minAdds: b.top > 0 ? byRank.filter(t => !has('test', t.id) && !coveredBy(t.id) && this.pr(t) >= b.top).slice(0, 3).map(t => ({ name: t.short, priceF: cost(t), add: () => this.toggle('test', t.id, t.short) })) : [] },
       confirm: () => this.confirm(),
       isBooked: !!s.booked, bookedUrl: s.booked ? s.booked.url : '#',
       finishBooked: () => { this.setCart(() => []); this.setState({ booked: null }); this.go('home'); },

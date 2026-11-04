@@ -58,6 +58,20 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-gold-ghost]{white-space:nowrap;height:44px;padding:0 16px;border-radius:999px;border:1px solid #EBDAB0;background:rgba(255,255,255,.8);color:#8A6414;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
 [data-gold-ghost]:hover{background:#fff}
 @media (prefers-reduced-motion:reduce){[data-gold-card]::after{animation:none;display:none}}
+/* Offer price: green pill above a dark price, on a strip with a soft green glow. */
+[data-offer-pill]{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;padding:2px 7px 2px 6px;border-radius:999px;font-size:9px;font-weight:800;letter-spacing:.05em;line-height:1.3;text-transform:uppercase;white-space:nowrap;color:#fff;background:linear-gradient(135deg,#128A52 0%,#0B6B48 100%);box-shadow:0 5px 12px -6px rgba(14,115,80,.8),inset 0 1px 0 rgba(255,255,255,.25)}
+[data-offer-pill]::before{content:'';width:4px;height:4px;border-radius:999px;background:#B6F5CF;box-shadow:0 0 0 2px rgba(182,245,207,.3);animation:avmOfferDot 2.4s ease-in-out infinite}
+@keyframes avmOfferDot{50%{box-shadow:0 0 0 4px rgba(182,245,207,.08)}}
+[data-price-strip]{background:radial-gradient(70% 130% at 0% 0%,rgba(34,180,99,.16) 0%,rgba(34,180,99,0) 70%),linear-gradient(135deg,#FBFAFF 0%,#EFECFD 100%);box-shadow:inset 0 0 0 1px rgba(59,44,158,.09),inset 0 1px 0 #fff,0 10px 20px -18px rgba(42,31,122,.6)}
+[data-min-note]{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;line-height:1.35;color:#6E6A8A}
+@media (prefers-reduced-motion:reduce){[data-offer-pill]::before{animation:none}}
+/* Cart prompt to add tests and clear the minimum billing charge. */
+[data-min-card]{display:flex;flex-direction:column;gap:10px;margin-top:6px;padding:14px;border-radius:16px;background:radial-gradient(70% 130% at 100% 0%,rgba(34,180,99,.13) 0%,rgba(34,180,99,0) 70%),#F7F5FF;box-shadow:inset 0 0 0 1px rgba(59,44,158,.1)}
+[data-min-track]{height:6px;border-radius:999px;background:#E2DEF6;overflow:hidden}
+[data-min-track]>span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#22B463,#128A52);transition:width .3s}
+[data-min-add]{display:inline-flex;align-items:center;gap:5px;min-height:36px;padding:0 12px 0 9px;border-radius:999px;border:1px solid rgba(59,44,158,.28);background:#fff;color:#16133A;font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;transition:background .2s,border-color .2s}
+[data-min-add]:hover{background:#EFEDFB;border-color:#3B2C9E}
+[data-min-add] b{color:#5D5A7A;font-weight:600}
 
 /* Reels "What's included": tap a row to show its tests / parameters */
 [data-inc]{flex:none;border-radius:14px;background:#fff;border:1px solid #E7E6F0;overflow:hidden;transition:border-color .2s,box-shadow .2s}

@@ -40,7 +40,10 @@
       else lines.push('   ' + x.params + ' parameter' + (x.params > 1 ? 's' : ''));
       lines.push('   Price: ' + this.cost(x));
     });
-    if (many) lines.push('', '*Total:* ' + this.money(total));
+    const pay = this.billed(total), topped = pay - total > 0.0001;
+    if (many || topped) lines.push('');
+    if (many) lines.push('*Total:* ' + this.money(total));
+    if (topped) lines.push('*To pay:* ' + this.money(pay) + ' (minimum billing)');
     lines.push('', '*Reports:* within ' + (tat || '24 hrs'), '*Preparation:* ' + (fasting ? '10–12 hrs fasting needed' : 'No fasting needed'),
       '*Location:* ' + ((s.region && s.region.city ? s.region.city + ', ' : '') + RG.name),
       '*Collection:* ' + (s.mode === 'walkin' ? 'Walk-in at centre' : 'Home sample collection'));
@@ -62,6 +65,7 @@
       '*Patient:* ' + f.name.trim() + ', ' + f.age + ', ' + f.gender,
       '*Mobile:* ' + this.region().dial + ' ' + f.phone];
     lines.push('', 'Item total: ' + this.money(b.price));
+    if (b.top > 0) lines.push('Minimum billing adjustment: ' + this.money(b.top));
     lines.push('*To pay: ' + this.money(b.pay) + '*');
     const url = this.wa(lines.join('\n'));
     this.setState({ booked: { url } });
