@@ -220,9 +220,10 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 @keyframes avmHcRing{0%,58%{transform:scale(1);opacity:0}64%{opacity:.85}100%{transform:scale(1.9);opacity:0}}
 @media (prefers-reduced-motion:reduce){[data-hc-pop],[data-hc-pop]::before,[data-hc-pop]::after{animation:none}[data-hc-tile]::after{display:none}}
 
-/* The reel viewer rises in softly when it opens (opacity and a few px only, so nothing it measures changes) */
+/* The reel viewer rises in softly when opened by a tap (not from a link: that would show the page under it first).
+   Opacity and a few px only, so nothing it measures changes. */
 @keyframes avmReelsIn{from{opacity:0;transform:translate3d(0,14px,0)}to{opacity:1;transform:none}}
-[data-reels-root]{animation:avmReelsIn .26s cubic-bezier(.2,.8,.2,1) both}
+[data-reels-root][data-anim="1"]{animation:avmReelsIn .26s cubic-bezier(.2,.8,.2,1) both}
 @media (prefers-reduced-motion:reduce){[data-reels-root]{animation:none}}
 
 /* Hero: free home collection banner under the search bar, in the gold of "Save more with profiles" */

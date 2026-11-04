@@ -275,9 +275,10 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 @keyframes avmHcRing{0%,58%{transform:scale(1);opacity:0}64%{opacity:.85}100%{transform:scale(1.9);opacity:0}}
 @media (prefers-reduced-motion:reduce){[data-hc-pop],[data-hc-pop]::before,[data-hc-pop]::after{animation:none}[data-hc-tile]::after{display:none}}
 
-/* The reel viewer rises in softly when it opens (opacity and a few px only, so nothing it measures changes) */
+/* The reel viewer rises in softly when opened by a tap (not from a link: that would show the page under it first).
+   Opacity and a few px only, so nothing it measures changes. */
 @keyframes avmReelsIn{from{opacity:0;transform:translate3d(0,14px,0)}to{opacity:1;transform:none}}
-[data-reels-root]{animation:avmReelsIn .26s cubic-bezier(.2,.8,.2,1) both}
+[data-reels-root][data-anim="1"]{animation:avmReelsIn .26s cubic-bezier(.2,.8,.2,1) both}
 @media (prefers-reduced-motion:reduce){[data-reels-root]{animation:none}}
 
 /* Hero: free home collection banner under the search bar, in the gold of "Save more with profiles" */
@@ -1040,7 +1041,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 </sc-if>
 
 <sc-if value="{{ desktopReels }}" hint-placeholder-val="{{ false }}">
-<div data-reels-root="1" style="position:fixed;inset:0;z-index:100;background:#F6F6FA;color:#16133A;display:flex;flex-direction:column">
+<div data-reels-root="1" data-anim="{{ reelsAnim }}" style="position:fixed;inset:0;z-index:100;background:#F6F6FA;color:#16133A;display:flex;flex-direction:column">
   <div style="position:absolute;inset:0;background:{{ reelAmbient }};pointer-events:none"></div>
   <div style="position:relative;display:flex;align-items:center;gap:16px;padding:18px 28px">
     <span style="background:#fff;border-radius:12px;padding:5px 8px;display:flex;border:1px solid #E7E6F0"><img src="./assets/avm-logo.png" alt="AVM Labs" style="height:36px;display:block"></span>
@@ -1116,7 +1117,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 </sc-if>
 
 <sc-if value="{{ mobileReels }}" hint-placeholder-val="{{ false }}">
-<div data-reels-root="1" style="position:fixed;inset:0;z-index:100;background:#F6F6FA;display:flex;align-items:center;justify-content:center;gap:28px;color:#16133A">
+<div data-reels-root="1" data-anim="{{ reelsAnim }}" style="position:fixed;inset:0;z-index:100;background:#F6F6FA;display:flex;align-items:center;justify-content:center;gap:28px;color:#16133A">
   <div style="position:absolute;inset:0;background:{{ reelAmbient }};pointer-events:none"></div>
   <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ false }}">
     <div style="position:relative;width:260px;max-height:{{ stageH }};overflow:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:24px;background:#fff;border:1px solid #E7E6F0;backdrop-filter:blur(20px)">
@@ -1599,6 +1600,7 @@ class Component extends DCLogic {
     const solo = p.reel ? null : p.id, i = solo ? 0 : D.R.indexOf(p);
     this._ri = i;
     this._openSlide = slide || 0;
+    this._reelsAnim = true;
     this.setState({ reelsOpen: true, reelIdx: i, reelSolo: solo, slides: {}, locOpen: false });
     this.setPath('/profiles/' + encodeURIComponent(p.id), this.pagePath());
     this._reelPushed = true;
@@ -2240,6 +2242,8 @@ class Component extends DCLogic {
         : cats.map(c => ({ label: c.short || c.label, icon: c.icon, soft: c.soft, ink: c.ink, go: c.go })),
       // Lift the hero "Explore profiles" bar so it centres on the category circles beside it (labels sit below them).
       exploreMb: isDesktop ? '43px' : '0px',
+      // The reel viewer fades in when opened by a tap (openReels), not when the page loads on a reel link.
+      reelsAnim: this._reelsAnim ? '1' : '0',
       rowDisplay: isDesktop ? 'grid' : 'flex', rowOverflow: isDesktop ? 'visible' : 'auto',
       reelTiles: D.R.map(p => ({ hcFree: this.hcOn(p), slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: cost(p), ...price(p), bg: reelBg(p.hue), open: () => this.openReels(p.id) })),
       // Desktop: two rows of three. Mobile keeps all of them in one swipeable row.

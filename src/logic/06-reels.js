@@ -6,6 +6,7 @@
     const solo = p.reel ? null : p.id, i = solo ? 0 : D.R.indexOf(p);
     this._ri = i;
     this._openSlide = slide || 0;
+    this._reelsAnim = true;
     this.setState({ reelsOpen: true, reelIdx: i, reelSolo: solo, slides: {}, locOpen: false });
     this.setPath('/profiles/' + encodeURIComponent(p.id), this.pagePath());
     this._reelPushed = true;
