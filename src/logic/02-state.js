@@ -2,6 +2,7 @@
   reelsRef = React.createRef();
 
   init() {
+    this.fromOldHash();
     let cart = [];
     try { cart = JSON.parse(localStorage.getItem('avmlabs_cart_v1') || '[]') || []; } catch (e) {}
     // Drop saved items that no longer exist in the catalogue so the cart badge stays accurate.
@@ -10,7 +11,7 @@
     return { page: 'home', w: window.innerWidth, h: window.innerHeight, cart, sMode: 'tests', q: '', qFocus: false, cat: 'all', tq: '', pf: 'all', hero: 0,
       reelsOpen: false, reelIdx: 0, slides: {}, hint: false, mode: 'home',
       form: { name: '', phone: '', age: '', gender: '', date: '', slot: '' }, errors: {}, booked: null,
-      locOpen: false, toast: '', pop: null, ...this.fromHash() };
+      locOpen: false, toast: '', pop: null, ...this.fromUrl() };
   }
 
   db() {
@@ -35,8 +36,8 @@
       if (Array.isArray(list) && list.length) {
         Component.TESTS = list.map(t => ({ ...t, cat: t.cat && t.cat.length ? t.cat : ['routine'], params: (t.parameters || []).length + (t.calculated || []).length || 1 }));
         Component._db = null;
-        // A link to a test that only exists in the admin (#test/<new id>) couldn't open before the list arrived.
-        const h = this.fromHash();
+        // A link to a test that only exists in the admin (/tests/<new id>) couldn't open before the list arrived.
+        const h = this.fromUrl();
         this.setState(s => ({ catalogVer: (s.catalogVer || 0) + 1, ...(h.page === 'test' && s.page !== 'test' ? { page: 'test', testId: h.testId } : {}) }));
       }
     }).catch(() => {}).then(() => this.loadProfiles());

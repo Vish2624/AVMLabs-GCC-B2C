@@ -48,7 +48,8 @@
     this._onVV = () => this.fixBars();
     if (window.visualViewport) { window.visualViewport.addEventListener('resize', this._onVV); window.visualViewport.addEventListener('scroll', this._onVV); }
     this._onPop = () => {
-      const h = this.fromHash();
+      this.fromOldHash();
+      const h = this.fromUrl();
       this._reelPushed = false;
       this.setState({ locOpen: false, qFocus: false, ...h });
       if (h.reelsOpen) { this._ri = h.reelIdx; this.armHint(); } else { clearTimeout(this._ht); clearTimeout(this._ht2); window.scrollTo(0, 0); }
@@ -120,12 +121,31 @@
     const bar = document.querySelector('[data-tests-bar]');
     if (bar) { const stuck = bar.getBoundingClientRect().top <= h + 1 && window.scrollY > 0; if (stuck !== bar.hasAttribute('data-stuck')) bar.toggleAttribute('data-stuck', stuck); }
   }
-  // Browser tab title for the open page, so tabs, history and shared links read well.
+  // Browser tab title, description and canonical link for the open page (or reel), so tabs, history, shared links
+  // and search results read well. The home values and the site address come from the tags in index.html.
   syncTitle() {
-    const s = this.state, t = s.page === 'test' && this.db().T[s.testId];
-    const name = t ? t.name + ' Test: Price & Report Time' : { tests: 'All Lab Tests', profiles: 'Health Checkup Profiles', cart: 'Your Cart', about: 'About Us' }[s.page];
+    const s = this.state, D = this.db(), t = s.page === 'test' && D.T[s.testId], p = s.reelsOpen && D.P[this.cur()];
+    const tag = sel => document.querySelector(sel), canon = tag('link[rel="canonical"]'), desc = tag('meta[name="description"]');
+    const home = this._seo || (this._seo = { site: canon ? new URL(canon.href).origin : location.origin, desc: desc ? desc.content : '', og: (tag('meta[property="og:description"]') || {}).content || '', robots: (tag('meta[name="robots"]') || {}).content || '' });
+    const where = ' Free home sample collection in Bahrain, Saudi Arabia and the UAE.';
+    const name = p ? p.name + ': Health Checkup Tests & Price' : t ? t.name + ' Test: Price & Report Time' : { tests: 'All Lab Tests', profiles: 'Health Checkup Profiles', cart: 'Your Cart', about: 'About Us' }[s.page];
     const title = name ? name + ' | AVM Labs' : 'AVM Labs | Lab Tests & Health Profiles with Free Home Collection';
+    const text = p ? p.name + ': ' + (p.tagline ? p.tagline + ' ' : '') + p.ts.length + ' tests (' + p.params + ' parameters) from one sample' + (this.tat(p) ? ', report in ' + this.tat(p) : '') + '.' + where
+      : t ? t.name + ' test at AVM Labs. ' + ((t.about || '').split(/(?<=\.)\s/)[0] || '') + (this.tat(t) ? ' Report in ' + this.tat(t) + ',' : '') + (t.fasting ? ' fasting needed.' : ' no fasting needed.') + where
+      : { tests: 'Browse every lab test at AVM Labs with local prices, report times and fasting needs. Book online.' + where,
+        profiles: 'Compare AVM Labs health checkup profiles: packages of tests taken from one sample, at one price.' + where,
+        cart: 'Review the lab tests and health profiles in your AVM Labs cart and book a home sample collection.',
+        about: 'About AVM Labs: an accredited laboratory offering lab tests and health profiles with home sample collection and reports in 24 hours.' + where }[s.page] || home.desc;
+    const url = home.site + (p ? this.reelPath(this.cur()) : this.pagePath());
+    const set = (sel, attr, v) => { const el = tag(sel); if (el && el.getAttribute(attr) !== v) el.setAttribute(attr, v); };
     if (document.title !== title) document.title = title;
+    set('meta[name="description"]', 'content', text);
+    set('link[rel="canonical"]', 'href', url);
+    set('meta[property="og:url"]', 'content', url);
+    set('meta[property="og:title"]', 'content', title);
+    set('meta[property="og:description"]', 'content', name ? text : home.og);
+    // The cart is personal: keep it out of search results.
+    set('meta[name="robots"]', 'content', s.page === 'cart' && !p ? 'noindex, follow' : home.robots);
   }
   componentDidUpdate() {
     this.syncTitle();

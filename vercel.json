@@ -1,6 +1,10 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/:page(tests|profiles|about|cart)", "destination": "/index.html" },
+    { "source": "/:page(tests|profiles)/:id", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
