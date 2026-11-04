@@ -126,7 +126,7 @@
   // Browser tab title, description and canonical link for the open page (or reel), so tabs, history, shared links
   // and search results read well. The home values and the site address come from the tags in index.html.
   syncTitle() {
-    const s = this.state, D = this.db(), t = s.page === 'test' && D.T[s.testId], p = s.reelsOpen && D.P[this.cur()];
+    const s = this.state, D = this.db(), t = s.page === 'test' && D.T[s.testId], p = s.reelsOpen && this.reelList()[this.cur()];
     const tag = sel => document.querySelector(sel), canon = tag('link[rel="canonical"]'), desc = tag('meta[name="description"]');
     const home = this._seo || (this._seo = { site: canon ? new URL(canon.href).origin : location.origin, desc: desc ? desc.content : '', og: (tag('meta[property="og:description"]') || {}).content || '', robots: (tag('meta[name="robots"]') || {}).content || '' });
     const where = ' Free home sample collection in Bahrain, Saudi Arabia and the UAE.';
@@ -210,7 +210,7 @@
                 }
                 if (d.axis !== 'y') return;
                 ev.preventDefault();
-                const H = this.reelH(), min = -(Component.PROFILES.length - 1) * H;
+                const H = this.reelH(), min = -(this.reelList().length - 1) * H;
                 // Past the first or last profile the track gives less and less, like a rubber band.
                 const band = o => (1 - 1 / (o * 0.55 / H + 1)) * H;
                 let y = d.y0 + dy;

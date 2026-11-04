@@ -58,7 +58,7 @@
         paramsTitle: t.params + (t.params > 1 ? ' parameters' : ' parameter') + (calc.length ? ' · ' + calc.length + ' calculated' : ''),
         sample, sampleIcon: sample === 'Urine' ? 'flask-conical' : 'droplet', fastTitle: t.fasting ? 'Fasting required' : 'No fasting required', fastSub: t.fasting ? '10–12 hrs overnight, water is fine' : 'Eat and drink as usual',
         reportT: 'Report in ' + this.tat(t), book: () => this.bookWA([{ type: 'test', id: t.id }]),
-        profs: ps.map(p => ({ name: p.name, meta: p.params + ' parameters · ' + cost(p), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.i) })), toProfs: () => { const el = document.querySelector('[data-td-profs]'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, hasProfs: ps.length > 0 };
+        profs: ps.map(p => ({ name: p.name, meta: p.params + ' parameters · ' + cost(p), sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, open: () => this.openReels(p.id) })), toProfs: () => { const el = document.querySelector('[data-td-profs]'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, hasProfs: ps.length > 0 };
     }
     const book = p => () => this.bookWA([{ type: 'profile', id: p.id }]);
 
@@ -74,7 +74,7 @@
     } else {
       const list = q ? D.P.filter(p => (p.name + ' ' + p.tag + ' ' + p.tagline).toLowerCase().includes(q)) : D.P;
       resultsLabel = q ? 'Profiles' : 'Popular profiles';
-      results = list.slice(0, 6).map(p => ({ name: p.name, meta: p.params + ' parameters', priceF: cost(p), ...price(p), open: () => this.openReels(p.i), action: () => this.openReels(p.i), alabel: 'View', abg: '#fff', afg: '#3B2C9E' }));
+      results = list.slice(0, 6).map(p => ({ name: p.name, meta: p.params + ' parameters', priceF: cost(p), ...price(p), open: () => this.openReels(p.id), action: () => this.openReels(p.id), alabel: 'View', abg: '#fff', afg: '#3B2C9E' }));
     }
 
     const cats = C.CATS.map(c => ({ ...c, name: c.short || c.label, soft: `oklch(0.95 0.035 ${c.hue})`, ink: `oklch(0.5 0.15 ${c.hue})`, grad: `linear-gradient(150deg, oklch(0.97 0.03 ${c.hue}) 0%, oklch(0.91 0.06 ${c.hue}) 100%)`, ring: `oklch(0.85 0.07 ${c.hue})`, count: C.TESTS.filter(t => t.cat.includes(c.id)).length, go: () => { this.setState({ cat: c.id, tq: '' }); this.go('tests'); } }));
@@ -110,7 +110,8 @@
     });
     const pickedDay = days.find(d => d.key === s.form.date);
 
-    const n = D.P.length, ri = s.reelIdx;
+    // The reel viewer swipes through RL (see reelList()); positions in it are reelIdx, k below and goReel().
+    const RL = this.reelList(), n = RL.length, ri = s.reelIdx;
     const stH = Math.round(Math.min(s.h * 0.9, 860));
     // "What's included" rows. Profiles with several sub-profiles list those (tap: their tests and parameters);
     // otherwise each test is a row (tap: its parameters).
@@ -128,17 +129,17 @@
         ? subs.map((x, k) => ({ n: k + 1, name: x.name, meta: plural(x.ts.reduce((a, t) => a + t.params, 0), 'param'), items: x.ts.map(t => incTest(t, true)) }))
         : p.ts.map((t, k) => ({ n: k + 1, name: t.name, meta: plural(t.params, 'param'), items: [incTest(t, false)] }));
     };
-    const reels = s.reelsOpen ? D.P.map(p => {
-      const sl = s.slides[p.i] || 0, inC = has('profile', p.id), worth = this.sumPr(p.ts);
+    const reels = s.reelsOpen ? RL.map((p, k) => {
+      const sl = s.slides[k] || 0, inC = has('profile', p.id), worth = this.sumPr(p.ts);
       return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, ideal: p.ideal, hasIdeal: p.ideal.length > 0, benefits: p.benefits, hasBenefits: p.benefits.length > 0, tat: this.tat(p),
         fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })), groups: incGroups(p),
         // What its tests cost one by one, shown only when the profile is cheaper.
         priceF: cost(p), ...price(p), worthF: this.money(worth), hasWorth: worth > this.pr(p) + 0.0001,
-        segs: [0, 1, 2].map(k => ({ w: k === sl ? '22px' : '7px', bg: k === sl ? '#3B2C9E' : '#D4D1E6', go: () => this.goSlide(p.i, k) })), onH: e => this.onH(p.i, e), toTests: () => this.goSlide(p.i, 1),
+        segs: [0, 1, 2].map(j => ({ w: j === sl ? '22px' : '7px', bg: j === sl ? '#3B2C9E' : '#D4D1E6', go: () => this.goSlide(k, j) })), onH: e => this.onH(k, e), toTests: () => this.goSlide(k, 1),
         toggle: () => this.toggle('profile', p.id, p.name), addIcon: inC ? 'check' : 'plus', addLabel: inC ? 'Added' : 'Add', addText: inC ? 'In cart' : 'Add to cart', addBg: inC ? '#3B2C9E' : '#fff', addInk: inC ? '#fff' : '#16133A', popping: inC && s.pop === p.id, addPop: inC && s.pop === p.id ? '1' : '0',
         share: () => this.share(p), book: book(p) };
     }) : [];
-    const cur = D.P[ri] || D.P[0];
+    const cur = RL[ri] || RL[0];
     const heroW = D.PM['women-hormone-plus'], heroV = D.PM['vitamin-profile'];
 
     const hasTabs = isMobile && !s.reelsOpen && !(pg === 'cart' && hasCart);
@@ -156,7 +157,7 @@
     return {
       isDesktop, isMobile, isWide, isHome: pg === 'home', isTests: pg === 'tests', isProfiles: pg === 'profiles', isCart: pg === 'cart', isAbout: pg === 'about', isTest: !!td, td: td || {}, backTests: go('tests'),
       goHome: go('home'), goTests: go('tests'), goProfiles: go('profiles'), goCart: go('cart'), nav,
-      openReels0: () => this.openReels(0), hasCart, cartEmpty: !hasCart, cartCount, profileCount: n,
+      openReels0: () => this.openReels(), hasCart, cartEmpty: !hasCart, cartCount, profileCount: D.R.length,
       locOpen: s.locOpen, toggleLoc: () => this.setState(st => ({ locOpen: !st.locOpen })),
       locLabel: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name,
       regionPlace: (s.region && s.region.city ? s.region.city + ', ' : '') + RG.name, regionAddr: (this.props || {})[RG.addrProp] || RG.addrDef, relocate: () => this.locate(),
@@ -185,7 +186,7 @@
       // Swipe the hero card left/right; a mostly vertical drag is left to scroll the page.
       heroTS: e => { const t = e.touches[0]; this._hx = t.clientX; this._hy = t.clientY; },
       heroTE: e => { const t = e.changedTouches[0], dx = t.clientX - (this._hx || 0), dy = t.clientY - (this._hy || 0); if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) this.setState(st => ({ hero: (st.hero + (dx < 0 ? 1 : 3)) % 4 })); },
-      heroGo1: () => (heroW ? this.openReels(heroW.i) : this.go('profiles')), heroGo2: () => (heroV ? this.openReels(heroV.i) : this.go('profiles')),
+      heroGo1: () => (heroW ? this.openReels(heroW.id) : this.go('profiles')), heroGo2: () => (heroV ? this.openReels(heroV.id) : this.go('profiles')),
       directions: () => window.open('https://www.google.com/maps/search/?api=1&query=AVM+Labs', '_blank', 'noopener'),
       // With items in the cart, the footer/general WhatsApp buttons send the cart as a booking; otherwise a general enquiry.
       waGeneral: () => (s.cart.length ? this.bookWA(s.cart) : this.openWA("Hi AVM Labs! I'd like to know more about your tests and profiles.")),
@@ -198,12 +199,12 @@
         if (open) { if (pg !== 'home') this.go('home'); setTimeout(() => { const el = document.querySelector('[data-type-ph]'); if (el) el.focus(); }, 60); }
       },
       mRow: s.sMode === 'profiles'
-        ? D.P.map(p => ({ label: p.name, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, go: () => this.openReels(p.i) }))
+        ? D.P.map(p => ({ label: p.name, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, go: () => this.openReels(p.id) }))
         : cats.map(c => ({ label: c.short || c.label, icon: c.icon, soft: c.soft, ink: c.ink, go: c.go })),
       // Lift the hero "Explore profiles" bar so it centres on the category circles beside it (labels sit below them).
       exploreMb: isDesktop ? '43px' : '0px',
       rowDisplay: isDesktop ? 'grid' : 'flex', rowOverflow: isDesktop ? 'visible' : 'auto',
-      reelTiles: D.P.map(p => ({ slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: cost(p), ...price(p), bg: reelBg(p.hue), open: () => this.openReels(p.i) })),
+      reelTiles: D.R.map(p => ({ slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), name: p.name, tag: p.tag, sym: p.sym, params: p.params, priceF: cost(p), ...price(p), bg: reelBg(p.hue), open: () => this.openReels(p.id) })),
       // Desktop: two rows of three. Mobile keeps all of them in one swipeable row.
       popular: (isDesktop ? popularTests.slice(0, 6) : popularTests).map(testVM),
       catTitle: s.cat === 'all' ? 'All lab tests' : (C.CATS.find(c => c.id === s.cat) || {}).label + ' tests',
@@ -219,7 +220,7 @@
         return { name: p.name, tag: p.tag, sym: p.sym, tagline: p.tagline, params: p.params, fastLabel: p.fasting ? 'Fasting needed' : 'No fasting',
           soft: `linear-gradient(160deg, oklch(0.94 0.04 ${p.hue}), oklch(0.985 0.012 ${p.hue}))`, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), veil: `linear-gradient(90deg, oklch(0.95 0.035 ${p.hue} / 0.97) 0%, oklch(0.95 0.035 ${p.hue} / 0.94) 58%, oklch(0.95 0.035 ${p.hue} / 0.6) 78%, oklch(0.95 0.035 ${p.hue} / 0) 96%), linear-gradient(0deg, oklch(0.97 0.02 ${p.hue} / 0.6), transparent 45%)`, ink: `oklch(0.42 0.15 ${p.hue})`,
           preview: p.ts.slice(0, 4).map(t => t.short), hasMore: p.ts.length > 4, moreLabel: '+' + (p.ts.length - 4) + ' more',
-          priceF: cost(p), ...price(p), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i, 1), book: book(p) };
+          priceF: cost(p), ...price(p), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.id, 1), book: book(p) };
       }),
       cartLines, pickHome: () => this.setState({ mode: 'home' }), pickWalk: () => this.setState({ mode: 'walkin' }),
       modeHome: modeStyle(isHomeMode), modeWalk: modeStyle(!isHomeMode), isHomeMode,
@@ -250,8 +251,8 @@
       reels, reelsRef: this.reelsRef, closeReels: () => this.closeReels(),
       stageW: isDesktop ? Math.round(stH * 9 / 16) + 'px' : '100%', stageH: isDesktop ? stH + 'px' : '100%', stageR: isDesktop ? '28px' : '0px',
       reelAmbient: `radial-gradient(60% 60% at 50% 30%, oklch(0.93 0.04 275 / 0.7), transparent 70%)`,
-      reelList: D.P.map(p => ({ sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, name: p.name, meta: p.params + ' parameters · ' + cost(p), go: () => this.goReel(p.i), bg: p.i === ri ? '#EEECF8' : 'transparent', bd: p.i === ri ? '#D9D5F0' : 'transparent' })),
-      mobileReels: s.reelsOpen && isMobile, desktopReels: s.reelsOpen && isDesktop, reelDots: D.P.map(p => ({ h: p.i === ri ? '26px' : '8px', bg: p.i === ri ? '#3B2C9E' : '#D4D1E6', go: () => this.goReel(p.i) })), reelUp: () => this.goReel(this.cur() - 1), reelDown: () => this.goReel(this.cur() + 1), reelPos: (ri + 1) + ' / ' + n,
+      reelList: RL.map((p, k) => ({ sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, name: p.name, meta: p.params + ' parameters · ' + cost(p), go: () => this.goReel(k), bg: k === ri ? '#EEECF8' : 'transparent', bd: k === ri ? '#D9D5F0' : 'transparent' })),
+      mobileReels: s.reelsOpen && isMobile, desktopReels: s.reelsOpen && isDesktop, reelDots: RL.map((p, k) => ({ h: k === ri ? '26px' : '8px', bg: k === ri ? '#3B2C9E' : '#D4D1E6', go: () => this.goReel(k) })), reelUp: () => this.goReel(this.cur() - 1), reelDown: () => this.goReel(this.cur() + 1), reelPos: (ri + 1) + ' / ' + n,
       prevSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) - 1); }, nextSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) + 1); },
       reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')', hintBottom: 'calc(82px + ' + reelPadB + ')'
     };

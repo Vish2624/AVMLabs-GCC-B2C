@@ -44,6 +44,8 @@ export const profileSchema = z
       .max(9999, 'Display order must be 9999 or less')
       .default(0),
     published: z.boolean().default(true),
+    // In the reels and the home reel row; every published profile is on the Profiles page.
+    inReels: z.boolean().default(true),
     subProfiles: z
       .array(z.number().int().positive())
       .max(30)
@@ -74,7 +76,7 @@ export function expandSubs(subs, tests) {
 
 // A profile with its sub-profiles, in one query.
 const SELECT =
-  'id, code, short_name, name, tag, category, tagline, ideal, benefits, prices, icon, hue, sort_order, published, test_ids, updated_at, ' +
+  'id, code, short_name, name, tag, category, tagline, ideal, benefits, prices, icon, hue, sort_order, published, in_reels, test_ids, updated_at, ' +
   'profile_sub_profiles (sort_order, sub_profile_library (id, name, description, test_ids))';
 
 function toApi(row) {
@@ -99,6 +101,7 @@ function toApi(row) {
     hue: row.hue,
     sortOrder: row.sort_order,
     published: row.published,
+    inReels: row.in_reels,
     updatedAt: row.updated_at,
     subProfiles: subs.map((s) => s.id),
     tests,
@@ -177,6 +180,7 @@ async function save(p) {
         hue: p.hue,
         sort_order: p.sortOrder,
         published: p.published,
+        in_reels: p.inReels,
         test_ids: p.tests,
         sub_profile_ids: p.subProfiles,
       },

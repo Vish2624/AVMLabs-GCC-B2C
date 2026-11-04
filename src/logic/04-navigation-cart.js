@@ -16,7 +16,7 @@
   setPath(p, base) { if (location.pathname !== p) history.pushState(base ? { base } : null, '', p); }
   replacePath(p, base) { history.replaceState(base ? { base } : null, '', p); }
   pagePath() { const s = this.state; return s.page === 'home' ? '/' : s.page === 'test' ? '/tests/' + encodeURIComponent(s.testId) : '/' + s.page; }
-  reelPath(i) { const p = Component.PROFILES[i]; return p ? '/profiles/' + encodeURIComponent(p.id) : this.pagePath(); }
+  reelPath(i) { const p = this.reelList()[i]; return p ? '/profiles/' + encodeURIComponent(p.id) : this.pagePath(); }
   segs(path) { let s = path; try { s = decodeURIComponent(path); } catch (e) {} return s.replace(/^\/+|\/+$/g, '').split('/'); }
   // A test id that isn't known yet (admin tests load after start-up) shows the tests list; loadCatalog() opens it once they arrive.
   pageAt(path) {
@@ -26,9 +26,10 @@
   fromUrl() {
     const [p, reel] = this.segs(location.pathname);
     if (p !== 'profiles' || !reel) return { ...this.pageAt(location.pathname), reelsOpen: false };
-    // Admin profiles load after start-up; loadProfiles() re-finds this id once they arrive.
-    this._wantReel = reel;
-    return { ...this.pageAt((history.state && history.state.base) || '/profiles'), reelsOpen: true, reelIdx: Math.max(0, Component.PROFILES.findIndex(x => x.id === reel)), slides: {} };
+    // A profile not in the reels opens on its own. Admin profiles load after start-up; loadCatalog() re-finds the id.
+    const all = Component.PROFILES, prof = all.find(x => x.id === reel), solo = prof && !prof.reel ? prof.id : null;
+    return { ...this.pageAt((history.state && history.state.base) || '/profiles'), reelsOpen: true, found: !!prof, reelSolo: solo,
+      reelIdx: prof && !solo ? Math.max(0, all.filter(x => x.reel).indexOf(prof)) : 0, slides: {} };
   }
   // Older links kept the page in the hash (#tests, #test/vitd, #profiles&reel=thyroid): move them to their path.
   fromOldHash() {
@@ -96,7 +97,7 @@
       pill: save ? 'Save ' + inr(-m.extra) : '+' + n + ' test' + (n > 1 ? 's' : ''),
       extras: m.others.map(id => D.T[id].short),
       switchIt: () => this.switchTo(m.p, m.ov),
-      view: () => this.openReels(m.p.i)
+      view: () => this.openReels(m.p.id)
     };
   }
 

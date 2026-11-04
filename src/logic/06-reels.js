@@ -1,9 +1,13 @@
   // slide: 0 = overview, 1 = What's included, 2 = Good to know (phones; desktop shows all of it at once).
-  openReels(i, slide) {
-    this._ri = i || 0;
+  // Opens profile id in the reel viewer (the first reel profile without one). A profile that isn't in the reels
+  // (a single panel, opened from the Profiles page) opens on its own, with nothing to swipe to.
+  openReels(id, slide) {
+    const D = this.db(), p = D.PM[id] || D.R[0]; if (!p) return;
+    const solo = p.reel ? null : p.id, i = solo ? 0 : D.R.indexOf(p);
+    this._ri = i;
     this._openSlide = slide || 0;
-    this.setState({ reelsOpen: true, reelIdx: i || 0, slides: {}, locOpen: false });
-    this.setPath(this.reelPath(i || 0), this.pagePath());
+    this.setState({ reelsOpen: true, reelIdx: i, reelSolo: solo, slides: {}, locOpen: false });
+    this.setPath('/profiles/' + encodeURIComponent(p.id), this.pagePath());
     this._reelPushed = true;
     this._hc = 0;
     this.armHint();
@@ -13,6 +17,9 @@
     // Step back over the entry openReels() added, so Back afterwards doesn't land on the same page again.
     if (this._reelPushed) { this._reelPushed = false; history.back(); } else this.replacePath(this.pagePath());
   }
+  // The profiles the reel viewer swipes through: the reel profiles, or just the one opened when it isn't one.
+  // Reel positions (reelIdx, _ri, slides, the track) index this list.
+  reelList() { const D = this.db(), solo = this.state.reelSolo && D.PM[this.state.reelSolo]; return solo ? [solo] : D.R; }
   // Mobile reels: after 4s without any touch, show a swipe hint above the side buttons for 5s, then start counting again.
   // Alternates between "swipe left" (test details) and "swipe up/down" (other profiles).
   armHint() {
@@ -20,7 +27,7 @@
     this.showHint(null);
     this._ht = setTimeout(() => {
       if (!this.state.reelsOpen || this.state.w >= 1024) return;
-      const i = this.cur(), k = this.state.slides[i] || 0, n = Component.PROFILES.length, opts = [];
+      const i = this.cur(), k = this.state.slides[i] || 0, n = this.reelList().length, opts = [];
       if (k < 2) opts.push('left');
       if (n > 1) opts.push(i < n - 1 ? 'up' : 'down');
       if (!opts.length) return;
@@ -106,7 +113,7 @@
     this._sprRaf = requestAnimationFrame(step);
   }
   goReel(i, v0) {
-    const n = Component.PROFILES.length; i = Math.max(0, Math.min(n - 1, i));
+    const n = this.reelList().length; i = Math.max(0, Math.min(n - 1, i));
     this._ri = i;
     this.applyTrack(i, true, null, v0);
     this.replacePath(this.reelPath(i), this.pagePath());

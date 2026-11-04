@@ -19,7 +19,7 @@
   static siteProfile(p, known) {
     const subs = p.subs.map(s => ({ name: s.name, tests: known ? s.tests.filter(id => known.has(id)) : s.tests })).filter(s => s.tests.length);
     return { id: p.id, name: p.name, tag: p.tag, sym: Component.symOf(p.name), hue: p.hue, icon: p.icon || 'layers', tags: [p.category], tagline: p.tagline,
-      tests: [...new Set(subs.flatMap(s => s.tests))], prices: p.prices || {}, ideal: p.ideal || [], benefits: p.benefits || [], subs };
+      tests: [...new Set(subs.flatMap(s => s.tests))], prices: p.prices || {}, ideal: p.ideal || [], benefits: p.benefits || [], subs, reel: p.inReels !== false };
   }
   // The built-in profiles (src/data/profiles.json, from the B2C rates sheet): shared panels, then the profile's own tests.
   static fromCatalog({ library, profiles }) {

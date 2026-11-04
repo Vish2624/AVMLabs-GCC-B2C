@@ -68,11 +68,13 @@ export function ProfileEditorView({
         hue: catalog.colours[0].hue,
         sortOrder: nextSortOrder,
         published: true,
+        inReels: true,
         subProfiles: [],
         tests: [],
       }
     : {
         ...profile,
+        inReels: profile.inReels !== false,
         code: profile.code || '',
         shortName: profile.shortName || '',
         ideal: (profile.ideal || []).join('\n'),
@@ -193,6 +195,8 @@ export function ProfileEditorView({
         <div class="field">
           <span class="label">Visibility</span>
           <label class="switch"><input type="checkbox" data-field="published" ${draft.published ? 'checked' : ''}><span class="track"></span>Show on website</label>
+          <label class="switch"><input type="checkbox" data-field="inReels" ${draft.inReels ? 'checked' : ''}><span class="track"></span>Show in reels</label>
+          <span class="hint">Off: only on the Profiles page, not in the reels or the home reel row.</span>
         </div>
       </div>
     </section>
@@ -344,6 +348,7 @@ export function ProfileEditorView({
       hue: draft.hue,
       sortOrder: Math.max(0, Math.round(Number(draft.sortOrder) || 0)),
       published: draft.published,
+      inReels: draft.inReels,
       subProfiles: draft.subProfiles,
       tests: draft.tests,
     };
@@ -465,7 +470,7 @@ export function ProfileEditorView({
       return;
     }
     markDirty();
-    if (field === 'published') draft.published = t.checked;
+    if (field === 'published' || field === 'inReels') draft[field] = t.checked;
     else if (field === 'price') draft.prices[t.dataset.country] = t.value;
     else if (field === 'id') {
       draft.id = t.value;

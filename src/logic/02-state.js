@@ -24,7 +24,8 @@
     });
     const PM = {}; P.forEach(p => { PM[p.id] = p; });
     const inProf = {}; P.forEach(p => p.tests.forEach(id => { (inProf[id] = inProf[id] || []).push(p); }));
-    return (Component._db = { T, P, PM, inProf });
+    // R: the profiles in the reels and the home reel row (all of P are on the Profiles page).
+    return (Component._db = { T, P, PM, inProf, R: P.filter(p => p.reel) });
   }
 
   // Swaps the built-in tests and profiles for the ones managed in the admin (/api/tests, /api/profiles), fetched
@@ -43,12 +44,10 @@
       if (newP) { Component.PROFILES = P; Component.PICON = Object.fromEntries(P.map(p => [p.id, p.icon])); }
       Component._db = null;
       // A link to a test or reel that only exists in the admin couldn't open before the lists arrived.
-      const h = this.fromUrl(), list = Component.PROFILES;
-      const ri = this._wantReel ? list.findIndex(p => p.id === this._wantReel) : -1;
-      this._wantReel = null;
-      if (ri >= 0 && this.state.reelsOpen) { this._ri = ri; requestAnimationFrame(() => this.applyTrack(ri, false)); }
+      const h = this.fromUrl(), list = Component.PROFILES, reel = this.state.reelsOpen && h.reelsOpen && h.found;
+      if (reel) { this._ri = h.reelIdx; requestAnimationFrame(() => this.applyTrack(h.reelIdx, false)); }
       this.setState(s => ({ catalogVer: (s.catalogVer || 0) + 1, cart: s.cart.filter(c => (c.type === 'test' ? Component.TESTS : list).some(x => x.id === c.id)),
-        ...(h.page === 'test' && s.page !== 'test' ? { page: 'test', testId: h.testId } : {}), ...(ri >= 0 && s.reelsOpen ? { reelIdx: ri } : {}) }));
+        ...(h.page === 'test' && s.page !== 'test' ? { page: 'test', testId: h.testId } : {}), ...(reel ? { reelIdx: h.reelIdx, reelSolo: h.reelSolo } : {}) }));
     });
   }
 
