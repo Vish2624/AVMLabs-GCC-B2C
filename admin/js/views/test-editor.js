@@ -21,6 +21,8 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
   const draft = isNew
     ? {
         id: '',
+        code: '',
+        shortName: '',
         name: '',
         short: '',
         categories: [],
@@ -37,6 +39,8 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
       }
     : {
         ...test,
+        code: test.code || '',
+        shortName: test.shortName || '',
         categories: [...test.cat],
         prices: Object.fromEntries(COUNTRIES.map((c) => [c.code, String(test.prices?.[c.code] ?? '')])),
         tats: Object.fromEntries(COUNTRIES.map((c) => [c.code, test.tats?.[c.code] || ''])),
@@ -88,6 +92,16 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
           <label for="short">Short name <span class="hint">(optional)</span></label>
           <input id="short" data-field="short" value="${draft.short}" placeholder="e.g. Vitamin D" maxlength="60" autocomplete="off">
           <span class="hint">Used where space is tight. Defaults to the test name.</span>
+        </div>
+        <div class="field">
+          <label for="code">Lab code</label>
+          <input id="code" data-field="code" value="${draft.code}" placeholder="e.g. VITDC" maxlength="60" autocomplete="off">
+          <span class="hint">For the lab only. Not shown on the website.</span>
+        </div>
+        <div class="field">
+          <label for="shortName">Lab short name</label>
+          <input id="shortName" data-field="shortName" value="${draft.shortName}" placeholder="e.g. VITDC" maxlength="40" autocomplete="off">
+          <span class="hint">For the lab only. Not shown on the website.</span>
         </div>
         <div class="field">
           <label for="sample">Sample</label>
@@ -234,6 +248,8 @@ export function TestEditorView({ test, catalog, subProfiles, profiles, onSave, o
     }
     const payload = {
       id: draft.id,
+      code: draft.code.trim(),
+      shortName: draft.shortName.trim(),
       name: draft.name.trim(),
       short: draft.short.trim(),
       categories: draft.categories,

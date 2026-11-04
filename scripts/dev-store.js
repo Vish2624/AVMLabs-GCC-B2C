@@ -1,71 +1,25 @@
 // In-memory stand-in for the Supabase tables (tests, sub-profiles, profiles), used by scripts/dev.js when
-// SUPABASE_SERVICE_ROLE_KEY is not set. Starts from supabase/seed.sql, brought up to date the way
-// migration 0004 does it (old panels swapped for their tests, profile prices = what their tests cost)
-// and with the lists from migration 0005; changes last until the dev server restarts.
-import fs from 'node:fs';
-import { remapTests, STATIC_TESTS } from '../server/catalog.js';
+// SUPABASE_SERVICE_ROLE_KEY is not set. Starts from the built-in tests and profiles (src/data/), which is
+// what the database holds after migration 0006; changes last until the dev server restarts.
+import { STATIC_PROFILES, STATIC_TESTS } from '../server/catalog.js';
 import { HttpError } from '../server/http.js';
-import { expandSubs, sumPrices } from '../server/profiles.js';
+import { expandSubs } from '../server/profiles.js';
 import { inUse } from '../server/subprofiles.js';
 import { fromStatic, testInUse } from '../server/tests.js';
 
-const str = (s) => s.slice(1, -1).replace(/''/g, "'");
 const now = () => new Date().toISOString();
 
-function parseSeed(sql) {
-  const library = new Map();
-  const libRe = /\((\d+), ('(?:[^']|'')*'), ('(?:[^']|'')*'), array\[([^\]]*)\]::text\[\]\)/g;
-  for (const m of sql.matchAll(libRe)) {
-    const tests = remapTests([...m[4].matchAll(/'([^']+)'/g)].map((t) => t[1]));
-    library.set(+m[1], { id: +m[1], name: str(m[2]), description: str(m[3]), tests, updatedAt: now() });
-  }
-
-  const profiles = new Map();
-  const profileRe =
-    /values \('([^']+)', ('(?:[^']|'')*'), ('(?:[^']|'')*'), '([^']+)', ('(?:[^']|'')*'), (\d+), '([^']+)', (\d+), (\d+), (true|false)\);/g;
-  for (const m of sql.matchAll(profileRe)) {
-    profiles.set(m[1], {
-      id: m[1],
-      name: str(m[2]),
-      tag: str(m[3]),
-      category: m[4],
-      tagline: str(m[5]),
-      icon: m[7],
-      hue: +m[8],
-      sortOrder: +m[9],
-      published: m[10] === 'true',
-      updatedAt: now(),
-      subProfiles: [],
-      tests: [],
-    });
-  }
-
-  const links = sql.slice(sql.indexOf('profile_sub_profiles (profile_id'));
-  const linkRe = /\('([a-z0-9-]+)', (\d+), (\d+)\)/g;
-  const order = [];
-  for (const m of links.matchAll(linkRe)) order.push({ profile: m[1], sub: +m[2], at: +m[3] });
-  order.sort((a, b) => a.at - b.at).forEach((l) => profiles.get(l.profile)?.subProfiles.push(l.sub));
-  return { library, profiles };
-}
-
-// The "Ideal for" and "Why take this profile" lists, keyed by profile id.
-function parseLists(sql) {
-  const list = (s) => [...s.matchAll(/'(?:[^']|'')*'/g)].map((m) => str(m[0]));
-  const re = /\('([a-z0-9-]+)', array\[([^\]]*)\]::text\[\], array\[([^\]]*)\]::text\[\]\)/g;
-  return new Map([...sql.matchAll(re)].map((m) => [m[1], { ideal: list(m[2]), benefits: list(m[3]) }]));
-}
-
-export function createDevStore(seedFile) {
-  const { library, profiles } = parseSeed(fs.readFileSync(seedFile, 'utf8'));
-  const lists = parseLists(
-    fs.readFileSync(new URL('../supabase/migrations/0005_profile_benefits.sql', import.meta.url), 'utf8'),
+export function createDevStore() {
+  const library = new Map(
+    STATIC_PROFILES.library.map((s) => [
+      s.id,
+      { id: s.id, name: s.name, description: '', tests: [...s.tests], updatedAt: now() },
+    ]),
+  );
+  const profiles = new Map(
+    STATIC_PROFILES.profiles.map((p) => [p.id, { ...structuredClone(p), published: true, updatedAt: now() }]),
   );
   const tests = new Map(STATIC_TESTS.map((t) => [t.id, fromStatic(t)]));
-  for (const p of profiles.values()) {
-    const ids = [...new Set([...p.subProfiles.flatMap((id) => library.get(id)?.tests || []), ...p.tests])];
-    p.prices = sumPrices(ids, tests);
-    Object.assign(p, { ideal: [], benefits: [] }, lists.get(p.id));
-  }
   let nextSubId = Math.max(0, ...library.keys()) + 1;
   const copy = (x) => structuredClone(x);
   const withSubs = (p) => {

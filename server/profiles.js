@@ -4,10 +4,12 @@ import { z } from 'zod';
 import { CATEGORIES, COUNTRIES, ICONS, remapTests } from './catalog.js';
 import {
   benefitsReady,
+  codesReady,
   db,
   libraryReady,
   pricesReady,
   requireBenefits,
+  requireCodes,
   requireLibrary,
   requirePrices,
   unwrap,
@@ -34,6 +36,9 @@ export const profileSchema = z
       .min(1)
       .max(40)
       .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'Use lowercase letters, numbers and dashes'),
+    // The lab's code and short name (e.g. EW_PRO): kept for the lab and the admin, never shown on the site.
+    code: text(40).default(''),
+    shortName: text(40).default(''),
     name: text(80).min(1, 'Profile name is required'),
     tag: text(24).default(''),
     category: z.enum(CATEGORIES.map((c) => c.id)),
@@ -79,9 +84,9 @@ export function expandSubs(subs, tests) {
 }
 
 // `prices` exists from migration 0004; before it, profiles had one rupee price that no longer applies.
-// `ideal` and `benefits` exist from migration 0005.
-const select = (prices, benefits) =>
-  `id, name, tag, category, tagline, ${benefits ? 'ideal, benefits, ' : ''}${prices ? 'prices, ' : ''}icon, hue, sort_order, published, test_ids, updated_at, ` +
+// `ideal` and `benefits` exist from migration 0005, `code` and `short_name` from 0006.
+const select = (prices, benefits, codes) =>
+  `id, ${codes ? 'code, short_name, ' : ''}name, tag, category, tagline, ${benefits ? 'ideal, benefits, ' : ''}${prices ? 'prices, ' : ''}icon, hue, sort_order, published, test_ids, updated_at, ` +
   'profile_sub_profiles (sort_order, sub_profile_library (id, name, description, test_ids))';
 
 // What the profile's tests cost together in each country, rounded like a price.
@@ -103,6 +108,8 @@ function toApi(row) {
   const tests = remapTests(row.test_ids);
   return {
     id: row.id,
+    code: row.code || '',
+    shortName: row.short_name || '',
     name: row.name,
     tag: row.tag,
     category: row.category,
@@ -139,10 +146,15 @@ function legacyToApi(row) {
 
 export async function listProfiles({ publishedOnly = false } = {}) {
   if (devStore()) return devStore().list({ publishedOnly });
-  const [ready, priced, listed] = await Promise.all([libraryReady(), pricesReady(), benefitsReady()]);
+  const [ready, priced, listed, coded] = await Promise.all([
+    libraryReady(),
+    pricesReady(),
+    benefitsReady(),
+    codesReady(),
+  ]);
   let query = db()
     .from('profiles')
-    .select(ready ? select(priced, listed) : LEGACY_SELECT)
+    .select(ready ? select(priced, listed, coded) : LEGACY_SELECT)
     .order('sort_order')
     .order('name');
   if (publishedOnly) query = query.eq('published', true);
@@ -170,6 +182,7 @@ export async function createProfile(profile) {
   await requireLibrary();
   await requirePrices();
   await requireBenefits();
+  await requireCodes();
   if (await exists(profile.id)) throw new HttpError(409, 'A profile with this ID already exists');
   await checkSubProfiles(profile.subProfiles);
   await save(profile);
@@ -181,6 +194,7 @@ export async function updateProfile(id, profile) {
   await requireLibrary();
   await requirePrices();
   await requireBenefits();
+  await requireCodes();
   if (profile.id !== id) throw new HttpError(400, 'Profile ID cannot be changed');
   if (!(await exists(id))) throw new HttpError(404, 'Profile not found');
   await checkSubProfiles(profile.subProfiles);
@@ -192,6 +206,8 @@ async function save(p) {
     await db().rpc('save_profile', {
       payload: {
         id: p.id,
+        code: p.code,
+        short_name: p.shortName,
         name: p.name,
         tag: p.tag,
         category: p.category,

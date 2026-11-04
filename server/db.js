@@ -86,6 +86,27 @@ export async function requireBenefits() {
   }
 }
 
+// Lab codes and short names on tests and profiles, and the B2C profiles (migration 0006): true once profiles
+// have a `code` column. Until then codes aren't read or written, and saving a profile is refused because the
+// old save_profile would drop them.
+const CODES_MIGRATION = '0006_b2c_profiles.sql';
+export async function codesReady() {
+  const k = known.get('codes');
+  if (k && (k.ready || Date.now() - k.at < 60_000)) return k.ready;
+  const { error } = await db().from('profiles').select('code').limit(1);
+  // 42703: undefined column. Any other failure is a real error.
+  if (error && !(error.code === '42703' || /column .* does not exist/i.test(error.message || ''))) unwrap({ error });
+  known.set('codes', { ready: !error, at: Date.now() });
+  if (error) console.warn(`Lab codes and B2C profiles not set up; run supabase/migrations/${CODES_MIGRATION}`);
+  return !error;
+}
+
+export async function requireCodes() {
+  if (!(await codesReady())) {
+    throw new HttpError(503, `The database needs an update: run supabase/migrations/${CODES_MIGRATION} in Supabase`);
+  }
+}
+
 // The sub-profile library (migration 0002). Until it runs, the old save_profile would drop sub-profiles.
 export const libraryReady = () => tableReady('sub_profile_library');
 export const requireLibrary = () => requireTable('sub_profile_library');

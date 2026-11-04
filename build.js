@@ -18,7 +18,9 @@ const SRC = path.join(ROOT, 'src');
 const OUT = path.join(ROOT, 'AVM Labs Website.dc.html');
 
 const read = (rel) => fs.readFileSync(path.join(SRC, rel), 'utf8');
-const json = (rel) => JSON.stringify(JSON.parse(read(rel)));
+// Lab codes and short names are for the lab and the admin only: the site never shows them, so they stay out of the page.
+const PRIVATE = new Set(['code', 'shortName']);
+const json = (rel) => JSON.stringify(JSON.parse(read(rel)), (k, v) => (PRIVATE.has(k) ? undefined : v));
 
 function build() {
   return (

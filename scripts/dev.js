@@ -18,11 +18,11 @@ if (!process.env.ADMIN_PASSWORD) {
   console.warn('ADMIN_PASSWORD is not set: admin login is disabled on this dev server.');
 }
 
-// No Supabase key locally -> serve profiles from supabase/seed.sql, kept in memory.
+// No Supabase key locally -> serve the built-in tests and profiles (src/data/), kept in memory.
 if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
   const { createDevStore } = await import('./dev-store.js');
-  globalThis.AVM_DEV_STORE = createDevStore(path.join(ROOT, 'supabase', 'seed.sql'));
-  console.warn('SUPABASE_SERVICE_ROLE_KEY is not set: using sample profiles from seed.sql (in memory).');
+  globalThis.AVM_DEV_STORE = createDevStore();
+  console.warn('SUPABASE_SERVICE_ROLE_KEY is not set: using the built-in tests and profiles (in memory).');
 }
 
 const TYPES = {

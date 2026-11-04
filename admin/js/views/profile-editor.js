@@ -55,6 +55,8 @@ export function ProfileEditorView({
   const draft = isNew
     ? {
         id: '',
+        code: '',
+        shortName: '',
         name: '',
         tag: '',
         category: catalog.categories[0].id,
@@ -71,6 +73,8 @@ export function ProfileEditorView({
       }
     : {
         ...profile,
+        code: profile.code || '',
+        shortName: profile.shortName || '',
         ideal: (profile.ideal || []).join('\n'),
         benefits: (profile.benefits || []).join('\n'),
         prices: Object.fromEntries(COUNTRIES.map((c) => [c.code, String(profile.prices?.[c.code] ?? '')])),
@@ -154,6 +158,16 @@ export function ProfileEditorView({
         <div class="field">
           <label for="tag">Badge label</label>
           <input id="tag" data-field="tag" value="${draft.tag}" placeholder="e.g. Women" maxlength="24" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="code">Lab code</label>
+          <input id="code" data-field="code" value="${draft.code}" placeholder="e.g. EW_PRO" maxlength="40" autocomplete="off">
+          <span class="hint">For the lab only. Not shown on the website.</span>
+        </div>
+        <div class="field">
+          <label for="shortName">Lab short name</label>
+          <input id="shortName" data-field="shortName" value="${draft.shortName}" placeholder="e.g. EW_PRO" maxlength="40" autocomplete="off">
+          <span class="hint">For the lab only. Not shown on the website.</span>
         </div>
         <div class="field">
           <label for="category">Category</label>
@@ -317,6 +331,8 @@ export function ProfileEditorView({
     }
     const payload = {
       id: draft.id,
+      code: draft.code.trim(),
+      shortName: draft.shortName.trim(),
       name: draft.name.trim(),
       tag: draft.tag.trim(),
       category: draft.category,

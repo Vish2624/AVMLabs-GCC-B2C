@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { remapTests } from '../../server/catalog.js';
+import { remapTests, STATIC_PROFILES, STATIC_TESTS } from '../../server/catalog.js';
 import { HttpError } from '../../server/http.js';
 import { expandSubs, parseProfile, sumPrices } from '../../server/profiles.js';
 import { parseSubProfile, parseSubProfileId } from '../../server/subprofiles.js';
@@ -152,16 +152,85 @@ describe('expandSubs', () => {
   });
 });
 
-describe('dev store lists', () => {
-  it('starts profiles with the text from migration 0005', async () => {
+describe('built-in B2C profiles', () => {
+  const testIds = new Set(STATIC_TESTS.map((t) => t.id));
+  const all = (p) => [
+    ...new Set([...p.subProfiles.flatMap((id) => STATIC_PROFILES.library.find((s) => s.id === id).tests), ...p.tests]),
+  ];
+
+  it('are the 27 profiles of the rates sheet, each valid, with known tests', () => {
+    assert.equal(STATIC_PROFILES.profiles.length, 27);
+    for (const p of STATIC_PROFILES.profiles) {
+      parseProfile(p);
+      assert.ok(p.code && p.shortName, `${p.id} has a code and short name`);
+      assert.ok(
+        all(p).every((id) => testIds.has(id)),
+        `${p.id} uses known tests`,
+      );
+    }
+    assert.ok(STATIC_PROFILES.library.every((s) => s.tests.every((id) => testIds.has(id))));
+  });
+
+  it('build bigger profiles from shared panels, with the sheet prices', () => {
+    const ew = STATIC_PROFILES.profiles.find((p) => p.code === 'EW_PRO');
+    const names = ew.subProfiles.map((id) => STATIC_PROFILES.library.find((s) => s.id === id).name);
+    assert.deepEqual(names, ['Liver Profile', 'Lipid Profile', 'Kidney Profile', 'Free Thyroid Profile']);
+    assert.deepEqual(ew.tests, ['hba1c', 'fbs']);
+    assert.deepEqual(ew.prices, { AE: 69, SA: 69, BH: 7 });
+    // PANC is the pancreatic panel.
+    assert.ok(all(STATIC_PROFILES.profiles.find((p) => p.code === 'AW_PRO')).includes('lipase'));
+  });
+
+  it('give every test a lab code and short name', () => {
+    assert.ok(STATIC_TESTS.every((t) => t.code && t.shortName));
+    assert.equal(STATIC_TESTS.find((t) => t.id === 'cbc').shortName, 'H6');
+  });
+});
+
+describe('dev store', () => {
+  it('starts from the built-in profiles, with their panels as sub-profiles', async () => {
     const { createDevStore } = await import('../../scripts/dev-store.js');
-    const store = createDevStore(new URL('../../supabase/seed.sql', import.meta.url));
-    const profiles = store.list();
-    assert.equal(profiles.length, 8);
-    const thyroid = profiles.find((p) => p.id === 'thyroid');
-    assert.deepEqual(thyroid.ideal, ['Weight changes', 'Hair thinning', 'Family history']);
-    assert.equal(thyroid.benefits[0], 'Full T3, T4 & TSH with antibody check');
-    assert.ok(profiles.every((p) => p.ideal.length && p.benefits.length));
+    const profiles = createDevStore().list();
+    assert.equal(profiles.length, 27);
+    const ew = profiles.find((p) => p.id === 'essential-wellness');
+    assert.deepEqual(
+      ew.subs.map((s) => s.name),
+      ['Liver Profile', 'Lipid Profile', 'Kidney Profile', 'Free Thyroid Profile', 'Additional tests'],
+    );
+    assert.equal(ew.code, 'EW_PRO');
+  });
+});
+
+// The website must never receive lab codes or short names.
+describe('public API', () => {
+  const get = async (handler) => {
+    const res = {
+      headers: {},
+      setHeader(k, v) {
+        this.headers[k] = v;
+      },
+      end(body) {
+        this.body = body;
+      },
+    };
+    await handler({ method: 'GET', url: '/', headers: {} }, res);
+    return { status: res.statusCode, body: JSON.parse(res.body) };
+  };
+
+  it('leaves out codes and short names from profiles and tests', async () => {
+    const { createDevStore } = await import('../../scripts/dev-store.js');
+    globalThis.AVM_DEV_STORE = createDevStore();
+    try {
+      const profiles = await get((await import('../../api/profiles.js')).default);
+      const tests = await get((await import('../../api/tests.js')).default);
+      assert.equal(profiles.status, 200);
+      assert.equal(profiles.body.length, 27);
+      assert.equal(tests.body.length, 122);
+      for (const x of [...profiles.body, ...tests.body]) assert.ok(!('code' in x) && !('shortName' in x));
+      assert.equal(profiles.body[0].subs.length, 5);
+    } finally {
+      delete globalThis.AVM_DEV_STORE;
+    }
   });
 });
 
@@ -169,7 +238,7 @@ describe('dev store lists', () => {
 describe('assertKnownTests', () => {
   it('accepts known tests and names unknown ones', async () => {
     const { createDevStore } = await import('../../scripts/dev-store.js');
-    globalThis.AVM_DEV_STORE = createDevStore(new URL('../../supabase/seed.sql', import.meta.url));
+    globalThis.AVM_DEV_STORE = createDevStore();
     try {
       await assertKnownTests(['vitd', 'cholesterol']);
       await assert.rejects(assertKnownTests(['lipid']), (err) => err.message === 'Unknown test: lipid');

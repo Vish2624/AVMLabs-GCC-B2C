@@ -44,7 +44,7 @@
   }
 
   loadProfiles() {
-    const sym = name => { const w = name.replace(/[^A-Za-z ]/g, '').split(/\s+/).filter(Boolean); return w.length > 1 ? w[0][0].toUpperCase() + w[1][0].toLowerCase() : (w[0] || '··').slice(0, 2); };
+    const sym = Component.symOf;
     fetch('/api/profiles').then(r => (r.ok ? r.json() : null)).then(list => {
       if (!Array.isArray(list) || !list.length) return;
       const known = new Set(Component.TESTS.map(t => t.id));

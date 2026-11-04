@@ -136,7 +136,7 @@
         share: () => this.share(p), book: book(p) };
     }) : [];
     const cur = D.P[ri] || D.P[0];
-    const heroW = D.PM.women, heroV = D.PM.vitamin;
+    const heroW = D.PM['women-hormone-plus'], heroV = D.PM['vitamin-profile'];
 
     const hasTabs = isMobile && !s.reelsOpen && !(pg === 'cart' && hasCart);
     const hasTestsBar = isMobile && !isWide && pg === 'tests' && hasCart && !s.reelsOpen;
@@ -174,7 +174,7 @@
       q: s.q, onQ: e => this.setState({ q: e.target.value, qFocus: true }), onQFocus: () => this.setState({ qFocus: true }), onQBlur: () => setTimeout(() => this.setState({ qFocus: false }), 150),
       onQKey: e => { if (e.key === 'Enter') { e.target.blur(); this.renderVals().submitSearch(); } else if (e.key === 'Escape') e.target.blur(); },
       submitSearch: () => { if (s.sMode === 'tests') { this.setState({ tq: s.q, cat: 'all', qFocus: false }); this.go('tests'); } else { const r = results[0]; if (r) r.open(); } },
-      qPlaceholder: s.sMode === 'tests' ? 'Search CBC, TSH, Vitamin D…' : "Search women's health, PCOS…",
+      qPlaceholder: s.sMode === 'tests' ? 'Search CBC, TSH, Vitamin D…' : 'Search wellness, hair fall, thyroid…',
       showResults: s.qFocus, keepFocus: e => e.preventDefault(), resultsLabel, results, noResults: !!q && !results.length,
       tileNext: () => { const el = document.querySelector('[data-tile-row]'); if (!el) return; const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4; el.scrollTo({ left: end ? 0 : el.scrollLeft + Math.max(240, el.clientWidth * 0.75), behavior: 'smooth' }); }, cats, catNext: () => { const el = document.querySelector('[data-cat-row]'); if (!el) return; const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4; el.scrollTo({ left: end ? 0 : el.scrollLeft + Math.max(200, el.clientWidth * 0.7), behavior: 'smooth' }); },
       heroX: 'translateX(-' + (s.hero * 100) + '%)', heroPrev: () => this.setState(st => ({ hero: (st.hero + 3) % 4 })), heroNext: () => this.setState(st => ({ hero: (st.hero + 1) % 4 })),

@@ -5,7 +5,7 @@
 // and editing is refused.
 import { z } from 'zod';
 import { COUNTRIES, SAMPLES, STATIC_TESTS, TEST_CATEGORIES } from './catalog.js';
-import { db, pricesReady, requirePrices, unwrap } from './db.js';
+import { codesReady, db, pricesReady, requirePrices, unwrap } from './db.js';
 import { HttpError } from './http.js';
 
 const text = (max) => z.string().trim().max(max);
@@ -34,6 +34,10 @@ export const testSchema = z
       .min(1)
       .max(40)
       .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'Use lowercase letters, numbers and dashes'),
+    // The lab's code and short name (e.g. HEMOGRAM - 6 PART (DIFF), H6): kept for the lab and the admin,
+    // never shown on the site. `short` below is the name the site shows on buttons and chips.
+    code: text(60).default(''),
+    shortName: text(40).default(''),
     name: text(120).min(1, 'Test name is required'),
     short: text(60).default(''),
     categories: z
@@ -80,6 +84,8 @@ export function parseTest(body) {
 export function toApi(t) {
   return {
     id: t.id,
+    code: t.code,
+    shortName: t.shortName,
     name: t.name,
     short: t.short || t.name,
     cat: t.categories,
@@ -102,6 +108,8 @@ export function toApi(t) {
 // The built-in tests.json rows in the stored shape.
 export const fromStatic = (t) => ({
   id: t.id,
+  code: t.code || '',
+  shortName: t.shortName || '',
   name: t.name,
   short: t.short,
   categories: t.cat,
@@ -120,6 +128,8 @@ export const fromStatic = (t) => ({
 
 const fromRow = (r) => ({
   id: r.id,
+  code: r.code || '',
+  shortName: r.short_name || '',
   name: r.name,
   short: r.short,
   categories: r.categories,
@@ -136,8 +146,10 @@ const fromRow = (r) => ({
   updatedAt: r.updated_at,
 });
 
-const toRow = (t) => ({
+// `codes`: the code columns exist (migration 0006); before it they are left out so saving still works.
+const toRow = (t, codes) => ({
   id: t.id,
+  ...(codes ? { code: t.code, short_name: t.shortName } : {}),
   name: t.name,
   short: t.short,
   categories: t.categories,
@@ -177,7 +189,11 @@ export async function createTest(t) {
   await requirePrices();
   const rows = unwrap(await db().from('tests').select('id').eq('id', t.id).limit(1));
   if (rows.length) throw new HttpError(409, 'A test with this ID already exists');
-  unwrap(await db().from('tests').insert(toRow(t)));
+  unwrap(
+    await db()
+      .from('tests')
+      .insert(toRow(t, await codesReady())),
+  );
 }
 
 export async function updateTest(id, t) {
@@ -187,7 +203,7 @@ export async function updateTest(id, t) {
   const rows = unwrap(
     await db()
       .from('tests')
-      .update({ ...toRow(t), updated_at: new Date().toISOString() })
+      .update({ ...toRow(t, await codesReady()), updated_at: new Date().toISOString() })
       .eq('id', id)
       .select('id'),
   );

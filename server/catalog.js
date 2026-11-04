@@ -3,10 +3,15 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const tests = require('../src/data/tests.json');
+const profiles = require('../src/data/profiles.json');
 
 // Built-in tests: the starting data for the tests table (migration 0003), and what is
 // served until that migration runs. After that, tests are managed in the admin.
 export const STATIC_TESTS = tests;
+
+// Built-in profiles and their shared panels (the B2C rates sheet): what migration 0006 puts in the
+// database, and the starting data of the local dev server.
+export const STATIC_PROFILES = profiles;
 
 // Test categories: must match the test filters on the site (CATS in src/logic/01-data.js).
 export const TEST_CATEGORIES = [
@@ -49,11 +54,16 @@ export const SAMPLES = ['Blood', 'Urine', 'Stool', 'Swab', 'Other'];
 // Must match the profile filters on the site (PF in src/logic/01-data.js).
 export const CATEGORIES = [
   { id: 'wellness', label: 'Wellness' },
-  { id: 'vitamins', label: 'Vitamins' },
-  { id: 'thyroid', label: 'Thyroid' },
   { id: 'women', label: 'Women' },
   { id: 'men', label: 'Men' },
+  { id: 'heart', label: 'Heart' },
   { id: 'diabetes', label: 'Diabetes' },
+  { id: 'thyroid', label: 'Thyroid' },
+  { id: 'vitamins', label: 'Vitamins' },
+  { id: 'hair', label: 'Hair fall' },
+  { id: 'organs', label: 'Kidney & Liver' },
+  { id: 'kids', label: 'Kids' },
+  { id: 'screening', label: 'Screening' },
 ];
 
 // Lucide icon names (https://lucide.dev).
