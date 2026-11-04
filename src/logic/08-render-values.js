@@ -164,7 +164,7 @@
         // screen; the list is then doubled so the marquee loops seamlessly.
         const one = C.CENTRE_PHOTOS.map(([file, ph]) => ({ photoSrc: './assets/centres/bahrain-' + file + '.jpg', photoCredit: '', photoHref: '', ph }));
         const all = Array.from({ length: Math.ceil(6 / one.length) * one.length }, (_, i) => ({ ...one[i % one.length], id: 'centre-' + i }));
-        return { centreRows: rows, centreY: 'translateY(' + (-k * 46) + 'px)', centreCount: regs.length, centreShots: all.concat(all) };
+        return { centreRows: rows, centreY: 'translateY(' + (-k * 46) + 'px)', centreShots: all.concat(all) };
       })(),
       // Hero slides feature these profiles by id; they may be unpublished or reordered in the admin.
       hero1Price: heroW ? cost(heroW) : '', hero2Price: heroV ? cost(heroV) : '',
@@ -219,7 +219,7 @@
           priceF: cost(p), inCart: inC, notInCart: !inC, toggle: () => this.toggle('profile', p.id, p.name), open: () => this.openReels(p.i, 1), book: book(p) };
       }),
       cartLines, pickHome: () => this.setState({ mode: 'home' }), pickWalk: () => this.setState({ mode: 'walkin' }),
-      modeHome: modeStyle(isHomeMode), modeWalk: modeStyle(!isHomeMode), isHomeMode, isWalkMode: !isHomeMode,
+      modeHome: modeStyle(isHomeMode), modeWalk: modeStyle(!isHomeMode), isHomeMode,
       form: s.form, err: s.errors, dial: RG.dial, phPh: RG.phPh, phPad: (RG.dial.length * 10 + 24) + 'px',
       on: { name: setF('name'), phone: setF('phone', digits(RG.phLen)), age: setF('age', digits(3)) },
       bc: { name: bcOf('name'), phone: bcOf('phone'), age: bcOf('age'), gender: bcOf('gender') },
@@ -244,7 +244,7 @@
       ...(() => { const kind = /^Removed/.test(s.toast) ? 'off' : /^(Please|Couldn't)/.test(s.toast) ? 'bad' : 'ok';
         return { toastIcon: { off: 'minus', bad: 'circle-alert', ok: 'check' }[kind], toastDot: { off: 'rgba(255,255,255,0.18)', bad: '#E5484D', ok: '#22B463' }[kind] }; })(),
       hasToast: !!s.toast, toast: s.toast, toastTop: 'calc(' + (s.reelsOpen ? '72px' : '14px') + ' + env(safe-area-inset-top))',
-      reelsOpen: s.reelsOpen, reels, reelsRef: this.reelsRef, onReelsScroll: e => this.onReelsScroll(e), closeReels: () => this.closeReels(),
+      reels, reelsRef: this.reelsRef, closeReels: () => this.closeReels(),
       stageW: isDesktop ? Math.round(stH * 9 / 16) + 'px' : '100%', stageH: isDesktop ? stH + 'px' : '100%', stageR: isDesktop ? '28px' : '0px',
       reelAmbient: `radial-gradient(60% 60% at 50% 30%, oklch(0.93 0.04 275 / 0.7), transparent 70%)`,
       reelList: D.P.map(p => ({ sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, name: p.name, meta: p.tests.length + ' tests · ' + cost(p), go: () => this.goReel(p.i), bg: p.i === ri ? '#EEECF8' : 'transparent', bd: p.i === ri ? '#D9D5F0' : 'transparent' })),

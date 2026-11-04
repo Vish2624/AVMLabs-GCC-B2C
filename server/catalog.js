@@ -33,22 +33,6 @@ export const COUNTRIES = [
   { code: 'BH', name: 'Bahrain', currency: 'BHD', decimals: 2 },
 ];
 
-// Panels from the first catalogue, replaced by the single tests they contained (migration 0004).
-// Applied when reading older data, so a profile saved before the change still lists real tests.
-// No current test id may appear here as a key.
-export const OLD_TEST_IDS = {
-  thyroid: ['t3', 't4', 'tsh'],
-  lipid: ['cholesterol', 'triglycerides', 'hdl', 'ldl'],
-  lft: ['bilirubin-total', 'bilirubin-direct', 'sgot', 'sgpt', 'alp', 'ggt', 'total-protein', 'albumin'],
-  kft: ['creatinine', 'bun', 'uric-acid', 'electrolytes'],
-  iron: ['serum-iron', 'tibc'],
-  antitpo: ['anti-tpo'],
-  crp: ['hscrp'],
-};
-
-// Test ids with the old panels swapped for their tests, first occurrence kept.
-export const remapTests = (ids) => [...new Set((ids || []).flatMap((id) => OLD_TEST_IDS[id] || [id]))];
-
 export const SAMPLES = ['Blood', 'Urine', 'Stool', 'Swab', 'Other'];
 
 // Must match the profile filters on the site (PF in src/logic/01-data.js).

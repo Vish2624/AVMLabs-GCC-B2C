@@ -2,14 +2,14 @@
   openReels(i, slide) {
     this._ri = i || 0;
     this._openSlide = slide || 0;
-    this.setState({ reelsOpen: true, reelIdx: i || 0, slides: {}, hint: false, locOpen: false });
+    this.setState({ reelsOpen: true, reelIdx: i || 0, slides: {}, locOpen: false });
     this.setPath(this.reelPath(i || 0), this.pagePath());
     this._reelPushed = true;
     this._hc = 0;
     this.armHint();
   }
   closeReels() {
-    clearTimeout(this._ht); clearTimeout(this._ht2); cancelAnimationFrame(this._sprRaf); this._sprRaf = 0; this.setState({ reelsOpen: false, hint: false });
+    clearTimeout(this._ht); clearTimeout(this._ht2); cancelAnimationFrame(this._sprRaf); this._sprRaf = 0; this.setState({ reelsOpen: false });
     // Step back over the entry openReels() added, so Back afterwards doesn't land on the same page again.
     if (this._reelPushed) { this._reelPushed = false; history.back(); } else this.replacePath(this.pagePath());
   }
@@ -125,15 +125,6 @@
     const h = el.querySelectorAll('[data-h]')[i]; if (!h) return;
     k = Math.max(0, Math.min(2, k));
     h.scrollTo({ left: k * h.clientWidth, behavior: 'smooth' });
-  }
-  // Re-render only after the swipe settles — updating state mid-gesture re-renders every reel and causes stutter.
-  onReelsScroll(e) {
-    const el = e.currentTarget;
-    clearTimeout(this._vT);
-    this._vT = setTimeout(() => {
-      const i = Math.round(el.scrollTop / el.clientHeight);
-      if (i !== this.state.reelIdx) { this.setState({ reelIdx: i }); this.replacePath(this.reelPath(i), this.pagePath()); }
-    }, 120);
   }
   onH(i, e) {
     const el = e.currentTarget;

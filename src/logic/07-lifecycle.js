@@ -55,10 +55,12 @@
       if (h.reelsOpen) { this._ri = h.reelIdx; this.armHint(); } else { clearTimeout(this._ht); clearTimeout(this._ht2); window.scrollTo(0, 0); }
     };
     window.addEventListener('popstate', this._onPop);
-    // Both timers re-render the page, so they skip a hidden tab. The hero doesn't auto-advance for reduced motion.
+    // Both timers re-render the page, so they only run while their section is on screen in a visible tab, on the
+    // home page with no reel open. The hero doesn't auto-advance for reduced motion.
     const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    this._tickT = setInterval(() => { if (!document.hidden && !this.state.reelsOpen && this.state.page === 'home') this.setState(s => ({ tick: (s.tick || 0) + 1 })); }, 2200);
-    this._heroT = setInterval(() => { if (!still && !document.hidden && this.state.page === 'home' && !this.state.reelsOpen) this.setState(s => ({ hero: (s.hero + 1) % 4 })); }, 6000);
+    const live = el => { if (!el || document.hidden || this.state.reelsOpen || this.state.page !== 'home') return false; const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; };
+    this._tickT = setInterval(() => { if (live(document.querySelector('[data-centre-strip]')?.parentElement)) this.setState(s => ({ tick: (s.tick || 0) + 1 })); }, 2200);
+    this._heroT = setInterval(() => { if (!still && live(document.querySelector('[data-hero-card]'))) this.setState(s => ({ hero: (s.hero + 1) % 4 })); }, 6000);
     if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) this.typeLoop();
     requestAnimationFrame(() => this.fillSlots());
     this.syncTitle();
@@ -257,7 +259,7 @@
     document.removeEventListener('focusin', this._onFocusIn); document.removeEventListener('focusout', this._onFocusOut);
     if (window.visualViewport) { window.visualViewport.removeEventListener('resize', this._onResize); window.visualViewport.removeEventListener('resize', this._onVV); window.visualViewport.removeEventListener('scroll', this._onVV); }
     clearInterval(this._heroT); clearInterval(this._tickT); cancelAnimationFrame(this._cRaf); cancelAnimationFrame(this._sprRaf);
-    [this._tt, this._ht, this._ht2, this._gT, this._vT, this._hT, this._tyT].forEach(clearTimeout);
+    [this._tt, this._ht, this._ht2, this._gT, this._hT, this._tyT].forEach(clearTimeout);
     document.body.style.overflow = ''; document.documentElement.style.overflow = '';
   }
 

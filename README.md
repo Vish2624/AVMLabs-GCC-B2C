@@ -57,7 +57,9 @@ On load the site fetches `/api/profiles`. If that fails it keeps the profiles bu
 `/admin/` signs in with one shared password and manages health profiles: details, look,
 sub-profiles made of tests picked from `src/data/tests.json`, and the reel text ("Why take
 this profile" and "Ideal for"). The website picks up
-changes within a minute (the public API is cached at Vercel's edge for 60 seconds).
+changes within about 5 minutes: the public API is cached at Vercel's edge for 5 minutes and
+refreshed in the background, so visitors never wait for it. The page shows the built-in tests
+and profiles straight away and only re-renders if the API's differ.
 
 | Route | |
 |---|---|
@@ -74,21 +76,14 @@ changes within a minute (the public API is cached at Vercel's edge for 60 second
 
 ## Setup
 
-1. Create a Supabase project. In its SQL Editor run `supabase/migrations/0001_profiles.sql`,
-   then `supabase/migrations/0002_sub_profile_library.sql`, then `supabase/migrations/0003_tests.sql`,
-   then `supabase/seed.sql`.
-   An existing project only needs `0002_sub_profile_library.sql`: it moves each profile's
-   sub-profiles into the shared library. Until it runs, the website keeps working and the
-   admin shows a message asking for it. `0003_tests.sql` moves the tests into the database so
-   they can be managed in the admin; until it runs, the built-in `src/data/tests.json` is used.
-   After `seed.sql`, run `0004_country_prices.sql` and then `0005_profile_benefits.sql`. Until
-   `0005` runs, the website keeps its built-in reel text and the admin refuses to save profiles,
-   with a message asking for it. Then run `0006_b2c_profiles.sql`: it replaces every profile with
-   the 27 from the B2C rates sheet (`src/data/profiles.json`) and adds each test's and profile's
-   lab code and short name. These are kept for the lab and shown only in the admin: the public
-   API and the website leave them out. Until `0006` runs, the API serves those 27 built-in profiles
-   instead of the database's old ones, and the admin shows them but refuses to save profiles or
-   sub-profiles, with a message asking for it.
+1. Create a Supabase project. In its SQL Editor run, in order: `supabase/migrations/0001_profiles.sql`,
+   `0002_sub_profile_library.sql`, `0003_tests.sql`, then `supabase/seed.sql`, then
+   `0004_country_prices.sql`, `0005_profile_benefits.sql` and `0006_b2c_profiles.sql`. An existing
+   project runs the ones it hasn't yet. `0006` replaces every profile with the 27 from the B2C rates
+   sheet (`src/data/profiles.json`) and adds each test's and profile's lab code and short name, kept
+   for the lab and shown only in the admin (the public API and the website leave them out).
+   Until `0006` has run, the API serves the built-in tests and profiles (`src/data/`) and the admin
+   shows them but refuses to save, with a message asking for it.
 2. In Vercel → Project Settings → Environment Variables, add the values listed in
    `.env.example` (SESSION_SECRET is optional), then redeploy. Connecting Supabase
    through Vercel → Storage adds the two Supabase values automatically.

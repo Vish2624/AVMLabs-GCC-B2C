@@ -6,23 +6,31 @@
     { id: 'heart', label: 'Heart & Lipids', short: 'Heart', sym: 'Ht', icon: 'heart-pulse', hue: 25 }, { id: 'hormones', label: 'Hormones', sym: 'Ho', icon: 'atom', hue: 300 },
     { id: 'infections', label: 'Infections & Immunity', short: 'Infections', sym: 'In', icon: 'shield-check', hue: 160 }, { id: 'tumour', label: 'Tumour Markers', short: 'Tumour', sym: 'Tm', icon: 'ribbon', hue: 330 }
   ];
-  static TESTS = @json data/tests.json;
+  // Tests as the site uses them, from the built-in list or /api/tests: each with its parameter count (measured +
+  // calculated, at least 1) and a category ('routine' if none). The built-in list gets the same, so the first paint
+  // already has every count instead of NaN until the API answers.
+  static prepTests(list) { return list.map(t => ({ ...t, cat: t.cat && t.cat.length ? t.cat : ['routine'], params: (t.parameters || []).length + (t.calculated || []).length || 1 })); }
+  static TEST_DATA = @json data/tests.json;
+  static TESTS = Component.prepTests(Component.TEST_DATA);
   // Two letters for a profile's badge, from its first two words ("Essential Wellness" -> "Ew").
   static symOf(name) { const w = name.replace(/[^A-Za-z ]/g, '').split(/\s+/).filter(Boolean); return w.length > 1 ? w[0][0].toUpperCase() + w[1][0].toLowerCase() : (w[0] || '··').slice(0, 2); }
-  // Built-in profiles (src/data/profiles.json, from the B2C rates sheet), in the shape /api/profiles gives: the shared
-  // panels and the profile's own tests become `subs`, and `tests` lists every test once. Shown until the admin's profiles
-  // load. A profile's report time is the longest of its tests' (see tats in db()).
+  // A profile as the site uses it, from /api/profiles or the built-in list: `subs` are the groups for "What's included"
+  // (tests not in `known` dropped), `tests` lists every test once. Its report time is the longest of its tests' (tats in db()).
+  static siteProfile(p, known) {
+    const subs = p.subs.map(s => ({ name: s.name, tests: known ? s.tests.filter(id => known.has(id)) : s.tests })).filter(s => s.tests.length);
+    return { id: p.id, name: p.name, tag: p.tag, sym: Component.symOf(p.name), hue: p.hue, icon: p.icon || 'layers', tags: [p.category], tagline: p.tagline,
+      tests: [...new Set(subs.flatMap(s => s.tests))], prices: p.prices || {}, ideal: p.ideal || [], benefits: p.benefits || [], subs };
+  }
+  // The built-in profiles (src/data/profiles.json, from the B2C rates sheet): shared panels, then the profile's own tests.
   static fromCatalog({ library, profiles }) {
     const lib = Object.fromEntries(library.map(s => [s.id, s]));
     return profiles.map(p => {
       const panels = p.subProfiles.map(id => lib[id]).filter(Boolean);
-      const subs = [...panels.map(s => ({ name: s.name, tests: s.tests })), ...(p.tests.length ? [{ name: panels.length ? 'Additional tests' : 'Tests', tests: p.tests }] : [])];
-      return { id: p.id, name: p.name, tag: p.tag, sym: Component.symOf(p.name), hue: p.hue, icon: p.icon, tags: [p.category], tagline: p.tagline,
-        tests: [...new Set(subs.flatMap(s => s.tests))], prices: p.prices, ideal: p.ideal, benefits: p.benefits, subs };
+      return Component.siteProfile({ ...p, subs: [...panels, ...(p.tests.length ? [{ name: panels.length ? 'Additional tests' : 'Tests', tests: p.tests }] : [])] });
     });
   }
-  static CATALOG = @json data/profiles.json;
-  static PROFILES = Component.fromCatalog(Component.CATALOG);
+  static PROFILE_DATA = @json data/profiles.json;
+  static PROFILES = Component.fromCatalog(Component.PROFILE_DATA);
   static PICON = Object.fromEntries(Component.PROFILES.map(p => [p.id, p.icon]));
   static TYPE_TERMS = { tests: ['Vitamin D', 'TSH', 'HbA1c', 'CBC', 'cholesterol'], profiles: ['Essential Wellness', 'hair fall', 'thyroid', 'heart', 'vitamin'] };
   // Unsplash photos for image slots: [photo id, photographer, Unsplash username]. Unsplash requires the credit.

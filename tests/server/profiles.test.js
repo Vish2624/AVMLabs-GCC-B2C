@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { remapTests, STATIC_PROFILES, STATIC_TESTS } from '../../server/catalog.js';
+import { STATIC_PROFILES, STATIC_TESTS } from '../../server/catalog.js';
 import { HttpError } from '../../server/http.js';
-import { expandSubs, parseProfile, staticProfiles, sumPrices } from '../../server/profiles.js';
+import { expandSubs, parseProfile, staticProfiles } from '../../server/profiles.js';
 import { parseSubProfile, parseSubProfileId } from '../../server/subprofiles.js';
 import { assertKnownTests, parseTest } from '../../server/tests.js';
 
@@ -312,23 +312,5 @@ describe('parseTest', () => {
     rejects(parseTest, { ...test(), sortOrder: 0 }, 'Popularity rank starts at 1');
     rejects(parseTest, { ...test(), categories: ['pets'] });
     rejects(parseTest, { ...test(), id: 'Vit D' });
-  });
-});
-
-describe('remapTests', () => {
-  it('swaps the old panels for their tests, keeping order and dropping repeats', () => {
-    assert.deepEqual(remapTests(['thyroid', 'tsh', 'cbc']), ['t3', 't4', 'tsh', 'cbc']);
-    assert.deepEqual(remapTests(['iron', 'ferritin']), ['serum-iron', 'tibc', 'ferritin']);
-    assert.deepEqual(remapTests(['vitd']), ['vitd']);
-  });
-});
-
-describe('sumPrices', () => {
-  it('adds up each country and rounds to the currency', () => {
-    const tests = new Map([
-      ['a', { prices: { AE: 17, SA: 17, BH: 1.7 } }],
-      ['b', { prices: { AE: 7, SA: 7, BH: 0.7 } }],
-    ]);
-    assert.deepEqual(sumPrices(['a', 'b', 'missing'], tests), { AE: 24, SA: 24, BH: 2.4 });
   });
 });

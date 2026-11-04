@@ -2,8 +2,8 @@
 // named group of tests that profiles pick from; editing it updates every
 // profile that uses it.
 import { z } from 'zod';
-import { remapTests, STATIC_PROFILES } from './catalog.js';
-import { codesReady, db, requireCodes, requireLibrary, unwrap } from './db.js';
+import { STATIC_PROFILES } from './catalog.js';
+import { db, dbReady, requireDb, unwrap } from './db.js';
 import { HttpError } from './http.js';
 import { assertKnownTests } from './tests.js';
 
@@ -42,7 +42,7 @@ function toApi(row) {
     id: row.id,
     name: row.name,
     description: row.description,
-    tests: remapTests(row.test_ids),
+    tests: row.test_ids,
     updatedAt: row.updated_at,
     usedBy: (row.profile_sub_profiles || []).map((l) => l.profile_id),
   };
@@ -53,8 +53,8 @@ const devStore = () => globalThis.AVM_DEV_STORE;
 
 export async function listSubProfiles() {
   if (devStore()) return devStore().listSubs();
-  // Until migration 0006 runs, profiles come from the built-in list (see listProfiles), so their panels do too.
-  if (!(await codesReady())) {
+  // Until the database is up to date, profiles come from the built-in list (see listProfiles), so their panels do too.
+  if (!(await dbReady())) {
     return STATIC_PROFILES.library.map((s) => ({
       id: s.id,
       name: s.name,
@@ -64,7 +64,6 @@ export async function listSubProfiles() {
       usedBy: STATIC_PROFILES.profiles.filter((p) => p.subProfiles.includes(s.id)).map((p) => p.id),
     }));
   }
-  await requireLibrary();
   const rows = unwrap(
     await db()
       .from('sub_profile_library')
@@ -78,8 +77,7 @@ export async function listSubProfiles() {
 export async function createSubProfile(sub) {
   await assertKnownTests(sub.tests);
   if (devStore()) return devStore().createSub(sub);
-  await requireLibrary();
-  await requireCodes();
+  await requireDb();
   const row = unwrap(
     await db()
       .from('sub_profile_library')
@@ -93,8 +91,7 @@ export async function createSubProfile(sub) {
 export async function updateSubProfile(id, sub) {
   await assertKnownTests(sub.tests);
   if (devStore()) return devStore().updateSub(id, sub);
-  await requireLibrary();
-  await requireCodes();
+  await requireDb();
   const rows = unwrap(
     await db()
       .from('sub_profile_library')
@@ -113,8 +110,7 @@ export async function updateSubProfile(id, sub) {
 // Refuses while any profile still uses it, naming those profiles.
 export async function deleteSubProfile(id) {
   if (devStore()) return devStore().removeSub(id);
-  await requireLibrary();
-  await requireCodes();
+  await requireDb();
   const links = unwrap(await db().from('profile_sub_profiles').select('profiles (name)').eq('sub_profile_id', id));
   if (links.length) throw inUse(links.map((l) => l.profiles?.name).filter(Boolean));
   const rows = unwrap(await db().from('sub_profile_library').delete().eq('id', id).select('id'));

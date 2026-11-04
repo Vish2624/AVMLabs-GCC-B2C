@@ -27,7 +27,7 @@
     if (p !== 'profiles' || !reel) return { ...this.pageAt(location.pathname), reelsOpen: false };
     // Admin profiles load after start-up; loadProfiles() re-finds this id once they arrive.
     this._wantReel = reel;
-    return { ...this.pageAt((history.state && history.state.base) || '/profiles'), reelsOpen: true, reelIdx: Math.max(0, Component.PROFILES.findIndex(x => x.id === reel)), slides: {}, hint: false };
+    return { ...this.pageAt((history.state && history.state.base) || '/profiles'), reelsOpen: true, reelIdx: Math.max(0, Component.PROFILES.findIndex(x => x.id === reel)), slides: {} };
   }
   // Older links kept the page in the hash (#tests, #test/vitd, #profiles&reel=thyroid): move them to their path.
   fromOldHash() {

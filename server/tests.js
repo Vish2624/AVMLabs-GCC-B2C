@@ -1,11 +1,11 @@
 // Lab tests: validation and database access. Each test lists the parameters it
 // measures and, optionally, calculated parameters (worked out from other
 // results, e.g. LDL / HDL Ratio). Prices and report times are set per country.
-// Until migration 0004 runs, the built-in tests (src/data/tests.json) are served
-// and editing is refused.
+// Until the database is up to date (server/db.js), the built-in tests
+// (src/data/tests.json) are served and editing is refused.
 import { z } from 'zod';
 import { COUNTRIES, SAMPLES, STATIC_TESTS, TEST_CATEGORIES } from './catalog.js';
-import { codesReady, db, pricesReady, requirePrices, unwrap } from './db.js';
+import { db, dbReady, requireDb, unwrap } from './db.js';
 import { HttpError } from './http.js';
 
 const text = (max) => z.string().trim().max(max);
@@ -146,10 +146,10 @@ const fromRow = (r) => ({
   updatedAt: r.updated_at,
 });
 
-// `codes`: the code columns exist (migration 0006); before it they are left out so saving still works.
-const toRow = (t, codes) => ({
+const toRow = (t) => ({
   id: t.id,
-  ...(codes ? { code: t.code, short_name: t.shortName } : {}),
+  code: t.code,
+  short_name: t.shortName,
   name: t.name,
   short: t.short,
   categories: t.categories,
@@ -171,7 +171,7 @@ const devStore = () => globalThis.AVM_DEV_STORE;
 export async function listTests({ publishedOnly = false } = {}) {
   let tests;
   if (devStore()) tests = devStore().listTests();
-  else if (!(await pricesReady())) tests = STATIC_TESTS.map(fromStatic);
+  else if (!(await dbReady())) tests = STATIC_TESTS.map(fromStatic);
   else tests = unwrap(await db().from('tests').select('*').order('sort_order').order('name')).map(fromRow);
   return tests.filter((t) => !publishedOnly || t.published).map(toApi);
 }
@@ -186,24 +186,20 @@ export async function assertKnownTests(ids) {
 
 export async function createTest(t) {
   if (devStore()) return devStore().createTest(t);
-  await requirePrices();
+  await requireDb();
   const rows = unwrap(await db().from('tests').select('id').eq('id', t.id).limit(1));
   if (rows.length) throw new HttpError(409, 'A test with this ID already exists');
-  unwrap(
-    await db()
-      .from('tests')
-      .insert(toRow(t, await codesReady())),
-  );
+  unwrap(await db().from('tests').insert(toRow(t)));
 }
 
 export async function updateTest(id, t) {
   if (devStore()) return devStore().updateTest(id, t);
-  await requirePrices();
+  await requireDb();
   if (t.id !== id) throw new HttpError(400, 'Test ID cannot be changed');
   const rows = unwrap(
     await db()
       .from('tests')
-      .update({ ...toRow(t, await codesReady()), updated_at: new Date().toISOString() })
+      .update({ ...toRow(t), updated_at: new Date().toISOString() })
       .eq('id', id)
       .select('id'),
   );
@@ -213,7 +209,7 @@ export async function updateTest(id, t) {
 // Refuses while a sub-profile or profile still includes it, naming them.
 export async function deleteTest(id) {
   if (devStore()) return devStore().removeTest(id);
-  await requirePrices();
+  await requireDb();
   const subs = unwrap(await db().from('sub_profile_library').select('name').contains('test_ids', [id]));
   const profiles = unwrap(await db().from('profiles').select('name').contains('test_ids', [id]));
   const users = [...subs.map((s) => s.name), ...profiles.map((p) => p.name)];

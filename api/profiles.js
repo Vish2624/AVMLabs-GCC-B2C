@@ -10,8 +10,11 @@ export default route({
       200,
       profiles.map(({ published, updatedAt, sortOrder, code, shortName, ...p }) => p),
       {
-        // Cached at Vercel's edge; admin changes show within a minute.
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        // Cached at Vercel's edge for 5 minutes and refreshed in the background, so visitors never wait for a cold
+        // function; admin changes show within about 5 minutes. Browsers always ask again: with their own
+        // stale-while-revalidate they would keep showing the previous answer.
+        'Cache-Control': 'no-cache',
+        'Vercel-CDN-Cache-Control': 'max-age=300, stale-while-revalidate=86400',
       },
     );
   },
