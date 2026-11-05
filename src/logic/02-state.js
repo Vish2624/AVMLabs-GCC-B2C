@@ -10,7 +10,7 @@
     cart = Array.isArray(cart) ? cart.filter(ok) : [];
     return { page: 'home', w: window.innerWidth, h: window.innerHeight, cart, sMode: 'tests', q: '', qFocus: false, cat: 'all', tq: '', pf: 'all', hero: 0,
       reelsOpen: false, reelIdx: 0, slides: {}, mode: 'home',
-      form: { name: '', phone: '', age: '', gender: '', date: '', slot: '' }, errors: {}, booked: null,
+      form: { name: '', phone: '', age: '', gender: '', cc: '' }, errors: {}, booked: null,
       locOpen: false, toast: '', pop: null, ...this.fromUrl() };
   }
 

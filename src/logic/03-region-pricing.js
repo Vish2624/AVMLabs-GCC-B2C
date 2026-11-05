@@ -1,8 +1,16 @@
   static REGIONS = {
-    BH: { code: 'BH', name: 'Bahrain', dial: '+973', phLen: 8, phRe: /^[36]\d{7}$/, phPh: '8-digit mobile', minBill: 1.5, hcFree: 18, show: v => Number(v.toFixed(3)) + ' BD' },
-    SA: { code: 'SA', name: 'Saudi Arabia', dial: '+966', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, hcFree: 180, show: v => Number(v.toFixed(2)).toLocaleString('en-US') + ' SAR' },
-    AE: { code: 'AE', name: 'UAE', dial: '+971', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, hcFree: 180, show: v => Number(v.toFixed(2)).toLocaleString('en-US') + ' AED' }
+    BH: { code: 'BH', name: 'Bahrain', dial: '+973', phLen: 8, phRe: /^[36]\d{7}$/, phPh: '8-digit mobile', minBill: 1.5, hcFree: 18, show: v => Number(v.toFixed(3)) + ' BD', social: { name: 'AVMLabs Bahrain', instagram: 'https://www.instagram.com/avmlabsbahrain', facebook: 'https://www.facebook.com/profile.php?id=61580419852001' } },
+    SA: { code: 'SA', name: 'Saudi Arabia', dial: '+966', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, hcFree: 180, show: v => Number(v.toFixed(2)).toLocaleString('en-US') + ' SAR', social: { name: 'AVMLabs KSA', instagram: 'https://www.instagram.com/avmlabsksa', facebook: 'https://www.facebook.com/profile.php?id=61554832831971' } },
+    AE: { code: 'AE', name: 'UAE', dial: '+971', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, hcFree: 180, show: v => Number(v.toFixed(2)).toLocaleString('en-US') + ' AED', social: { name: 'AVMLabs UAE', instagram: 'https://www.instagram.com/avmlabsuae/', facebook: 'https://www.facebook.com/profile.php?id=61557083525796' } }
   };
+  // The patient's phone country: their own pick (form.cc), otherwise the visitor's location. Our three countries
+  // keep their exact mobile rules; any other country is checked by length only.
+  phoneRule() {
+    const code = this.state.form.cc || this.region().code, R = Component.REGIONS[code];
+    if (R) return { code, dial: R.dial, max: R.phLen, ph: R.phPh, ok: v => R.phRe.test(v), err: 'Enter a valid ' + R.phLen + '-digit mobile number' };
+    const [, , dial, min, max] = Component.DIAL.find(d => d[0] === code), n = min === max ? String(min) : min + '–' + max;
+    return { code, dial, max, ph: n + '-digit mobile', ok: v => /^\d+$/.test(v) && v.length >= min && v.length <= max, err: 'Enter a valid ' + n + '-digit mobile number' };
+  }
   region() {
     const p = this.props || {}, R = Component.REGIONS;
     if (p.previewRegion && R[p.previewRegion]) return R[p.previewRegion];

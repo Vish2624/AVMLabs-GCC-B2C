@@ -9,9 +9,9 @@
   // Opens WhatsApp with the message filled in. If the browser blocks the new tab (some phones do), go there directly.
   // No 'noopener' feature: with it window.open() always returns null, which looked like a block and also sent this tab away.
   openWA(msg, isUrl, num) { const url = isUrl ? msg : this.wa(msg, num), w = window.open(url, '_blank'); if (w) { try { w.opener = null; } catch (e) {} } else window.location.href = url; }
-  go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); this.setPath(page === 'home' ? '/' : '/' + page); }
+  go(page) { this.setState({ page, locOpen: false, qFocus: false, dialOpen: false }); window.scrollTo(0, 0); this.setPath(page === 'home' ? '/' : '/' + page); }
   openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); this.setPath('/tests/' + encodeURIComponent(id)); }
-  // The current page lives in the URL path (/tests, /tests/vitd, /profiles, /cart, /about) so a refresh reopens it
+  // The current page lives in the URL path (/tests, /tests/vitd, /profiles, /cart) so a refresh reopens it
   // and search engines see each page. An open reel is /profiles/<profile id>; the page under it is kept in history.state.base.
   // vercel.json and scripts/dev.js serve index.html on these paths.
   setPath(p, base) { if (location.pathname !== p) history.pushState(base ? { base } : null, '', p); }
@@ -22,7 +22,7 @@
   // A test id that isn't known yet (admin tests load after start-up) shows the tests list; loadCatalog() opens it once they arrive.
   pageAt(path) {
     const [p, id] = this.segs(path);
-    return p === 'tests' && id && Component.TESTS.some(t => t.id === id) ? { page: 'test', testId: id } : ['tests', 'profiles', 'cart', 'about'].includes(p) ? { page: p } : { page: 'home' };
+    return p === 'tests' && id && Component.TESTS.some(t => t.id === id) ? { page: 'test', testId: id } : ['tests', 'profiles', 'cart'].includes(p) ? { page: p } : { page: 'home' };
   }
   fromUrl() {
     const [p, reel] = this.segs(location.pathname);
@@ -35,7 +35,7 @@
   // Older links kept the page in the hash (#tests, #test/vitd, #profiles&reel=thyroid): move them to their path.
   fromOldHash() {
     let raw = location.hash.slice(1); try { raw = decodeURIComponent(raw); } catch (e) {}
-    if (!raw || !/^(tests|profiles|cart|about|test\/[^&/]+)?(&?reel=[^&]*)?$/.test(raw)) return;
+    if (!raw || !/^(tests|profiles|cart|test\/[^&/]+)?(&?reel=[^&]*)?$/.test(raw)) return;
     const reel = (raw.match(/(?:^|&)reel=([^&]*)/) || [])[1], [p, id] = raw.replace(/&?reel=[^&]*/, '').split('/');
     const base = p === 'test' ? '/tests/' + encodeURIComponent(id) : p ? '/' + p : '/';
     history.replaceState(reel ? { base } : null, '', (reel ? '/profiles/' + encodeURIComponent(reel) : base) + location.search);

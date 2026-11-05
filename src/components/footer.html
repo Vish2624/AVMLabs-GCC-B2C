@@ -1,49 +1,53 @@
 <footer style="position:relative;overflow:hidden;background:#0F0C29;color:#C9C6E0;margin-top:clamp(40px,6vw,72px)">
-  <div style="position:absolute;width:520px;height:520px;border-radius:50%;background:#5B46D6;opacity:.14;filter:blur(120px);top:-260px;left:-160px;pointer-events:none"></div>
+  <div style="position:absolute;width:520px;height:520px;border-radius:50%;background:#5B46D6;opacity:.1;filter:blur(120px);top:-260px;left:-160px;pointer-events:none"></div>
   <div style="max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,48px) clamp(16px,3vw,28px) 0;position:relative">
-    <div style="position:relative;overflow:hidden;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px 28px;padding:clamp(22px,3vw,32px) clamp(20px,3.5vw,40px);border-radius:28px;background:linear-gradient(120deg,#231B66 0%,#3B2C9E 65%,#5B46D6 100%);box-shadow:0 30px 60px -36px rgba(91,70,214,0.8),inset 0 1px 0 rgba(255,255,255,0.12)">
-      <div style="position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.18),transparent 70%);right:-60px;top:-140px;pointer-events:none"></div>
-      <div style="display:flex;align-items:center;gap:16px;min-width:0;flex:1 1 300px;position:relative">
+    <div data-foot-cta="1">
+      <div style="position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.1),transparent 70%);right:-60px;top:-140px;pointer-events:none"></div>
+      <div data-foot-cta-text="1">
         <span style="width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);color:#fff;display:grid;place-items:center;flex:none"><avm-i n="house" s="24"></avm-i></span>
-        <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+        <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
           <span style="font-size:clamp(20px,2.4vw,26px);font-weight:800;letter-spacing:-0.02em;color:#fff;line-height:1.2;text-wrap:balance">Book a test in under a minute</span>
-          <span style="font-size:14px;color:#D4CFF7">Home sample collection, or walk in to our centre.</span>
+          <span style="font-size:14px;line-height:1.45;color:#DEDAFA">Home sample collection, or walk in to our centre.</span>
         </div>
       </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;position:relative">
-        <button onClick="{{ waGeneral }}" style="white-space:nowrap;height:50px;padding:0 22px;border-radius:999px;border:none;background:linear-gradient(180deg,#22B463,#138A47);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;gap:9px;cursor:pointer;box-shadow:0 12px 26px -12px rgba(19,138,71,0.9),inset 0 1px 0 rgba(255,255,255,0.25)"><avm-i n="whatsapp" s="19"></avm-i>Book on WhatsApp</button>
-        <button onClick="{{ goTests }}" style="white-space:nowrap;height:50px;padding:0 22px;border-radius:999px;border:none;background:#fff;color:#2A1F7A;font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;transition:transform .2s" style-hover="transform:translateY(-1px)">Browse tests<avm-i n="arrow-right" s="16"></avm-i></button>
+      <div data-foot-cta-btns="1">
+        <button data-foot-btn="wa" onClick="{{ waGeneral }}"><avm-i n="whatsapp" s="18"></avm-i>Book on WhatsApp</button>
+        <button data-foot-btn="browse" onClick="{{ goTests }}">Browse tests<avm-i n="arrow-right" s="18"></avm-i></button>
       </div>
     </div>
   </div>
 
-  <div data-foot-grid="1" style="max-width:1200px;margin:0 auto;padding:clamp(36px,5vw,56px) clamp(16px,3vw,28px) clamp(28px,4vw,40px);position:relative">
+  <div data-foot-grid="1">
     <div data-foot-contact="1" style="display:flex;flex-direction:column;gap:14px;min-width:0">
-      <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Visit or contact us<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
-      <small style="font-size:11.5px;color:#8D88B0;margin-top:-4px">{{ centresLabel }}</small>
-      <sc-for list="{{ centresHere }}" as="c" hint-placeholder-count="1"><div data-foot-centre="1" style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;align-items:flex-start;gap:12px"><span style="width:34px;height:34px;border-radius:10px;background:rgba(123,108,240,0.14);color:#A79CF5;display:grid;place-items:center;flex:none"><avm-i n="map-pin" s="16"></avm-i></span><span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:14.5px;font-weight:700;color:#fff">{{ c.city }}</span><span style="font-size:13.5px;line-height:1.5;color:#C9C6E0">{{ c.address }}</span></span></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;padding-left:46px">
-          <button onClick="{{ c.wa }}" style="white-space:nowrap;height:36px;padding:0 13px;border-radius:999px;border:1px solid rgba(34,180,99,0.45);background:rgba(34,180,99,0.12);color:#7BE3B4;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer;transition:background .2s" style-hover="background:rgba(34,180,99,0.22)"><avm-i n="whatsapp" s="15"></avm-i>WhatsApp</button>
-          <button onClick="{{ c.dir }}" style="white-space:nowrap;height:36px;padding:0 13px;border-radius:999px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer;transition:background .2s" style-hover="background:rgba(255,255,255,0.12)"><avm-i n="navigation" s="15"></avm-i>Directions</button>
+      <span data-foot-head="1">Visit or contact us<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
+      <small style="font-size:12px;color:#A9A5C9;margin-top:-4px">{{ centresLabel }}</small>
+      <sc-for list="{{ centresHere }}" as="c" hint-placeholder-count="1"><div data-foot-centre="1">
+        <div style="display:flex;align-items:flex-start;gap:12px"><span style="width:34px;height:34px;border-radius:10px;background:rgba(123,108,240,0.14);color:#A79CF5;display:grid;place-items:center;flex:none"><avm-i n="map-pin" s="16"></avm-i></span><span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:15px;font-weight:700;line-height:1.3;color:#fff">{{ c.city }}</span><span style="font-size:13.5px;line-height:1.5;color:#C9C6E0">{{ c.address }}</span></span></div>
+        <div data-foot-actions="1">
+          <button data-foot-chip="wa" onClick="{{ c.wa }}"><avm-i n="whatsapp" s="16"></avm-i>WhatsApp</button>
+          <button data-foot-chip="dir" onClick="{{ c.dir }}"><avm-i n="navigation" s="16"></avm-i>Directions</button>
         </div>
       </div></sc-for>
     </div>
     <div data-foot-brand="1" style="display:flex;flex-direction:column;gap:16px;min-width:0">
       <span style="align-self:flex-start;background:#fff;border-radius:12px;padding:6px 8px;display:flex;box-shadow:0 10px 24px -14px rgba(0,0,0,0.6)"><img src="./assets/avm-logo.png" alt="AVM Labs" style="height:48px;display:block"></span>
-      <span style="font-size:14px;line-height:1.7;color:#A9A5C9;max-width:320px">Lab tests and health profiles for hormones, vitamins and everyday wellness, with home sample collection.</span>
+      <span data-foot-about="1">Lab tests and health profiles for hormones, vitamins and everyday wellness, with home sample collection.</span>
+      <div data-foot-social="1">
+        <span>Follow us</span>
+        <div data-foot-social-links="1"><sc-for list="{{ footSocials }}" as="x" hint-placeholder-count="3"><a data-foot-social-link="1" href="{{ x.url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ x.label }}" title="{{ x.label }}"><avm-i n="{{ x.icon }}" s="18"></avm-i></a></sc-for></div>
+      </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Explore<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
-      <div style="display:flex;flex-direction:column;gap:4px"><sc-for list="{{ footLinks }}" as="f" hint-placeholder-count="4"><button onClick="{{ f.go }}" style="align-self:flex-start;white-space:nowrap;border:none;background:none;padding:4px 0;text-align:left;color:#C9C6E0;font-size:14.5px;cursor:pointer;transition:color .2s,transform .2s" style-hover="color:#fff;transform:translateX(3px)">{{ f.label }}</button></sc-for></div>
+    <div data-foot-explore="1" style="display:flex;flex-direction:column;gap:14px;min-width:0">
+      <span data-foot-head="1">Explore<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
+      <div data-foot-links="1"><sc-for list="{{ footLinks }}" as="f" hint-placeholder-count="4"><button data-foot-link="1" onClick="{{ f.go }}">{{ f.label }}</button></sc-for></div>
     </div>
   </div>
 
-  <div style="border-top:1px solid rgba(255,255,255,0.07);position:relative">
-    <div data-foot-bottom="1" style="max-width:1200px;margin:0 auto;padding:18px clamp(16px,3vw,28px) 22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;font-size:12.5px;line-height:1.6;color:#8D88B0">
+  <div style="border-top:1px solid rgba(255,255,255,0.1);position:relative">
+    <div data-foot-bottom="1">
       <span>© 2026 AVM Labs · Wellness Laboratory</span>
-      <span style="display:flex;align-items:center;gap:6px"><avm-i n="info" s="13"></avm-i>Lab results support, but do not replace, medical advice.</span>
-      <button onClick="{{ toTop }}" style="white-space:nowrap;height:32px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.12);background:none;color:#C9C6E0;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;transition:color .2s,border-color .2s" style-hover="color:#fff;border-color:rgba(255,255,255,0.3)"><avm-i n="arrow-up" s="13"></avm-i>Back to top</button>
+      <span data-foot-note="1"><avm-i n="info" s="14"></avm-i>Lab results support, but do not replace, medical advice.</span>
+      <button data-foot-top="1" onClick="{{ toTop }}"><avm-i n="arrow-up" s="14"></avm-i>Back to top</button>
     </div>
   </div>
 <div style="height:{{ spacerH }}"></div>

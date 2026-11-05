@@ -64,8 +64,8 @@
     }
     const book = p => () => this.bookWA([{ type: 'profile', id: p.id }]);
 
-    const nav = [['Home', 'home'], ['Tests', 'tests'], ['Profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p), bg: pgN === p ? '#EFEDFB' : 'transparent', fg: pgN === p ? '#3B2C9E' : '#16133A' }));
-    const segOn = { bg: '#fff', fg: '#16133A', sh: '0 2px 8px -2px rgba(22,19,58,0.2)' }, segOff = { bg: 'transparent', fg: '#5D5A7A', sh: 'none' };
+    const nav = [['Home', 'home'], ['Tests', 'tests'], ['Profiles', 'profiles']].map(([label, p]) => ({ label, go: go(p), bg: pgN === p ? '#EFEDFB' : 'transparent', fg: pgN === p ? '#3B2C9E' : '#16133A' }));
+    const segOn = { fg: '#16133A' }, segOff = { fg: '#5D5A7A' };
 
     const q = s.q.trim().toLowerCase();
     let results = [], resultsLabel = '';
@@ -101,16 +101,14 @@
     const isHomeMode = s.mode === 'home';
     const setF = (k, clean) => e => { let v = e.target.value; if (clean) v = clean(v); this.setState(st => ({ form: { ...st.form, [k]: v }, errors: { ...st.errors, [k]: undefined } })); };
     const digits = n => v => v.replace(/\D/g, '').slice(0, n);
-    const bcOf = k => s.errors[k] ? '#E5484D' : '#E7E6F0';
-    const days = this.days();
-    const nowH = new Date().getHours();
-    const isToday = s.form.date === (days[0] || {}).key;
-    const slots = C.SLOTS.map(([label, start]) => {
-      const dis = isToday && start <= nowH, a = s.form.slot === label;
-      return { label, disabled: dis, icon: start < 8 ? 'sunrise' : start < 16 ? 'sun' : start < 18 ? 'sunset' : 'moon', part: start < 12 ? 'Morning' : start < 16 ? 'Afternoon' : 'Evening',
-        pick: () => !dis && this.setState(st => ({ form: { ...st.form, slot: label }, errors: { ...st.errors, slot: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : dis ? '#F6F6FA' : '#fff', fg: a ? '#fff' : dis ? '#A9A6BD' : '#16133A', sub: a ? 'rgba(255,255,255,0.75)' : '#8A8698', ico: a ? '#fff' : dis ? '#C9C6DA' : '#3B2C9E', sh: a ? '0 10px 22px -12px rgba(59,44,158,0.8)' : 'none', cursor: dis ? 'not-allowed' : 'pointer', td: dis ? 'line-through' : 'none' };
+    // Phone number: digits only, without the leading 0 many people type before a local number.
+    const PH = this.phoneRule(), dq = (s.dialQ || '').trim().toLowerCase();
+    const closeDial = () => this.setState({ dialOpen: false, dialQ: '' });
+    const dialList = !s.dialOpen ? [] : C.DIAL.filter(d => !dq || d[1].toLowerCase().includes(dq) || d[2].includes(dq)).map(([code, name, dial, , max]) => {
+      const a = code === PH.code;
+      return { name, dial, bg: a ? '#F4F2FE' : 'transparent', fw: a ? '800' : '600', pick: () => this.setState(st => ({ form: { ...st.form, cc: code, phone: st.form.phone.slice(0, max) }, errors: { ...st.errors, phone: undefined }, dialOpen: false, dialQ: '' })) };
     });
-    const pickedDay = days.find(d => d.key === s.form.date);
+    const bcOf = k => s.errors[k] ? '#E5484D' : '#E7E6F0';
 
     // The reel viewer swipes through RL (see reelList()); positions in it are reelIdx, k below and goReel().
     const RL = this.reelList(), n = RL.length, ri = s.reelIdx;
@@ -157,7 +155,7 @@
     const tabC = p => pgN === p ? '#3B2C9E' : '#5D5A7A';
 
     return {
-      isDesktop, isMobile, isWide, isHome: pg === 'home', isTests: pg === 'tests', isProfiles: pg === 'profiles', isCart: pg === 'cart', isAbout: pg === 'about', isTest: !!td, td: td || {}, backTests: go('tests'),
+      isDesktop, isMobile, isWide, isHome: pg === 'home', isTests: pg === 'tests', isProfiles: pg === 'profiles', isCart: pg === 'cart', isTest: !!td, td: td || {}, backTests: go('tests'),
       goHome: go('home'), goTests: go('tests'), goProfiles: go('profiles'), goCart: go('cart'), nav,
       openReels0: () => this.openReels(), hasCart, cartEmpty: !hasCart, cartCount, profileCount: D.R.length,
       locOpen: s.locOpen, toggleLoc: () => this.setState(st => ({ locOpen: !st.locOpen })),
@@ -169,9 +167,9 @@
         // Every centre, the visitor's country first, one at a time: city and address; the pin opens Google Maps.
         const all0 = C.CENTRES.filter(c => c.country === RG.code).concat(C.CENTRES.filter(c => c.country !== RG.code)), k = (s.tick || 0) % Math.max(1, all0.length);
         const rows = all0.map((c, i) => { const on = i === k; return { dotW: on ? '20px' : '6px', dotBg: on ? '#3B2C9E' : '#D4D1E6', name: c.city, address: c.address, code: c.country === 'SA' ? 'KSA' : c.country === 'AE' ? 'UAE' : c.country, go: () => this.setState({ tick: i }), map: () => window.open(c.maps, '_blank', 'noopener') }; });
-        // Photos of our Bahrain centre (assets/centres/), repeated to at least 6 tiles so half the strip is wider than the
+        // Photos of our centre and lab (assets/centres/), repeated to at least 6 tiles so half the strip is wider than the
         // screen; the list is then doubled so the marquee loops seamlessly.
-        const one = C.CENTRE_PHOTOS.map(([file, ph]) => ({ photoSrc: './assets/centres/bahrain-' + file + '.jpg', photoCredit: '', photoHref: '', ph }));
+        const one = C.CENTRE_PHOTOS.map(([file, ph]) => ({ photoSrc: './assets/centres/' + file + '.jpg', photoCredit: '', photoHref: '', ph }));
         const all = Array.from({ length: Math.ceil(6 / one.length) * one.length }, (_, i) => ({ ...one[i % one.length], id: 'centre-' + i }));
         return { centreRows: rows, centreY: 'translateY(' + (-k * 54) + 'px)', centreShots: all.concat(all) };
       })(),
@@ -180,7 +178,7 @@
       // Where the site mentions home collection: free from the country's limit.
       hcFreeAt: this.money(RG.hcFree), hcModeSub: b.hcFree ? 'Free · we come to you' : 'Free on ' + this.money(RG.hcFree) + '+', ...(heroV ? parts('hero2', this.pr(heroV)) : {}),
       ...gateVM,
-      smTests: s.sMode === 'tests' ? segOn : segOff, smProfiles: s.sMode === 'profiles' ? segOn : segOff,
+      smTests: s.sMode === 'tests' ? segOn : segOff, smProfiles: s.sMode === 'profiles' ? segOn : segOff, smX: s.sMode === 'profiles' ? 'translateX(100%)' : 'translateX(0)',
       setModeTests: () => this.setState({ sMode: 'tests' }), setModeProfiles: () => this.setState({ sMode: 'profiles' }),
       q: s.q, onQ: e => this.setState({ q: e.target.value, qFocus: true }), onQFocus: () => this.setState({ qFocus: true }), onQBlur: () => setTimeout(() => this.setState({ qFocus: false }), 150),
       onQKey: e => { if (e.key === 'Enter') { e.target.blur(); this.renderVals().submitSearch(); } else if (e.key === 'Escape') e.target.blur(); },
@@ -207,8 +205,6 @@
       mRow: s.sMode === 'profiles'
         ? D.P.map(p => ({ label: p.name, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, go: () => this.openReels(p.id) }))
         : cats.map(c => ({ label: c.short || c.label, icon: c.icon, soft: c.soft, ink: c.ink, go: c.go })),
-      // Lift the hero "Explore profiles" bar so it centres on the category circles beside it (labels sit below them).
-      exploreMb: isDesktop ? '43px' : '0px',
       // The reel viewer fades in when opened by a tap (openReels), not when the page loads on a reel link.
       reelsAnim: this._reelsAnim ? '1' : '0',
       rowDisplay: isDesktop ? 'grid' : 'flex', rowOverflow: isDesktop ? 'visible' : 'auto',
@@ -232,13 +228,11 @@
       }),
       cartLines, pickHome: () => this.setState({ mode: 'home' }), pickWalk: () => this.setState({ mode: 'walkin' }),
       modeHome: modeStyle(isHomeMode), modeWalk: modeStyle(!isHomeMode), isHomeMode,
-      form: s.form, err: s.errors, dial: RG.dial, phPh: RG.phPh, phPad: (RG.dial.length * 10 + 24) + 'px',
-      on: { name: setF('name'), phone: setF('phone', digits(RG.phLen)), age: setF('age', digits(3)) },
+      form: s.form, err: s.errors, dial: PH.dial, phPh: PH.ph, dialOpen: !!s.dialOpen, dialList, dialNone: !!s.dialOpen && !dialList.length, dialQ: s.dialQ || '', closeDial, toggleDial: () => this.setState(st => ({ dialOpen: !st.dialOpen, dialQ: '' })), onDialQ: e => this.setState({ dialQ: e.target.value }), dialKey: e => { if (e.key === 'Escape') closeDial(); },
+      on: { name: setF('name'), phone: setF('phone', v => digits(PH.max)(v.replace(/^[^1-9]+/, ''))), age: setF('age', digits(3)) },
       bc: { name: bcOf('name'), phone: bcOf('phone'), age: bcOf('age'), gender: bcOf('gender') },
       genders: ['Male', 'Female', 'Other'].map(g => { const a = s.form.gender === g; return { label: g, pick: () => this.setState(st => ({ form: { ...st.form, gender: g }, errors: { ...st.errors, gender: undefined } })), bg: a ? '#fff' : 'transparent', fg: a ? '#3B2C9E' : '#5D5A7A', sh: a ? '0 2px 8px -2px rgba(22,19,58,0.2)' : 'none' }; }),
-      slotTitle: isHomeMode ? 'Collection date & time' : 'Visit date & time',
-      days: days.map(d => { const a = s.form.date === d.key; return { top: d.top, num: d.num, mon: d.mon, pick: () => this.setState(st => ({ form: { ...st.form, date: d.key, slot: d.i === 0 ? '' : st.form.slot }, errors: { ...st.errors, date: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : '#fff', fg: a ? '#fff' : '#16133A', sub: a ? 'rgba(255,255,255,0.8)' : '#5D5A7A', sh: a ? '0 12px 24px -12px rgba(59,44,158,0.85)' : 'none', lift: a ? 'translateY(-2px)' : 'none' }; }),
-      slots, slotPicked: !!(pickedDay && s.form.slot), slotSummary: pickedDay ? pickedDay.full + ' · ' + s.form.slot : '', asidePos: isWide ? 'sticky' : 'static',
+      asidePos: isWide ? 'sticky' : 'static',
       bill: { priceF: this.money(b.price), ...parts('price', b.price), ...parts('pay', b.pay), ...parts('top', b.top), hcF: b.hcFree ? 'FREE' : 'Extra charges', hcColor: b.hcFree ? '#0E7350' : '#B4540A', hcFree: b.hcFree,
         // Below the free-collection limit: how much more to add, as minimum billing does (only once something is in the cart).
         showHcLeft: isHomeMode && !b.hcFree && b.items.length > 0, hcShort: 'Add ' + this.money(b.hcLeft) + ' more for free home collection', payF: this.money(b.pay), hasTop: b.top > 0, topF: this.money(b.top), minShort: 'Add ' + this.money(b.top) + ' more to avoid minimum billing',
@@ -251,7 +245,9 @@
       isBooked: !!s.booked, bookedUrl: s.booked ? s.booked.url : '#',
       finishBooked: () => { this.setCart(() => []); this.setState({ booked: null }); this.go('home'); },
       toTop: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
-      footLinks:[['Home', 'home'], ['All tests', 'tests'], ['Health profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p) })),
+      // Instagram and Facebook are per country; LinkedIn is the one company page for all of them.
+      footSocials: [['instagram', 'Instagram', RG.social.instagram, RG.social.name], ['facebook', 'Facebook', RG.social.facebook, RG.social.name], ['linkedin', 'LinkedIn', 'https://www.linkedin.com/company/avmlabsofficial/', 'AVMLabs']].map(([icon, site, url, name]) => ({ icon, url, label: name + ' on ' + site })),
+      footLinks:[['Home', 'home'], ['All tests', 'tests'], ['Health profiles', 'profiles']].map(([label, p]) => ({ label, go: go(p) })),
       spacerH, showTabs, showTestsBar, showCartBar, tab: { home: tabC('home'), tests: tabC('tests'), profiles: tabC('profiles'), cart: tabC('cart') },
       showFab, fabBottom: !isMobile ? '24px' : 'calc(' + (hasCartBar ? '104px' : hasTestsBar ? (ms.length ? '214px' : '160px') : '92px') + ' + ' + barPad + ')', fabAway: 'translate(0, var(--vv-drop, 0px))',
       // Removals show a minus, problems ("Please complete…", "Couldn't copy…") an alert, everything else a tick.
@@ -275,6 +271,6 @@
       reelList: RL.map((p, k) => ({ sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, name: p.name, meta: p.params + ' parameters · ' + cost(p), go: () => this.goReel(k), bg: k === ri ? '#EEECF8' : 'transparent', bd: k === ri ? '#D9D5F0' : 'transparent' })),
       mobileReels: s.reelsOpen && isMobile, desktopReels: s.reelsOpen && isDesktop, reelDots: RL.map((p, k) => ({ h: k === ri ? '26px' : '8px', bg: k === ri ? '#3B2C9E' : '#D4D1E6', go: () => this.goReel(k) })), reelUp: () => this.goReel(this.cur() - 1), reelDown: () => this.goReel(this.cur() + 1), reelPos: (ri + 1) + ' / ' + n,
       prevSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) - 1); }, nextSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) + 1); },
-      reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')', hintBottom: 'calc(82px + ' + reelPadB + ')'
+      reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')'
     };
   }

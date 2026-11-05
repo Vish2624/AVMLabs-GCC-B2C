@@ -1,27 +1,10 @@
-  days() {
-    const out = [], d0 = new Date(); d0.setHours(0, 0, 0, 0);
-    for (let i = 0; i < 6; i++) {
-      const d = new Date(d0); d.setDate(d0.getDate() + i);
-      const key = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-      out.push({ key, i, top: i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-GB', { weekday: 'short' }), bottom: d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }), num: d.getDate(), mon: d.toLocaleDateString('en-GB', { month: 'short' }), full: d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }) });
-    }
-    return out;
-  }
-
   validate() {
     const f = this.state.form, e = {};
     if (f.name.trim().length < 2) e.name = "Enter the patient's full name";
-    const RG = this.region();
-    if (!RG.phRe.test(f.phone)) e.phone = 'Enter a valid ' + RG.phLen + '-digit mobile number';
+    const rule = this.phoneRule();
+    if (!rule.ok(f.phone)) e.phone = rule.err;
     const a = +f.age; if (!a || a < 1 || a > 110) e.age = 'Enter age';
     if (!f.gender) e.gender = 'Select gender';
-    // A date picked before midnight drops off the list of days once the page is left open overnight.
-    if (!f.date || !this.days().some(d => d.key === f.date)) e.date = 'Pick a date';
-    if (!f.slot) e.slot = 'Pick a time slot';
-    else if (f.date === (this.days()[0] || {}).key) {
-      const sl = Component.SLOTS.find(x => x[0] === f.slot);
-      if (sl && sl[1] <= new Date().getHours()) e.slot = 'That slot has passed — pick another';
-    }
     return e;
   }
 
@@ -49,7 +32,8 @@
       '*Location:* ' + ((s.region && s.region.city ? s.region.city + ', ' : '') + RG.name),
       '*Collection:* ' + (s.mode === 'walkin' ? 'Walk-in at centre' : 'Home sample collection' + (total >= RG.hcFree ? ' (Free)' : ' (extra charges apply)')));
     if (f.name.trim()) lines.push('*Patient:* ' + [f.name.trim(), f.age, f.gender].filter(Boolean).join(', '));
-    if (RG.phRe.test(f.phone)) lines.push('*Mobile:* ' + RG.dial + ' ' + f.phone);
+    const rule = this.phoneRule();
+    if (rule.ok(f.phone)) lines.push('*Mobile:* ' + rule.dial + ' ' + f.phone);
     lines.push('', 'Please share the available slots. Thank you!');
     this.openWA(lines.join('\n'), false, num);
   }
@@ -64,15 +48,13 @@
       return;
     }
     const f = this.state.form;
-    const day = (this.days().find(d => d.key === f.date) || {}).full || '';
     const lines = ['Hi AVM Labs! I would like to book:', '', ...b.items.map((it, i) => (i + 1) + '. ' + it.name + ' – ' + this.money(it.price)), '',
       this.state.mode === 'home' ? '*Collection:* Home sample collection' + (b.hcFree ? ' (Free)' : ' (extra charges apply)') : '*Collection:* Walk-in at centre',
-      '*Date & slot:* ' + day + ' · ' + f.slot,
       '*Patient:* ' + f.name.trim() + ', ' + f.age + ', ' + f.gender,
-      '*Mobile:* ' + this.region().dial + ' ' + f.phone];
+      '*Mobile:* ' + this.phoneRule().dial + ' ' + f.phone];
     lines.push('', 'Item total: ' + this.money(b.price));
     if (b.top > 0) lines.push('Minimum billing adjustment: ' + this.money(b.top));
-    lines.push('*To pay: ' + this.money(b.pay) + '*');
+    lines.push('*To pay: ' + this.money(b.pay) + '*', '', 'Please share the available slots. Thank you!');
     const url = this.wa(lines.join('\n'));
     this.setState({ booked: { url } });
     this.openWA(url, true);

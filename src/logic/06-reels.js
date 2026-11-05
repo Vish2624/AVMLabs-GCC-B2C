@@ -21,7 +21,8 @@
   // The profiles the reel viewer swipes through: the reel profiles, or just the one opened when it isn't one.
   // Reel positions (reelIdx, _ri, slides, the track) index this list.
   reelList() { const D = this.db(), solo = this.state.reelSolo && D.PM[this.state.reelSolo]; return solo ? [solo] : D.R; }
-  // Mobile reels: after 4s without any touch, show a swipe hint above the side buttons for 5s, then start counting again.
+  // Mobile reels: a small swipe card under the close button. It shows 1.2s after opening, then after 4s without any
+  // touch, stays for 5s, then starts counting again.
   // Alternates between "swipe left" (test details) and "swipe up/down" (other profiles).
   armHint() {
     clearTimeout(this._ht); clearTimeout(this._ht2);
@@ -34,7 +35,7 @@
       if (!opts.length) return;
       this.showHint(opts[(this._hc = (this._hc || 0) + 1) % opts.length]);
       this._ht2 = setTimeout(() => { this.showHint(null); this.armHint(); }, 5000);
-    }, 4000);
+    }, this._hc ? 4000 : 1200);
   }
   // Shows the hint on the current reel ('up', 'down', 'left'), or hides it (null). Written straight to the page:
   // a re-render here redraws every reel and stalled any swipe that started just as the hint came or went.
@@ -45,7 +46,7 @@
       if (!dir || k !== cur) { if (w.hasAttribute('data-on')) w.removeAttribute('data-on'); return; }
       w.querySelector('[data-swipe]').setAttribute('data-swipe', dir);
       w.querySelectorAll('avm-i').forEach(ic => ic.setAttribute('n', 'chevron-' + dir));
-      w.querySelector('[data-swipe-label]').textContent = dir === 'left' ? 'details' : dir === 'down' ? 'back' : 'next';
+      w.querySelector('[data-swipe-label]').textContent = dir === 'left' ? 'Details' : dir === 'down' ? 'Back' : 'Next';
       w.setAttribute('data-on', '');
     });
   }

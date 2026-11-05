@@ -130,14 +130,13 @@
     const tag = sel => document.querySelector(sel), canon = tag('link[rel="canonical"]'), desc = tag('meta[name="description"]');
     const home = this._seo || (this._seo = { site: canon ? new URL(canon.href).origin : location.origin, desc: desc ? desc.content : '', og: (tag('meta[property="og:description"]') || {}).content || '', robots: (tag('meta[name="robots"]') || {}).content || '' });
     const where = ' Home sample collection in Bahrain, Saudi Arabia and the UAE.';
-    const name = p ? p.name + ': Health Checkup Tests & Price' : t ? t.name + ' Test: Price & Report Time' : { tests: 'All Lab Tests', profiles: 'Health Checkup Profiles', cart: 'Your Cart', about: 'About Us' }[s.page];
+    const name = p ? p.name + ': Health Checkup Tests & Price' : t ? t.name + ' Test: Price & Report Time' : { tests: 'All Lab Tests', profiles: 'Health Checkup Profiles', cart: 'Your Cart' }[s.page];
     const title = name ? name + ' | AVM Labs' : 'AVM Labs | Lab Tests & Health Profiles with Home Collection';
     const text = p ? p.name + ': ' + (p.tagline ? p.tagline + ' ' : '') + p.params + ' parameters from one sample' + (this.tat(p) ? ', report in ' + this.tat(p) : '') + '.' + where
       : t ? t.name + ' test at AVM Labs. ' + (((t.about || '').match(/^.*?\.(?=\s|$)/) || [t.about || ''])[0]) + (this.tat(t) ? ' Report in ' + this.tat(t) + ',' : '') + (t.fasting ? ' fasting needed.' : ' no fasting needed.') + where
       : { tests: 'Browse every lab test at AVM Labs with local prices, report times and fasting needs. Book online.' + where,
         profiles: 'Compare AVM Labs health checkup profiles: packages of tests taken from one sample, at one price.' + where,
-        cart: 'Review the lab tests and health profiles in your AVM Labs cart and book a home sample collection.',
-        about: 'About AVM Labs: an accredited laboratory offering lab tests and health profiles with home sample collection and reports in 24 hours.' + where }[s.page] || home.desc;
+        cart: 'Review the lab tests and health profiles in your AVM Labs cart and book a home sample collection.' }[s.page] || home.desc;
     const url = home.site + (p ? this.reelPath(this.cur()) : this.pagePath());
     const set = (sel, attr, v) => { const el = tag(sel); if (el && el.getAttribute(attr) !== v) el.setAttribute(attr, v); };
     if (document.title !== title) document.title = title;

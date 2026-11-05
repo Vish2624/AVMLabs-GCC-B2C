@@ -21,7 +21,6 @@ const urls = [
   ['/', 'weekly', '1.0'],
   ['/tests', 'weekly', '0.9'],
   ['/profiles', 'weekly', '0.9'],
-  ['/about', 'monthly', '0.5'],
   ...profiles.map((id) => ['/profiles/' + encodeURIComponent(id), 'weekly', '0.8']),
   ...tests.map((id) => ['/tests/' + encodeURIComponent(id), 'monthly', '0.7']),
 ];

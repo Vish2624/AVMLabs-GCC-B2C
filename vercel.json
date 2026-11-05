@@ -1,8 +1,9 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "public",
+  "redirects": [{ "source": "/about", "destination": "/", "permanent": true }],
   "rewrites": [
-    { "source": "/:page(tests|profiles|about|cart)", "destination": "/index.html" },
+    { "source": "/:page(tests|profiles|cart)", "destination": "/index.html" },
     { "source": "/:page(tests|profiles)/:id", "destination": "/index.html" }
   ],
   "headers": [

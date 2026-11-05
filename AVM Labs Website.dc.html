@@ -164,20 +164,92 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-td-group-name]{margin:6px 0 0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font-size:clamp(15px,1.6vw,17px);font-weight:800;letter-spacing:-0.01em;color:#16133A}
 [data-td-group-name] small{font-size:12.5px;font-weight:600;color:#5D5A7A}
 
-/* Footer columns: centre/contact first, then brand and links; on phones contact and brand take the full width */
-[data-foot-grid]{display:grid;grid-template-columns:1.3fr 1.3fr 1fr;gap:36px 40px}
-@media (max-width:900px){[data-foot-grid]{grid-template-columns:1fr 1fr}}
-/* Phones: contact and brand full width, links below, tighter spacing */
-@media (max-width:520px){
-[data-foot-grid]{grid-template-columns:1fr 1fr;gap:22px 16px;padding-top:26px!important;padding-bottom:18px!important}
-[data-foot-brand],[data-foot-contact]{grid-column:1/-1}
-[data-foot-brand]{gap:10px!important}
+/* Footer banner: icon and heading on the left, two equal-width buttons on the right */
+[data-foot-cta]{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:20px 40px;padding:clamp(22px,3vw,32px) clamp(20px,3.5vw,40px);border-radius:28px;background:linear-gradient(120deg,#231B66 0%,#3B2C9E 60%,#5B46D6 100%);box-shadow:0 24px 48px -32px rgba(91,70,214,.65),inset 0 1px 0 rgba(255,255,255,.12)}
+[data-foot-cta-text]{position:relative;display:flex;align-items:center;gap:18px;min-width:0}
+[data-foot-cta-btns]{position:relative;flex:none;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+[data-foot-btn]{display:flex;align-items:center;justify-content:center;gap:9px;height:52px;padding:0 24px;border-radius:999px;border:none;font-size:15px;font-weight:800;white-space:nowrap;cursor:pointer;transition:transform .2s,box-shadow .2s,background-color .2s}
+[data-foot-btn="wa"]{color:#fff;background:linear-gradient(180deg,#15904C,#0E743A);box-shadow:0 10px 22px -12px rgba(5,60,30,.9),inset 0 1px 0 rgba(255,255,255,.2)}
+[data-foot-btn="browse"]{color:#2A1F7A;background:#fff;box-shadow:0 10px 22px -12px rgba(15,12,41,.75)}
+/* Footer columns: contact, brand, links; all start at the same top line */
+[data-foot-grid]{position:relative;max-width:1200px;margin:0 auto;padding:clamp(36px,5vw,56px) clamp(16px,3vw,28px) clamp(32px,4vw,44px);display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1.1fr) minmax(0,.65fr);align-items:start;gap:36px clamp(32px,4.5vw,64px)}
+[data-foot-head]{display:flex;flex-direction:column;gap:8px;font-size:12.5px;font-weight:800;line-height:1.3;color:#fff;letter-spacing:.12em;text-transform:uppercase}
+[data-foot-centre]{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+[data-foot-actions]{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:fit-content;padding-left:46px}
+[data-foot-chip]{display:flex;align-items:center;justify-content:center;gap:7px;height:40px;padding:0 14px;border-radius:999px;font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer;transition:background-color .2s,border-color .2s}
+[data-foot-chip="wa"]{border:1px solid rgba(34,180,99,.45);background:rgba(34,180,99,.12);color:#7BE3B4}
+[data-foot-chip="dir"]{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff}
+[data-foot-about]{font-size:14px;line-height:1.7;color:#C9C6E0;max-width:320px}
+[data-foot-social]{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;font-size:12.5px;font-weight:600;color:#A9A5C9}
+[data-foot-social-links]{display:flex;gap:10px}
+[data-foot-social-link]{width:40px;height:40px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;transition:background-color .2s,border-color .2s,transform .2s}
+[data-foot-links]{display:flex;flex-direction:column;gap:2px}
+[data-foot-link]{align-self:flex-start;display:flex;align-items:center;min-height:36px;padding:0;border:none;background:none;text-align:left;color:#C9C6E0;font-size:14.5px;white-space:nowrap;cursor:pointer;transition:color .2s,transform .2s}
+/* Footer bottom bar: the outer columns match so the disclaimer sits in the true centre */
+[data-foot-bottom]{max-width:1200px;margin:0 auto;padding:18px clamp(16px,3vw,28px) 22px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px 24px;font-size:12.5px;line-height:1.6;color:#A9A5C9}
+[data-foot-note]{display:flex;align-items:center;gap:7px}
+[data-foot-note] avm-i{flex:none}
+[data-foot-top]{justify-self:end;display:flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:none;color:#C9C6E0;font-size:12.5px;font-weight:600;white-space:nowrap;cursor:pointer;transition:color .2s,border-color .2s,background-color .2s}
+@media (hover:hover){
+[data-foot-btn]:hover{transform:translateY(-1px)}
+[data-foot-btn="wa"]:hover{box-shadow:0 14px 26px -12px rgba(5,60,30,1),inset 0 1px 0 rgba(255,255,255,.2)}
+[data-foot-btn="browse"]:hover{background:#F3F1FF;box-shadow:0 14px 26px -12px rgba(15,12,41,.85)}
+[data-foot-chip="wa"]:hover{background:rgba(34,180,99,.22);border-color:rgba(34,180,99,.7)}
+[data-foot-chip="dir"]:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3)}
+[data-foot-social-link]:hover{color:#fff;background:rgba(123,108,240,.35);border-color:rgba(167,156,245,.6);transform:translateY(-1px)}
+[data-foot-link]:hover{color:#fff;transform:translateX(3px)}
+[data-foot-top]:hover{color:#fff;border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.05)}
+}
+[data-foot-btn]:active{transform:translateY(0) scale(.99)}
+[data-foot-btn]:focus-visible,[data-foot-chip]:focus-visible,[data-foot-social-link]:focus-visible,[data-foot-link]:focus-visible,[data-foot-top]:focus-visible{outline:2px solid #fff;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){[data-foot-btn],[data-foot-social-link],[data-foot-link]{transition:none;transform:none!important}}
+/* The banner stacks before its text and buttons collide; the buttons then share the full width */
+@media (max-width:1040px){
+[data-foot-cta]{flex-direction:column;align-items:stretch}
+}
+/* Tablets: contact on the left, brand above links on the right; bottom bar on two rows */
+@media (max-width:900px){
+[data-foot-grid]{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-areas:"contact brand" "contact explore"}
+[data-foot-contact]{grid-area:contact}
+[data-foot-brand]{grid-area:brand}
+[data-foot-explore]{grid-area:explore}
+[data-foot-bottom]{grid-template-columns:1fr auto}
+[data-foot-note]{grid-row:2;grid-column:1}
+[data-foot-top]{grid-row:1/span 2;grid-column:2}
+}
+/* Phones and small tablets: one compact column in reading order; the logo sits beside its description and Back to top beside the copyright */
+@media (max-width:640px){
+[data-foot-grid]{grid-template-columns:minmax(0,1fr);grid-template-areas:"contact" "brand" "explore";gap:24px;padding-top:24px;padding-bottom:18px}
+[data-foot-contact]{gap:10px!important}
+[data-foot-centre]{gap:8px;margin-top:4px}
+[data-foot-actions]{width:auto;padding-left:0}
+[data-foot-brand]{flex-direction:row!important;flex-wrap:wrap;align-items:center;gap:12px 14px!important}
+[data-foot-social]{flex:0 0 100%}
+[data-foot-brand]>span:first-child{align-self:center!important;flex:none}
 [data-foot-brand] img{height:40px!important}
-[data-foot-brand]>span:nth-child(2){font-size:13px!important;line-height:1.55!important}
-[data-foot-grid]>div{gap:10px!important}
-[data-foot-grid]>div:not([data-foot-contact]) button{padding:2px 0!important;font-size:13.5px!important}
-[data-foot-contact] button{height:34px!important;padding:0 12px!important;font-size:12.5px!important}
-[data-foot-bottom]{padding-top:12px!important;padding-bottom:14px!important;gap:6px 12px!important;font-size:11.5px!important}
+[data-foot-about]{flex:1 1 0;min-width:0;max-width:none;font-size:13px;line-height:1.5}
+[data-foot-explore]{gap:8px!important}
+[data-foot-links]{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+[data-foot-link]{align-self:auto;width:100%;min-height:38px;font-size:14px}
+[data-foot-bottom]{grid-template-columns:minmax(0,1fr) auto;padding-top:12px;padding-bottom:14px;gap:6px 12px;font-size:11.5px;line-height:1.5}
+[data-foot-note]{grid-row:2;grid-column:1/-1;align-items:flex-start}
+[data-foot-note] avm-i{margin-top:1px}
+[data-foot-top]{grid-row:1;grid-column:2;height:36px;padding:0 12px;font-size:12px}
+}
+@media (max-width:560px){
+[data-foot-cta]{gap:14px;padding:16px;border-radius:22px}
+[data-foot-cta-text]{gap:12px}
+[data-foot-cta-text]>span:first-child{width:40px!important;height:40px!important;border-radius:12px!important}
+[data-foot-cta-btns]{gap:8px}
+[data-foot-btn]{height:46px;padding:0 8px;gap:6px;font-size:13px}
+}
+/* Most phones: "Book on WhatsApp" can't fit in half the width, so it takes what it needs and Browse tests fills the rest */
+@media (max-width:400px){
+[data-foot-cta-btns]{grid-template-columns:auto minmax(0,1fr)}
+}
+/* Very narrow phones: the two banner labels no longer fit side by side */
+@media (max-width:350px){
+[data-foot-cta-btns]{grid-template-columns:minmax(0,1fr)}
 }
 
 /* Reels double-tap heart (mobile, just for show): springs in at the finger with a slight tilt, holds, then rises straight up and fades.
@@ -196,22 +268,20 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-dtap] svg{display:block;width:100%;height:100%}
 @media (prefers-reduced-motion:reduce){[data-dtap]{animation-duration:.6s}}
 
-/* Reels swipe hint (mobile): two cascading chevrons + label in the gap above "Book now", shown for 5s after 4s idle */
-@keyframes avmSwipeLife{0%{opacity:0;transform:translateY(8px) scale(.9)}7%{opacity:1;transform:none}93%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-4px) scale(.95)}}
-@keyframes avmChev{0%{opacity:.2;transform:translate(0,0)}45%{opacity:1}100%{opacity:.2;transform:translate(var(--sx),var(--sy))}}
-[data-swipe-wrap]:not([data-on]){display:none!important}
-[data-swipe]{--sx:0px;--sy:-4px;display:flex;align-items:center;gap:7px;pointer-events:none;color:#2A1F7A;animation:avmSwipeLife 5s cubic-bezier(.2,.8,.2,1) both}
-[data-swipe="down"]{--sy:4px}
-[data-swipe="left"]{--sx:-4px;--sy:0px}
-[data-swipe-arrows]{display:flex;flex-direction:column;align-items:center;color:#3B2C9E;filter:drop-shadow(0 0 .4px #3B2C9E) drop-shadow(0 0 5px rgba(255,255,255,.95))}
-[data-swipe-arrows] avm-i{display:block;animation:avmChev 1s ease-in-out infinite}
-[data-swipe-arrows] avm-i+avm-i{margin-top:-10px}
-[data-swipe="left"] [data-swipe-arrows]{flex-direction:row}
-[data-swipe="left"] [data-swipe-arrows] avm-i+avm-i{margin:0 0 0 -10px}
-[data-swipe="up"] [data-swipe-arrows] avm-i:first-child,[data-swipe="left"] [data-swipe-arrows] avm-i:first-child,[data-swipe="down"] [data-swipe-arrows] avm-i:last-child{animation-delay:.18s}
-[data-swipe] b{font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;line-height:1.1;text-shadow:0 0 10px #fff,0 0 5px #fff,0 0 2px #fff}
-[data-swipe] small{font-size:10px;font-weight:600;color:#4A4668;line-height:1.1;white-space:nowrap;text-shadow:0 0 10px #fff,0 0 5px #fff,0 0 2px #fff}
-@media (prefers-reduced-motion:reduce){[data-swipe],[data-swipe-arrows] avm-i{animation:none!important}}
+/* Reels swipe hint (mobile): a small card under the close button; fades in and out, the arrows glide only while it shows */
+@keyframes avmSwipeGlide{0%{opacity:0;transform:translate(calc(var(--sx) * -1),calc(var(--sy) * -1))}35%,65%{opacity:1}100%{opacity:0;transform:translate(var(--sx),var(--sy))}}
+[data-swipe-wrap]{position:absolute;top:calc(74px + env(safe-area-inset-top));right:12px;z-index:5;pointer-events:none;visibility:hidden;opacity:0;transform:translateY(-6px) scale(.92);transform-origin:50% 0;transition:opacity .3s ease,transform .4s cubic-bezier(.2,.9,.3,1.15),visibility 0s linear .3s}
+[data-swipe-wrap][data-on]{visibility:visible;opacity:1;transform:none;transition-delay:0s}
+[data-swipe]{--sx:0px;--sy:-8px;width:60px;display:flex;flex-direction:column;align-items:center;padding:7px 4px 8px;border-radius:16px;background:rgba(255,255,255,.96);border:1px solid #ECEBF3;box-shadow:0 12px 26px -14px rgba(22,19,58,.45);color:#16133A;line-height:1.15}
+[data-swipe="down"]{--sy:8px}
+[data-swipe="left"]{--sx:-8px;--sy:0px}
+[data-swipe-tile]{position:relative;width:34px;height:34px;margin-bottom:5px;border-radius:11px;overflow:hidden;background:#EFEDFB;color:#3B2C9E}
+[data-swipe-tile] avm-i{position:absolute;top:8px;left:8px;width:18px;height:18px;display:block;opacity:0}
+[data-swipe-wrap][data-on] [data-swipe-tile] avm-i{animation:avmSwipeGlide 1.6s cubic-bezier(.45,0,.55,1) infinite;will-change:transform,opacity}
+[data-swipe-wrap][data-on] [data-swipe-tile] avm-i+avm-i{animation-delay:.8s}
+[data-swipe] b{font-size:11px;font-weight:800;letter-spacing:-.01em}
+[data-swipe] small{margin-top:1px;font-size:10px;font-weight:600;color:#5D5A7A}
+@media (prefers-reduced-motion:reduce){[data-swipe-wrap]{transition:none}[data-swipe-wrap][data-on] [data-swipe-tile] avm-i{animation:none;opacity:1}[data-swipe-wrap][data-on] [data-swipe-tile] avm-i+avm-i{display:none}}
 
 /* Reels "Add" button: the circle pops, two waves ripple out, sparks burst, and a big check pops in the middle of the reel */
 @keyframes avmAddPop{0%{transform:scale(1)}20%{transform:scale(.8)}50%{transform:scale(1.18)}72%{transform:scale(.96)}100%{transform:scale(1)}}
@@ -281,6 +351,34 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-reels-root][data-anim="1"]{animation:avmReelsIn .26s cubic-bezier(.2,.8,.2,1) both}
 @media (prefers-reduced-motion:reduce){[data-reels-root]{animation:none}}
 
+/* Tests / Profiles switch: one white pill slides between two equal options, with a slight settle */
+[data-seg]{position:relative;display:grid;grid-template-columns:1fr 1fr}
+[data-seg-thumb]{position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:999px;background:#fff;box-shadow:0 2px 8px -2px rgba(22,19,58,.2);pointer-events:none;transition:transform .38s cubic-bezier(.32,1.2,.5,1)}
+[data-seg] button{position:relative;z-index:1;background:none;transition:color .25s ease}
+@media (prefers-reduced-motion:reduce){[data-seg-thumb],[data-seg] button{transition:none}}
+
+/* Cart: WhatsApp number with a country code picker */
+[data-phone]{position:relative;display:flex;align-items:stretch;height:50px;border-radius:14px;background:#FBFBFD;transition:border-color .15s,background .15s,box-shadow .15s}
+[data-phone]:focus-within{border-color:#3B2C9E!important;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,.12)}
+[data-dial-btn]{flex:none;display:flex;align-items:center;gap:4px;padding:0 9px 0 14px;border:none;border-right:1px solid #E7E6F0;border-radius:12px 0 0 12px;background:none;color:#16133A;font-size:15px;font-weight:600;white-space:nowrap;cursor:pointer}
+[data-dial-btn]:hover{background:#F4F2FE}
+[data-phone]>input{flex:1;min-width:0;border:none;outline:none;background:transparent;padding:0 14px;font-size:15px;color:#16133A}
+[data-dial-back]{position:fixed;inset:0;z-index:39;border:none;padding:0;background:transparent;cursor:default}
+[data-dial-menu]{position:absolute;top:calc(100% + 8px);left:-1.5px;z-index:40;width:min(300px,calc(100vw - 48px));display:flex;flex-direction:column;gap:6px;padding:8px;background:#fff;border:1px solid #E7E6F0;border-radius:18px;box-shadow:0 24px 60px -20px rgba(22,19,58,.35)}
+[data-dial-search]{height:40px;width:100%;padding:0 12px;border:1px solid #E7E6F0;border-radius:12px;outline:none;background:#FBFBFD;font-size:16px;color:#16133A}
+[data-dial-search]:focus{border-color:#3B2C9E;background:#fff}
+[data-dial-list]{display:flex;flex-direction:column;gap:1px;max-height:240px;overflow-y:auto;overscroll-behavior:contain}
+[data-dial-list] button{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px;padding:0 10px;border:none;border-radius:10px;color:#16133A;font-size:14px;text-align:left;cursor:pointer}
+[data-dial-list] button:hover{background:#F4F3FA!important}
+[data-dial-list] button span:last-child{flex:none;color:#5D5A7A}
+[data-dial-none]{padding:12px 10px;font-size:13.5px;color:#5D5A7A}
+
+/* Mobile home: free home collection strip, the message on the left and the amount in a gold pill */
+[data-hc-m]{display:flex;align-items:center;gap:9px;min-height:46px;padding:6px 7px 6px 7px;border-radius:16px;background:linear-gradient(100deg,#FFFBEE 0%,#FFF3D1 100%);border:1px solid #F1DFA8;box-shadow:0 10px 22px -18px rgba(160,112,20,.6);color:#3A2A08}
+[data-hc-m-ico]{flex:none;width:32px;height:32px;border-radius:11px;display:grid;place-items:center;color:#7A5200;background:#FFE7A6}
+[data-hc-m] b{flex:1;min-width:0;font-size:13.5px;font-weight:800;letter-spacing:-.01em;line-height:1.2}
+[data-hc-m-amt]{flex:none;padding:6px 11px;border-radius:999px;background:linear-gradient(180deg,#FFE08A,#F2BE3E);box-shadow:inset 0 1px 0 rgba(255,255,255,.55);color:#3A2A08;font-size:12px;font-weight:800;white-space:nowrap}
+
 /* Hero: free home collection banner under the search bar, in the gold of "Save more with profiles" */
 [data-hc-banner]{position:relative;z-index:0;overflow:hidden;align-self:flex-start;display:inline-flex;align-items:center;gap:9px;height:42px;padding:0 20px 0 6px;margin-top:calc(-1 * clamp(4px,1vw,10px));border-radius:999px;color:#2A1A00;font-size:clamp(13.5px,1.25vw,15px);font-weight:800;letter-spacing:-.005em;white-space:nowrap;background:linear-gradient(180deg,#FFE58F 0%,#F7C948 45%,#E3A92A 100%);border:1px solid #D39A22;box-shadow:0 14px 26px -12px rgba(201,138,20,.75),inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(120,70,0,.18);text-shadow:0 1px 0 rgba(255,240,190,.6)}
 [data-hc-banner]::after{content:'';position:absolute;top:0;bottom:0;left:0;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);pointer-events:none;animation:avmSaveSweep 3.2s ease-in-out infinite}
@@ -288,6 +386,14 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-hc-banner] [data-spark="1"]{top:5px;left:46%}
 [data-hc-banner] [data-spark="2"]{bottom:5px;left:72%}
 [data-hc-banner] [data-spark="3"]{top:6px;right:5%}
+/* Desktop: a small gold tab hanging off the search bar, like "Save more with profiles" on the test page. The right margin keeps it on the bar's flat edge, clear of the pill's curve. */
+[data-hc-tab]{align-self:flex-end;height:32px;gap:7px;padding:0 14px 0 6px;margin:0 34px 0 0;border-radius:0 0 14px 14px;border-top:none;font-size:12.5px;box-shadow:0 12px 22px -12px rgba(201,138,20,.75),inset 0 -1px 0 rgba(255,255,255,.35),inset 0 4px 5px -3px rgba(70,40,0,.28)}
+[data-hc-tab] [data-hc-banner-ico]{width:22px;height:22px}
+/* Search results are open: the tab would peek out between the bar and the list */
+div:has(input:focus)+[data-hc-tab]{visibility:hidden}
+[data-hc-tab] [data-spark="1"]{top:3px;left:44%;width:9px;height:9px}
+[data-hc-tab] [data-spark="2"]{bottom:3px;left:70%;width:7px;height:7px}
+[data-hc-tab] [data-spark="3"]{top:4px;right:4%;width:8px;height:8px}
 @media (max-width:767px){[data-hc-banner]{align-self:stretch;justify-content:center;height:40px;margin-top:0;font-size:13.5px}}
 @media (prefers-reduced-motion:reduce){[data-td-save]::after,[data-hc-banner]::after,[data-spark]{animation:none;display:none}}
 /* Profile rows inside a gold card (test page "Save more with a profile") */
@@ -374,9 +480,11 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 
 <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
 <div data-page="1">
-<section style="position:relative;overflow:clip">
+<section style="position:relative">
+  <div aria-hidden="true" style="position:absolute;inset:0;overflow:clip;pointer-events:none">
   <div style="position:absolute;width:560px;height:560px;border-radius:50%;background:#6C5CE7;opacity:0.16;filter:blur(100px);top:-200px;right:-140px;pointer-events:none"></div>
   <div style="position:absolute;width:420px;height:420px;border-radius:50%;background:#E0222A;opacity:0.08;filter:blur(100px);top:260px;left:-180px;pointer-events:none"></div>
+  </div>
   <div style="position:relative;max-width:1280px;margin:0 auto;padding:clamp(18px,3vw,40px) clamp(14px,3vw,28px) clamp(20px,3vw,36px);display:flex;flex-direction:row-reverse;flex-wrap:wrap;gap:clamp(22px,3vw,40px);align-items:stretch">
     <div style="flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:clamp(16px,2.4vw,24px);justify-content:center">
       <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
@@ -384,9 +492,9 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
         <sc-if value="{{ mSearchOpen }}" hint-placeholder-val="{{ false }}">
           <div style="position:relative;z-index:30">
             <div style="display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:rgba(255,255,255,0.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,0.95);box-shadow:0 14px 40px -18px rgba(42,31,122,0.4),0 1px 2px rgba(22,19,58,0.06)">
-              <div style="display:flex;background:#F0EFF7;border-radius:999px;padding:3px;flex:none">
-                <button onClick="{{ setModeTests }}" style="white-space:nowrap;height:38px;padding:0 13px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;background:{{ smTests.bg }};color:{{ smTests.fg }};box-shadow:{{ smTests.sh }}">Tests</button>
-                <button onClick="{{ setModeProfiles }}" style="white-space:nowrap;height:38px;padding:0 13px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;background:{{ smProfiles.bg }};color:{{ smProfiles.fg }};box-shadow:{{ smProfiles.sh }}">Profiles</button>
+              <div data-seg="1" style="background:#F0EFF7;border-radius:999px;padding:3px;flex:none"><i data-seg-thumb="1" style="transform:{{ smX }}"></i>
+                <button onClick="{{ setModeTests }}" style="white-space:nowrap;height:38px;padding:0 13px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;color:{{ smTests.fg }}">Tests</button>
+                <button onClick="{{ setModeProfiles }}" style="white-space:nowrap;height:38px;padding:0 13px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;color:{{ smProfiles.fg }}">Profiles</button>
               </div>
               <span style="flex:1;min-width:0;position:relative;display:flex">
                 <input data-type-ph="1" value="{{ q }}" onChange="{{ onQ }}" onFocus="{{ onQFocus }}" onBlur="{{ onQBlur }}" onKeyDown="{{ onQKey }}" placeholder="{{ qPlaceholder }}" style="flex:1;min-width:0;border:none;outline:none;background:transparent;font-size:15px;color:#16133A;padding:0 6px;height:44px">
@@ -395,7 +503,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
               <button onClick="{{ submitSearch }}" aria-label="Search" style="width:44px;height:44px;border-radius:999px;border:none;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;display:grid;place-items:center;cursor:pointer;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,0.25)"><avm-i n="search" s="18"></avm-i></button>
             </div>
             <sc-if value="{{ showResults }}" hint-placeholder-val="{{ false }}">
-              <div onMouseDown="{{ keepFocus }}" style="position:absolute;top:calc(100% + 8px);left:0;right:0;background:rgba(255,255,255,0.98);border:1px solid #E7E6F0;border-radius:22px;box-shadow:0 24px 60px -20px rgba(22,19,58,0.32);padding:8px;max-height:380px;overflow:auto">
+              <div onMouseDown="{{ keepFocus }}" style="position:absolute;top:calc(100% + 8px);left:0;right:0;background:#fff;border:1px solid #E7E6F0;border-radius:22px;box-shadow:0 24px 60px -20px rgba(22,19,58,0.32);padding:8px;max-height:380px;overflow:auto">
                 <div style="padding:8px 12px 6px;font-size:11px;font-weight:700;letter-spacing:0.08em;color:#5D5A7A;text-transform:uppercase">{{ resultsLabel }}</div>
                 <sc-for list="{{ results }}" as="r" hint-placeholder-count="3">
                   <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px" style-hover="background:#F4F3FA">
@@ -409,10 +517,10 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             </sc-if>
           </div>
         </sc-if>
-        <div data-hc-banner="1"><i data-spark="1"></i><i data-spark="2"></i><i data-spark="3"></i><span data-hc-banner-ico="1"><avm-i n="house" s="15"></avm-i></span><span>Free Home Collection on {{ hcFreeAt }}+</span></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:999px;background:#EFEEF4;border:1px solid #E7E6F0">
-          <button onClick="{{ setModeTests }}" style="height:36px;border-radius:999px;border:none;cursor:pointer;font-size:14px;font-weight:800;background:{{ smTests.bg }};color:{{ smTests.fg }};box-shadow:{{ smTests.sh }};transition:background .2s,color .2s">Tests</button>
-          <button onClick="{{ setModeProfiles }}" style="height:36px;border-radius:999px;border:none;cursor:pointer;font-size:14px;font-weight:800;background:{{ smProfiles.bg }};color:{{ smProfiles.fg }};box-shadow:{{ smProfiles.sh }};transition:background .2s,color .2s">Profiles</button>
+        <div data-hc-m="1"><span data-hc-m-ico="1"><avm-i n="house" s="15"></avm-i></span><b>Free Home Collection</b><span data-hc-m-amt="1">on {{ hcFreeAt }}+</span></div>
+        <div data-seg="1" style="padding:3px;border-radius:999px;background:#EFEEF4;border:1px solid #E7E6F0"><i data-seg-thumb="1" style="transform:{{ smX }}"></i>
+          <button onClick="{{ setModeTests }}" style="height:36px;border-radius:999px;border:none;cursor:pointer;font-size:14px;font-weight:800;color:{{ smTests.fg }}">Tests</button>
+          <button onClick="{{ setModeProfiles }}" style="height:36px;border-radius:999px;border:none;cursor:pointer;font-size:14px;font-weight:800;color:{{ smProfiles.fg }}">Profiles</button>
         </div>
         <div style="display:flex;overflow-x:auto;gap:4px;margin:0 calc(-1 * clamp(14px,3vw,28px));padding:2px clamp(14px,3vw,28px) 4px;scroll-padding-inline:clamp(14px,3vw,28px);scroll-snap-type:x proximity;scrollbar-width:none">
           <sc-for list="{{ mRow }}" as="c" hint-placeholder-count="5">
@@ -424,13 +532,16 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
         </div>
       </sc-if>
       <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
-      <h1 style="margin:0;font-size:clamp(34px,4.8vw,58px);font-weight:800;line-height:1.02;letter-spacing:-0.035em;text-wrap:balance"><span style="white-space:nowrap">Know it Early&nbsp;!</span><br><span style="color:#3B2C9E">Exactly&nbsp;!!</span></h1>
+      <div style="display:flex;flex-direction:column;gap:clamp(12px,1.4vw,16px)">
+      <h1 style="margin:0;font-size:clamp(34px,4.2vw,54px);font-weight:800;line-height:1.2;letter-spacing:-0.035em;text-wrap:balance">Know it<br><span style="white-space:nowrap">Early&nbsp;!</span><br><span style="color:#3B2C9E;white-space:nowrap">Exactly&nbsp;!!</span></h1>
       <p style="margin:0;font-size:clamp(15px,1.4vw,17px);line-height:1.6;color:#5D5A7A;max-width:520px;text-wrap:pretty">From routine health checks to specialised wellness profiles, discover the right tests to understand your body and stay ahead.</p>
+      </div>
+      <div style="display:flex;flex-direction:column">
       <div style="position:relative;z-index:30">
         <div style="display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:rgba(255,255,255,0.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,0.95);box-shadow:0 14px 40px -18px rgba(42,31,122,0.4),0 1px 2px rgba(22,19,58,0.06)">
-          <div style="display:flex;background:#F0EFF7;border-radius:999px;padding:3px;flex:none">
-            <button onClick="{{ setModeTests }}" style="white-space:nowrap;height:38px;padding:0 13px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;background:{{ smTests.bg }};color:{{ smTests.fg }};box-shadow:{{ smTests.sh }}">Tests</button>
-            <button onClick="{{ setModeProfiles }}" style="white-space:nowrap;height:38px;padding:0 13px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;background:{{ smProfiles.bg }};color:{{ smProfiles.fg }};box-shadow:{{ smProfiles.sh }}">Profiles</button>
+          <div data-seg="1" style="background:#F0EFF7;border-radius:999px;padding:3px;flex:none"><i data-seg-thumb="1" style="transform:{{ smX }}"></i>
+            <button onClick="{{ setModeTests }}" style="white-space:nowrap;height:38px;padding:0 13px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;color:{{ smTests.fg }}">Tests</button>
+            <button onClick="{{ setModeProfiles }}" style="white-space:nowrap;height:38px;padding:0 13px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;color:{{ smProfiles.fg }}">Profiles</button>
           </div>
           <span style="flex:1;min-width:0;position:relative;display:flex">
             <input data-type-ph="1" value="{{ q }}" onChange="{{ onQ }}" onFocus="{{ onQFocus }}" onBlur="{{ onQBlur }}" onKeyDown="{{ onQKey }}" placeholder="{{ qPlaceholder }}" style="flex:1;min-width:0;border:none;outline:none;background:transparent;font-size:15px;color:#16133A;padding:0 6px;height:44px">
@@ -439,7 +550,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
           <button onClick="{{ submitSearch }}" aria-label="Search" style="width:44px;height:44px;border-radius:999px;border:none;background:linear-gradient(180deg,#4B3CC4,#3B2C9E);color:#fff;display:grid;place-items:center;cursor:pointer;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,0.25)"><avm-i n="search" s="18"></avm-i></button>
         </div>
         <sc-if value="{{ showResults }}" hint-placeholder-val="{{ false }}">
-          <div onMouseDown="{{ keepFocus }}" style="position:absolute;top:calc(100% + 8px);left:0;right:0;background:rgba(255,255,255,0.98);border:1px solid #E7E6F0;border-radius:22px;box-shadow:0 24px 60px -20px rgba(22,19,58,0.32);padding:8px;max-height:380px;overflow:auto">
+          <div onMouseDown="{{ keepFocus }}" style="position:absolute;top:calc(100% + 8px);left:0;right:0;background:#fff;border:1px solid #E7E6F0;border-radius:22px;box-shadow:0 24px 60px -20px rgba(22,19,58,0.32);padding:8px;max-height:380px;overflow:auto">
             <div style="padding:8px 12px 6px;font-size:11px;font-weight:700;letter-spacing:0.08em;color:#5D5A7A;text-transform:uppercase">{{ resultsLabel }}</div>
             <sc-for list="{{ results }}" as="r" hint-placeholder-count="3">
               <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px" style-hover="background:#F4F3FA">
@@ -452,7 +563,8 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
           </div>
         </sc-if>
       </div>
-      <div data-hc-banner="1"><i data-spark="1"></i><i data-spark="2"></i><i data-spark="3"></i><span data-hc-banner-ico="1"><avm-i n="house" s="15"></avm-i></span><span>Free Home Collection on {{ hcFreeAt }}+</span></div>
+      <div data-hc-banner="1" data-hc-tab="1"><i data-spark="1"></i><i data-spark="2"></i><i data-spark="3"></i><span data-hc-banner-ico="1"><avm-i n="house" s="12"></avm-i></span><span>Free Home Collection on {{ hcFreeAt }}+</span></div>
+      </div>
       <div style="margin-top:auto;display:flex;flex-direction:column;gap:12px">
         <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
           <h2 style="margin:0;font-size:15px;font-weight:800">Browse by category</h2>
@@ -468,7 +580,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             </sc-for>
           </div>
           <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
-            <button onClick="{{ catNext }}" aria-label="More categories" style="position:absolute;right:-6px;top:26px;width:40px;height:40px;border-radius:999px;border:1px solid #E7E6F0;background:rgba(255,255,255,0.94);backdrop-filter:blur(10px);color:#16133A;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 20px -10px rgba(22,19,58,0.35)"><avm-i n="chevron-right" s="18"></avm-i></button>
+            <button onClick="{{ catNext }}" aria-label="More categories" style="position:absolute;right:0;top:23px;width:40px;height:40px;border-radius:999px;border:1px solid #E7E6F0;background:rgba(255,255,255,0.94);backdrop-filter:blur(10px);color:#16133A;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 20px -10px rgba(22,19,58,0.35)"><avm-i n="chevron-right" s="18"></avm-i></button>
           </sc-if>
         </div>
       </div>
@@ -512,7 +624,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
               <div style="display:flex;flex-direction:column;gap:12px;position:relative">
                 <span style="white-space:nowrap;align-self:flex-start;height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);display:inline-flex;align-items:center;font-size:12px;font-weight:700">Home collection</span>
                 <h3 style="margin:0;font-size:clamp(24px,2.6vw,32px);font-weight:800;letter-spacing:-0.03em;line-height:1.08">Home collection available.</h3>
-                <p style="margin:0;font-size:15px;line-height:1.55;color:#fff">Our trained team collects your sample at home — pick a date and time that works for you.</p>
+                <p style="margin:0;font-size:15px;line-height:1.55;color:#fff">Our trained team collects your sample at home, at a time that works for you.</p>
               </div>
               <div style="display:flex;align-items:center;gap:10px;position:relative;flex-wrap:wrap">
                 <button onClick="{{ goTests }}" style="white-space:nowrap;height:46px;padding:0 20px;border-radius:999px;border:none;background:#fff;color:#B3161D;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px">Browse tests<avm-i n="arrow-right" s="16"></avm-i></button>
@@ -551,7 +663,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
           <button onClick="{{ heroNext }}" aria-label="Next slide" style="width:34px;height:34px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="chevron-right" s="16"></avm-i></button>
         </div>
       </div>
-      <button data-grad-anim="1" onClick="{{ openReels0 }}" style="margin-top:auto;margin-bottom:{{ exploreMb }};display:flex;align-items:center;gap:16px;padding:10px 10px 10px 26px;min-height:76px;border-radius:999px;border:none;cursor:pointer;background:linear-gradient(115deg,#1C1650 0%,#3B2C9E 25%,#6A55E8 50%,#3B2C9E 75%,#1C1650 100%);background-size:300% 100%;color:#fff;box-shadow:0 22px 44px -22px rgba(59,44,158,0.85),inset 0 1px 0 rgba(255,255,255,0.2);text-align:left;position:relative;overflow:hidden;isolation:isolate">
+      <button data-grad-anim="1" onClick="{{ openReels0 }}" style="margin-top:auto;display:flex;align-items:center;gap:16px;padding:10px 10px 10px 26px;min-height:76px;border-radius:999px;border:none;cursor:pointer;background:linear-gradient(115deg,#1C1650 0%,#3B2C9E 25%,#6A55E8 50%,#3B2C9E 75%,#1C1650 100%);background-size:300% 100%;color:#fff;box-shadow:0 22px 44px -22px rgba(59,44,158,0.85),inset 0 1px 0 rgba(255,255,255,0.2);text-align:left;position:relative;overflow:hidden;isolation:isolate">
         <span style="flex:1;display:flex;flex-direction:column;gap:3px"><span style="font-size:clamp(17px,1.8vw,20px);font-weight:800;letter-spacing:-0.01em">Explore profiles</span><span style="font-size:13px;color:rgba(255,255,255,0.85)">Swipe through {{ profileCount }} health profiles</span></span>
         <span data-play="1" style="width:56px;height:56px;border-radius:999px;background:rgba(255,255,255,0.16);position:relative;display:grid;place-items:center;flex:none"><svg data-play-tri="1" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="avmPlayFill" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FF8A3D"/><stop offset=".35" stop-color="#FF4B2B"/><stop offset=".65" stop-color="#FD1D1D"/><stop offset="1" stop-color="#E0222A"/></linearGradient></defs><path d="M7 4.5v15c0 .8.9 1.3 1.6.9l12-7.5c.6-.4.6-1.4 0-1.8l-12-7.5C7.9 3.2 7 3.7 7 4.5z" fill="url(#avmPlayFill)" stroke="url(#avmPlayFill)" stroke-width="1.5" stroke-linejoin="round"/></svg></span>
       </button>
@@ -632,7 +744,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
     </div>
     
   <div data-centre-strip="1" style="grid-column:1/-1;padding:46px 0 clamp(44px,5vw,56px);overflow:hidden">
-      <div style="display:flex;gap:44px;padding-right:44px;width:max-content;animation:avmMarquee 45s linear infinite;will-change:transform" style-hover="animation-play-state:paused">
+      <div style="display:flex;gap:44px;padding-right:44px;width:max-content;animation:avmMarquee 51s linear infinite;will-change:transform" style-hover="animation-play-state:paused">
         <sc-for list="{{ centreShots }}" as="c" hint-placeholder-count="10"><div data-centre-tile="1" style="flex:none;width:clamp(180px,19vw,230px);aspect-ratio:3/4;border-radius:20px;overflow:hidden;background:linear-gradient(160deg,#F4F2FC 0%,#E9E6F7 100%);border:1px solid rgba(59,44,158,0.08);transform-origin:50% 50%;will-change:transform;backface-visibility:hidden;transform:translateZ(0)"><image-slot id="{{ c.id }}" src="{{ c.photoSrc }}" credit="{{ c.photoCredit }}" credit-href="{{ c.photoHref }}" shape="rect" placeholder="{{ c.ph }}" style="display:block;width:100%;height:100%"></image-slot></div></sc-for>
       </div>
     </div>
@@ -812,20 +924,10 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
         <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;background:#16133A;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800">3</span><span style="font-size:17px;font-weight:800">Patient details</span></div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
           <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Full name</span><input value="{{ form.name }}" onChange="{{ on.name }}" autocomplete="name" placeholder="Patient's full name" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.name }};background:#FBFBFD;padding:0 14px;font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"><sc-if value="{{ err.name }}"><span data-err="1" style="font-size:12px;color:#C81E25;font-weight:600">{{ err.name }}</span></sc-if></label>
-          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">WhatsApp number</span><span style="position:relative;display:block"><span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:600;color:#5D5A7A">{{ dial }}</span><input value="{{ form.phone }}" onChange="{{ on.phone }}" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="{{ phPh }}" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.phone }};background:#FBFBFD;padding:0 14px 0 {{ phPad }};font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"></span><sc-if value="{{ err.phone }}"><span data-err="1" style="font-size:12px;color:#C81E25;font-weight:600">{{ err.phone }}</span></sc-if></label>
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">WhatsApp number</span><div data-phone="1" onKeyDown="{{ dialKey }}" style="border:1.5px solid {{ bc.phone }}"><button data-dial-btn="1" type="button" onClick="{{ toggleDial }}" aria-label="Change country code, now {{ dial }}" aria-expanded="{{ dialOpen }}">{{ dial }}<avm-i n="chevron-down" s="14"></avm-i></button><input value="{{ form.phone }}" onChange="{{ on.phone }}" aria-label="WhatsApp number" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="{{ phPh }}"><sc-if value="{{ dialOpen }}" hint-placeholder-val="{{ false }}"><button data-dial-back="1" type="button" aria-label="Close country codes" onClick="{{ closeDial }}"></button><div data-dial-menu="1"><input data-dial-search="1" value="{{ dialQ }}" onChange="{{ onDialQ }}" aria-label="Search country or code" placeholder="Search country or code"><div data-dial-list="1"><sc-for list="{{ dialList }}" as="d" hint-placeholder-count="6"><button type="button" onClick="{{ d.pick }}" style="background:{{ d.bg }};font-weight:{{ d.fw }}"><span>{{ d.name }}</span><span>{{ d.dial }}</span></button></sc-for><sc-if value="{{ dialNone }}"><span data-dial-none="1">No matching country</span></sc-if></div></div></sc-if></div><sc-if value="{{ err.phone }}"><span data-err="1" style="font-size:12px;color:#C81E25;font-weight:600">{{ err.phone }}</span></sc-if></div>
           <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Age</span><input value="{{ form.age }}" onChange="{{ on.age }}" type="tel" inputmode="numeric" placeholder="Years" style="height:50px;border-radius:14px;border:1.5px solid {{ bc.age }};background:#FBFBFD;padding:0 14px;font-size:15px;color:#16133A;outline:none;width:100%" style-focus="border-color:#3B2C9E;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,0.12)"><sc-if value="{{ err.age }}"><span data-err="1" style="font-size:12px;color:#C81E25;font-weight:600">{{ err.age }}</span></sc-if></label>
           <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;color:#4A4766">Gender</span><div style="display:flex;gap:6px;height:50px;padding:4px;border-radius:14px;background:#F2F1F7;border:1.5px solid {{ bc.gender }}"><sc-for list="{{ genders }}" as="g" hint-placeholder-count="3"><button onClick="{{ g.pick }}" style="flex:1;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;background:{{ g.bg }};color:{{ g.fg }};box-shadow:{{ g.sh }}">{{ g.label }}</button></sc-for></div><sc-if value="{{ err.gender }}"><span data-err="1" style="font-size:12px;color:#C81E25;font-weight:600">{{ err.gender }}</span></sc-if></div>
         </div>
-      </div>
-      <div style="background:#fff;border:1px solid #ECEBF3;border-radius:24px;padding:clamp(16px,2.5vw,24px);display:flex;flex-direction:column;gap:14px">
-        <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;background:#16133A;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800">4</span><span style="font-size:17px;font-weight:800">{{ slotTitle }}</span></div>
-        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8A8698;margin-top:2px">Pick a date</span>
-        <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 6px;margin:-2px -2px -6px"><sc-for list="{{ days }}" as="d" hint-placeholder-count="6"><button onClick="{{ d.pick }}" style="flex:none;width:72px;padding:10px 0 9px;border-radius:16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;border:1.5px solid {{ d.bd }};background:{{ d.bg }};color:{{ d.fg }};box-shadow:{{ d.sh }};transform:{{ d.lift }};transition:background .2s,color .2s,border-color .2s,box-shadow .2s,transform .2s"><span style="font-size:11.5px;font-weight:700;color:{{ d.sub }}">{{ d.top }}</span><span style="font-size:24px;font-weight:800;line-height:1.15;letter-spacing:-0.02em">{{ d.num }}</span><span style="font-size:11.5px;font-weight:600;color:{{ d.sub }}">{{ d.mon }}</span></button></sc-for></div>
-        <sc-if value="{{ err.date }}"><span data-err="1" style="font-size:12px;color:#C81E25;font-weight:600">{{ err.date }}</span></sc-if>
-        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8A8698;margin-top:4px">Pick a time</span>
-        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"><sc-for list="{{ slots }}" as="s" hint-placeholder-count="6"><button onClick="{{ s.pick }}" disabled="{{ s.disabled }}" style="min-width:0;padding:10px 6px;border-radius:14px;cursor:{{ s.cursor }};border:1.5px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};box-shadow:{{ s.sh }};display:flex;flex-direction:column;align-items:center;gap:3px;transition:background .2s,color .2s,border-color .2s,box-shadow .2s"><span style="color:{{ s.ico }};display:flex"><avm-i n="{{ s.icon }}" s="17"></avm-i></span><span style="white-space:nowrap;font-size:14px;font-weight:800;text-decoration:{{ s.td }}">{{ s.label }}</span><span style="font-size:11px;font-weight:600;color:{{ s.sub }}">{{ s.part }}</span></button></sc-for></div>
-        <sc-if value="{{ err.slot }}"><span data-err="1" style="font-size:12px;color:#C81E25;font-weight:600">{{ err.slot }}</span></sc-if>
-        <sc-if value="{{ slotPicked }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;background:#EAF7EF;color:#0E7350;font-size:14px;font-weight:700"><avm-i n="calendar-check" s="18"></avm-i><span>{{ slotSummary }}</span></div></sc-if>
       </div>
     </div>
     <aside style="flex:1 1 320px;min-width:0;position:{{ asidePos }};top:92px;display:flex;flex-direction:column;gap:14px">
@@ -915,79 +1017,56 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 </div>
 </sc-if>
 
-<sc-if value="{{ isAbout }}" hint-placeholder-val="{{ false }}">
-<div data-page="1">
-<main style="max-width:1120px;margin:0 auto;padding:clamp(18px,3vw,40px) clamp(14px,3vw,28px) 24px;display:flex;flex-direction:column;gap:24px">
-  <div style="display:flex;flex-direction:column;gap:12px;max-width:760px">
-    <span style="font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#C81E25">About AVM Labs</span>
-    <h1 style="margin:0;font-size:clamp(30px,4.2vw,52px);font-weight:800;letter-spacing:-0.035em;line-height:1.05;text-wrap:balance">A wellness laboratory built around everyday health.</h1>
-    <p style="margin:0;font-size:16px;line-height:1.65;color:#4A4766">AVM Labs focuses on the tests that matter for daily wellbeing — hormones, vitamins and preventive health. We keep pricing transparent, collection convenient and reports easy to understand.</p>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px">
-    <div style="background:#fff;border:1px solid #ECEBF3;border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:10px"><span style="width:52px;height:52px;border-radius:16px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center;font-size:18px;font-weight:800">Ho</span><span style="font-size:18px;font-weight:800">Hormones</span><span style="font-size:14px;line-height:1.55;color:#5D5A7A">Thyroid, reproductive and stress hormones — measured and explained clearly.</span></div>
-    <div style="background:#fff;border:1px solid #ECEBF3;border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:10px"><span style="width:52px;height:52px;border-radius:16px;background:#EFEDFB;color:#3B2C9E;display:grid;place-items:center;font-size:18px;font-weight:800">Vi</span><span style="font-size:18px;font-weight:800">Vitamins</span><span style="font-size:14px;line-height:1.55;color:#5D5A7A">Vitamin D, B12, iron and more — the deficiencies behind everyday tiredness.</span></div>
-    <div style="background:#fff;border:1px solid #ECEBF3;border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:10px"><span style="width:52px;height:52px;border-radius:16px;background:#FDECEC;color:#C81E25;display:grid;place-items:center;font-size:18px;font-weight:800">Wl</span><span style="font-size:18px;font-weight:800">Wellness</span><span style="font-size:14px;line-height:1.55;color:#5D5A7A">Preventive profiles that give you a yearly baseline of your health.</span></div>
-  </div>
-  <div style="display:flex;flex-wrap:wrap;gap:16px">
-    <div style="flex:1 1 360px;min-height:300px;position:relative;border-radius:26px;overflow:hidden"><image-slot id="about-lab" src="https://images.unsplash.com/photo-1581093577421-f561a654a353?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" credit="Photo by ThisisEngineering on Unsplash" credit-href="https://unsplash.com/@thisisengineering" shape="rect" placeholder="Lab / team photo"></image-slot></div>
-    <div style="flex:1 1 300px;background:#16133A;color:#fff;border-radius:26px;padding:24px;display:flex;flex-direction:column;gap:14px">
-      <span style="font-size:20px;font-weight:800">Visit or reach us</span>
-      <span style="display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.5;color:#D6D3EE"><avm-i n="map-pin" s="18"></avm-i>[Centre address, area, city]</span>
-      <span style="display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.5;color:#D6D3EE"><avm-i n="clock" s="18"></avm-i>7 AM – 8 PM, all days</span>
-      <span style="display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.5;color:#D6D3EE"><avm-i n="house" s="18"></avm-i>Home collection available</span>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:auto"><button onClick="{{ waGeneral }}" style="white-space:nowrap;height:48px;padding:0 20px;border-radius:999px;border:none;background:linear-gradient(180deg,#1FAD5E,#138A47);color:#fff;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px"><avm-i n="whatsapp" s="17"></avm-i>Chat on WhatsApp</button><button onClick="{{ directions }}" style="white-space:nowrap;height:48px;padding:0 18px;border-radius:999px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px"><avm-i n="navigation" s="15"></avm-i>Directions</button></div>
-    </div>
-  </div>
-</main>
-</div>
-</sc-if>
-
 <footer style="position:relative;overflow:hidden;background:#0F0C29;color:#C9C6E0;margin-top:clamp(40px,6vw,72px)">
-  <div style="position:absolute;width:520px;height:520px;border-radius:50%;background:#5B46D6;opacity:.14;filter:blur(120px);top:-260px;left:-160px;pointer-events:none"></div>
+  <div style="position:absolute;width:520px;height:520px;border-radius:50%;background:#5B46D6;opacity:.1;filter:blur(120px);top:-260px;left:-160px;pointer-events:none"></div>
   <div style="max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,48px) clamp(16px,3vw,28px) 0;position:relative">
-    <div style="position:relative;overflow:hidden;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px 28px;padding:clamp(22px,3vw,32px) clamp(20px,3.5vw,40px);border-radius:28px;background:linear-gradient(120deg,#231B66 0%,#3B2C9E 65%,#5B46D6 100%);box-shadow:0 30px 60px -36px rgba(91,70,214,0.8),inset 0 1px 0 rgba(255,255,255,0.12)">
-      <div style="position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.18),transparent 70%);right:-60px;top:-140px;pointer-events:none"></div>
-      <div style="display:flex;align-items:center;gap:16px;min-width:0;flex:1 1 300px;position:relative">
+    <div data-foot-cta="1">
+      <div style="position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.1),transparent 70%);right:-60px;top:-140px;pointer-events:none"></div>
+      <div data-foot-cta-text="1">
         <span style="width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);color:#fff;display:grid;place-items:center;flex:none"><avm-i n="house" s="24"></avm-i></span>
-        <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+        <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
           <span style="font-size:clamp(20px,2.4vw,26px);font-weight:800;letter-spacing:-0.02em;color:#fff;line-height:1.2;text-wrap:balance">Book a test in under a minute</span>
-          <span style="font-size:14px;color:#D4CFF7">Home sample collection, or walk in to our centre.</span>
+          <span style="font-size:14px;line-height:1.45;color:#DEDAFA">Home sample collection, or walk in to our centre.</span>
         </div>
       </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;position:relative">
-        <button onClick="{{ waGeneral }}" style="white-space:nowrap;height:50px;padding:0 22px;border-radius:999px;border:none;background:linear-gradient(180deg,#22B463,#138A47);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;gap:9px;cursor:pointer;box-shadow:0 12px 26px -12px rgba(19,138,71,0.9),inset 0 1px 0 rgba(255,255,255,0.25)"><avm-i n="whatsapp" s="19"></avm-i>Book on WhatsApp</button>
-        <button onClick="{{ goTests }}" style="white-space:nowrap;height:50px;padding:0 22px;border-radius:999px;border:none;background:#fff;color:#2A1F7A;font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;transition:transform .2s" style-hover="transform:translateY(-1px)">Browse tests<avm-i n="arrow-right" s="16"></avm-i></button>
+      <div data-foot-cta-btns="1">
+        <button data-foot-btn="wa" onClick="{{ waGeneral }}"><avm-i n="whatsapp" s="18"></avm-i>Book on WhatsApp</button>
+        <button data-foot-btn="browse" onClick="{{ goTests }}">Browse tests<avm-i n="arrow-right" s="18"></avm-i></button>
       </div>
     </div>
   </div>
 
-  <div data-foot-grid="1" style="max-width:1200px;margin:0 auto;padding:clamp(36px,5vw,56px) clamp(16px,3vw,28px) clamp(28px,4vw,40px);position:relative">
+  <div data-foot-grid="1">
     <div data-foot-contact="1" style="display:flex;flex-direction:column;gap:14px;min-width:0">
-      <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Visit or contact us<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
-      <small style="font-size:11.5px;color:#8D88B0;margin-top:-4px">{{ centresLabel }}</small>
-      <sc-for list="{{ centresHere }}" as="c" hint-placeholder-count="1"><div data-foot-centre="1" style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;align-items:flex-start;gap:12px"><span style="width:34px;height:34px;border-radius:10px;background:rgba(123,108,240,0.14);color:#A79CF5;display:grid;place-items:center;flex:none"><avm-i n="map-pin" s="16"></avm-i></span><span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:14.5px;font-weight:700;color:#fff">{{ c.city }}</span><span style="font-size:13.5px;line-height:1.5;color:#C9C6E0">{{ c.address }}</span></span></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;padding-left:46px">
-          <button onClick="{{ c.wa }}" style="white-space:nowrap;height:36px;padding:0 13px;border-radius:999px;border:1px solid rgba(34,180,99,0.45);background:rgba(34,180,99,0.12);color:#7BE3B4;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer;transition:background .2s" style-hover="background:rgba(34,180,99,0.22)"><avm-i n="whatsapp" s="15"></avm-i>WhatsApp</button>
-          <button onClick="{{ c.dir }}" style="white-space:nowrap;height:36px;padding:0 13px;border-radius:999px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer;transition:background .2s" style-hover="background:rgba(255,255,255,0.12)"><avm-i n="navigation" s="15"></avm-i>Directions</button>
+      <span data-foot-head="1">Visit or contact us<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
+      <small style="font-size:12px;color:#A9A5C9;margin-top:-4px">{{ centresLabel }}</small>
+      <sc-for list="{{ centresHere }}" as="c" hint-placeholder-count="1"><div data-foot-centre="1">
+        <div style="display:flex;align-items:flex-start;gap:12px"><span style="width:34px;height:34px;border-radius:10px;background:rgba(123,108,240,0.14);color:#A79CF5;display:grid;place-items:center;flex:none"><avm-i n="map-pin" s="16"></avm-i></span><span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:15px;font-weight:700;line-height:1.3;color:#fff">{{ c.city }}</span><span style="font-size:13.5px;line-height:1.5;color:#C9C6E0">{{ c.address }}</span></span></div>
+        <div data-foot-actions="1">
+          <button data-foot-chip="wa" onClick="{{ c.wa }}"><avm-i n="whatsapp" s="16"></avm-i>WhatsApp</button>
+          <button data-foot-chip="dir" onClick="{{ c.dir }}"><avm-i n="navigation" s="16"></avm-i>Directions</button>
         </div>
       </div></sc-for>
     </div>
     <div data-foot-brand="1" style="display:flex;flex-direction:column;gap:16px;min-width:0">
       <span style="align-self:flex-start;background:#fff;border-radius:12px;padding:6px 8px;display:flex;box-shadow:0 10px 24px -14px rgba(0,0,0,0.6)"><img src="./assets/avm-logo.png" alt="AVM Labs" style="height:48px;display:block"></span>
-      <span style="font-size:14px;line-height:1.7;color:#A9A5C9;max-width:320px">Lab tests and health profiles for hormones, vitamins and everyday wellness, with home sample collection.</span>
+      <span data-foot-about="1">Lab tests and health profiles for hormones, vitamins and everyday wellness, with home sample collection.</span>
+      <div data-foot-social="1">
+        <span>Follow us</span>
+        <div data-foot-social-links="1"><sc-for list="{{ footSocials }}" as="x" hint-placeholder-count="3"><a data-foot-social-link="1" href="{{ x.url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ x.label }}" title="{{ x.label }}"><avm-i n="{{ x.icon }}" s="18"></avm-i></a></sc-for></div>
+      </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <span style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase">Explore<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
-      <div style="display:flex;flex-direction:column;gap:4px"><sc-for list="{{ footLinks }}" as="f" hint-placeholder-count="4"><button onClick="{{ f.go }}" style="align-self:flex-start;white-space:nowrap;border:none;background:none;padding:4px 0;text-align:left;color:#C9C6E0;font-size:14.5px;cursor:pointer;transition:color .2s,transform .2s" style-hover="color:#fff;transform:translateX(3px)">{{ f.label }}</button></sc-for></div>
+    <div data-foot-explore="1" style="display:flex;flex-direction:column;gap:14px;min-width:0">
+      <span data-foot-head="1">Explore<i style="width:22px;height:2px;border-radius:2px;background:#7B6CF0"></i></span>
+      <div data-foot-links="1"><sc-for list="{{ footLinks }}" as="f" hint-placeholder-count="4"><button data-foot-link="1" onClick="{{ f.go }}">{{ f.label }}</button></sc-for></div>
     </div>
   </div>
 
-  <div style="border-top:1px solid rgba(255,255,255,0.07);position:relative">
-    <div data-foot-bottom="1" style="max-width:1200px;margin:0 auto;padding:18px clamp(16px,3vw,28px) 22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;font-size:12.5px;line-height:1.6;color:#8D88B0">
+  <div style="border-top:1px solid rgba(255,255,255,0.1);position:relative">
+    <div data-foot-bottom="1">
       <span>© 2026 AVM Labs · Wellness Laboratory</span>
-      <span style="display:flex;align-items:center;gap:6px"><avm-i n="info" s="13"></avm-i>Lab results support, but do not replace, medical advice.</span>
-      <button onClick="{{ toTop }}" style="white-space:nowrap;height:32px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.12);background:none;color:#C9C6E0;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;transition:color .2s,border-color .2s" style-hover="color:#fff;border-color:rgba(255,255,255,0.3)"><avm-i n="arrow-up" s="13"></avm-i>Back to top</button>
+      <span data-foot-note="1"><avm-i n="info" s="14"></avm-i>Lab results support, but do not replace, medical advice.</span>
+      <button data-foot-top="1" onClick="{{ toTop }}"><avm-i n="arrow-up" s="14"></avm-i>Back to top</button>
     </div>
   </div>
 <div style="height:{{ spacerH }}"></div>
@@ -1043,8 +1122,8 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 <sc-if value="{{ desktopReels }}" hint-placeholder-val="{{ false }}">
 <div data-reels-root="1" data-anim="{{ reelsAnim }}" style="position:fixed;inset:0;z-index:100;background:#F6F6FA;color:#16133A;display:flex;flex-direction:column">
   <div style="position:absolute;inset:0;background:{{ reelAmbient }};pointer-events:none"></div>
-  <div style="position:relative;display:flex;align-items:center;gap:16px;padding:18px 28px">
-    <span style="background:#fff;border-radius:12px;padding:5px 8px;display:flex;border:1px solid #E7E6F0"><img src="./assets/avm-logo.png" alt="AVM Labs" style="height:36px;display:block"></span>
+  <div style="position:relative;display:flex;align-items:center;gap:16px;padding:12px 28px">
+    <span style="background:#fff;border-radius:12px;padding:5px 8px;display:flex;border:1px solid #E7E6F0"><img src="./assets/avm-logo.png" alt="AVM Labs" style="height:56px;display:block"></span>
     <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:18px;font-weight:800;letter-spacing:-0.01em">Explore profiles</span><span style="font-size:13px;color:#5D5A7A">Scroll or press ↑ ↓ to browse · Esc to close</span></div>
     <span style="flex:1"></span>
     <span style="font-size:14px;font-weight:700;padding:9px 16px;border-radius:999px;background:#fff;border:1px solid #E7E6F0">{{ reelPos }}</span>
@@ -1165,7 +1244,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
             </div>
           </div>
           <sc-if value="{{ r.popping }}" hint-placeholder-val="{{ false }}"><div data-add-big="1" aria-hidden="true"><span><avm-i n="check" s="56"></avm-i></span></div></sc-if>
-          <div data-swipe-wrap="1" style="position:absolute;left:0;right:0;bottom:{{ hintBottom }};z-index:5;display:flex;justify-content:center;pointer-events:none"><div data-swipe="up" aria-hidden="true"><span data-swipe-arrows="1"><avm-i n="chevron-up" s="18"></avm-i><avm-i n="chevron-up" s="18"></avm-i></span><b>Swipe</b><small data-swipe-label="1">next</small></div></div>
+          <div data-swipe-wrap="1"><div data-swipe="up" aria-hidden="true"><span data-swipe-tile="1"><avm-i n="chevron-up" s="18"></avm-i><avm-i n="chevron-up" s="18"></avm-i></span><b>Swipe</b><small data-swipe-label="1">Next</small></div></div>
           <div style="position:absolute;right:10px;bottom:{{ railBottom }};z-index:4;display:flex;flex-direction:column;gap:16px;align-items:center">
             <button onClick="{{ r.toggle }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span data-add-btn="{{ r.addPop }}" style="position:relative;width:48px;height:48px;border-radius:999px;background:{{ r.addBg }};color:{{ r.addInk }};border:1px solid #E7E6F0;display:grid;place-items:center;transition:background .25s,color .25s"><avm-i n="{{ r.addIcon }}" s="22"></avm-i><sc-if value="{{ r.popping }}" hint-placeholder-val="{{ false }}"><span data-add-fx="1" aria-hidden="true"><i data-wave="1"></i><i data-wave="2"></i><b style="--r:0deg"></b><b style="--r:45deg"></b><b style="--r:90deg"></b><b style="--r:135deg"></b><b style="--r:180deg"></b><b style="--r:225deg"></b><b style="--r:270deg"></b><b style="--r:315deg"></b></span></sc-if></span>{{ r.addLabel }}</button>
             <button onClick="{{ r.share }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;color:#16133A;cursor:pointer;font-size:11px;font-weight:700"><span style="width:48px;height:48px;border-radius:999px;background:#fff;border:1px solid #E7E6F0;display:grid;place-items:center"><avm-i n="share-2" s="20"></avm-i></span>Share</button>
@@ -1178,7 +1257,7 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
         </div>
       </sc-for></div>
     </div>
-    <button onClick="{{ closeReels }}" aria-label="Close" style="position:absolute;top:calc(24px + env(safe-area-inset-top));right:12px;z-index:6;width:40px;height:40px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="x" s="20"></avm-i></button>
+    <button onClick="{{ closeReels }}" aria-label="Close" style="position:absolute;top:calc(24px + env(safe-area-inset-top));right:12px;z-index:6;width:40px;height:40px;border-radius:999px;border:none;background:#E0222A;color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 18px -8px rgba(224,34,42,.75)"><avm-i n="x" s="20"></avm-i></button>
     <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ false }}">
       <button onClick="{{ prevSlide }}" aria-label="Previous" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);z-index:6;width:38px;height:38px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="chevron-left" s="18"></avm-i></button>
       <button onClick="{{ nextSlide }}" aria-label="Next" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);z-index:6;width:38px;height:38px;border-radius:999px;border:1px solid #E7E6F0;background:#fff;color:#16133A;display:grid;place-items:center;cursor:pointer"><avm-i n="chevron-right" s="18"></avm-i></button>
@@ -1252,12 +1331,13 @@ class Component extends DCLogic {
     'profile-bg-vitamin-profile': ['1707129785947-ddc627a8bab9', 'Madara', 'madara_p'],
     'profile-bg-diabetes-monitoring': ['1683727186226-910f31a9da45', 'Sweet Life', 'sweetlifediabetes'],
   };
-  // Our Bahrain centre: assets/centres/bahrain-<file>.jpg, [file, caption].
   // Our centres, by country: city, address, Google Maps link and WhatsApp number. Managed in the admin (/api/centres);
   // this built-in list is what the database starts with and what shows until the API answers.
   static CENTRES = [{"country":"AE","city":"Dubai","address":"Al Garhoud, Dubai","maps":"https://maps.app.goo.gl/QFPzMoWUSovCEbJy5","whatsapp":"971501304708"},{"country":"BH","city":"Manama","address":"Salmaniya, Manama, Bahrain","maps":"https://maps.app.goo.gl/WzeusdraTUDPomw47","whatsapp":"97333627273"},{"country":"SA","city":"Al Khobar","address":"Madinat Al Umal, Al Khobar, KSA","maps":"https://maps.app.goo.gl/LW5Sbz2UvaPDzmd98","whatsapp":"966506399959"},{"country":"SA","city":"Riyadh","address":"Al Malaz, Riyadh, KSA","maps":"https://maps.app.goo.gl/jCmJoWFSvaDEvwAd8","whatsapp":"966506399959"}];
-  static CENTRE_PHOTOS = [['reception', 'Reception'], ['blood-collection', 'Blood collection unit'], ['waiting-area', 'Waiting area'], ['entrance', 'Collection centre entrance']];
-  static SLOTS = [['6–8 AM', 6], ['8–10 AM', 8], ['10–12 PM', 10], ['12–2 PM', 12], ['4–6 PM', 16], ['6–8 PM', 18]];
+  // Country codes for the patient's WhatsApp number: [country, name, code, fewest digits, most digits].
+  static DIAL = [["BH","Bahrain","+973",8,8],["KW","Kuwait","+965",8,8],["OM","Oman","+968",8,8],["QA","Qatar","+974",8,8],["SA","Saudi Arabia","+966",9,9],["AE","UAE","+971",9,9],["AF","Afghanistan","+93",9,9],["DZ","Algeria","+213",9,9],["AU","Australia","+61",9,9],["BD","Bangladesh","+880",10,10],["CA","Canada","+1",10,10],["CN","China","+86",11,11],["EG","Egypt","+20",10,10],["ET","Ethiopia","+251",9,9],["FR","France","+33",9,9],["DE","Germany","+49",10,11],["GH","Ghana","+233",9,9],["IN","India","+91",10,10],["ID","Indonesia","+62",9,12],["IR","Iran","+98",10,10],["IQ","Iraq","+964",10,10],["IE","Ireland","+353",9,9],["IT","Italy","+39",9,10],["JO","Jordan","+962",9,9],["KE","Kenya","+254",9,9],["LB","Lebanon","+961",7,8],["MY","Malaysia","+60",9,10],["MA","Morocco","+212",9,9],["NP","Nepal","+977",10,10],["NL","Netherlands","+31",9,9],["NZ","New Zealand","+64",8,10],["NG","Nigeria","+234",10,10],["PK","Pakistan","+92",10,10],["PS","Palestine","+970",9,9],["PH","Philippines","+63",10,10],["RU","Russia","+7",10,10],["SG","Singapore","+65",8,8],["ZA","South Africa","+27",9,9],["ES","Spain","+34",9,9],["LK","Sri Lanka","+94",9,9],["SD","Sudan","+249",9,9],["SY","Syria","+963",9,9],["TH","Thailand","+66",9,9],["TN","Tunisia","+216",8,8],["TR","Türkiye","+90",10,10],["UG","Uganda","+256",9,9],["GB","United Kingdom","+44",10,10],["US","United States","+1",10,10],["YE","Yemen","+967",9,9]];
+  // Centre gallery: assets/centres/<file>.jpg (3:4), [file, caption].
+  static CENTRE_PHOTOS = [['bahrain-reception', 'Reception'], ['lab-analyser-line', 'Automated analyser line'], ['bahrain-blood-collection', 'Blood collection unit'], ['lab-hematology', 'Hematology'], ['bahrain-waiting-area', 'Waiting area'], ['lab-immunology-biochemistry', 'Immunology and biochemistry'], ['bahrain-entrance', 'Collection centre entrance'], ['lab-hplc', 'HPLC'], ['lab-analyser-room', 'Automated analyser room']];
   // Profile filters: must match CATEGORIES in server/catalog.js.
   static PF = [['all', 'All'], ['wellness', 'Wellness'], ['women', 'Women'], ['men', 'Men'], ['heart', 'Heart'], ['diabetes', 'Diabetes'], ['thyroid', 'Thyroid'], ['vitamins', 'Vitamins'], ['hair', 'Hair fall'], ['organs', 'Kidney & Liver'], ['kids', 'Kids'], ['screening', 'Screening']];
   // Each profile category's icon and hue, for the category headers in the desktop reel list.
@@ -1275,7 +1355,7 @@ class Component extends DCLogic {
     cart = Array.isArray(cart) ? cart.filter(ok) : [];
     return { page: 'home', w: window.innerWidth, h: window.innerHeight, cart, sMode: 'tests', q: '', qFocus: false, cat: 'all', tq: '', pf: 'all', hero: 0,
       reelsOpen: false, reelIdx: 0, slides: {}, mode: 'home',
-      form: { name: '', phone: '', age: '', gender: '', date: '', slot: '' }, errors: {}, booked: null,
+      form: { name: '', phone: '', age: '', gender: '', cc: '' }, errors: {}, booked: null,
       locOpen: false, toast: '', pop: null, ...this.fromUrl() };
   }
 
@@ -1329,10 +1409,18 @@ class Component extends DCLogic {
   }
 
   static REGIONS = {
-    BH: { code: 'BH', name: 'Bahrain', dial: '+973', phLen: 8, phRe: /^[36]\d{7}$/, phPh: '8-digit mobile', minBill: 1.5, hcFree: 18, show: v => Number(v.toFixed(3)) + ' BD' },
-    SA: { code: 'SA', name: 'Saudi Arabia', dial: '+966', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, hcFree: 180, show: v => Number(v.toFixed(2)).toLocaleString('en-US') + ' SAR' },
-    AE: { code: 'AE', name: 'UAE', dial: '+971', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, hcFree: 180, show: v => Number(v.toFixed(2)).toLocaleString('en-US') + ' AED' }
+    BH: { code: 'BH', name: 'Bahrain', dial: '+973', phLen: 8, phRe: /^[36]\d{7}$/, phPh: '8-digit mobile', minBill: 1.5, hcFree: 18, show: v => Number(v.toFixed(3)) + ' BD', social: { name: 'AVMLabs Bahrain', instagram: 'https://www.instagram.com/avmlabsbahrain', facebook: 'https://www.facebook.com/profile.php?id=61580419852001' } },
+    SA: { code: 'SA', name: 'Saudi Arabia', dial: '+966', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, hcFree: 180, show: v => Number(v.toFixed(2)).toLocaleString('en-US') + ' SAR', social: { name: 'AVMLabs KSA', instagram: 'https://www.instagram.com/avmlabsksa', facebook: 'https://www.facebook.com/profile.php?id=61554832831971' } },
+    AE: { code: 'AE', name: 'UAE', dial: '+971', phLen: 9, phRe: /^5\d{8}$/, phPh: '5X XXX XXXX', minBill: 15, hcFree: 180, show: v => Number(v.toFixed(2)).toLocaleString('en-US') + ' AED', social: { name: 'AVMLabs UAE', instagram: 'https://www.instagram.com/avmlabsuae/', facebook: 'https://www.facebook.com/profile.php?id=61557083525796' } }
   };
+  // The patient's phone country: their own pick (form.cc), otherwise the visitor's location. Our three countries
+  // keep their exact mobile rules; any other country is checked by length only.
+  phoneRule() {
+    const code = this.state.form.cc || this.region().code, R = Component.REGIONS[code];
+    if (R) return { code, dial: R.dial, max: R.phLen, ph: R.phPh, ok: v => R.phRe.test(v), err: 'Enter a valid ' + R.phLen + '-digit mobile number' };
+    const [, , dial, min, max] = Component.DIAL.find(d => d[0] === code), n = min === max ? String(min) : min + '–' + max;
+    return { code, dial, max, ph: n + '-digit mobile', ok: v => /^\d+$/.test(v) && v.length >= min && v.length <= max, err: 'Enter a valid ' + n + '-digit mobile number' };
+  }
   region() {
     const p = this.props || {}, R = Component.REGIONS;
     if (p.previewRegion && R[p.previewRegion]) return R[p.previewRegion];
@@ -1402,9 +1490,9 @@ class Component extends DCLogic {
   // Opens WhatsApp with the message filled in. If the browser blocks the new tab (some phones do), go there directly.
   // No 'noopener' feature: with it window.open() always returns null, which looked like a block and also sent this tab away.
   openWA(msg, isUrl, num) { const url = isUrl ? msg : this.wa(msg, num), w = window.open(url, '_blank'); if (w) { try { w.opener = null; } catch (e) {} } else window.location.href = url; }
-  go(page) { this.setState({ page, locOpen: false, qFocus: false }); window.scrollTo(0, 0); this.setPath(page === 'home' ? '/' : '/' + page); }
+  go(page) { this.setState({ page, locOpen: false, qFocus: false, dialOpen: false }); window.scrollTo(0, 0); this.setPath(page === 'home' ? '/' : '/' + page); }
   openTest(id) { this.setState({ page: 'test', testId: id, locOpen: false, qFocus: false, reelsOpen: false }); window.scrollTo(0, 0); this.setPath('/tests/' + encodeURIComponent(id)); }
-  // The current page lives in the URL path (/tests, /tests/vitd, /profiles, /cart, /about) so a refresh reopens it
+  // The current page lives in the URL path (/tests, /tests/vitd, /profiles, /cart) so a refresh reopens it
   // and search engines see each page. An open reel is /profiles/<profile id>; the page under it is kept in history.state.base.
   // vercel.json and scripts/dev.js serve index.html on these paths.
   setPath(p, base) { if (location.pathname !== p) history.pushState(base ? { base } : null, '', p); }
@@ -1415,7 +1503,7 @@ class Component extends DCLogic {
   // A test id that isn't known yet (admin tests load after start-up) shows the tests list; loadCatalog() opens it once they arrive.
   pageAt(path) {
     const [p, id] = this.segs(path);
-    return p === 'tests' && id && Component.TESTS.some(t => t.id === id) ? { page: 'test', testId: id } : ['tests', 'profiles', 'cart', 'about'].includes(p) ? { page: p } : { page: 'home' };
+    return p === 'tests' && id && Component.TESTS.some(t => t.id === id) ? { page: 'test', testId: id } : ['tests', 'profiles', 'cart'].includes(p) ? { page: p } : { page: 'home' };
   }
   fromUrl() {
     const [p, reel] = this.segs(location.pathname);
@@ -1428,7 +1516,7 @@ class Component extends DCLogic {
   // Older links kept the page in the hash (#tests, #test/vitd, #profiles&reel=thyroid): move them to their path.
   fromOldHash() {
     let raw = location.hash.slice(1); try { raw = decodeURIComponent(raw); } catch (e) {}
-    if (!raw || !/^(tests|profiles|cart|about|test\/[^&/]+)?(&?reel=[^&]*)?$/.test(raw)) return;
+    if (!raw || !/^(tests|profiles|cart|test\/[^&/]+)?(&?reel=[^&]*)?$/.test(raw)) return;
     const reel = (raw.match(/(?:^|&)reel=([^&]*)/) || [])[1], [p, id] = raw.replace(/&?reel=[^&]*/, '').split('/');
     const base = p === 'test' ? '/tests/' + encodeURIComponent(id) : p ? '/' + p : '/';
     history.replaceState(reel ? { base } : null, '', (reel ? '/profiles/' + encodeURIComponent(reel) : base) + location.search);
@@ -1512,30 +1600,13 @@ class Component extends DCLogic {
     return { items, price, hcFree, hcLeft: hcFree ? 0 : Math.round((limit - price) * 1000) / 1000, top: Math.round((pay - price) * 1000) / 1000, pay };
   }
 
-  days() {
-    const out = [], d0 = new Date(); d0.setHours(0, 0, 0, 0);
-    for (let i = 0; i < 6; i++) {
-      const d = new Date(d0); d.setDate(d0.getDate() + i);
-      const key = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-      out.push({ key, i, top: i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-GB', { weekday: 'short' }), bottom: d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }), num: d.getDate(), mon: d.toLocaleDateString('en-GB', { month: 'short' }), full: d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }) });
-    }
-    return out;
-  }
-
   validate() {
     const f = this.state.form, e = {};
     if (f.name.trim().length < 2) e.name = "Enter the patient's full name";
-    const RG = this.region();
-    if (!RG.phRe.test(f.phone)) e.phone = 'Enter a valid ' + RG.phLen + '-digit mobile number';
+    const rule = this.phoneRule();
+    if (!rule.ok(f.phone)) e.phone = rule.err;
     const a = +f.age; if (!a || a < 1 || a > 110) e.age = 'Enter age';
     if (!f.gender) e.gender = 'Select gender';
-    // A date picked before midnight drops off the list of days once the page is left open overnight.
-    if (!f.date || !this.days().some(d => d.key === f.date)) e.date = 'Pick a date';
-    if (!f.slot) e.slot = 'Pick a time slot';
-    else if (f.date === (this.days()[0] || {}).key) {
-      const sl = Component.SLOTS.find(x => x[0] === f.slot);
-      if (sl && sl[1] <= new Date().getHours()) e.slot = 'That slot has passed — pick another';
-    }
     return e;
   }
 
@@ -1563,7 +1634,8 @@ class Component extends DCLogic {
       '*Location:* ' + ((s.region && s.region.city ? s.region.city + ', ' : '') + RG.name),
       '*Collection:* ' + (s.mode === 'walkin' ? 'Walk-in at centre' : 'Home sample collection' + (total >= RG.hcFree ? ' (Free)' : ' (extra charges apply)')));
     if (f.name.trim()) lines.push('*Patient:* ' + [f.name.trim(), f.age, f.gender].filter(Boolean).join(', '));
-    if (RG.phRe.test(f.phone)) lines.push('*Mobile:* ' + RG.dial + ' ' + f.phone);
+    const rule = this.phoneRule();
+    if (rule.ok(f.phone)) lines.push('*Mobile:* ' + rule.dial + ' ' + f.phone);
     lines.push('', 'Please share the available slots. Thank you!');
     this.openWA(lines.join('\n'), false, num);
   }
@@ -1578,15 +1650,13 @@ class Component extends DCLogic {
       return;
     }
     const f = this.state.form;
-    const day = (this.days().find(d => d.key === f.date) || {}).full || '';
     const lines = ['Hi AVM Labs! I would like to book:', '', ...b.items.map((it, i) => (i + 1) + '. ' + it.name + ' – ' + this.money(it.price)), '',
       this.state.mode === 'home' ? '*Collection:* Home sample collection' + (b.hcFree ? ' (Free)' : ' (extra charges apply)') : '*Collection:* Walk-in at centre',
-      '*Date & slot:* ' + day + ' · ' + f.slot,
       '*Patient:* ' + f.name.trim() + ', ' + f.age + ', ' + f.gender,
-      '*Mobile:* ' + this.region().dial + ' ' + f.phone];
+      '*Mobile:* ' + this.phoneRule().dial + ' ' + f.phone];
     lines.push('', 'Item total: ' + this.money(b.price));
     if (b.top > 0) lines.push('Minimum billing adjustment: ' + this.money(b.top));
-    lines.push('*To pay: ' + this.money(b.pay) + '*');
+    lines.push('*To pay: ' + this.money(b.pay) + '*', '', 'Please share the available slots. Thank you!');
     const url = this.wa(lines.join('\n'));
     this.setState({ booked: { url } });
     this.openWA(url, true);
@@ -1615,7 +1685,8 @@ class Component extends DCLogic {
   // The profiles the reel viewer swipes through: the reel profiles, or just the one opened when it isn't one.
   // Reel positions (reelIdx, _ri, slides, the track) index this list.
   reelList() { const D = this.db(), solo = this.state.reelSolo && D.PM[this.state.reelSolo]; return solo ? [solo] : D.R; }
-  // Mobile reels: after 4s without any touch, show a swipe hint above the side buttons for 5s, then start counting again.
+  // Mobile reels: a small swipe card under the close button. It shows 1.2s after opening, then after 4s without any
+  // touch, stays for 5s, then starts counting again.
   // Alternates between "swipe left" (test details) and "swipe up/down" (other profiles).
   armHint() {
     clearTimeout(this._ht); clearTimeout(this._ht2);
@@ -1628,7 +1699,7 @@ class Component extends DCLogic {
       if (!opts.length) return;
       this.showHint(opts[(this._hc = (this._hc || 0) + 1) % opts.length]);
       this._ht2 = setTimeout(() => { this.showHint(null); this.armHint(); }, 5000);
-    }, 4000);
+    }, this._hc ? 4000 : 1200);
   }
   // Shows the hint on the current reel ('up', 'down', 'left'), or hides it (null). Written straight to the page:
   // a re-render here redraws every reel and stalled any swipe that started just as the hint came or went.
@@ -1639,7 +1710,7 @@ class Component extends DCLogic {
       if (!dir || k !== cur) { if (w.hasAttribute('data-on')) w.removeAttribute('data-on'); return; }
       w.querySelector('[data-swipe]').setAttribute('data-swipe', dir);
       w.querySelectorAll('avm-i').forEach(ic => ic.setAttribute('n', 'chevron-' + dir));
-      w.querySelector('[data-swipe-label]').textContent = dir === 'left' ? 'details' : dir === 'down' ? 'back' : 'next';
+      w.querySelector('[data-swipe-label]').textContent = dir === 'left' ? 'Details' : dir === 'down' ? 'Back' : 'Next';
       w.setAttribute('data-on', '');
     });
   }
@@ -1884,14 +1955,13 @@ class Component extends DCLogic {
     const tag = sel => document.querySelector(sel), canon = tag('link[rel="canonical"]'), desc = tag('meta[name="description"]');
     const home = this._seo || (this._seo = { site: canon ? new URL(canon.href).origin : location.origin, desc: desc ? desc.content : '', og: (tag('meta[property="og:description"]') || {}).content || '', robots: (tag('meta[name="robots"]') || {}).content || '' });
     const where = ' Home sample collection in Bahrain, Saudi Arabia and the UAE.';
-    const name = p ? p.name + ': Health Checkup Tests & Price' : t ? t.name + ' Test: Price & Report Time' : { tests: 'All Lab Tests', profiles: 'Health Checkup Profiles', cart: 'Your Cart', about: 'About Us' }[s.page];
+    const name = p ? p.name + ': Health Checkup Tests & Price' : t ? t.name + ' Test: Price & Report Time' : { tests: 'All Lab Tests', profiles: 'Health Checkup Profiles', cart: 'Your Cart' }[s.page];
     const title = name ? name + ' | AVM Labs' : 'AVM Labs | Lab Tests & Health Profiles with Home Collection';
     const text = p ? p.name + ': ' + (p.tagline ? p.tagline + ' ' : '') + p.params + ' parameters from one sample' + (this.tat(p) ? ', report in ' + this.tat(p) : '') + '.' + where
       : t ? t.name + ' test at AVM Labs. ' + (((t.about || '').match(/^.*?\.(?=\s|$)/) || [t.about || ''])[0]) + (this.tat(t) ? ' Report in ' + this.tat(t) + ',' : '') + (t.fasting ? ' fasting needed.' : ' no fasting needed.') + where
       : { tests: 'Browse every lab test at AVM Labs with local prices, report times and fasting needs. Book online.' + where,
         profiles: 'Compare AVM Labs health checkup profiles: packages of tests taken from one sample, at one price.' + where,
-        cart: 'Review the lab tests and health profiles in your AVM Labs cart and book a home sample collection.',
-        about: 'About AVM Labs: an accredited laboratory offering lab tests and health profiles with home sample collection and reports in 24 hours.' + where }[s.page] || home.desc;
+        cart: 'Review the lab tests and health profiles in your AVM Labs cart and book a home sample collection.' }[s.page] || home.desc;
     const url = home.site + (p ? this.reelPath(this.cur()) : this.pagePath());
     const set = (sel, attr, v) => { const el = tag(sel); if (el && el.getAttribute(attr) !== v) el.setAttribute(attr, v); };
     if (document.title !== title) document.title = title;
@@ -2097,8 +2167,8 @@ class Component extends DCLogic {
     }
     const book = p => () => this.bookWA([{ type: 'profile', id: p.id }]);
 
-    const nav = [['Home', 'home'], ['Tests', 'tests'], ['Profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p), bg: pgN === p ? '#EFEDFB' : 'transparent', fg: pgN === p ? '#3B2C9E' : '#16133A' }));
-    const segOn = { bg: '#fff', fg: '#16133A', sh: '0 2px 8px -2px rgba(22,19,58,0.2)' }, segOff = { bg: 'transparent', fg: '#5D5A7A', sh: 'none' };
+    const nav = [['Home', 'home'], ['Tests', 'tests'], ['Profiles', 'profiles']].map(([label, p]) => ({ label, go: go(p), bg: pgN === p ? '#EFEDFB' : 'transparent', fg: pgN === p ? '#3B2C9E' : '#16133A' }));
+    const segOn = { fg: '#16133A' }, segOff = { fg: '#5D5A7A' };
 
     const q = s.q.trim().toLowerCase();
     let results = [], resultsLabel = '';
@@ -2134,16 +2204,14 @@ class Component extends DCLogic {
     const isHomeMode = s.mode === 'home';
     const setF = (k, clean) => e => { let v = e.target.value; if (clean) v = clean(v); this.setState(st => ({ form: { ...st.form, [k]: v }, errors: { ...st.errors, [k]: undefined } })); };
     const digits = n => v => v.replace(/\D/g, '').slice(0, n);
-    const bcOf = k => s.errors[k] ? '#E5484D' : '#E7E6F0';
-    const days = this.days();
-    const nowH = new Date().getHours();
-    const isToday = s.form.date === (days[0] || {}).key;
-    const slots = C.SLOTS.map(([label, start]) => {
-      const dis = isToday && start <= nowH, a = s.form.slot === label;
-      return { label, disabled: dis, icon: start < 8 ? 'sunrise' : start < 16 ? 'sun' : start < 18 ? 'sunset' : 'moon', part: start < 12 ? 'Morning' : start < 16 ? 'Afternoon' : 'Evening',
-        pick: () => !dis && this.setState(st => ({ form: { ...st.form, slot: label }, errors: { ...st.errors, slot: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : dis ? '#F6F6FA' : '#fff', fg: a ? '#fff' : dis ? '#A9A6BD' : '#16133A', sub: a ? 'rgba(255,255,255,0.75)' : '#8A8698', ico: a ? '#fff' : dis ? '#C9C6DA' : '#3B2C9E', sh: a ? '0 10px 22px -12px rgba(59,44,158,0.8)' : 'none', cursor: dis ? 'not-allowed' : 'pointer', td: dis ? 'line-through' : 'none' };
+    // Phone number: digits only, without the leading 0 many people type before a local number.
+    const PH = this.phoneRule(), dq = (s.dialQ || '').trim().toLowerCase();
+    const closeDial = () => this.setState({ dialOpen: false, dialQ: '' });
+    const dialList = !s.dialOpen ? [] : C.DIAL.filter(d => !dq || d[1].toLowerCase().includes(dq) || d[2].includes(dq)).map(([code, name, dial, , max]) => {
+      const a = code === PH.code;
+      return { name, dial, bg: a ? '#F4F2FE' : 'transparent', fw: a ? '800' : '600', pick: () => this.setState(st => ({ form: { ...st.form, cc: code, phone: st.form.phone.slice(0, max) }, errors: { ...st.errors, phone: undefined }, dialOpen: false, dialQ: '' })) };
     });
-    const pickedDay = days.find(d => d.key === s.form.date);
+    const bcOf = k => s.errors[k] ? '#E5484D' : '#E7E6F0';
 
     // The reel viewer swipes through RL (see reelList()); positions in it are reelIdx, k below and goReel().
     const RL = this.reelList(), n = RL.length, ri = s.reelIdx;
@@ -2190,7 +2258,7 @@ class Component extends DCLogic {
     const tabC = p => pgN === p ? '#3B2C9E' : '#5D5A7A';
 
     return {
-      isDesktop, isMobile, isWide, isHome: pg === 'home', isTests: pg === 'tests', isProfiles: pg === 'profiles', isCart: pg === 'cart', isAbout: pg === 'about', isTest: !!td, td: td || {}, backTests: go('tests'),
+      isDesktop, isMobile, isWide, isHome: pg === 'home', isTests: pg === 'tests', isProfiles: pg === 'profiles', isCart: pg === 'cart', isTest: !!td, td: td || {}, backTests: go('tests'),
       goHome: go('home'), goTests: go('tests'), goProfiles: go('profiles'), goCart: go('cart'), nav,
       openReels0: () => this.openReels(), hasCart, cartEmpty: !hasCart, cartCount, profileCount: D.R.length,
       locOpen: s.locOpen, toggleLoc: () => this.setState(st => ({ locOpen: !st.locOpen })),
@@ -2202,9 +2270,9 @@ class Component extends DCLogic {
         // Every centre, the visitor's country first, one at a time: city and address; the pin opens Google Maps.
         const all0 = C.CENTRES.filter(c => c.country === RG.code).concat(C.CENTRES.filter(c => c.country !== RG.code)), k = (s.tick || 0) % Math.max(1, all0.length);
         const rows = all0.map((c, i) => { const on = i === k; return { dotW: on ? '20px' : '6px', dotBg: on ? '#3B2C9E' : '#D4D1E6', name: c.city, address: c.address, code: c.country === 'SA' ? 'KSA' : c.country === 'AE' ? 'UAE' : c.country, go: () => this.setState({ tick: i }), map: () => window.open(c.maps, '_blank', 'noopener') }; });
-        // Photos of our Bahrain centre (assets/centres/), repeated to at least 6 tiles so half the strip is wider than the
+        // Photos of our centre and lab (assets/centres/), repeated to at least 6 tiles so half the strip is wider than the
         // screen; the list is then doubled so the marquee loops seamlessly.
-        const one = C.CENTRE_PHOTOS.map(([file, ph]) => ({ photoSrc: './assets/centres/bahrain-' + file + '.jpg', photoCredit: '', photoHref: '', ph }));
+        const one = C.CENTRE_PHOTOS.map(([file, ph]) => ({ photoSrc: './assets/centres/' + file + '.jpg', photoCredit: '', photoHref: '', ph }));
         const all = Array.from({ length: Math.ceil(6 / one.length) * one.length }, (_, i) => ({ ...one[i % one.length], id: 'centre-' + i }));
         return { centreRows: rows, centreY: 'translateY(' + (-k * 54) + 'px)', centreShots: all.concat(all) };
       })(),
@@ -2213,7 +2281,7 @@ class Component extends DCLogic {
       // Where the site mentions home collection: free from the country's limit.
       hcFreeAt: this.money(RG.hcFree), hcModeSub: b.hcFree ? 'Free · we come to you' : 'Free on ' + this.money(RG.hcFree) + '+', ...(heroV ? parts('hero2', this.pr(heroV)) : {}),
       ...gateVM,
-      smTests: s.sMode === 'tests' ? segOn : segOff, smProfiles: s.sMode === 'profiles' ? segOn : segOff,
+      smTests: s.sMode === 'tests' ? segOn : segOff, smProfiles: s.sMode === 'profiles' ? segOn : segOff, smX: s.sMode === 'profiles' ? 'translateX(100%)' : 'translateX(0)',
       setModeTests: () => this.setState({ sMode: 'tests' }), setModeProfiles: () => this.setState({ sMode: 'profiles' }),
       q: s.q, onQ: e => this.setState({ q: e.target.value, qFocus: true }), onQFocus: () => this.setState({ qFocus: true }), onQBlur: () => setTimeout(() => this.setState({ qFocus: false }), 150),
       onQKey: e => { if (e.key === 'Enter') { e.target.blur(); this.renderVals().submitSearch(); } else if (e.key === 'Escape') e.target.blur(); },
@@ -2240,8 +2308,6 @@ class Component extends DCLogic {
       mRow: s.sMode === 'profiles'
         ? D.P.map(p => ({ label: p.name, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, go: () => this.openReels(p.id) }))
         : cats.map(c => ({ label: c.short || c.label, icon: c.icon, soft: c.soft, ink: c.ink, go: c.go })),
-      // Lift the hero "Explore profiles" bar so it centres on the category circles beside it (labels sit below them).
-      exploreMb: isDesktop ? '43px' : '0px',
       // The reel viewer fades in when opened by a tap (openReels), not when the page loads on a reel link.
       reelsAnim: this._reelsAnim ? '1' : '0',
       rowDisplay: isDesktop ? 'grid' : 'flex', rowOverflow: isDesktop ? 'visible' : 'auto',
@@ -2265,13 +2331,11 @@ class Component extends DCLogic {
       }),
       cartLines, pickHome: () => this.setState({ mode: 'home' }), pickWalk: () => this.setState({ mode: 'walkin' }),
       modeHome: modeStyle(isHomeMode), modeWalk: modeStyle(!isHomeMode), isHomeMode,
-      form: s.form, err: s.errors, dial: RG.dial, phPh: RG.phPh, phPad: (RG.dial.length * 10 + 24) + 'px',
-      on: { name: setF('name'), phone: setF('phone', digits(RG.phLen)), age: setF('age', digits(3)) },
+      form: s.form, err: s.errors, dial: PH.dial, phPh: PH.ph, dialOpen: !!s.dialOpen, dialList, dialNone: !!s.dialOpen && !dialList.length, dialQ: s.dialQ || '', closeDial, toggleDial: () => this.setState(st => ({ dialOpen: !st.dialOpen, dialQ: '' })), onDialQ: e => this.setState({ dialQ: e.target.value }), dialKey: e => { if (e.key === 'Escape') closeDial(); },
+      on: { name: setF('name'), phone: setF('phone', v => digits(PH.max)(v.replace(/^[^1-9]+/, ''))), age: setF('age', digits(3)) },
       bc: { name: bcOf('name'), phone: bcOf('phone'), age: bcOf('age'), gender: bcOf('gender') },
       genders: ['Male', 'Female', 'Other'].map(g => { const a = s.form.gender === g; return { label: g, pick: () => this.setState(st => ({ form: { ...st.form, gender: g }, errors: { ...st.errors, gender: undefined } })), bg: a ? '#fff' : 'transparent', fg: a ? '#3B2C9E' : '#5D5A7A', sh: a ? '0 2px 8px -2px rgba(22,19,58,0.2)' : 'none' }; }),
-      slotTitle: isHomeMode ? 'Collection date & time' : 'Visit date & time',
-      days: days.map(d => { const a = s.form.date === d.key; return { top: d.top, num: d.num, mon: d.mon, pick: () => this.setState(st => ({ form: { ...st.form, date: d.key, slot: d.i === 0 ? '' : st.form.slot }, errors: { ...st.errors, date: undefined } })), bd: a ? '#3B2C9E' : '#E7E6F0', bg: a ? '#3B2C9E' : '#fff', fg: a ? '#fff' : '#16133A', sub: a ? 'rgba(255,255,255,0.8)' : '#5D5A7A', sh: a ? '0 12px 24px -12px rgba(59,44,158,0.85)' : 'none', lift: a ? 'translateY(-2px)' : 'none' }; }),
-      slots, slotPicked: !!(pickedDay && s.form.slot), slotSummary: pickedDay ? pickedDay.full + ' · ' + s.form.slot : '', asidePos: isWide ? 'sticky' : 'static',
+      asidePos: isWide ? 'sticky' : 'static',
       bill: { priceF: this.money(b.price), ...parts('price', b.price), ...parts('pay', b.pay), ...parts('top', b.top), hcF: b.hcFree ? 'FREE' : 'Extra charges', hcColor: b.hcFree ? '#0E7350' : '#B4540A', hcFree: b.hcFree,
         // Below the free-collection limit: how much more to add, as minimum billing does (only once something is in the cart).
         showHcLeft: isHomeMode && !b.hcFree && b.items.length > 0, hcShort: 'Add ' + this.money(b.hcLeft) + ' more for free home collection', payF: this.money(b.pay), hasTop: b.top > 0, topF: this.money(b.top), minShort: 'Add ' + this.money(b.top) + ' more to avoid minimum billing',
@@ -2284,7 +2348,9 @@ class Component extends DCLogic {
       isBooked: !!s.booked, bookedUrl: s.booked ? s.booked.url : '#',
       finishBooked: () => { this.setCart(() => []); this.setState({ booked: null }); this.go('home'); },
       toTop: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
-      footLinks:[['Home', 'home'], ['All tests', 'tests'], ['Health profiles', 'profiles'], ['About us', 'about']].map(([label, p]) => ({ label, go: go(p) })),
+      // Instagram and Facebook are per country; LinkedIn is the one company page for all of them.
+      footSocials: [['instagram', 'Instagram', RG.social.instagram, RG.social.name], ['facebook', 'Facebook', RG.social.facebook, RG.social.name], ['linkedin', 'LinkedIn', 'https://www.linkedin.com/company/avmlabsofficial/', 'AVMLabs']].map(([icon, site, url, name]) => ({ icon, url, label: name + ' on ' + site })),
+      footLinks:[['Home', 'home'], ['All tests', 'tests'], ['Health profiles', 'profiles']].map(([label, p]) => ({ label, go: go(p) })),
       spacerH, showTabs, showTestsBar, showCartBar, tab: { home: tabC('home'), tests: tabC('tests'), profiles: tabC('profiles'), cart: tabC('cart') },
       showFab, fabBottom: !isMobile ? '24px' : 'calc(' + (hasCartBar ? '104px' : hasTestsBar ? (ms.length ? '214px' : '160px') : '92px') + ' + ' + barPad + ')', fabAway: 'translate(0, var(--vv-drop, 0px))',
       // Removals show a minus, problems ("Please complete…", "Couldn't copy…") an alert, everything else a tick.
@@ -2308,7 +2374,7 @@ class Component extends DCLogic {
       reelList: RL.map((p, k) => ({ sym: p.sym, icon: C.PICON[p.id] || 'layers', soft: `oklch(0.94 0.045 ${p.hue})`, ink: `oklch(0.48 0.16 ${p.hue})`, dot: `oklch(0.55 0.17 ${p.hue})`, name: p.name, meta: p.params + ' parameters · ' + cost(p), go: () => this.goReel(k), bg: k === ri ? '#EEECF8' : 'transparent', bd: k === ri ? '#D9D5F0' : 'transparent' })),
       mobileReels: s.reelsOpen && isMobile, desktopReels: s.reelsOpen && isDesktop, reelDots: RL.map((p, k) => ({ h: k === ri ? '26px' : '8px', bg: k === ri ? '#3B2C9E' : '#D4D1E6', go: () => this.goReel(k) })), reelUp: () => this.goReel(this.cur() - 1), reelDown: () => this.goReel(this.cur() + 1), reelPos: (ri + 1) + ' / ' + n,
       prevSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) - 1); }, nextSlide: () => { const i = this.cur(); this.goSlide(i, (this.state.slides[i] || 0) + 1); },
-      reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')', hintBottom: 'calc(82px + ' + reelPadB + ')'
+      reelPadB, barPad, tabBottom: 'calc(10px + ' + barPad + ')', testsBarBottom: 'calc(86px + ' + barPad + ')', cartPadB: 'calc(12px + ' + barPad + ')', slidePadB: 'calc(134px + ' + reelPadB + ')', railBottom: 'calc(152px + ' + reelPadB + ')'
     };
   }
 }

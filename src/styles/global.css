@@ -109,20 +109,92 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-td-group-name]{margin:6px 0 0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font-size:clamp(15px,1.6vw,17px);font-weight:800;letter-spacing:-0.01em;color:#16133A}
 [data-td-group-name] small{font-size:12.5px;font-weight:600;color:#5D5A7A}
 
-/* Footer columns: centre/contact first, then brand and links; on phones contact and brand take the full width */
-[data-foot-grid]{display:grid;grid-template-columns:1.3fr 1.3fr 1fr;gap:36px 40px}
-@media (max-width:900px){[data-foot-grid]{grid-template-columns:1fr 1fr}}
-/* Phones: contact and brand full width, links below, tighter spacing */
-@media (max-width:520px){
-[data-foot-grid]{grid-template-columns:1fr 1fr;gap:22px 16px;padding-top:26px!important;padding-bottom:18px!important}
-[data-foot-brand],[data-foot-contact]{grid-column:1/-1}
-[data-foot-brand]{gap:10px!important}
+/* Footer banner: icon and heading on the left, two equal-width buttons on the right */
+[data-foot-cta]{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:20px 40px;padding:clamp(22px,3vw,32px) clamp(20px,3.5vw,40px);border-radius:28px;background:linear-gradient(120deg,#231B66 0%,#3B2C9E 60%,#5B46D6 100%);box-shadow:0 24px 48px -32px rgba(91,70,214,.65),inset 0 1px 0 rgba(255,255,255,.12)}
+[data-foot-cta-text]{position:relative;display:flex;align-items:center;gap:18px;min-width:0}
+[data-foot-cta-btns]{position:relative;flex:none;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+[data-foot-btn]{display:flex;align-items:center;justify-content:center;gap:9px;height:52px;padding:0 24px;border-radius:999px;border:none;font-size:15px;font-weight:800;white-space:nowrap;cursor:pointer;transition:transform .2s,box-shadow .2s,background-color .2s}
+[data-foot-btn="wa"]{color:#fff;background:linear-gradient(180deg,#15904C,#0E743A);box-shadow:0 10px 22px -12px rgba(5,60,30,.9),inset 0 1px 0 rgba(255,255,255,.2)}
+[data-foot-btn="browse"]{color:#2A1F7A;background:#fff;box-shadow:0 10px 22px -12px rgba(15,12,41,.75)}
+/* Footer columns: contact, brand, links; all start at the same top line */
+[data-foot-grid]{position:relative;max-width:1200px;margin:0 auto;padding:clamp(36px,5vw,56px) clamp(16px,3vw,28px) clamp(32px,4vw,44px);display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1.1fr) minmax(0,.65fr);align-items:start;gap:36px clamp(32px,4.5vw,64px)}
+[data-foot-head]{display:flex;flex-direction:column;gap:8px;font-size:12.5px;font-weight:800;line-height:1.3;color:#fff;letter-spacing:.12em;text-transform:uppercase}
+[data-foot-centre]{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+[data-foot-actions]{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:fit-content;padding-left:46px}
+[data-foot-chip]{display:flex;align-items:center;justify-content:center;gap:7px;height:40px;padding:0 14px;border-radius:999px;font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer;transition:background-color .2s,border-color .2s}
+[data-foot-chip="wa"]{border:1px solid rgba(34,180,99,.45);background:rgba(34,180,99,.12);color:#7BE3B4}
+[data-foot-chip="dir"]{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff}
+[data-foot-about]{font-size:14px;line-height:1.7;color:#C9C6E0;max-width:320px}
+[data-foot-social]{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;font-size:12.5px;font-weight:600;color:#A9A5C9}
+[data-foot-social-links]{display:flex;gap:10px}
+[data-foot-social-link]{width:40px;height:40px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;transition:background-color .2s,border-color .2s,transform .2s}
+[data-foot-links]{display:flex;flex-direction:column;gap:2px}
+[data-foot-link]{align-self:flex-start;display:flex;align-items:center;min-height:36px;padding:0;border:none;background:none;text-align:left;color:#C9C6E0;font-size:14.5px;white-space:nowrap;cursor:pointer;transition:color .2s,transform .2s}
+/* Footer bottom bar: the outer columns match so the disclaimer sits in the true centre */
+[data-foot-bottom]{max-width:1200px;margin:0 auto;padding:18px clamp(16px,3vw,28px) 22px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px 24px;font-size:12.5px;line-height:1.6;color:#A9A5C9}
+[data-foot-note]{display:flex;align-items:center;gap:7px}
+[data-foot-note] avm-i{flex:none}
+[data-foot-top]{justify-self:end;display:flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:none;color:#C9C6E0;font-size:12.5px;font-weight:600;white-space:nowrap;cursor:pointer;transition:color .2s,border-color .2s,background-color .2s}
+@media (hover:hover){
+[data-foot-btn]:hover{transform:translateY(-1px)}
+[data-foot-btn="wa"]:hover{box-shadow:0 14px 26px -12px rgba(5,60,30,1),inset 0 1px 0 rgba(255,255,255,.2)}
+[data-foot-btn="browse"]:hover{background:#F3F1FF;box-shadow:0 14px 26px -12px rgba(15,12,41,.85)}
+[data-foot-chip="wa"]:hover{background:rgba(34,180,99,.22);border-color:rgba(34,180,99,.7)}
+[data-foot-chip="dir"]:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3)}
+[data-foot-social-link]:hover{color:#fff;background:rgba(123,108,240,.35);border-color:rgba(167,156,245,.6);transform:translateY(-1px)}
+[data-foot-link]:hover{color:#fff;transform:translateX(3px)}
+[data-foot-top]:hover{color:#fff;border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.05)}
+}
+[data-foot-btn]:active{transform:translateY(0) scale(.99)}
+[data-foot-btn]:focus-visible,[data-foot-chip]:focus-visible,[data-foot-social-link]:focus-visible,[data-foot-link]:focus-visible,[data-foot-top]:focus-visible{outline:2px solid #fff;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){[data-foot-btn],[data-foot-social-link],[data-foot-link]{transition:none;transform:none!important}}
+/* The banner stacks before its text and buttons collide; the buttons then share the full width */
+@media (max-width:1040px){
+[data-foot-cta]{flex-direction:column;align-items:stretch}
+}
+/* Tablets: contact on the left, brand above links on the right; bottom bar on two rows */
+@media (max-width:900px){
+[data-foot-grid]{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-areas:"contact brand" "contact explore"}
+[data-foot-contact]{grid-area:contact}
+[data-foot-brand]{grid-area:brand}
+[data-foot-explore]{grid-area:explore}
+[data-foot-bottom]{grid-template-columns:1fr auto}
+[data-foot-note]{grid-row:2;grid-column:1}
+[data-foot-top]{grid-row:1/span 2;grid-column:2}
+}
+/* Phones and small tablets: one compact column in reading order; the logo sits beside its description and Back to top beside the copyright */
+@media (max-width:640px){
+[data-foot-grid]{grid-template-columns:minmax(0,1fr);grid-template-areas:"contact" "brand" "explore";gap:24px;padding-top:24px;padding-bottom:18px}
+[data-foot-contact]{gap:10px!important}
+[data-foot-centre]{gap:8px;margin-top:4px}
+[data-foot-actions]{width:auto;padding-left:0}
+[data-foot-brand]{flex-direction:row!important;flex-wrap:wrap;align-items:center;gap:12px 14px!important}
+[data-foot-social]{flex:0 0 100%}
+[data-foot-brand]>span:first-child{align-self:center!important;flex:none}
 [data-foot-brand] img{height:40px!important}
-[data-foot-brand]>span:nth-child(2){font-size:13px!important;line-height:1.55!important}
-[data-foot-grid]>div{gap:10px!important}
-[data-foot-grid]>div:not([data-foot-contact]) button{padding:2px 0!important;font-size:13.5px!important}
-[data-foot-contact] button{height:34px!important;padding:0 12px!important;font-size:12.5px!important}
-[data-foot-bottom]{padding-top:12px!important;padding-bottom:14px!important;gap:6px 12px!important;font-size:11.5px!important}
+[data-foot-about]{flex:1 1 0;min-width:0;max-width:none;font-size:13px;line-height:1.5}
+[data-foot-explore]{gap:8px!important}
+[data-foot-links]{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+[data-foot-link]{align-self:auto;width:100%;min-height:38px;font-size:14px}
+[data-foot-bottom]{grid-template-columns:minmax(0,1fr) auto;padding-top:12px;padding-bottom:14px;gap:6px 12px;font-size:11.5px;line-height:1.5}
+[data-foot-note]{grid-row:2;grid-column:1/-1;align-items:flex-start}
+[data-foot-note] avm-i{margin-top:1px}
+[data-foot-top]{grid-row:1;grid-column:2;height:36px;padding:0 12px;font-size:12px}
+}
+@media (max-width:560px){
+[data-foot-cta]{gap:14px;padding:16px;border-radius:22px}
+[data-foot-cta-text]{gap:12px}
+[data-foot-cta-text]>span:first-child{width:40px!important;height:40px!important;border-radius:12px!important}
+[data-foot-cta-btns]{gap:8px}
+[data-foot-btn]{height:46px;padding:0 8px;gap:6px;font-size:13px}
+}
+/* Most phones: "Book on WhatsApp" can't fit in half the width, so it takes what it needs and Browse tests fills the rest */
+@media (max-width:400px){
+[data-foot-cta-btns]{grid-template-columns:auto minmax(0,1fr)}
+}
+/* Very narrow phones: the two banner labels no longer fit side by side */
+@media (max-width:350px){
+[data-foot-cta-btns]{grid-template-columns:minmax(0,1fr)}
 }
 
 /* Reels double-tap heart (mobile, just for show): springs in at the finger with a slight tilt, holds, then rises straight up and fades.
@@ -141,22 +213,20 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-dtap] svg{display:block;width:100%;height:100%}
 @media (prefers-reduced-motion:reduce){[data-dtap]{animation-duration:.6s}}
 
-/* Reels swipe hint (mobile): two cascading chevrons + label in the gap above "Book now", shown for 5s after 4s idle */
-@keyframes avmSwipeLife{0%{opacity:0;transform:translateY(8px) scale(.9)}7%{opacity:1;transform:none}93%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-4px) scale(.95)}}
-@keyframes avmChev{0%{opacity:.2;transform:translate(0,0)}45%{opacity:1}100%{opacity:.2;transform:translate(var(--sx),var(--sy))}}
-[data-swipe-wrap]:not([data-on]){display:none!important}
-[data-swipe]{--sx:0px;--sy:-4px;display:flex;align-items:center;gap:7px;pointer-events:none;color:#2A1F7A;animation:avmSwipeLife 5s cubic-bezier(.2,.8,.2,1) both}
-[data-swipe="down"]{--sy:4px}
-[data-swipe="left"]{--sx:-4px;--sy:0px}
-[data-swipe-arrows]{display:flex;flex-direction:column;align-items:center;color:#3B2C9E;filter:drop-shadow(0 0 .4px #3B2C9E) drop-shadow(0 0 5px rgba(255,255,255,.95))}
-[data-swipe-arrows] avm-i{display:block;animation:avmChev 1s ease-in-out infinite}
-[data-swipe-arrows] avm-i+avm-i{margin-top:-10px}
-[data-swipe="left"] [data-swipe-arrows]{flex-direction:row}
-[data-swipe="left"] [data-swipe-arrows] avm-i+avm-i{margin:0 0 0 -10px}
-[data-swipe="up"] [data-swipe-arrows] avm-i:first-child,[data-swipe="left"] [data-swipe-arrows] avm-i:first-child,[data-swipe="down"] [data-swipe-arrows] avm-i:last-child{animation-delay:.18s}
-[data-swipe] b{font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;line-height:1.1;text-shadow:0 0 10px #fff,0 0 5px #fff,0 0 2px #fff}
-[data-swipe] small{font-size:10px;font-weight:600;color:#4A4668;line-height:1.1;white-space:nowrap;text-shadow:0 0 10px #fff,0 0 5px #fff,0 0 2px #fff}
-@media (prefers-reduced-motion:reduce){[data-swipe],[data-swipe-arrows] avm-i{animation:none!important}}
+/* Reels swipe hint (mobile): a small card under the close button; fades in and out, the arrows glide only while it shows */
+@keyframes avmSwipeGlide{0%{opacity:0;transform:translate(calc(var(--sx) * -1),calc(var(--sy) * -1))}35%,65%{opacity:1}100%{opacity:0;transform:translate(var(--sx),var(--sy))}}
+[data-swipe-wrap]{position:absolute;top:calc(74px + env(safe-area-inset-top));right:12px;z-index:5;pointer-events:none;visibility:hidden;opacity:0;transform:translateY(-6px) scale(.92);transform-origin:50% 0;transition:opacity .3s ease,transform .4s cubic-bezier(.2,.9,.3,1.15),visibility 0s linear .3s}
+[data-swipe-wrap][data-on]{visibility:visible;opacity:1;transform:none;transition-delay:0s}
+[data-swipe]{--sx:0px;--sy:-8px;width:60px;display:flex;flex-direction:column;align-items:center;padding:7px 4px 8px;border-radius:16px;background:rgba(255,255,255,.96);border:1px solid #ECEBF3;box-shadow:0 12px 26px -14px rgba(22,19,58,.45);color:#16133A;line-height:1.15}
+[data-swipe="down"]{--sy:8px}
+[data-swipe="left"]{--sx:-8px;--sy:0px}
+[data-swipe-tile]{position:relative;width:34px;height:34px;margin-bottom:5px;border-radius:11px;overflow:hidden;background:#EFEDFB;color:#3B2C9E}
+[data-swipe-tile] avm-i{position:absolute;top:8px;left:8px;width:18px;height:18px;display:block;opacity:0}
+[data-swipe-wrap][data-on] [data-swipe-tile] avm-i{animation:avmSwipeGlide 1.6s cubic-bezier(.45,0,.55,1) infinite;will-change:transform,opacity}
+[data-swipe-wrap][data-on] [data-swipe-tile] avm-i+avm-i{animation-delay:.8s}
+[data-swipe] b{font-size:11px;font-weight:800;letter-spacing:-.01em}
+[data-swipe] small{margin-top:1px;font-size:10px;font-weight:600;color:#5D5A7A}
+@media (prefers-reduced-motion:reduce){[data-swipe-wrap]{transition:none}[data-swipe-wrap][data-on] [data-swipe-tile] avm-i{animation:none;opacity:1}[data-swipe-wrap][data-on] [data-swipe-tile] avm-i+avm-i{display:none}}
 
 /* Reels "Add" button: the circle pops, two waves ripple out, sparks burst, and a big check pops in the middle of the reel */
 @keyframes avmAddPop{0%{transform:scale(1)}20%{transform:scale(.8)}50%{transform:scale(1.18)}72%{transform:scale(.96)}100%{transform:scale(1)}}
@@ -226,6 +296,34 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-reels-root][data-anim="1"]{animation:avmReelsIn .26s cubic-bezier(.2,.8,.2,1) both}
 @media (prefers-reduced-motion:reduce){[data-reels-root]{animation:none}}
 
+/* Tests / Profiles switch: one white pill slides between two equal options, with a slight settle */
+[data-seg]{position:relative;display:grid;grid-template-columns:1fr 1fr}
+[data-seg-thumb]{position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:999px;background:#fff;box-shadow:0 2px 8px -2px rgba(22,19,58,.2);pointer-events:none;transition:transform .38s cubic-bezier(.32,1.2,.5,1)}
+[data-seg] button{position:relative;z-index:1;background:none;transition:color .25s ease}
+@media (prefers-reduced-motion:reduce){[data-seg-thumb],[data-seg] button{transition:none}}
+
+/* Cart: WhatsApp number with a country code picker */
+[data-phone]{position:relative;display:flex;align-items:stretch;height:50px;border-radius:14px;background:#FBFBFD;transition:border-color .15s,background .15s,box-shadow .15s}
+[data-phone]:focus-within{border-color:#3B2C9E!important;background:#fff;box-shadow:0 0 0 4px rgba(59,44,158,.12)}
+[data-dial-btn]{flex:none;display:flex;align-items:center;gap:4px;padding:0 9px 0 14px;border:none;border-right:1px solid #E7E6F0;border-radius:12px 0 0 12px;background:none;color:#16133A;font-size:15px;font-weight:600;white-space:nowrap;cursor:pointer}
+[data-dial-btn]:hover{background:#F4F2FE}
+[data-phone]>input{flex:1;min-width:0;border:none;outline:none;background:transparent;padding:0 14px;font-size:15px;color:#16133A}
+[data-dial-back]{position:fixed;inset:0;z-index:39;border:none;padding:0;background:transparent;cursor:default}
+[data-dial-menu]{position:absolute;top:calc(100% + 8px);left:-1.5px;z-index:40;width:min(300px,calc(100vw - 48px));display:flex;flex-direction:column;gap:6px;padding:8px;background:#fff;border:1px solid #E7E6F0;border-radius:18px;box-shadow:0 24px 60px -20px rgba(22,19,58,.35)}
+[data-dial-search]{height:40px;width:100%;padding:0 12px;border:1px solid #E7E6F0;border-radius:12px;outline:none;background:#FBFBFD;font-size:16px;color:#16133A}
+[data-dial-search]:focus{border-color:#3B2C9E;background:#fff}
+[data-dial-list]{display:flex;flex-direction:column;gap:1px;max-height:240px;overflow-y:auto;overscroll-behavior:contain}
+[data-dial-list] button{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px;padding:0 10px;border:none;border-radius:10px;color:#16133A;font-size:14px;text-align:left;cursor:pointer}
+[data-dial-list] button:hover{background:#F4F3FA!important}
+[data-dial-list] button span:last-child{flex:none;color:#5D5A7A}
+[data-dial-none]{padding:12px 10px;font-size:13.5px;color:#5D5A7A}
+
+/* Mobile home: free home collection strip, the message on the left and the amount in a gold pill */
+[data-hc-m]{display:flex;align-items:center;gap:9px;min-height:46px;padding:6px 7px 6px 7px;border-radius:16px;background:linear-gradient(100deg,#FFFBEE 0%,#FFF3D1 100%);border:1px solid #F1DFA8;box-shadow:0 10px 22px -18px rgba(160,112,20,.6);color:#3A2A08}
+[data-hc-m-ico]{flex:none;width:32px;height:32px;border-radius:11px;display:grid;place-items:center;color:#7A5200;background:#FFE7A6}
+[data-hc-m] b{flex:1;min-width:0;font-size:13.5px;font-weight:800;letter-spacing:-.01em;line-height:1.2}
+[data-hc-m-amt]{flex:none;padding:6px 11px;border-radius:999px;background:linear-gradient(180deg,#FFE08A,#F2BE3E);box-shadow:inset 0 1px 0 rgba(255,255,255,.55);color:#3A2A08;font-size:12px;font-weight:800;white-space:nowrap}
+
 /* Hero: free home collection banner under the search bar, in the gold of "Save more with profiles" */
 [data-hc-banner]{position:relative;z-index:0;overflow:hidden;align-self:flex-start;display:inline-flex;align-items:center;gap:9px;height:42px;padding:0 20px 0 6px;margin-top:calc(-1 * clamp(4px,1vw,10px));border-radius:999px;color:#2A1A00;font-size:clamp(13.5px,1.25vw,15px);font-weight:800;letter-spacing:-.005em;white-space:nowrap;background:linear-gradient(180deg,#FFE58F 0%,#F7C948 45%,#E3A92A 100%);border:1px solid #D39A22;box-shadow:0 14px 26px -12px rgba(201,138,20,.75),inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(120,70,0,.18);text-shadow:0 1px 0 rgba(255,240,190,.6)}
 [data-hc-banner]::after{content:'';position:absolute;top:0;bottom:0;left:0;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);pointer-events:none;animation:avmSaveSweep 3.2s ease-in-out infinite}
@@ -233,6 +331,14 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-hc-banner] [data-spark="1"]{top:5px;left:46%}
 [data-hc-banner] [data-spark="2"]{bottom:5px;left:72%}
 [data-hc-banner] [data-spark="3"]{top:6px;right:5%}
+/* Desktop: a small gold tab hanging off the search bar, like "Save more with profiles" on the test page. The right margin keeps it on the bar's flat edge, clear of the pill's curve. */
+[data-hc-tab]{align-self:flex-end;height:32px;gap:7px;padding:0 14px 0 6px;margin:0 34px 0 0;border-radius:0 0 14px 14px;border-top:none;font-size:12.5px;box-shadow:0 12px 22px -12px rgba(201,138,20,.75),inset 0 -1px 0 rgba(255,255,255,.35),inset 0 4px 5px -3px rgba(70,40,0,.28)}
+[data-hc-tab] [data-hc-banner-ico]{width:22px;height:22px}
+/* Search results are open: the tab would peek out between the bar and the list */
+div:has(input:focus)+[data-hc-tab]{visibility:hidden}
+[data-hc-tab] [data-spark="1"]{top:3px;left:44%;width:9px;height:9px}
+[data-hc-tab] [data-spark="2"]{bottom:3px;left:70%;width:7px;height:7px}
+[data-hc-tab] [data-spark="3"]{top:4px;right:4%;width:8px;height:8px}
 @media (max-width:767px){[data-hc-banner]{align-self:stretch;justify-content:center;height:40px;margin-top:0;font-size:13.5px}}
 @media (prefers-reduced-motion:reduce){[data-td-save]::after,[data-hc-banner]::after,[data-spark]{animation:none;display:none}}
 /* Profile rows inside a gold card (test page "Save more with a profile") */

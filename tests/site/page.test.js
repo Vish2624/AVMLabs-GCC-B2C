@@ -14,6 +14,19 @@ describe('site file', () => {
     assert.doesNotThrow(() => new Function('DCLogic', 'React', page.slice(start, end) + '\nreturn Component;'));
   });
 
+  it('links every country to its own social pages', () => {
+    for (const [code, instagram, facebook] of [
+      ['BH', 'instagram.com/avmlabsbahrain', 'id=61580419852001'],
+      ['SA', 'instagram.com/avmlabsksa', 'id=61554832831971'],
+      ['AE', 'instagram.com/avmlabsuae/', 'id=61557083525796'],
+    ]) {
+      const region = new RegExp(code + ": \\{ code: '" + code + "'.*").exec(page);
+      assert.ok(region, code + ' is missing from REGIONS');
+      assert.ok(region[0].includes(instagram) && region[0].includes(facebook), code + ' has the wrong social links');
+    }
+    assert.ok(page.includes('linkedin.com/company/avmlabsofficial/'));
+  });
+
   it('leaves out lab codes and short names', () => {
     assert.ok(!/"shortName"|EW_PRO|HEMOGRAM - 6 PART/.test(page));
   });

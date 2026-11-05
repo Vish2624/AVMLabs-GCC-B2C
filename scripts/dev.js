@@ -41,7 +41,7 @@ const TYPES = {
 };
 // Site pages with their own path (see setPath() in src/logic/04-navigation-cart.js) get the site file,
 // like the rewrites in vercel.json.
-const PAGE = /^\/((tests|profiles)(\/[^/]+)?|about|cart)\/?$/;
+const PAGE = /^\/((tests|profiles)(\/[^/]+)?|cart)\/?$/;
 const PRIVATE = /^\/(\.env[^/]*|\.git|node_modules|server|scripts|supabase)(\/|$)/;
 
 // /api/admin/profiles/abc -> api/admin/profiles/[id].js, like Vercel's file routing.
@@ -92,6 +92,8 @@ http
     try {
       if (urlPath.startsWith('/api/')) await serveApi(req, res, urlPath);
       else if (urlPath === '/admin') res.writeHead(301, { Location: '/admin/' }).end();
+      // The About page is gone; old links go home, like the redirect in vercel.json.
+      else if (/^\/about\/?$/.test(urlPath)) res.writeHead(301, { Location: '/' }).end();
       else serveStatic(res, urlPath);
     } catch (err) {
       console.error(err);

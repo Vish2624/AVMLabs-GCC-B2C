@@ -45,7 +45,7 @@ editor settings (location gate, preview country) in `src/config/settings.json`.
 `src/logic/*.js` are pieces of one `Component` class, in order, not standalone modules.
 
 Each page has its own path (`/tests`, `/tests/<id>`, `/profiles`, `/profiles/<id>` for a profile's
-reel, `/about`, `/cart`); `vercel.json` and `scripts/dev.js` serve the site file on them, and old
+reel, `/cart`); `vercel.json` and `scripts/dev.js` serve the site file on them, and old
 `#tests`-style links are moved to their path on load. `npm run build` writes `public/sitemap.xml`
 from `src/data/tests.json` and the built-in profiles.
 

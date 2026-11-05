@@ -52,12 +52,13 @@
     'profile-bg-vitamin-profile': ['1707129785947-ddc627a8bab9', 'Madara', 'madara_p'],
     'profile-bg-diabetes-monitoring': ['1683727186226-910f31a9da45', 'Sweet Life', 'sweetlifediabetes'],
   };
-  // Our Bahrain centre: assets/centres/bahrain-<file>.jpg, [file, caption].
   // Our centres, by country: city, address, Google Maps link and WhatsApp number. Managed in the admin (/api/centres);
   // this built-in list is what the database starts with and what shows until the API answers.
   static CENTRES = @json data/centres.json;
-  static CENTRE_PHOTOS = [['reception', 'Reception'], ['blood-collection', 'Blood collection unit'], ['waiting-area', 'Waiting area'], ['entrance', 'Collection centre entrance']];
-  static SLOTS = [['6–8 AM', 6], ['8–10 AM', 8], ['10–12 PM', 10], ['12–2 PM', 12], ['4–6 PM', 16], ['6–8 PM', 18]];
+  // Country codes for the patient's WhatsApp number: [country, name, code, fewest digits, most digits].
+  static DIAL = @json data/dial-codes.json;
+  // Centre gallery: assets/centres/<file>.jpg (3:4), [file, caption].
+  static CENTRE_PHOTOS = [['bahrain-reception', 'Reception'], ['lab-analyser-line', 'Automated analyser line'], ['bahrain-blood-collection', 'Blood collection unit'], ['lab-hematology', 'Hematology'], ['bahrain-waiting-area', 'Waiting area'], ['lab-immunology-biochemistry', 'Immunology and biochemistry'], ['bahrain-entrance', 'Collection centre entrance'], ['lab-hplc', 'HPLC'], ['lab-analyser-room', 'Automated analyser room']];
   // Profile filters: must match CATEGORIES in server/catalog.js.
   static PF = [['all', 'All'], ['wellness', 'Wellness'], ['women', 'Women'], ['men', 'Men'], ['heart', 'Heart'], ['diabetes', 'Diabetes'], ['thyroid', 'Thyroid'], ['vitamins', 'Vitamins'], ['hair', 'Hair fall'], ['organs', 'Kidney & Liver'], ['kids', 'Kids'], ['screening', 'Screening']];
   // Each profile category's icon and hue, for the category headers in the desktop reel list.
