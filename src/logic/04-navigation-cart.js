@@ -32,6 +32,15 @@
     return { ...this.pageAt((history.state && history.state.base) || '/profiles'), reelsOpen: true, found: !!prof, reelSolo: solo,
       reelIdx: prof && !solo ? Math.max(0, all.filter(x => x.reel).indexOf(prof)) : 0, slides: {} };
   }
+  // Once the lists have loaded: a link to a profile or test that doesn't exist goes to its list, with the address to match.
+  fixDeadLink() {
+    const [p, id] = this.segs(location.pathname); if (!id) return;
+    if (p === 'profiles' && this.state.reelsOpen && !Component.PROFILES.some(x => x.id === id)) {
+      clearTimeout(this._ht); clearTimeout(this._ht2);
+      this.replacePath('/profiles');
+      this.setState({ reelsOpen: false, reelSolo: null, page: 'profiles' });
+    } else if (p === 'tests' && !Component.TESTS.some(x => x.id === id)) this.replacePath('/tests');
+  }
   // Older links kept the page in the hash (#tests, #test/vitd, #profiles&reel=thyroid): move them to their path.
   fromOldHash() {
     let raw = location.hash.slice(1); try { raw = decodeURIComponent(raw); } catch (e) {}

@@ -59,7 +59,7 @@ export function ProfileListView({ profiles, catalog, onNew, onEdit, onTab, onLog
           <div>
             <div class="eyebrow">Admin</div>
             <h1>Health profiles</h1>
-            <p class="subtitle">Changes show on the website within a minute.</p>
+            <p class="subtitle">Changes show on the website within about 5 minutes.</p>
           </div>
         </div>
         ${tabs('profiles')}

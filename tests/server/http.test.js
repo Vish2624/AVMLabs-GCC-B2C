@@ -18,6 +18,13 @@ function fakeRes() {
 }
 
 describe('pathParam', () => {
+  it('refuses a malformed address with a 400', () => {
+    assert.throws(
+      () => pathParam({ url: '/api/admin/profiles/%E0' }),
+      (e) => e instanceof HttpError && e.status === 400,
+    );
+  });
+
   it('returns the decoded last path segment', () => {
     assert.equal(pathParam({ url: '/api/admin/profiles/essential' }), 'essential');
     assert.equal(pathParam({ url: '/api/admin/profiles/a%20b/?x=1' }), 'a b');
@@ -25,6 +32,19 @@ describe('pathParam', () => {
 });
 
 describe('readJson', () => {
+  it('treats a body of null as empty', async () => {
+    assert.deepEqual(await readJson(jsonReq('null')), {});
+    assert.deepEqual(await readJson(Object.assign(jsonReq(''), { body: null })), {});
+  });
+
+  it('keeps a character that is split across chunks', async () => {
+    const bytes = Buffer.from('{"a":"Türkiye"}');
+    const req = Object.assign(Readable.from([bytes.subarray(0, 8), bytes.subarray(8)]), {
+      headers: { 'content-type': 'application/json' },
+    });
+    assert.deepEqual(await readJson(req), { a: 'Türkiye' });
+  });
+
   it('parses a JSON body', async () => {
     assert.deepEqual(await readJson(jsonReq('{"a":1}')), { a: 1 });
   });

@@ -45,7 +45,7 @@
       const T = Array.isArray(tests) && tests.length ? Component.prepTests(tests) : Component.TESTS, known = new Set(T.map(t => t.id));
       const P = (Array.isArray(profiles) ? profiles : []).map(p => Component.siteProfile(p, known)).filter(p => p.tests.length);
       const newT = canon(T) !== canon(Component.TESTS), newP = P.length > 0 && canon(P) !== canon(Component.PROFILES);
-      if (!newT && !newP) { if (newC) this.setState(s => ({ catalogVer: (s.catalogVer || 0) + 1 })); return; }
+      if (!newT && !newP) { if (newC) this.setState(s => ({ catalogVer: (s.catalogVer || 0) + 1 })); this.fixDeadLink(); return; }
       if (newT) Component.TESTS = T;
       if (newP) { Component.PROFILES = P; Component.PICON = Object.fromEntries(P.map(p => [p.id, p.icon])); }
       Component._db = null;
@@ -54,6 +54,7 @@
       if (reel) { this._ri = h.reelIdx; requestAnimationFrame(() => this.applyTrack(h.reelIdx, false)); }
       this.setState(s => ({ catalogVer: (s.catalogVer || 0) + 1, cart: s.cart.filter(c => (c.type === 'test' ? Component.TESTS : list).some(x => x.id === c.id)),
         ...(h.page === 'test' && s.page !== 'test' ? { page: 'test', testId: h.testId } : {}), ...(reel ? { reelIdx: h.reelIdx, reelSolo: h.reelSolo } : {}) }));
+      this.fixDeadLink();
     });
   }
 

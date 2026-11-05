@@ -213,6 +213,9 @@ image-slot:not([data-filled]):not([data-editable]){visibility:hidden}
 [data-dtap] svg{display:block;width:100%;height:100%}
 @media (prefers-reduced-motion:reduce){[data-dtap]{animation-duration:.6s}}
 
+/* Reels with no photo: the profile's icon on a soft tile */
+[data-rimg-none]{position:absolute;left:50%;top:32%;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:36px;display:grid;place-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 24px 44px -28px rgba(22,19,58,.4)}
+
 /* Reels swipe hint (mobile): a small card under the close button; fades in and out, the arrows glide only while it shows */
 @keyframes avmSwipeGlide{0%{opacity:0;transform:translate(calc(var(--sx) * -1),calc(var(--sy) * -1))}35%,65%{opacity:1}100%{opacity:0;transform:translate(var(--sx),var(--sy))}}
 [data-swipe-wrap]{position:absolute;top:calc(74px + env(safe-area-inset-top));right:12px;z-index:5;pointer-events:none;visibility:hidden;opacity:0;transform:translateY(-6px) scale(.92);transform-origin:50% 0;transition:opacity .3s ease,transform .4s cubic-bezier(.2,.9,.3,1.15),visibility 0s linear .3s}
@@ -339,7 +342,6 @@ div:has(input:focus)+[data-hc-tab]{visibility:hidden}
 [data-hc-tab] [data-spark="1"]{top:3px;left:44%;width:9px;height:9px}
 [data-hc-tab] [data-spark="2"]{bottom:3px;left:70%;width:7px;height:7px}
 [data-hc-tab] [data-spark="3"]{top:4px;right:4%;width:8px;height:8px}
-@media (max-width:767px){[data-hc-banner]{align-self:stretch;justify-content:center;height:40px;margin-top:0;font-size:13.5px}}
 @media (prefers-reduced-motion:reduce){[data-td-save]::after,[data-hc-banner]::after,[data-spark]{animation:none;display:none}}
 /* Profile rows inside a gold card (test page "Save more with a profile") */
 [data-gold-item]{background:rgba(255,255,255,.88);border:1px solid #F0E2BE;box-shadow:0 10px 24px -20px rgba(160,112,20,.5);transition:transform .2s,box-shadow .2s,border-color .2s}

@@ -69,14 +69,15 @@ function serveStatic(res, urlPath) {
   if (urlPath === '/sitemap.xml') urlPath = '/public/sitemap.xml';
   if (urlPath.endsWith('/')) urlPath += 'index.html';
   const file = path.join(ROOT, urlPath);
-  if (!file.startsWith(ROOT) || PRIVATE.test(urlPath)) {
+  if (!file.startsWith(ROOT + path.sep) || PRIVATE.test(urlPath)) {
     res.writeHead(403);
     return res.end('Forbidden');
   }
   fs.readFile(file, (err, data) => {
     if (err) {
-      res.writeHead(404);
-      return res.end('Not found');
+      // Like Vercel, which serves public/404.html.
+      res.writeHead(404, { 'Content-Type': TYPES['.html'] });
+      return res.end(fs.readFileSync(path.join(ROOT, '404.html')));
     }
     res.writeHead(200, {
       'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream',
@@ -88,8 +89,8 @@ function serveStatic(res, urlPath) {
 
 http
   .createServer(async (req, res) => {
-    const urlPath = decodeURIComponent(new URL(req.url, 'http://local').pathname);
     try {
+      const urlPath = decodeURIComponent(new URL(req.url, 'http://local').pathname);
       if (urlPath.startsWith('/api/')) await serveApi(req, res, urlPath);
       else if (urlPath === '/admin') res.writeHead(301, { Location: '/admin/' }).end();
       // The About page is gone; old links go home, like the redirect in vercel.json.

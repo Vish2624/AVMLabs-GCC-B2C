@@ -17,6 +17,7 @@ const FILES = [
   ['.image-slots.state.json'],
   ['robots.txt'],
   ['site.webmanifest'],
+  ['404.html'],
   ['assets'],
   ['admin'],
 ];

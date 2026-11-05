@@ -24,16 +24,22 @@ export async function readJson(req) {
     throw new HttpError(415, 'Expected a JSON body');
   }
   // Vercel may have parsed the body already.
-  if (req.body !== undefined && typeof req.body !== 'string') return req.body;
+  if (req.body !== undefined && typeof req.body !== 'string') return req.body ?? {};
   let raw = typeof req.body === 'string' ? req.body : '';
   if (!raw) {
+    // Joined as bytes: a character can be split across two chunks.
+    const chunks = [];
+    let size = 0;
     for await (const chunk of req) {
-      raw += chunk;
-      if (raw.length > MAX_BODY) throw new HttpError(413, 'Request body too large');
+      const buf = Buffer.from(chunk);
+      size += buf.length;
+      if (size > MAX_BODY) throw new HttpError(413, 'Request body too large');
+      chunks.push(buf);
     }
+    raw = Buffer.concat(chunks).toString('utf8');
   }
   try {
-    return JSON.parse(raw || '{}');
+    return JSON.parse(raw || '{}') ?? {};
   } catch {
     throw new HttpError(400, 'Invalid JSON');
   }
@@ -42,7 +48,11 @@ export async function readJson(req) {
 // Last path segment, e.g. "essential" for /api/admin/profiles/essential.
 export function pathParam(req) {
   const path = new URL(req.url, 'http://local').pathname.replace(/\/+$/, '');
-  return decodeURIComponent(path.slice(path.lastIndexOf('/') + 1));
+  try {
+    return decodeURIComponent(path.slice(path.lastIndexOf('/') + 1));
+  } catch {
+    throw new HttpError(400, 'Invalid address');
+  }
 }
 
 // Wraps a map of method -> handler with method checks and error handling.

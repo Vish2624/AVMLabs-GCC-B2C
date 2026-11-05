@@ -27,6 +27,10 @@ describe('site file', () => {
     assert.ok(page.includes('linkedin.com/company/avmlabsofficial/'));
   });
 
+  it('does not promise every report in 24 hours: report times differ by test and country', () => {
+    assert.ok(!/reports? in 24 hours/i.test(page));
+  });
+
   it('leaves out lab codes and short names', () => {
     assert.ok(!/"shortName"|EW_PRO|HEMOGRAM - 6 PART/.test(page));
   });

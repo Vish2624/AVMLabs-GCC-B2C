@@ -131,7 +131,7 @@
     };
     const reels = s.reelsOpen ? RL.map((p, k) => {
       const sl = s.slides[k] || 0, inC = has('profile', p.id), worth = this.sumPr(p.ts);
-      return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id),   bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, ideal: p.ideal, hasIdeal: p.ideal.length > 0, benefits: p.benefits, hasBenefits: p.benefits.length > 0, tat: this.tat(p),
+      return { sym: p.sym, slotId: 'profile-bg-' + p.id, ...this.photo('profile-bg-' + p.id), noPhoto: !this.photo('profile-bg-' + p.id).photoSrc, noIcon: C.PICON[p.id] || 'layers', noSoft: `oklch(0.94 0.045 ${p.hue})`, noInk: `oklch(0.48 0.16 ${p.hue})`, bg: `radial-gradient(70% 50% at 100% 0%, oklch(0.93 0.05 ${p.hue} / 0.9), transparent 70%), linear-gradient(170deg, #FFFFFF 0%, #F7F6FC 100%)`, tag: p.tag, name: p.name, tagline: p.tagline, params: p.params, ideal: p.ideal, hasIdeal: p.ideal.length > 0, benefits: p.benefits, hasBenefits: p.benefits.length > 0, tat: this.tat(p),
         fastLabel: p.fasting ? '10–12 hr fasting' : 'No fasting needed', hcFree: this.hcOn(p), hcPaid: !this.hcOn(p), hcLabel: this.hcOn(p) ? 'Free' : 'Extra charges', hcInk: this.hcOn(p) ? '#0E7350' : '#B4540A', tests: p.ts.map((t, k) => ({ n: k + 1, name: t.name, p: t.params + (t.params > 1 ? ' params' : ' param') })), groups: incGroups(p),
         // What its tests cost one by one, shown only when the profile is cheaper.
         priceF: cost(p), ...price(p), worthF: this.money(worth), hasWorth: worth > this.pr(p) + 0.0001,
