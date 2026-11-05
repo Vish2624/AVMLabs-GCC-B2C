@@ -1687,7 +1687,7 @@ class Component extends DCLogic {
     this.setPath('/profiles/' + encodeURIComponent(p.id), this.pagePath());
     this._reelPushed = true;
     this._hc = 0;
-    this.armHint();
+    this.armHint(300);
   }
   closeReels() {
     clearTimeout(this._ht); clearTimeout(this._ht2); cancelAnimationFrame(this._sprRaf); this._sprRaf = 0; this.setState({ reelsOpen: false });
@@ -1697,21 +1697,25 @@ class Component extends DCLogic {
   // The profiles the reel viewer swipes through: the reel profiles, or just the one opened when it isn't one.
   // Reel positions (reelIdx, _ri, slides, the track) index this list.
   reelList() { const D = this.db(), solo = this.state.reelSolo && D.PM[this.state.reelSolo]; return solo ? [solo] : D.R; }
-  // Mobile reels: a small swipe card under the close button. It shows 1.2s after opening, then after 4s without any
-  // touch, stays for 5s, then starts counting again.
-  // Alternates between "swipe left" (test details) and "swipe up/down" (other profiles).
-  armHint() {
+  // Mobile reels: a small swipe card under the close button. It shows as soon as a reel opens or a swipe lands on a new
+  // reel or slide (delay: just long enough for the movement to finish), hides while the finger is down, stays for 5s,
+  // then comes back after 4s without any touch.
+  // Guides in order: on a profile's overview, "swipe left" (details) first, then "swipe up/down" (other profiles) if left
+  // waiting; on its details, only "swipe up/down". A profile with nothing to swipe to keeps "swipe left" until the last slide.
+  armHint(delay = 4000) {
     clearTimeout(this._ht); clearTimeout(this._ht2);
     this.showHint(null);
     this._ht = setTimeout(() => {
       if (!this.state.reelsOpen || this.state.w >= 1024) return;
-      const i = this.cur(), k = this.state.slides[i] || 0, n = this.reelList().length, opts = [];
-      if (k < 2) opts.push('left');
-      if (n > 1) opts.push(i < n - 1 ? 'up' : 'down');
+      // The slide on screen: the saved one (state.slides) only updates a moment after a swipe stops.
+      const i = this.cur(), el = this.scroller(), h = el && el.querySelectorAll('[data-h]')[i];
+      const k = h && h.clientWidth ? Math.round(h.scrollLeft / h.clientWidth) : this.state.slides[i] || 0, n = this.reelList().length, next = n > 1 ? (i < n - 1 ? 'up' : 'down') : null;
+      const opts = (k === 0 ? ['left', next] : [next || (k < 2 ? 'left' : null)]).filter(Boolean);
       if (!opts.length) return;
-      this.showHint(opts[(this._hc = (this._hc || 0) + 1) % opts.length]);
+      const c = this._hc || 0; this._hc = c + 1;
+      this.showHint(opts[c % opts.length]);
       this._ht2 = setTimeout(() => { this.showHint(null); this.armHint(); }, 5000);
-    }, this._hc ? 4000 : 1200);
+    }, delay);
   }
   // Shows the hint on the current reel ('up', 'down', 'left'), or hides it (null). Written straight to the page:
   // a re-render here redraws every reel and stalled any swipe that started just as the hint came or went.
@@ -1796,7 +1800,8 @@ class Component extends DCLogic {
     this.applyTrack(i, true, null, v0);
     this.replacePath(this.reelPath(i), this.pagePath());
     this.syncTitle();
-    this.armHint();
+    this._hc = 0;
+    this.armHint(120);
     // commit to state only after the slide finishes — re-rendering mid-animation causes stutter
     clearTimeout(this._gT);
     // Desktop shows the current reel in its side list and counter, so it re-renders after the slide.
@@ -1813,7 +1818,8 @@ class Component extends DCLogic {
   }
   onH(i, e) {
     const el = e.currentTarget;
-    this.armHint();
+    this._hc = 0;
+    this.armHint(120); // restarts on every scroll event, so it counts from when the slide stops
     // fade the photo in step with the finger — no state, no re-render
     const p = Math.max(0, Math.min(1, el.scrollLeft / Math.max(1, el.clientWidth)));
     const reel = el.closest('[data-reel]');
@@ -1889,7 +1895,7 @@ class Component extends DCLogic {
       const h = this.fromUrl();
       this._reelPushed = false;
       this.setState({ locOpen: false, qFocus: false, ...h });
-      if (h.reelsOpen) { this._ri = h.reelIdx; this.armHint(); } else { clearTimeout(this._ht); clearTimeout(this._ht2); window.scrollTo(0, 0); }
+      if (h.reelsOpen) { this._ri = h.reelIdx; this.armHint(300); } else { clearTimeout(this._ht); clearTimeout(this._ht2); window.scrollTo(0, 0); }
     };
     window.addEventListener('popstate', this._onPop);
     // Both timers re-render the page, so they only run while their section is on screen in a visible tab, on the
@@ -1903,7 +1909,7 @@ class Component extends DCLogic {
     this.syncTitle();
     this.centreLoop();
     // Opened straight onto a reel (refresh or shared link).
-    if (this.state.reelsOpen) { this._ri = this.state.reelIdx; this.armHint(); this.componentDidUpdate(); }
+    if (this.state.reelsOpen) { this._ri = this.state.reelIdx; this.armHint(300); this.componentDidUpdate(); }
   }
   // Centres gallery: the tile passing the middle of the strip grows, then eases back to normal size as it moves on.
   centreLoop() {

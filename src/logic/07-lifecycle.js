@@ -52,7 +52,7 @@
       const h = this.fromUrl();
       this._reelPushed = false;
       this.setState({ locOpen: false, qFocus: false, ...h });
-      if (h.reelsOpen) { this._ri = h.reelIdx; this.armHint(); } else { clearTimeout(this._ht); clearTimeout(this._ht2); window.scrollTo(0, 0); }
+      if (h.reelsOpen) { this._ri = h.reelIdx; this.armHint(300); } else { clearTimeout(this._ht); clearTimeout(this._ht2); window.scrollTo(0, 0); }
     };
     window.addEventListener('popstate', this._onPop);
     // Both timers re-render the page, so they only run while their section is on screen in a visible tab, on the
@@ -66,7 +66,7 @@
     this.syncTitle();
     this.centreLoop();
     // Opened straight onto a reel (refresh or shared link).
-    if (this.state.reelsOpen) { this._ri = this.state.reelIdx; this.armHint(); this.componentDidUpdate(); }
+    if (this.state.reelsOpen) { this._ri = this.state.reelIdx; this.armHint(300); this.componentDidUpdate(); }
   }
   // Centres gallery: the tile passing the middle of the strip grows, then eases back to normal size as it moves on.
   centreLoop() {
